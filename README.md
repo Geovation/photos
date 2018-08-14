@@ -1,3 +1,5 @@
-[![Build Status](https://travis-ci.org/Geovation/roads.svg?branch=master)](https://travis-ci.org/Geovation/roads)
+ [![Build Status](https://travis-ci.org/Geovation/photos.svg?branch=master)](https://travis-ci.org/Geovation/photos)
 
-TODO
+ # Geovation photos
+
+ TODO: choose a better name and document it.
