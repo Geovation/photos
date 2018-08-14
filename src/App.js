@@ -15,7 +15,7 @@ class App extends Component {
       }
   }
 
-  openPage1 = (e) =>{
+  openPage1 = () =>{
     this.setState({page1:true})
   }
 
