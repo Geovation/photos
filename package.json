@@ -1,7 +1,7 @@
 {
-  "name": "my-app",
+  "name": "geovation-photos",
   "version": "0.1.0",
-  "private": true,
+  "public": true,
   "dependencies": {
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
