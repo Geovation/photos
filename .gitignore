@@ -60,4 +60,9 @@ typings/
 # next.js build output
 .next
 
+#editors
+.idea
 .DS_Store
+
+# ignoring compiled folder for now
+build
