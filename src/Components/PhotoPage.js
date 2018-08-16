@@ -102,7 +102,7 @@ class PhotoPage extends Component {
                       <Button
                          onClick={this.sendFile}
                          color="primary"
-                         style={{color:'#333',backgroundColor:'#faa728'}}
+                         style={{color:'#333',backgroundColor:'#faa728',marginBottom:'15px'}}
                        >
                           Send Photo
                       </Button>
