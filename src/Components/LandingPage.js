@@ -23,7 +23,9 @@ class LandingPage extends Component {
 
   componentDidMount(){
     const fileInput = document.getElementById('file-input');
-    fileInput.addEventListener('change', (e) => this.openFile(e));
+     if (fileInput){
+       fileInput.addEventListener('change', (e) => this.openFile(e));
+     }
   }
 
   openFile = (e) =>{
