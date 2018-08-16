@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import imgHeader from '../Images/logo.svg';
 import menu from '../Images/menu.svg';
+import camera from '../Images/camera.svg';
 
 import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -20,6 +21,17 @@ class LandingPage extends Component {
       }
   }
 
+  componentDidMount(){
+    const fileInput = document.getElementById('file-input');
+    fileInput.addEventListener('change', (e) => this.openFile(e));
+  }
+
+  openFile = (e) =>{
+    if(e.target.files[0]){
+      this.props.openPhotoPage(e.target.files[0])
+    }
+  }
+
   openMenu = () =>{
     this.setState(state => ({ open: !state.open }));
   }
@@ -32,23 +44,17 @@ class LandingPage extends Component {
   };
 
   openPage1 = () =>{
-    this.setState({
-      open: false
-    })
+    this.setState({open: false});
     this.props.openPage1();
   }
 
   openPage2 = () =>{
-    this.setState({
-      open: false
-    })
+    this.setState({open: false});
     this.props.openPage2();
   }
 
   openPage3 = () =>{
-    this.setState({
-      open: false
-    })
+    this.setState({open: false});
     this.props.openPage3();
   }
 
@@ -92,7 +98,13 @@ class LandingPage extends Component {
                  )}
               </Popper>
           </div>
-          <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'center',backgroundColor:'#faa728'}}>
+          <div style={{display:'flex',flex:1,flexDirection:'column',backgroundColor:'#faa728'}}>
+              <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'center',alignSelf:'center',backgroundColor:'#faa728'}}>
+                    <input id="file-input" style={{opacity: 0,height:50,width:'50px',position:'absolute'}} type="file" accept="image/*"/>
+                    <img style={{height:50}} src={camera} alt="camera"/>
+              </div>
+              <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'center',backgroundColor:'#faa728'}}>
+              </div>
           </div>
       </div>
     );

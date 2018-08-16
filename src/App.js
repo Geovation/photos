@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Page1 from './Components/Page1';
 import Page2 from './Components/Page2';
 import Page3 from './Components/Page3';
+import PhotoPage from './Components/PhotoPage';
 import LandingPage from './Components/LandingPage';
 
 class App extends Component {
@@ -11,7 +12,9 @@ class App extends Component {
       this.state={
         page1:false,
         page2:false,
-        page3:false
+        page3:false,
+        photopage:false,
+        file:null
       }
   }
 
@@ -39,6 +42,13 @@ class App extends Component {
     this.setState({page3:false})
   }
 
+  openPhotoPage = (file) =>{
+    this.setState({photopage:true,file})
+  }
+
+  closePhotoPage = () =>{
+    this.setState({photopage:false})
+  }
 
   render() {
     return (
@@ -54,12 +64,17 @@ class App extends Component {
                   ?
                   <Page3 closePage={this.closePage3}/>
                   :
+                  this.state.photopage
+                      ?
+                        <PhotoPage file={this.state.file} closePage={this.closePhotoPage}/>
+                      :
                       <LandingPage
                           openMenu={this.openMenu}
                           closeMenu={this.closeMenu}
                           openPage1={this.openPage1}
                           openPage2={this.openPage2}
                           openPage3={this.openPage3}
+                          openPhotoPage={this.openPhotoPage}
                       />
     );
   }
