@@ -28,20 +28,20 @@ class PhotoPage extends Component {
 
   openDialog = (message) => {
      this.setState({ open: true ,message });
-  };
+  }
 
   closeDialog = () => {
      this.setState({ open: false });
      this.closePage();
-  };
+  }
 
   openDialogText = () => {
      this.setState({ opendialogtext: true  });
-  };
+  }
 
   closeDialogText = () => {
      this.setState({ opendialogtext: false });
-  };
+  }
 
   sendFile = () =>{
       let data = {}
@@ -96,7 +96,7 @@ class PhotoPage extends Component {
                   </label>
               </div>
               <div style={{display:'flex',flex:1,flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-                  <img style={{display:'flex',flex:1,width:'100%',height:400}}src={this.state.imgSrc} alt={'uploaded_photo'}/>
+                  <img style={{display:'flex',flex:1,width:'100%',height:400}} src={this.state.imgSrc} alt={'uploaded_photo'}/>
                   <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'flex-end',height:50,paddingBottom:5}}>
                   </div>
                       <Button
