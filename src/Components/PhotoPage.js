@@ -12,7 +12,7 @@ import {request} from '../Config/config.js'
 
 class PhotoPage extends Component {
   constructor(props){
-      super(props)
+      super(props);
       this.state={
         imgSrc:'',
         open:false,
@@ -32,7 +32,7 @@ class PhotoPage extends Component {
 
   closeDialog = () => {
      this.setState({ open: false });
-     this.closePage()
+     this.closePage();
   };
 
   openDialogText = () => {
@@ -45,24 +45,24 @@ class PhotoPage extends Component {
 
   sendFile = () =>{
       let data = {}
-      const text =  this.state.value
-      const file = this.props.file
-      data['file'] = file
+      const text =  this.state.value;
+      const file = this.props.file;
+      data['file'] = file;
       if(text!==''){
-          data['text'] = text
+          data['text'] = text;
           if (navigator && navigator.geolocation) {
               navigator.geolocation.getCurrentPosition((position)=>{
-                  data['latitude'] = position.coords.latitude
-                  data['longitude'] = position.coords.longitude
-                  request(this,data)
+                  data['latitude'] = position.coords.latitude;
+                  data['longitude'] = position.coords.longitude;
+                  request(this,data);
               })
           }
           else{
-            request(this,data)
+            request(this,data);
           }
       }
       else{
-        this.openDialogText()
+        this.openDialogText();
       }
   }
 

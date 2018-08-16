@@ -8,7 +8,7 @@ import LandingPage from './Components/LandingPage';
 
 class App extends Component {
   constructor(props){
-      super(props)
+      super(props);
       this.state={
         page1:false,
         page2:false,
@@ -19,35 +19,35 @@ class App extends Component {
   }
 
   openPage1 = () =>{
-    this.setState({page1:true})
+    this.setState({page1:true});
   }
 
   closePage1 = () =>{
-    this.setState({page1:false})
+    this.setState({page1:false});
   }
 
   openPage2 = () =>{
-    this.setState({page2:true})
+    this.setState({page2:true});
   }
 
   closePage2 = () =>{
-    this.setState({page2:false})
+    this.setState({page2:false});
   }
 
   openPage3 = () =>{
-    this.setState({page3:true})
+    this.setState({page3:true});
   }
 
   closePage3 = () =>{
-    this.setState({page3:false})
+    this.setState({page3:false});
   }
 
   openPhotoPage = (file) =>{
-    this.setState({photopage:true,file})
+    this.setState({photopage:true,file});
   }
 
   closePhotoPage = () =>{
-    this.setState({photopage:false})
+    this.setState({photopage:false});
   }
 
   render() {

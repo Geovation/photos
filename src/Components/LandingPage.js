@@ -14,7 +14,7 @@ import MenuList from '@material-ui/core/MenuList';
 
 class LandingPage extends Component {
   constructor(props){
-      super(props)
+      super(props);
       this.state={
         menuOpen:false,
         open:false
@@ -30,7 +30,7 @@ class LandingPage extends Component {
 
   openFile = (e) =>{
     if(e.target.files[0]){
-      this.props.openPhotoPage(e.target.files[0])
+      this.props.openPhotoPage(e.target.files[0]);
     }
   }
 
