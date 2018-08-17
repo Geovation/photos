@@ -12,6 +12,8 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 
+import styles from '../Style/LandingPageStyle.js';
+
 class LandingPage extends Component {
   constructor(props){
       super(props);
@@ -66,14 +68,14 @@ class LandingPage extends Component {
 
   render() {
     return (
-      <div style={{display:'flex',flex:1,flexDirection:'column',height:'100vh'}}>
-          <div style={{display:'flex',flex:1,flexDirection:'column',maxHeight:170,justifyContent:'center',backgroundColor:'#333'}}>
-              <div style={{color:'white',alignSelf:'center',paddingTop:10,fontFamily: 'OSGillSans ,sans-serif !important'}}>GEOVATION</div>
-              <img style={{display:'flex',flex:1,maxHeight:80,alignSelf:'center',paddingBottom:10}} src={imgHeader} alt="header"/>
-              <div style={{display:'flex',flex:1,height:50,textAlign:'center',alignItems:'center',justifyContent:'flex-start',backgroundColor:'#faa728',paddingLeft:5}}>
+      <div style={styles.wrapper}>
+          <div style={styles.headline}>
+          <div style={styles.headtext}>GEOVATION</div>
+          <img style={styles.headphoto} src={imgHeader} alt="header"/>
+              <div style={styles.appbar}>
                   <Button
                       onClick={this.openMenu}
-                      style={{alignSelf:'center'}}
+                      style={this.buttonappbar}
                       color="primary"
                       buttonRef={node => {
                          this.anchorEl = node;
@@ -81,7 +83,7 @@ class LandingPage extends Component {
                       aria-owns={this.state.open ? 'menu-list-grow' : null}
                       aria-haspopup="true"
                   >
-                      <img style={{height:25}} src={menu} alt="menu"/>
+                      <img style={this.photoappbar} src={menu} alt="menu"/>
                   </Button>
               </div>
               <Popper open={this.state.open} anchorEl={this.anchorEl} transition disablePortal>
@@ -104,16 +106,18 @@ class LandingPage extends Component {
                  )}
               </Popper>
           </div>
-          <div style={{display:'flex',flex:1,flexDirection:'column',backgroundColor:'#faa728'}}>
-              <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'center',alignSelf:'center',backgroundColor:'#faa728'}}>
-                    <input id="file-input" style={{opacity: 0,height:50,width:'50px',position:'absolute'}} type="file" accept="image/*"/>
-                    <img style={{height:50}} src={camera} alt="camera"/>
+          <div style={styles.body}>
+              <div style={styles.camera}>
+                  <Button onClick={this.openMap} color="primary">
+                      <input id="file-input" style={styles.inputcamera} type="file" accept="image/*"/>
+                      <img style={styles.imagecamera} src={camera} alt="camera"/>
+                  </Button>
               </div>
-              <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'flex-end'}}>
-                <div style={{display:'flex',flex:1,maxHeight:50,justifyContent:'center',alignItems:'center',backgroundColor:'#333'}}>
+              <div style={styles.wrapperexternallink}>
+                <div style={styles.externallink}>
                    <Button
                       onClick={this.setRedirect}
-                      style={{color:'#faa728'}}
+                      style={styles.buttonexternallink}
                     >
                        External Link
                     </Button>
