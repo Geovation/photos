@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import loadImage from 'blueimp-load-image';
+
 import backButton from '../Images/left-arrow.svg';
 
 import Button from '@material-ui/core/Button';
@@ -8,7 +10,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 
-import {request} from '../Config/config.js'
+import styles from '../Style/PhotoPageStyle.js';
+import {request} from '../Config/config.js';
 
 class PhotoPage extends Component {
   constructor(props){
@@ -71,38 +74,42 @@ class PhotoPage extends Component {
   }
 
   componentDidMount(){
-       this.setState({
-       imgSrc: URL.createObjectURL(this.props.file)
-     })
+     loadImage(
+       this.props.file, (img) =>{
+          document.getElementById('picture').appendChild(img);
+          document.getElementsByTagName('canvas')[0].style.width = '100%';
+       },
+      {orientation:true}
+     )
   }
 
   render() {
     return (
-          <div style={{display:'flex',flex:1,flexDirection:'column',height:'100vh',backgroundColor:'#333'}}>
-              <div style={{display:'flex',flex:1,maxHeight:50,backgroundColor:'#faa728',alignItems:'center'}}>
+          <div style={styles.wrapper}>
+              <div style={styles.headline}>
                   <Button
                      onClick={this.closePage}
                      color="primary"
-                     style={{color:'white'}}
                    >
-                      <img style={{height:25}} src={backButton} alt="backButton"/>
+                      <img style={styles.buttonback} src={backButton} alt="backButton"/>
                   </Button>
-                  <div style={{display:'flex',flex:1}}>PhotoPage</div>
+                  <div style={styles.headtext}>PhotoPage</div>
               </div>
-              <div style={{display:'flex',flex:1,maxHeight:50,paddingLeft:5,color:'#faa728',alignItems:'center'}}>
+              <div style={styles.entertext}>
                   <label>
                     Enter some text:
-                    <input type="text" style={{marginLeft:'5px'}} value={this.state.value} onChange={this.handleChange} />
+                    <input type="text" style={styles.inputtext} value={this.state.value} onChange={this.handleChange} />
                   </label>
               </div>
-              <div style={{display:'flex',flex:1,flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-                  <img style={{display:'flex',flex:1,width:'100%',height:400}} src={this.state.imgSrc} alt={'uploaded_photo'}/>
-                  <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'flex-end',height:50,paddingBottom:5}}>
+              <div style={styles.sendwrapper}>
+                  <div style={styles.picture} id='picture'>
+                  </div>
+                  <div style={styles.send}>
                   </div>
                       <Button
                          onClick={this.sendFile}
                          color="primary"
-                         style={{color:'#333',backgroundColor:'#faa728',marginBottom:'15px'}}
+                         style={styles.sendbutton}
                        >
                           Send Photo
                       </Button>
