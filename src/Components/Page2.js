@@ -4,6 +4,8 @@ import backButton from '../Images/left-arrow.svg';
 
 import Button from '@material-ui/core/Button';
 
+import styles from '../Style/Page2Style.js';
+
 class Page2 extends Component {
 
   closePage =() => {
@@ -12,16 +14,15 @@ class Page2 extends Component {
 
   render() {
     return (
-          <div style={{display:'flex',flex:1,flexDirection:'column',height:'100vh',backgroundColor:'#333'}}>
-              <div style={{display:'flex',flex:1,maxHeight:50,backgroundColor:'#faa728',alignItems:'center'}}>
+          <div style={styles.wrapper}>
+              <div style={styles.headline}>
                   <Button
                      onClick={this.closePage}
                      color="primary"
-                     style={{color:'white'}}
                    >
-                      <img style={{height:25}} src={backButton} alt="backButton"/>
+                      <img style={styles.buttonback} src={backButton} alt="backButton"/>
                   </Button>
-                  <div style={{display:'flex',flex:1}}>Page 2</div>
+                  <div style={styles.body}>Page 2</div>
               </div>
           </div>
 
