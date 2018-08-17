@@ -22,7 +22,7 @@ class Page1 extends Component {
                    >
                       <img style={styles.buttonback} src={backButton} alt="backButton"/>
                   </Button>
-                  <div style={styles.body}>Page 1</div>
+                  <div style={styles.headtext}>Page 1</div>
               </div>
           </div>
 

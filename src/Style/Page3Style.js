@@ -16,7 +16,7 @@ const styles = {
     'buttonback':{
       height:25
     },
-    'body':{
+    'headtext':{
       display:'flex',
       flex:1
     }
