@@ -60,6 +60,10 @@ class LandingPage extends Component {
     this.props.openPage3();
   }
 
+  setRedirect = () => {
+    window.location = 'https://geovation.uk/';
+  }
+
   render() {
     return (
       <div style={{display:'flex',flex:1,flexDirection:'column',height:'100vh'}}>
@@ -105,7 +109,15 @@ class LandingPage extends Component {
                     <input id="file-input" style={{opacity: 0,height:50,width:'50px',position:'absolute'}} type="file" accept="image/*"/>
                     <img style={{height:50}} src={camera} alt="camera"/>
               </div>
-              <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'center',backgroundColor:'#faa728'}}>
+              <div style={{display:'flex',flex:1,flexDirection:'column',justifyContent:'flex-end'}}>
+                <div style={{display:'flex',flex:1,maxHeight:50,justifyContent:'center',alignItems:'center',backgroundColor:'#333'}}>
+                   <Button
+                      onClick={this.setRedirect}
+                      style={{color:'#faa728'}}
+                    >
+                       External Link
+                    </Button>
+                </div>
               </div>
           </div>
       </div>
