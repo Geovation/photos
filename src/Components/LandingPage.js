@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import imgHeader from '../Images/logo.svg';
 import menu from '../Images/menu.svg';
 import camera from '../Images/camera.svg';
+import map from '../Images/map.svg';
 
 import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -62,6 +63,10 @@ class LandingPage extends Component {
     this.props.openPage3();
   }
 
+  openMap = () =>{
+    this.props.openMap();
+  }
+
   setRedirect = () => {
     window.location = 'https://geovation.uk/';
   }
@@ -70,8 +75,8 @@ class LandingPage extends Component {
     return (
       <div style={styles.wrapper}>
           <div style={styles.headline}>
-          <div style={styles.headtext}>GEOVATION</div>
-          <img style={styles.headphoto} src={imgHeader} alt="header"/>
+              <div style={styles.headtext}>GEOVATION</div>
+              <img style={styles.headphoto} src={imgHeader} alt="header"/>
               <div style={styles.appbar}>
                   <Button
                       onClick={this.openMenu}
@@ -108,10 +113,15 @@ class LandingPage extends Component {
           </div>
           <div style={styles.body}>
               <div style={styles.camera}>
-                  <Button onClick={this.openMap} color="primary">
+                  <Button onClick={this.openCamera} color="primary">
                       <input id="file-input" style={styles.inputcamera} type="file" accept="image/*"/>
                       <img style={styles.imagecamera} src={camera} alt="camera"/>
                   </Button>
+              </div>
+              <div style={styles.map}>
+                    <Button onClick={this.openMap} color="primary">
+                        <img style={styles.imagemap} src={map} alt="map"/>
+                    </Button>
               </div>
               <div style={styles.wrapperexternallink}>
                 <div style={styles.externallink}>
