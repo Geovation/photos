@@ -8,39 +8,27 @@ const styles = {
     },
     'headline':{
       display:'flex',
-      flex:1,
       flexDirection:'column',
-      maxHeight:170,
-      justifyContent:'center'
+      height:120,
+      justifyContent:'center',
+      alignItems:'center'
     },
     'headtext':{
       color:'white',
-      alignSelf:'center',
-      paddingTop:10,
       fontFamily: 'OSGillSans ,sans-serif !important'
     },
     'headphoto':{
       display:'flex',
-      flex:1,
-      maxHeight:80,
-      alignSelf:'center',
-      paddingBottom:10
+      height:80,
     },
     'appbar':{
       display:'flex',
-      flex:1,
-      maxHeight:52,
-      textAlign:'center',
-      alignItems:'center',
+      height:50,
       justifyContent:'flex-start',
       backgroundColor:'#faa728',
-      paddingLeft:5
     },
     'buttonappbar':{
       height:25
-    },
-    'photoappbar':{
-      alignSelf:'center'
     },
     'body':{
       display:'flex',
@@ -51,17 +39,16 @@ const styles = {
     'camera':{
       display:'flex',
       flex:1,
-      flexDirection:'column',
       justifyContent:'center',
-      alignSelf:'center',
-      backgroundColor:'#faa728'
+      alignItems:'center'
     },
     'inputcamera':{
-      opacity: 0,
       height:50,
       width:'50px',
-      position:'absolute',
-      cursor: 'pointer'
+      cursor: 'pointer',
+
+      opacity: 0,
+      position:'absolute'
     },
     'imagecamera':{
       height:50,
@@ -74,18 +61,12 @@ const styles = {
       alignItems:'center'
     },
     'imagemap':{
-      height:50
-    },
-    'wrapperexternallink':{
-      display:'flex',
-      flex:1,
-      flexDirection:'column',
-      justifyContent:'flex-end'
+      height:50,
+      cursor: 'pointer'
     },
     'externallink':{
       display:'flex',
-      flex:1,
-      maxHeight:50,
+      height:50,
       justifyContent:'center',
       alignItems:'center',
       backgroundColor:'#333'

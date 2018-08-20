@@ -8,22 +8,16 @@ const styles = {
     },
     'headline':{
       display:'flex',
-      flex:1,
-      maxHeight:50,
+      height:50,
       backgroundColor:'#faa728',
       alignItems:'center'
     },
     'buttonback':{
       height:25
     },
-    'headtext':{
-      display:'flex',
-      flex:1
-    },
     'entertext':{
       display:'flex',
-      flex:1,
-      maxHeight:50,
+      height:50,
       paddingLeft:5,
       color:'#faa728',
       alignItems:'center'
@@ -31,34 +25,23 @@ const styles = {
     'inputtext':{
       marginLeft:'5px'
     },
-    'body':{
-      display:'flex',
-      flex:1,
-      flexDirection:'column',
-      backgroundColor:'#faa728'
-    },
-    'sendwrapper':{
+    'picture':{
       display:'flex',
       flex:1,
       flexDirection:'column',
       alignItems:'center',
       justifyContent:'center'
     },
-    'picture':{
+    'sendwrapper':{
       display:'flex',
-    },
-    'send':{
-      display:'flex',
-      flex:1,
       flexDirection:'column',
-      justifyContent:'flex-end',
-      height:50,
-      paddingBottom:5
+      justifyContent:'center',
+      alignItems:'center',
+      height:50
     },
     'sendbutton':{
       color:'#333',
-      backgroundColor:'#faa728',
-      marginBottom:'15px'
+      backgroundColor:'#faa728'
     }
 }
 

@@ -76,8 +76,18 @@ class PhotoPage extends Component {
   componentDidMount(){
      loadImage(
        this.props.file, (img) =>{
-          document.getElementById('picture').appendChild(img);
-          document.getElementsByTagName('canvas')[0].style.width = '100%';
+         document.getElementById('picture').appendChild(img);
+         const canvas = document.getElementsByTagName('canvas')[0];
+         const width = canvas.width;
+         const height = canvas.height;
+         if(width<height){
+           canvas.style.width = 'auto';
+           canvas.style.maxHeight = '100%';
+         }
+         else {
+           canvas.style.height = 'auto';
+           canvas.style.maxWidth = '100%';
+         }
        },
       {orientation:true}
      )
@@ -93,7 +103,7 @@ class PhotoPage extends Component {
                    >
                       <img style={styles.buttonback} src={backButton} alt="backButton"/>
                   </Button>
-                  <div style={styles.headtext}>PhotoPage</div>
+                  <div>PhotoPage</div>
               </div>
               <div style={styles.entertext}>
                   <label>
@@ -101,18 +111,14 @@ class PhotoPage extends Component {
                     <input type="text" style={styles.inputtext} value={this.state.value} onChange={this.handleChange} />
                   </label>
               </div>
+              <div style={styles.picture} id='picture'></div>
               <div style={styles.sendwrapper}>
-                  <div style={styles.picture} id='picture'>
-                  </div>
-                  <div style={styles.send}>
-                  </div>
-                      <Button
-                         onClick={this.sendFile}
-                         color="primary"
-                         style={styles.sendbutton}
-                       >
-                          Send Photo
-                      </Button>
+                <Button
+                   onClick={this.sendFile}
+                   style={styles.sendbutton}
+                 >
+                    Send Photo
+                </Button>
               </div>
               <Dialog
                   open={this.state.open}

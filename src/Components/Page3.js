@@ -4,7 +4,7 @@ import backButton from '../Images/left-arrow.svg';
 
 import Button from '@material-ui/core/Button';
 
-import styles from '../Style/Page3Style.js';
+import styles from '../Style/Page1Style.js';
 
 class Page3 extends Component {
 
@@ -14,18 +14,14 @@ class Page3 extends Component {
 
   render() {
     return (
-          <div style={styles.wrapper}>
-              <div style={styles.headline}>
-                  <Button
-                     onClick={this.closePage}
-                     color="primary"
-                   >
-                      <img style={styles.buttonback} src={backButton} alt="backButton"/>
-                  </Button>
-                  <div style={styles.headtext}>Page 3</div>
-              </div>
-          </div>
-
+      <div style={styles.wrapper}>
+        <div style={styles.headline}>
+          <Button onClick={this.closePage}>
+            <img style={styles.buttonback} src={backButton} alt='backButton'/>
+          </Button>
+          <div style={styles.headtext}>Page 3</div>
+        </div>
+      </div>
     );
   }
 }
