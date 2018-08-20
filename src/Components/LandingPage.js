@@ -113,7 +113,7 @@ class LandingPage extends Component {
           </div>
           <div style={styles.body}>
               <div style={styles.camera}>
-                  <Button onClick={this.openMap} color="primary">
+                  <Button onClick={this.openCamera} color="primary">
                       <input id="file-input" style={styles.inputcamera} type="file" accept="image/*"/>
                       <img style={styles.imagecamera} src={camera} alt="camera"/>
                   </Button>
