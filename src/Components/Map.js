@@ -34,17 +34,15 @@ class Map extends Component {
           <div style={styles.buttonwrapper}>
             <Button
               onClick={this.closePage}
-              color="primary"
+              color='primary'
              >
-             <img style={styles.buttonback} src={backButton} alt="backButton"/>
+             <img style={styles.buttonback} src={backButton} alt=''/>
             </Button>
           </div>
           <div style={styles.headtext}>Map</div>
           <div style={styles.headspace}/>
         </div>
-        <div style={styles.body}>
-          <div id='map'style={styles.map}></div>
-        </div>
+        <div id='map'style={styles.map}></div>
       </div>
     );
   }
