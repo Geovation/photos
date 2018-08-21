@@ -1,0 +1,9 @@
+# Dependency directories
+node_modules/
+
+# OS X
+.DS_Store
+
+# Cordova
+platforms/
+plugins/
