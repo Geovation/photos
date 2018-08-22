@@ -22,7 +22,7 @@ class Map extends Component {
       container: 'map', // container id
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json', //stylesheet location
       center: [-0.1019313, 51.524311], // starting position [lng, lat]
-      zoom: 14, // starting zoom
+      zoom: 17, // starting zoom
       customAttribution:attribution
     });
   }
