@@ -1,4 +1,4 @@
-// Custom Dialog to choose camera and photo library used to interact with cordova-plugin-camera
+// Custom Dialog to choose camera and photo library to interact with cordova-plugin-camera
 
 import React from 'react';
 import PropTypes from 'prop-types';

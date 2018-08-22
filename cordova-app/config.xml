@@ -21,7 +21,7 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
+    <engine name="android" spec="^7.0.0" />
     <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
     <plugin name="cordova-plugin-camera" spec="~4.0.3" />
-    <engine name="android" spec="^7.0.0" />
 </widget>
