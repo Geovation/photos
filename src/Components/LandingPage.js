@@ -16,11 +16,13 @@ import MenuList from '@material-ui/core/MenuList';
 import styles from '../Style/LandingPageStyle.js';
 
 import CustomPhotoDialog from './CustomPhotoDialog';
+import Loading from './Loading';
 
 class LandingPage extends Component {
   constructor(props){
       super(props);
       this.state = {
+        loading: true,
         menuOpen: false,
         open: false,
         photoDialog: false
@@ -28,15 +30,26 @@ class LandingPage extends Component {
   }
 
   componentDidMount(){
-    const fileInput = document.getElementById('file-input');
-     if (fileInput) {
-       fileInput.addEventListener('change', (e) => this.openFile(e));
-     }
+    if (navigator && navigator.geolocation) {
+      const geoid = navigator.geolocation.watchPosition((position) => {
+        this.location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        navigator.geolocation.clearWatch(geoid);
+      });
+    }
+    this.setState({ loading: false }, () => {
+      const fileInput = document.getElementById('file-input');
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => this.openFile(e));
+      }
+    });
   }
 
   openFile = (e) => {
     if (e.target.files[0]) {
-      this.props.openPhotoPage(e.target.files[0]);
+      this.props.openPhotoPage(e.target.files[0], this.location);
     }
   }
 
@@ -78,13 +91,12 @@ class LandingPage extends Component {
 
   handleClose = dialogSelectedValue => {
     this.setState({ photoDialog: false });
-
     if (dialogSelectedValue) {
       const Camera = navigator.camera;
       const srcType = dialogSelectedValue === "CAMERA" ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
 
       Camera.getPicture(imageUri => {
-          this.props.openPhotoPage(imageUri);
+          this.props.openPhotoPage(imageUri, this.location);
         }, message => {
           console.log("Failed because: ", message);
         },
@@ -103,7 +115,10 @@ class LandingPage extends Component {
 
   render() {
     return (
-      <div style={styles.wrapper}>
+      this.state.loading ?
+        <Loading />
+      :
+        <div style={styles.wrapper}>
           <div style={styles.headline}>
               <div style={styles.headtext}>GEOVATION</div>
               <img style={styles.headphoto} src={imgHeader} alt="header"/>
@@ -171,7 +186,7 @@ class LandingPage extends Component {
                 </div>
               </div>
           </div>
-      </div>
+        </div>
     );
   }
 }

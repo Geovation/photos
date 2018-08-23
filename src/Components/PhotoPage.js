@@ -46,23 +46,19 @@ class PhotoPage extends Component {
      this.setState({ opendialogtext: false });
   }
 
-  sendFile = () =>{
+  sendFile = () => {
       let data = {}
       const text =  this.state.value;
-      const file = this.props.file;
+      const { file, location } = this.props;
       data['file'] = file;
-      if(text!==''){
+      if (text !== '') {
           data['text'] = text;
-          if (this.props.latitude && this.props.latitude) {
-            data['latitude'] = this.props.latitude;
-            data['longitude'] = this.props.latitude;
-            request(this,data);
+          if (location) {
+            data['latitude'] = location.latitude;
+            data['longitude'] = location.longitude;
           }
-          else{
-            request(this,data);
-          }
-      }
-      else{
+          request(this, data);
+      } else {
         this.openDialogText();
       }
   }

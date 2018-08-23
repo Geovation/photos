@@ -6,107 +6,95 @@ import Page3 from './Components/Page3';
 import PhotoPage from './Components/PhotoPage';
 import LandingPage from './Components/LandingPage';
 import Map from './Components/Map';
-import Loading from './Components/Loading';
 
 class App extends Component {
   constructor(props){
       super(props);
-      this.state={
-        page1:false,
-        page2:false,
-        page3:false,
-        photopage:false,
-        file:null,
-        map:false,
-        latitude: '',
-        longitude : '',
-        loaded:false
-      }
+      this.state = {
+        page1: false,
+        page2: false,
+        page3: false,
+        photopage: false,
+        file: null,
+        map: false
+      };
   }
 
-  pageLoaded = (latitude,longitude) =>{
+  openPage1 = () => {
+    this.setState({ page1: true });
+  }
+
+  closePage1 = () => {
+    this.setState({ page1:false });
+  }
+
+  openPage2 = () => {
+    this.setState({ page2:true });
+  }
+
+  closePage2 = () => {
+    this.setState({ page2:false });
+  }
+
+  openPage3 = () => {
+    this.setState({ page3:true });
+  }
+
+  closePage3 = () => {
+    this.setState({ page3:false });
+  }
+
+  openPhotoPage = (file, location) => {
     this.setState({
-      loaded:true,
-      latitude,
-      longitude
+      photopage: true,
+      file,
+      location
     });
   }
 
-  openPage1 = () =>{
-    this.setState({page1:true});
+  closePhotoPage = () => {
+    this.setState({ photopage: false });
   }
 
-  closePage1 = () =>{
-    this.setState({page1:false});
+  openMap = () => {
+    this.setState({ map: true });
   }
 
-  openPage2 = () =>{
-    this.setState({page2:true});
-  }
-
-  closePage2 = () =>{
-    this.setState({page2:false});
-  }
-
-  openPage3 = () =>{
-    this.setState({page3:true});
-  }
-
-  closePage3 = () =>{
-    this.setState({page3:false});
-  }
-
-  openPhotoPage = (file) =>{
-    this.setState({photopage:true,file});
-  }
-
-  closePhotoPage = () =>{
-    this.setState({photopage:false});
-  }
-
-  openMap = () =>{
-    this.setState({map:true});
-  }
-
-  closeMap = () =>{
-    this.setState({map:false});
+  closeMap = () => {
+    this.setState({ map:false });
   }
 
   render() {
     return (
-      !this.state.loaded
+      this.state.page1
         ?
-        <Loading pageLoaded={this.pageLoaded}/>
+        <Page1 closePage={this.closePage1}/>
         :
-        this.state.page1
+        this.state.page2
           ?
-          <Page1 closePage={this.closePage1}/>
+          <Page2 closePage={this.closePage2}/>
           :
-          this.state.page2
+          this.state.page3
             ?
-            <Page2 closePage={this.closePage2}/>
+            <Page3 closePage={this.closePage3}/>
             :
-            this.state.page3
+            this.state.photopage
               ?
-              <Page3 closePage={this.closePage3}/>
+              <PhotoPage location={this.state.location} file={this.state.file} closePage={this.closePhotoPage}/>
               :
-              this.state.photopage
+              this.state.map
                 ?
-                <PhotoPage longitude={this.state.longitude} latitude={this.state.latitude} file={this.state.file} closePage={this.closePhotoPage}/>
+                <Map closePage={this.closeMap}/>
                 :
-                this.state.map
-                  ?
-                  <Map closePage={this.closeMap}/>
-                  :
-                  <LandingPage
-                      openMenu={this.openMenu}
-                      closeMenu={this.closeMenu}
-                      openPage1={this.openPage1}
-                      openPage2={this.openPage2}
-                      openPage3={this.openPage3}
-                      openPhotoPage={this.openPhotoPage}
-                      openMap={this.openMap}
-                  />
+                <LandingPage
+                    openMenu={this.openMenu}
+                    closeMenu={this.closeMenu}
+                    openPage1={this.openPage1}
+                    openPage2={this.openPage2}
+                    openPage3={this.openPage3}
+                    openPhotoPage={this.openPhotoPage}
+                    openMap={this.openMap}
+                />
     );
   }
 }
