@@ -15,29 +15,32 @@ import MenuList from '@material-ui/core/MenuList';
 
 import styles from '../Style/LandingPageStyle.js';
 
+import CustomPhotoDialog from './CustomPhotoDialog';
+
 class LandingPage extends Component {
   constructor(props){
       super(props);
-      this.state={
-        menuOpen:false,
-        open:false
-      }
+      this.state = {
+        menuOpen: false,
+        open: false,
+        photoDialog: false
+      };
   }
 
   componentDidMount(){
     const fileInput = document.getElementById('file-input');
-     if (fileInput){
+     if (fileInput) {
        fileInput.addEventListener('change', (e) => this.openFile(e));
      }
   }
 
-  openFile = (e) =>{
-    if(e.target.files[0]){
+  openFile = (e) => {
+    if (e.target.files[0]) {
       this.props.openPhotoPage(e.target.files[0]);
     }
   }
 
-  openMenu = () =>{
+  openMenu = () => {
     this.setState(state => ({ open: !state.open }));
   }
 
@@ -48,24 +51,51 @@ class LandingPage extends Component {
      this.setState({ open: false });
   };
 
-  openPage1 = () =>{
-    this.setState({open: false});
+  openPage1 = () => {
+    this.setState({ open: false });
     this.props.openPage1();
   }
 
-  openPage2 = () =>{
-    this.setState({open: false});
+  openPage2 = () => {
+    this.setState({ open: false });
     this.props.openPage2();
   }
 
-  openPage3 = () =>{
-    this.setState({open: false});
+  openPage3 = () => {
+    this.setState({ open: false });
     this.props.openPage3();
   }
 
-  openMap = () =>{
+  openMap = () => {
     this.props.openMap();
   }
+
+  openCamera = () => {
+    if (window.cordova) {
+      this.setState({ photoDialog: true });
+    }
+  }
+
+  handleClose = dialogSelectedValue => {
+    this.setState({ photoDialog: false });
+
+    if (dialogSelectedValue) {
+      const Camera = navigator.camera;
+      const srcType = dialogSelectedValue === "CAMERA" ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
+      
+      Camera.getPicture(imageUri => {
+          this.props.openPhotoPage(imageUri);
+        }, message => {
+          console.log("Failed because: ", message);
+        },
+        {
+          quality: 50,
+          destinationType: Camera.DestinationType.FILE_URI,
+          sourceType: srcType,
+          correctOrientation: true
+        });
+    }
+  };
 
   setRedirect = () => {
     window.location = 'https://geovation.uk/';
@@ -114,9 +144,16 @@ class LandingPage extends Component {
           <div style={styles.body}>
               <div style={styles.camera}>
                   <Button onClick={this.openCamera} color="primary">
-                      <input id="file-input" style={styles.inputcamera} type="file" accept="image/*"/>
+                      { !window.cordova ?
+                          <input id="file-input" style={styles.inputcamera} type="file" accept="image/*"/>
+                        : null
+                      }
                       <img style={styles.imagecamera} src={camera} alt="camera"/>
                   </Button>
+                  <CustomPhotoDialog
+                    open={this.state.photoDialog}
+                    onClose={this.handleClose}
+                  />
               </div>
               <div style={styles.map}>
                     <Button onClick={this.openMap} color="primary">
