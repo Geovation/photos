@@ -78,14 +78,15 @@ class LandingPage extends Component {
 
   handleClose = dialogSelectedValue => {
     this.setState({ photoDialog: false });
-    if (dialogSelectedValue !== "CANCEL") {
+
+    if (dialogSelectedValue) {
       const Camera = navigator.camera;
       const srcType = dialogSelectedValue === "CAMERA" ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
       
       Camera.getPicture(imageUri => {
           this.props.openPhotoPage(imageUri);
         }, message => {
-          console.log("Failed because: : ", message);
+          console.log("Failed because: ", message);
         },
         {
           quality: 50,

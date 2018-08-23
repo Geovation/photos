@@ -54,7 +54,7 @@ class PhotoDialog extends React.Component {
               </ListItemAvatar>
               <ListItemText primary={"Photo Library"} />
             </ListItem>
-            <ListItem button onClick={() => this.props.onClose("CANCEL")}>
+            <ListItem button onClick={this.handleClose}>
               <ListItemAvatar>
                 <Avatar>
                   <CancelIcon />
