@@ -10,54 +10,58 @@ import Map from './Components/Map';
 class App extends Component {
   constructor(props){
       super(props);
-      this.state={
-        page1:false,
-        page2:false,
-        page3:false,
-        photopage:false,
-        file:null,
-        map:false
-      }
+      this.state = {
+        page1: false,
+        page2: false,
+        page3: false,
+        photopage: false,
+        file: null,
+        map: false
+      };
   }
 
-  openPage1 = () =>{
-    this.setState({page1:true});
+  openPage1 = () => {
+    this.setState({ page1: true });
   }
 
-  closePage1 = () =>{
-    this.setState({page1:false});
+  closePage1 = () => {
+    this.setState({ page1:false });
   }
 
-  openPage2 = () =>{
-    this.setState({page2:true});
+  openPage2 = () => {
+    this.setState({ page2:true });
   }
 
-  closePage2 = () =>{
-    this.setState({page2:false});
+  closePage2 = () => {
+    this.setState({ page2:false });
   }
 
-  openPage3 = () =>{
-    this.setState({page3:true});
+  openPage3 = () => {
+    this.setState({ page3:true });
   }
 
-  closePage3 = () =>{
-    this.setState({page3:false});
+  closePage3 = () => {
+    this.setState({ page3:false });
   }
 
-  openPhotoPage = (file) =>{
-    this.setState({photopage:true,file});
+  openPhotoPage = (file, location) => {
+    this.setState({
+      photopage: true,
+      file,
+      location
+    });
   }
 
-  closePhotoPage = () =>{
-    this.setState({photopage:false});
+  closePhotoPage = () => {
+    this.setState({ photopage: false });
   }
 
-  openMap = () =>{
-    this.setState({map:true});
+  openMap = () => {
+    this.setState({ map: true });
   }
 
-  closeMap = () =>{
-    this.setState({map:false});
+  closeMap = () => {
+    this.setState({ map:false });
   }
 
   render() {
@@ -76,7 +80,7 @@ class App extends Component {
             :
             this.state.photopage
               ?
-              <PhotoPage file={this.state.file} closePage={this.closePhotoPage}/>
+              <PhotoPage location={this.state.location} file={this.state.file} closePage={this.closePhotoPage}/>
               :
               this.state.map
                 ?
