@@ -82,7 +82,7 @@ class LandingPage extends Component {
     if (dialogSelectedValue) {
       const Camera = navigator.camera;
       const srcType = dialogSelectedValue === "CAMERA" ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
-      
+
       Camera.getPicture(imageUri => {
           this.props.openPhotoPage(imageUri);
         }, message => {

@@ -6,6 +6,7 @@ import Page3 from './Components/Page3';
 import PhotoPage from './Components/PhotoPage';
 import LandingPage from './Components/LandingPage';
 import Map from './Components/Map';
+import Loading from './Components/Loading';
 
 class App extends Component {
   constructor(props){
@@ -16,8 +17,19 @@ class App extends Component {
         page3:false,
         photopage:false,
         file:null,
-        map:false
+        map:false,
+        latitude: '',
+        longitude : '',
+        loaded:false
       }
+  }
+
+  pageLoaded = (latitude,longitude) =>{
+    this.setState({
+      loaded:true,
+      latitude,
+      longitude
+    });
   }
 
   openPage1 = () =>{
@@ -62,35 +74,39 @@ class App extends Component {
 
   render() {
     return (
-      this.state.page1
+      !this.state.loaded
         ?
-        <Page1 closePage={this.closePage1}/>
+        <Loading pageLoaded={this.pageLoaded}/>
         :
-        this.state.page2
+        this.state.page1
           ?
-          <Page2 closePage={this.closePage2}/>
+          <Page1 closePage={this.closePage1}/>
           :
-          this.state.page3
+          this.state.page2
             ?
-            <Page3 closePage={this.closePage3}/>
+            <Page2 closePage={this.closePage2}/>
             :
-            this.state.photopage
+            this.state.page3
               ?
-              <PhotoPage file={this.state.file} closePage={this.closePhotoPage}/>
+              <Page3 closePage={this.closePage3}/>
               :
-              this.state.map
+              this.state.photopage
                 ?
-                <Map closePage={this.closeMap}/>
+                <PhotoPage longitude={this.state.longitude} latitude={this.state.latitude} file={this.state.file} closePage={this.closePhotoPage}/>
                 :
-                <LandingPage
-                    openMenu={this.openMenu}
-                    closeMenu={this.closeMenu}
-                    openPage1={this.openPage1}
-                    openPage2={this.openPage2}
-                    openPage3={this.openPage3}
-                    openPhotoPage={this.openPhotoPage}
-                    openMap={this.openMap}
-                />
+                this.state.map
+                  ?
+                  <Map closePage={this.closeMap}/>
+                  :
+                  <LandingPage
+                      openMenu={this.openMenu}
+                      closeMenu={this.closeMenu}
+                      openPage1={this.openPage1}
+                      openPage2={this.openPage2}
+                      openPage3={this.openPage3}
+                      openPhotoPage={this.openPhotoPage}
+                      openMap={this.openMap}
+                  />
     );
   }
 }

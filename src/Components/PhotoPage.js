@@ -53,12 +53,10 @@ class PhotoPage extends Component {
       data['file'] = file;
       if(text!==''){
           data['text'] = text;
-          if (navigator && navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition((position)=>{
-                  data['latitude'] = position.coords.latitude;
-                  data['longitude'] = position.coords.longitude;
-                  request(this,data);
-              })
+          if (this.props.latitude && this.props.latitude) {
+            data['latitude'] = this.props.latitude;
+            data['longitude'] = this.props.latitude;
+            request(this,data);
           }
           else{
             request(this,data);
