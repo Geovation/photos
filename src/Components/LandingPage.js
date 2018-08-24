@@ -20,13 +20,13 @@ import Loading from './Loading';
 
 class LandingPage extends Component {
   constructor(props){
-      super(props);
-      this.state = {
-        loading: true,
-        menuOpen: false,
-        open: false,
-        photoDialog: false
-      };
+    super(props);
+    this.state = {
+      loading: true,
+      menuOpen: false,
+      open: false,
+      photoDialog: false
+    };
   }
 
   componentDidMount(){
@@ -37,14 +37,19 @@ class LandingPage extends Component {
           longitude: position.coords.longitude
         };
         navigator.geolocation.clearWatch(geoid);
+        this.setState({ loading: false });
+        const fileInput = document.getElementById('file-input');
+        if (fileInput) {
+          fileInput.addEventListener('change', (e) => this.openFile(e));
+        }
+      }, error => {
+        console.log("Error: ", error.message);
+        this.setState({ loading: false });
+      }, {
+        enableHighAccuracy: false,
+        timeout: 3000
       });
     }
-    this.setState({ loading: false }, () => {
-      const fileInput = document.getElementById('file-input');
-      if (fileInput) {
-        fileInput.addEventListener('change', (e) => this.openFile(e));
-      }
-    });
   }
 
   openFile = (e) => {
