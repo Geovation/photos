@@ -9,15 +9,15 @@ import Map from './Components/Map';
 
 class App extends Component {
   constructor(props){
-      super(props);
-      this.state = {
-        page1: false,
-        page2: false,
-        page3: false,
-        photopage: false,
-        file: null,
-        map: false
-      };
+    super(props);
+    this.state = {
+      page1: false,
+      page2: false,
+      page3: false,
+      photopage: false,
+      file: null,
+      map: false
+    };
   }
 
   openPage1 = () => {
