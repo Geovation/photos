@@ -41,7 +41,11 @@ class PhotoPage extends Component {
 
   closeDialog = () => {
     this.setState({ open: false });
-    this.closePage();
+    if (this.state.message === 'Failed to upload. Please try again!') {
+      this.loadImage();
+    } else {
+      this.closePage();
+    }
   }
 
   openDialogText = () => {
@@ -74,7 +78,7 @@ class PhotoPage extends Component {
     this.props.closePage();
   }
 
-  componentDidMount() {
+  loadImage = () => {
     loadImage(
       this.props.file, (img) => {
         document.getElementById('picture').appendChild(img);
@@ -82,6 +86,10 @@ class PhotoPage extends Component {
       },
       { orientation: true }
     );
+  }
+
+  componentDidMount() {
+    this.loadImage();
   }
 
   render() {

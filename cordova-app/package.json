@@ -1,7 +1,7 @@
 {
   "name": "uk.geovation.photos",
   "displayName": "Geovation Photos",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Framework to create geotagged photos upload apps.",
   "main": "index.js",
   "scripts": {

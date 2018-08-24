@@ -6,7 +6,7 @@ export const request = (that,data) =>{
       message = 'Photo was uploaded successfully';
   }
   else{
-      message = 'Photo failed to upload';
+      message = 'Failed to upload. Please try again!';
   }
   setTimeout(()=>that.openDialog(message),1 * 1000);
 }
