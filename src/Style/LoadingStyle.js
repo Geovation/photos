@@ -1,9 +1,11 @@
+import {colours} from '../Config/config.js'
+
 const styles = {
     'wrapper':{
       display:'flex',
       height:'100vh',
       flexDirection:'column',
-      backgroundColor:'#333',
+      backgroundColor:colours.color1,
     },
     'headline':{
       display:'flex',
@@ -26,10 +28,10 @@ const styles = {
       flex:1,
       justifyContent:'center',
       alignItems:'center',
-      backgroundColor:'#faa728',
+      backgroundColor:colours.color2,
     },
     'progress':{
-      color:'#333',
+      color:colours.color1,
     }
 }
 

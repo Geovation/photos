@@ -1,18 +1,19 @@
+import {colours} from '../Config/config'
+
 const styles = {
     'wrapper':{
       display:'flex',
-      flexDirection:'column',
+      flexDirection:'column'
     },
     'headline':{
       display:'flex',
-      flex:1,
       height:50,
-      backgroundColor:'#faa728',
+      backgroundColor:colours.color2,
       alignItems:'center'
     },
     'buttonwrapper':{
       display:'flex',
-      flex:1,
+      flex:1
     },
     'buttonback':{
       height:25
@@ -23,10 +24,6 @@ const styles = {
       justifyContent:'center'
     },
     'headspace':{
-      display:'flex',
-      flex:1,
-    },
-    'body':{
       display:'flex',
       flex:1
     },

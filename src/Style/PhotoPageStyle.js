@@ -1,64 +1,51 @@
+import {colours} from '../Config/config'
+
 const styles = {
     'wrapper':{
       display:'flex',
       flex:1,
       flexDirection:'column',
       height:'100vh',
-      backgroundColor:'#333'
+      backgroundColor:colours.color1
     },
     'headline':{
       display:'flex',
-      flex:1,
-      maxHeight:50,
-      backgroundColor:'#faa728',
-      alignItems:'center'
+      height:50,
+      backgroundColor:colours.color2,
+      alignItems:'center',
     },
     'buttonback':{
       height:25
     },
-    'headtext':{
-      display:'flex',
-      flex:1
-    },
     'entertext':{
       display:'flex',
-      flex:1,
-      maxHeight:50,
+      height:30,
       paddingLeft:5,
-      color:'#faa728',
+      color:colours.color2,
       alignItems:'center'
     },
     'inputtext':{
-      marginLeft:'5px'
-    },
-    'body':{
-      display:'flex',
-      flex:1,
-      flexDirection:'column',
-      backgroundColor:'#faa728'
-    },
-    'sendwrapper':{
-      display:'flex',
-      flex:1,
-      flexDirection:'column',
-      alignItems:'center',
-      justifyContent:'center'
+      marginLeft:'5px',
+      border: '1px solid black'
     },
     'picture':{
       display:'flex',
-    },
-    'send':{
-      display:'flex',
       flex:1,
+      alignItems:'center',
+      justifyContent:'center',
       flexDirection:'column',
-      justifyContent:'flex-end',
+      backgroundColor:colours.color1
+    },
+    'buttonwrapper':{
+      display:'flex',
       height:50,
-      paddingBottom:5
+      backgroundColor:colours.color1,
+      alignItems:'center',
+      justifyContent:'center',
     },
     'sendbutton':{
-      color:'#333',
-      backgroundColor:'#faa728',
-      marginBottom:'15px'
+      color:colours.color1,
+      backgroundColor:colours.color2,
     }
 }
 

@@ -35,24 +35,24 @@ class PhotoDialog extends React.Component {
     const { classes, open } = this.props;
 
     return (
-      <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" open={open}>
+      <Dialog onClose={this.handleClose} aria-labelledby='simple-dialog-title' open={open}>
         <div>
           <List>
-            <ListItem button onClick={() => this.handleListItemClick("CAMERA")}>
+            <ListItem button onClick={() => this.handleListItemClick('CAMERA')}>
               <ListItemAvatar>
                 <Avatar className={classes.avatar}>
                   <CameraIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={"Camera"} />
+              <ListItemText primary={'Camera'} />
             </ListItem>
-            <ListItem button onClick={() => this.handleListItemClick("PHOTOLIBRARY")}>
+            <ListItem button onClick={() => this.handleListItemClick('PHOTOLIBRARY')}>
               <ListItemAvatar>
                 <Avatar className={classes.avatar}>
                   <PhotoLibraryIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={"Photo Library"} />
+              <ListItemText primary={'Photo Library'} />
             </ListItem>
             <ListItem button onClick={this.handleClose}>
               <ListItemAvatar>
@@ -60,7 +60,7 @@ class PhotoDialog extends React.Component {
                   <CancelIcon />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary="Cancel" />
+              <ListItemText primary='Cancel' />
             </ListItem>
           </List>
         </div>
