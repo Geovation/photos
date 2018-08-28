@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-
-import mapboxgl from 'mapbox-gl'
+import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
-import backButton from '../Images/left-arrow.svg';
-
 import Button from '@material-ui/core/Button';
-
+import backButton from '../Images/left-arrow.svg';
 import styles from '../Style/MapStyle.js';
 
 class Map extends Component {
@@ -32,19 +28,14 @@ class Map extends Component {
       <div style={styles.wrapper}>
         <div style={styles.headline}>
           <div style={styles.buttonwrapper}>
-            <Button
-              onClick={this.closePage}
-              color="primary"
-             >
-             <img style={styles.buttonback} src={backButton} alt="backButton"/>
+            <Button onClick={this.closePage}>
+              <img style={styles.buttonback} src={backButton} alt=''/>
             </Button>
           </div>
           <div style={styles.headtext}>Map</div>
           <div style={styles.headspace}/>
         </div>
-        <div style={styles.body}>
-          <div id='map'style={styles.map}></div>
-        </div>
+        <div id='map'style={styles.map}></div>
       </div>
     );
   }

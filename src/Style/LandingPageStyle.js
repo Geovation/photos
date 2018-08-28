@@ -1,67 +1,35 @@
+import {colours} from '../Config/config.js'
+
 const styles = {
     'wrapper':{
       display:'flex',
       flex:1,
       flexDirection:'column',
       height:'100vh',
-      backgroundColor:'#333'
-    },
-    'headline':{
-      display:'flex',
-      flex:1,
-      flexDirection:'column',
-      maxHeight:170,
-      justifyContent:'center'
-    },
-    'headtext':{
-      color:'white',
-      alignSelf:'center',
-      paddingTop:10,
-      fontFamily: 'OSGillSans ,sans-serif !important'
-    },
-    'headphoto':{
-      display:'flex',
-      flex:1,
-      maxHeight:80,
-      alignSelf:'center',
-      paddingBottom:10
-    },
-    'appbar':{
-      display:'flex',
-      flex:1,
-      maxHeight:52,
-      textAlign:'center',
-      alignItems:'center',
-      justifyContent:'flex-start',
-      backgroundColor:'#faa728',
-      paddingLeft:5
+      backgroundColor:colours.color1
     },
     'buttonappbar':{
       height:25
-    },
-    'photoappbar':{
-      alignSelf:'center'
     },
     'body':{
       display:'flex',
       flex:1,
       flexDirection:'column',
-      backgroundColor:'#faa728'
+      backgroundColor:colours.color2
     },
     'camera':{
       display:'flex',
       flex:1,
-      flexDirection:'column',
       justifyContent:'center',
-      alignSelf:'center',
-      backgroundColor:'#faa728'
+      alignItems:'center'
     },
     'inputcamera':{
-      opacity: 0,
       height:50,
       width:'50px',
-      position:'absolute',
-      cursor: 'pointer'
+      cursor: 'pointer',
+
+      opacity: 0,
+      position:'absolute'
     },
     'imagecamera':{
       height:50,
@@ -74,25 +42,26 @@ const styles = {
       alignItems:'center'
     },
     'imagemap':{
-      height:50
-    },
-    'wrapperexternallink':{
-      display:'flex',
-      flex:1,
-      flexDirection:'column',
-      justifyContent:'flex-end'
+      height:50,
+      cursor: 'pointer'
     },
     'externallink':{
       display:'flex',
-      flex:1,
-      maxHeight:50,
+      height:50,
       justifyContent:'center',
       alignItems:'center',
-      backgroundColor:'#333'
+      backgroundColor:colours.color1
     },
     'buttonexternallink':{
-      color:'#faa728'
-    }
+      color:colours.color2,
+      textTransform: 'none'
+    },
+    'appbar':{
+      display:'flex',
+      height:50,
+      justifyContent:'flex-start',
+      backgroundColor:colours.color2,
+    },
 }
 
 export default styles;

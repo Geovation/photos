@@ -1,24 +1,24 @@
+import {colours} from '../Config/config'
+
 const styles = {
     'wrapper':{
       display:'flex',
       flex:1,
       flexDirection:'column',
       height:'100vh',
-      backgroundColor:'#333'
+      backgroundColor:colours.color1
     },
     'headline':{
       display:'flex',
-      flex:1,
-      maxHeight:50,
-      backgroundColor:'#faa728',
+      height:50,
+      backgroundColor:colours.color2,
       alignItems:'center'
     },
     'buttonback':{
       height:25
     },
     'headtext':{
-      display:'flex',
-      flex:1
+      display:'flex'
     }
 }
 
