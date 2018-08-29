@@ -18,7 +18,6 @@ class App extends Component {
       file: null,
       map: false,
       loading: true,
-      control: false,
       location: {}
     };
   }
@@ -28,10 +27,7 @@ class App extends Component {
   }
 
   closePage1 = () => {
-    this.setState((prevState)=>({
-      page1: false,
-      control: !prevState.control
-    }));
+    this.setState({ page1: false });
   }
 
   openPage2 = () => {
@@ -39,10 +35,7 @@ class App extends Component {
   }
 
   closePage2 = () => {
-    this.setState((prevState)=>({
-      page2: false,
-      control: !prevState.control
-    }));
+    this.setState({ page2: false });
   }
 
   openPage3 = () => {
@@ -50,13 +43,10 @@ class App extends Component {
   }
 
   closePage3 = () => {
-    this.setState((prevState)=>({
-      page3: false,
-      control: !prevState.control
-    }));
+    this.setState({ page3: false });
   }
 
-  openPhotoPage = (file, location) => {
+  openPhotoPage = (file) => {
     this.setState({
       photopage: true,
       file
@@ -64,10 +54,7 @@ class App extends Component {
   }
 
   closePhotoPage = () => {
-    this.setState((prevState)=>({
-      photopage: false,
-      control: !prevState.control
-    }));
+    this.setState({ photopage: false });
   }
 
   openMap = () => {
@@ -75,13 +62,10 @@ class App extends Component {
   }
 
   closeMap = () => {
-    this.setState((prevState)=>({
-      map: false,
-      control: !prevState.control
-    }));
+    this.setState({ map: false });
   }
 
-  getLocation(){
+  getLocation() {
     if (navigator && navigator.geolocation) {
       const geoid = navigator.geolocation.watchPosition((position) => {
       const location = {
@@ -105,12 +89,6 @@ class App extends Component {
   }
   componentDidMount(){
     this.getLocation();
-  }
-
-  componentDidUpdate(prevProps,prevState){
-    if(prevState.control!==this.state.control){
-      this.getLocation();
-    }
   }
 
   render() {
