@@ -5,6 +5,7 @@ import Page3 from './Components/Page3';
 import PhotoPage from './Components/PhotoPage';
 import LandingPage from './Components/LandingPage';
 import Map from './Components/Map';
+import Loading from './Components/Loading';
 
 class App extends Component {
   constructor(props){
@@ -15,7 +16,9 @@ class App extends Component {
       page3: false,
       photopage: false,
       file: null,
-      map: false
+      map: false,
+      loading: true,
+      location: {}
     };
   }
 
@@ -24,30 +27,29 @@ class App extends Component {
   }
 
   closePage1 = () => {
-    this.setState({ page1:false });
+    this.setState({ page1: false });
   }
 
   openPage2 = () => {
-    this.setState({ page2:true });
+    this.setState({ page2: true });
   }
 
   closePage2 = () => {
-    this.setState({ page2:false });
+    this.setState({ page2: false });
   }
 
   openPage3 = () => {
-    this.setState({ page3:true });
+    this.setState({ page3: true });
   }
 
   closePage3 = () => {
-    this.setState({ page3:false });
+    this.setState({ page3: false });
   }
 
-  openPhotoPage = (file, location) => {
+  openPhotoPage = (file) => {
     this.setState({
       photopage: true,
-      file,
-      location
+      file
     });
   }
 
@@ -60,32 +62,62 @@ class App extends Component {
   }
 
   closeMap = () => {
-    this.setState({ map:false });
+    this.setState({ map: false });
+  }
+
+  getLocation() {
+    if (navigator && navigator.geolocation) {
+      const geoid = navigator.geolocation.watchPosition((position) => {
+      const location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        navigator.geolocation.clearWatch(geoid);
+        this.setState({
+          loading: false,
+          location
+        });
+
+      }, error => {
+        console.log('Error: ', error.message);
+        this.setState({ loading: false });
+      }, {
+        enableHighAccuracy: false,
+        timeout: 3000
+      });
+    }
+  }
+  componentDidMount(){
+    this.getLocation();
   }
 
   render() {
     return (
-      this.state.page1
+      this.state.loading
         ?
-        <Page1 closePage={this.closePage1}/>
+        <Loading />
         :
-        this.state.page2
+        this.state.page1
           ?
-          <Page2 closePage={this.closePage2}/>
+          <Page1 closePage={this.closePage1}/>
           :
-          this.state.page3
+          this.state.page2
             ?
-            <Page3 closePage={this.closePage3}/>
+            <Page2 closePage={this.closePage2}/>
             :
-            this.state.photopage
+            this.state.page3
               ?
-              <PhotoPage location={this.state.location} file={this.state.file} closePage={this.closePhotoPage}/>
+              <Page3 closePage={this.closePage3}/>
               :
-              this.state.map
+              this.state.photopage
                 ?
-                <Map closePage={this.closeMap}/>
+                <PhotoPage location={this.state.location} file={this.state.file} closePage={this.closePhotoPage}/>
                 :
-                <LandingPage
+                this.state.map
+                  ?
+                  <Map closePage={this.closeMap}/>
+                  :
+                  <LandingPage
                     openMenu={this.openMenu}
                     closeMenu={this.closeMenu}
                     openPage1={this.openPage1}
@@ -93,7 +125,7 @@ class App extends Component {
                     openPage3={this.openPage3}
                     openPhotoPage={this.openPhotoPage}
                     openMap={this.openMap}
-                />
+                  />
     );
   }
 }
