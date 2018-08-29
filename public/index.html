@@ -42,7 +42,15 @@
 
 <body>
     <div id="root"></div>
-   <script type="text/javascript" src="cordova.js"></script>
+    <script>
+        const isCordovaApp = document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1;
+        if (isCordovaApp) {
+          let script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = 'cordova.js';
+          document.body.appendChild(script);
+        }
+    </script>
 </body>
 
 </html>
