@@ -17,11 +17,7 @@ Add the platform that you want to target your app - 'android' in this case:
 $ cordova platform add android
 ```
 
-Install geolocation and camera plugins:
-```
-$ cordova plugin add cordova-plugin-geolocation
-$ cordova plugin add cordova-plugin-camera
-```
+The geolocation and camera plugins will also be installed.
 
 After, run this command to build the project to specific platform:
 ```
@@ -37,3 +33,9 @@ Alternately, you can test the app directly on a real device:
 ```
 $ cordova run android
 ```
+
+You can create a release build:
+```
+$ cordova run android --release
+```
+Don't forget to generate a [signing key and  a `.properties` file](https://cordova.apache.org/docs/en/latest/guide/platforms/android/#signing-an-app) first.
