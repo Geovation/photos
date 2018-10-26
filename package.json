@@ -2,11 +2,13 @@
   "name": "geovation-photos",
   "version": "0.1.0",
   "public": true,
+  "license": "OGLv3.0",
   "homepage": "./",
   "dependencies": {
     "@material-ui/core": "^1.5.0",
     "@material-ui/icons": "^2.0.3",
     "blueimp-load-image": "^2.19.0",
+    "lodash": "^4.17.11",
     "mapbox-gl": "^0.50.0",
     "react": "16.6.0",
     "react-dom": "16.6.0",
@@ -17,9 +19,14 @@
     "build": "react-scripts build && cp -a ./build/. ./cordova-app/www/",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "serve-prod": "npm run build && serve -s build"
+    "serve-prod": "npm run build && serve -s build",
+    "geovation-photos-update": "geovation-photos-update"
+  },
+  "bin": {
+    "geovation-photos-update": "./bin/geovation-photos-update.js"
   },
   "devDependencies": {
+    "ncp": "^2.0.0",
     "serve": "^10.0.2"
   }
 }
