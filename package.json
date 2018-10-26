@@ -2,11 +2,15 @@
   "name": "geovation-photos",
   "version": "0.1.0",
   "public": true,
-  "license": "OGLv3.0",
+  "license": "OGL-UK-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Geovation/photos.git"
+  },
   "homepage": "./",
   "dependencies": {
-    "@material-ui/core": "^1.5.0",
-    "@material-ui/icons": "^2.0.3",
+    "@material-ui/core": "^3.3.1",
+    "@material-ui/icons": "^3.0.1",
     "blueimp-load-image": "^2.19.0",
     "lodash": "^4.17.11",
     "mapbox-gl": "^0.50.0",
@@ -28,5 +32,11 @@
   "devDependencies": {
     "ncp": "^2.0.0",
     "serve": "^10.0.2"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
