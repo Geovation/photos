@@ -7,10 +7,10 @@
     "@material-ui/core": "^1.5.0",
     "@material-ui/icons": "^2.0.3",
     "blueimp-load-image": "^2.19.0",
-    "mapbox-gl": "^0.48.0",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "react-scripts": "1.1.4"
+    "mapbox-gl": "^0.50.0",
+    "react": "16.6.0",
+    "react-dom": "16.6.0",
+    "react-scripts": "2.0.5"
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",
@@ -20,6 +20,6 @@
     "serve-prod": "npm run build && serve -s build"
   },
   "devDependencies": {
-    "serve": "^9.6.0"
+    "serve": "^10.0.2"
   }
 }
