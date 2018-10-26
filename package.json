@@ -8,9 +8,9 @@
     "@material-ui/icons": "^2.0.3",
     "blueimp-load-image": "^2.19.0",
     "mapbox-gl": "^0.50.0",
-    "react": "^16.6.0",
-    "react-dom": "^16.6.0",
-    "react-scripts": "^2.0.5"
+    "react": "16.6.0",
+    "react-dom": "16.6.0",
+    "react-scripts": "2.0.5"
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",
