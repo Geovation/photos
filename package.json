@@ -1,0 +1,19 @@
+{
+  "name": "geovation-photos-demo",
+  "version": "0.0.1",
+  "description": "Demo using geovation-photos: Upload your photo in a map.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Geovation/photos-demo.git"
+  },
+  "author": "Geovation, Ordnance Survey",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Geovation/photos-demo/issues"
+  },
+  "homepage": "https://github.com/Geovation/photos-demo#readme"
+}
