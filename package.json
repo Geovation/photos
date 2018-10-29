@@ -1,13 +1,22 @@
 {
   "name": "geovation-photos",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "public": true,
-  "license": "OGL-UK-3.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Geovation/photos.git"
+    "url": "git@github.com:Geovation/photos.git"
   },
   "homepage": "./",
+  "keywords": [
+    "map",
+    "geovation",
+    "javascript"
+  ],
+  "engines": {
+    "node": "^11.0",
+    "npm": "^6.4"
+  },
   "dependencies": {
     "@material-ui/core": "^3.3.1",
     "@material-ui/icons": "^3.0.1",

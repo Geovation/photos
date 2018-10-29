@@ -5,4 +5,4 @@
 
  # Geovation photos
 
- TODO: choose a better name and document it.
+ TODO:  document it.
