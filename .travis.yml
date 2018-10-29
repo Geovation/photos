@@ -8,7 +8,6 @@ cache:
 deploy:
   provider: npm
   email: sebastian.ovide@gmail.com
-  api_key:
-    secure: Uq63a7U2qKhVirPKvy2SPjz0TN0tL61QXM8z9MTrX4erLxd7hq8jQ/0go4UV0Bxe8k/qYM4ze+5JPNhi7rUbHkCAYjNB37WxQI1onpAffbE4FW4da6Y/rBkDRHBR2Gj12vav6h5+beW95+d2My0Q8tIoW0W+J3lVgC32z0vtax4dYcVFmc3MHctsAbnR6WQNkLtlc3n0c8ytNSpXdFAsxhbimo6hnFl7vRcQtNsBshSn6N0i+Xv3d4PHqVkZS2Yk9yuld80mGN2r+YisEpf4iOLrkEP27UoCQQMeI+tWxQ3y76aGKeRomazjiwGrAoWzM9AuP5S6b4EEGpjkqNuSp+3MPkgMDVe7MYO1H5D81vjA4wOYosV9kxwIkvBakXXN3WCGjHZjL4qScCh/6tNsgfdRbVCMt2WwMPHKQxrxzhliuqbqGWxP9gBcFItUbLEEjCqhBMTveiGnHARBVp3/yAw1imFlxPwsINzi9UHemAr6WzW4P/6tMUteZwmdJ1XEA/NMkhN/KiK0Z1blf4/uWLrAY0EcyStEZ+AMfPOQ2RRsdOzCcSkv7HipiiruzfuNsE75/crEaY+/Bit1Ij/G9KmHxgIP4kgCZ0uzQo+jfcfeRsELlGU/VIphOEWrHHh0Bb5wpoCzXCOpQkO2pybDU3IFt1/crj2t42wLRzfVh0g=
+  api_key: $NPM_TOKEN
   on:
     tags: true
