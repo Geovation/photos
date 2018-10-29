@@ -1,9 +1,15 @@
 language: node_js
 sudo: false
-
 node_js:
-  - "node"
-
+- node
 cache:
   directories:
-    - node_modules/
+  - node_modules/
+deploy:
+  provider: npm
+  email: sebastian.ovide@gmail.com
+  api_key:
+    secure: vRbNlkXCDQN31DjW36M7XiL94E0KRTeLsYxCghtjdLopkRrhekGPii6kZ2009u7i17+zplR7gAmkYHFq76Hn/f7ob1FLk+azrLciCw7OPSvMD1WhzSwmsJPqnl89JLH1Uh3fQ7gwkqjU209OIPAUCt4F6eLHjbAfsLI9z28PU67aKdJ+J89Dfqicc2AzvtbeO9W3wSSdRQiaItoqWRwzcpsuRiudy47UFqJ+AxA746xZeI/VrXhd4PJ7UKZ0hdmUA2RdLE5EpViHoW0iz9zJ0tGICYzItxAPh0vUJzPDUWXnV4uCIlG34vh3DZZzRY9pkzR5Y65pU6ERK732YhgzF6Yn7E+mBCXAZkOPQ8d7JoVcpqjIVtHEuXSX1H475OCwN64ObLZ2jDolt15k7X2mQjGKCj+eJ/CT3MOFvNct+p9rWAAaUnrGpeoNl2mQMCXAVYXzjwHJNW9XbbfIUBuukuY6QsQDCE4mWuE29VfWkoR2q/deq4SQo94RRtw8ymuaniBVh6MqXCfnD9EKwbkU9VKdRpgH18k94DJwwjqXieqfM5y7afWGqtvhXXdOjFxEVzqe0rEC/ukqJo1dtpqKKR9rykexbr9HBqpzDR45IG4q51bYJHd2kJeUYyiDFYaQ9mTK6eYi17YTarDUovugekZKCTHIHkFx8gW4LwSuIYg=
+  on:
+    tags: true
+    repo: geovation/photos
