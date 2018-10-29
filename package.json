@@ -1,10 +1,17 @@
 {
-  "name": "geovation-photos-demo",
+  "name": "geovation-photos-firebase",
   "version": "0.0.1",
-  "description": "Demo using geovation-photos: Upload your photo in a map.",
+  "description": "Demo using geovation-photos: Upload your photo in a map hosted in firebase.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "react-scripts test --env=jsdom",
+    "build": "react-scripts build && cp -a ./build/. ./cordova-app/www/",
+    "coverage": "react-scripts test --env=jsdom --coverage",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
+    "eject": "react-scripts eject",
+    "geovation-photos-update": "geovation-photos-update",
+    "serve-prod": "npm run build && serve -s build",
+    "start": "HTTPS=true react-scripts start"
   },
   "repository": {
     "type": "git",
@@ -15,5 +22,21 @@
   "bugs": {
     "url": "https://github.com/Geovation/photos-demo/issues"
   },
-  "homepage": "https://github.com/Geovation/photos-demo#readme"
+  "homepage": "https://github.com/Geovation/photos-demo#readme",
+  "devDependencies": {
+    "geovation-photos": "^0.1.2",
+    "coveralls": "^3.0.2",
+    "serve": "^10.0.2"
+  },
+  "dependencies": {
+    "@material-ui/core": "^3.3.1",
+    "@material-ui/icons": "^3.0.1",
+    "blueimp-load-image": "^2.19.0",
+    "lodash": "^4.17.11",
+    "mapbox-gl": "^0.50.0",
+    "ncp": "^2.0.0",
+    "react": "16.6.0",
+    "react-dom": "16.6.0",
+    "react-scripts": "2.0.5"
+  }
 }
