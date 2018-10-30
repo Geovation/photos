@@ -39,6 +39,7 @@ function copySrc() {
   ncp(path.join(geovationPhotoFolder, "src"), "src", errFunc);
   ncp(path.join(geovationPhotoFolder, "cordova-app"), "cordova-app", errFunc);
   ncp(path.join(geovationPhotoFolder, "public"), "public", errFunc);
+  ncp(path.join(geovationPhotoFolder, ".gitignore"), ".gitignore", { clobber : false }, errFunc);
 }
 
 function errFunc(err) {
