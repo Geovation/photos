@@ -25,7 +25,8 @@
     "mapbox-gl": "^0.50.0",
     "react": "16.6.0",
     "react-dom": "16.6.0",
-    "react-scripts": "2.0.5"
+    "react-scripts": "2.0.5",
+    "ncp": "^2.0.0"
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",
@@ -39,7 +40,6 @@
     "geovation-photos-update": "./bin/geovation-photos-update.js"
   },
   "devDependencies": {
-    "ncp": "^2.0.0",
     "serve": "^10.0.2"
   },
   "browserslist": [
