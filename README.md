@@ -2,6 +2,7 @@
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGeovation%2Fphotos.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FGeovation%2Fphotos?ref=badge_shield)
 [![dependencies Status](https://david-dm.org/geovation/photos/status.svg)](https://david-dm.org/geovation/photos)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f18dd7329321d93cbabb/maintainability)](https://codeclimate.com/github/Geovation/photos/maintainability)
+[![Coverage Status](https://coveralls.io/repos/github/Geovation/photos/badge.svg)](https://coveralls.io/github/Geovation/photos)
 
 # Geovation photos
 Many people in our [Geovation Hub](https://geovation.uk/hub) are asking for a simple tool to upload images into a map. It must be free, and easy to extend and white label. It also must work as mobiles app as well as web apps. An example of this is [Plastic Patrol](https://www.plasticpatrol.co.uk/). They needed an app to capture plastic pollution around UK.

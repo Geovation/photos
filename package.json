@@ -32,6 +32,8 @@
     "start": "HTTPS=true react-scripts start",
     "build": "react-scripts build && cp -a ./build/. ./cordova-app/www/",
     "test": "react-scripts test --env=jsdom",
+    "coverage": "react-scripts test --env=jsdom --coverage",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-scripts eject",
     "serve-prod": "npm run build && serve -s build",
     "geovation-photos-update": "geovation-photos-update"
@@ -40,7 +42,8 @@
     "geovation-photos-update": "./bin/geovation-photos-update.js"
   },
   "devDependencies": {
-    "serve": "^10.0.2"
+    "serve": "^10.0.2",
+    "coveralls": "^3.0.2"
   },
   "browserslist": [
     ">0.2%",
