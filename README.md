@@ -5,4 +5,4 @@
 
  # Geovation photos demo using firebase as back end
 
-Demo PWA/Mobile app done from Geovation Photos
+Demo PWA/Mobile app done from Geovation Photos: Hosting URL: https://photos-demo-d4b14.firebaseapp.com
