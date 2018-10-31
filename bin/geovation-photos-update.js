@@ -39,7 +39,8 @@ function copySrc() {
   ncp(path.join(geovationPhotoFolder, "src"), "src", errFunc);
   ncp(path.join(geovationPhotoFolder, "cordova-app"), "cordova-app", errFunc);
   ncp(path.join(geovationPhotoFolder, "public"), "public", errFunc);
-  ncp(path.join(geovationPhotoFolder, ".gitignore"), ".gitignore", { clobber : false }, errFunc);
+  // see https://github.com/atlassubbed/atlas-npm-init/issues/1
+  ncp(path.join(geovationPhotoFolder, "gitignore"), ".gitignore", { clobber : false }, errFunc);
 }
 
 function errFunc(err) {
