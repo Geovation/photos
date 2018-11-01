@@ -23,10 +23,10 @@
     "blueimp-load-image": "^2.19.0",
     "lodash": "^4.17.11",
     "mapbox-gl": "^0.50.0",
+    "ncp": "^2.0.0",
     "react": "16.6.0",
     "react-dom": "16.6.0",
-    "react-scripts": "2.0.5",
-    "ncp": "^2.0.0"
+    "react-scripts": "2.1.1"
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",
