@@ -1,3 +1,7 @@
+## next (2018-11-??)
+- workaround to publish also .gitignore
+- updated react
+
 ## 0.1.2 (2018-10-30)
 - Added some documentation
 - Small fix to geovation-photos-update.js
