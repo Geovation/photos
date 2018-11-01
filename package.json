@@ -30,19 +30,20 @@
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",
-    "build": "react-scripts build && cp -a ./build/. ./cordova-app/www/ && cp .gitignore gitignore",
+    "build:react": "react-scripts build",
+    "build:cordova": "cp .gitignore gitignore && cp -a ./build/* ./cordova-app/www/ && pushd cordova-app && cordova build && popd ",
+    "build": "npm run build:react && npm run build:cordova",
     "test": "react-scripts test --env=jsdom",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-scripts eject",
-    "serve-prod": "npm run build && serve -s build",
+    "start:prod": "npm run build && http-server cordova-app/platforms/browser/www -S -o",
     "geovation-photos-update": "geovation-photos-update"
   },
   "bin": {
     "geovation-photos-update": "./bin/geovation-photos-update.js"
   },
   "devDependencies": {
-    "serve": "^10.0.2",
     "coveralls": "^3.0.2"
   },
   "browserslist": [
