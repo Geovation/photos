@@ -28,6 +28,11 @@ class LandingPage extends Component {
     if (fileInput) {
       fileInput.addEventListener('change', (e) => this.openFile(e));
     }
+
+    window.gtag('event', 'page_view', {
+      'event_category': 'view',
+      'event_label': 'LandingPage'
+    });
   }
 
   openFile = (e) => {
