@@ -1,6 +1,6 @@
 ## next (2018-11-??)
 - workaround to publish also .gitignore
-- updated react
+- added google analytics
 
 ## 0.1.2 (2018-10-30)
 - Added some documentation
