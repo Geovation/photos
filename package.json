@@ -1,6 +1,6 @@
 {
   "name": "geovation-photos",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "public": true,
   "license": "MIT",
   "repository": {
@@ -14,11 +14,11 @@
     "javascript"
   ],
   "engines": {
-    "node": "^11.0",
+    "node": "^10.0",
     "npm": "^6.4"
   },
   "dependencies": {
-    "@material-ui/core": "^3.3.1",
+    "@material-ui/core": "^3.3.2",
     "@material-ui/icons": "^3.0.1",
     "blueimp-load-image": "^2.19.0",
     "lodash": "^4.17.11",
@@ -30,19 +30,21 @@
   },
   "scripts": {
     "start": "HTTPS=true react-scripts start",
-    "build": "react-scripts build && cp -a ./build/. ./cordova-app/www/ && cp .gitignore gitignore",
+    "build:react": "react-scripts build",
+    "build:cordova": "#cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova build && cd .. ",
+    "build": "npm run build:react && npm run build:cordova",
     "test": "react-scripts test --env=jsdom",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-scripts eject",
-    "serve-prod": "npm run build && serve -s build",
+    "start:prod": "npm run build && http-server build -S -o",
     "geovation-photos-update": "geovation-photos-update"
   },
   "bin": {
     "geovation-photos-update": "./bin/geovation-photos-update.js"
   },
   "devDependencies": {
-    "serve": "^10.0.2",
+    "cordova": "^8.1.2",
     "coveralls": "^3.0.2"
   },
   "browserslist": [
