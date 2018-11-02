@@ -31,7 +31,7 @@
   "scripts": {
     "start": "HTTPS=true react-scripts start",
     "build:react": "react-scripts build",
-    "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && pushd cordova-app && cordova build && popd ",
+    "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova build && cd .. ",
     "build": "npm run build:react && npm run build:cordova",
     "test": "react-scripts test --env=jsdom",
     "coverage": "react-scripts test --env=jsdom --coverage",
