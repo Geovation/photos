@@ -21,6 +21,11 @@ class Map extends Component {
       zoom: 17, // starting zoom
       customAttribution:attribution
     });
+
+    window.gtag('event', 'page_view', {
+      'event_category': 'view',
+      'event_label': 'Map'
+    });
   }
 
   render() {

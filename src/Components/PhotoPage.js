@@ -96,6 +96,11 @@ class PhotoPage extends Component {
 
   componentDidMount() {
     this.loadImage();
+
+    window.gtag('event', 'page_view', {
+      'event_category': 'view',
+      'event_label': 'PhotoPage'
+    });
   }
 
   render() {
