@@ -44,6 +44,7 @@
     "geovation-photos-update": "./bin/geovation-photos-update.js"
   },
   "devDependencies": {
+    "cordova": "^8.1.2",
     "coveralls": "^3.0.2"
   },
   "browserslist": [
