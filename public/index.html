@@ -40,7 +40,16 @@
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
 
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' 'self'; script-src * 'unsafe-inline' 'unsafe-eval' blob:; img-src * 'self' data: blob:;"/>
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src * data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline' file://* blob:;
+        connect-src * 'unsafe-inline';
+        style-src * data: blob: 'unsafe-inline';
+        font-src * data: blob: 'unsafe-inline';
+        media-src * 'unsafe-inline';
+        script-src * 'unsafe-inline' 'unsafe-eval';
+        frame-src *;
+        img-src * 'self' data: content: blob: 'unsafe-inline';">
+
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -51,7 +60,7 @@
     if ('serviceWorker' in navigator) {
         // Use the window load event to keep the page load performance
         window.addEventListener('load', () => {
-           navigator.serviceWorker.register('%PUBLIC_URL%/sw.js');
+           navigator.serviceWorker.register('%PUBLIC_URL%/service-worker.js');
         });
     }
     </script>
