@@ -66,3 +66,5 @@ typings/
 
 # ignoring compiled folder for now
 build
+.firebase
+
