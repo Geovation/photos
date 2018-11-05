@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import menu from '../Images/menu.svg';
-import camera from '../Images/camera.svg';
-import map from '../Images/map.svg';
+import menu from '../images/menu.svg';
+import camera from '../images/camera.svg';
+import map from '../images/map.svg';
 import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
