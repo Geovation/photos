@@ -1,4 +1,7 @@
-## next (2018-11-??)
+## 0.2.1 (2018-11-??)
+- fixed manifest for PWA
+
+## 0.2.0 (2018-11-1)
 - workaround to publish also .gitignore
 - added google analytics
 
