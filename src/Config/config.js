@@ -1,7 +1,7 @@
 import React from 'react';
 
 //change the logo file to upload your own Logo
-import imgHeader from '../Images/logo.svg';
+import imgHeader from '../images/logo.svg';
 
 // change function request to add a real server to upload a photo
 // instead of a mockup with timeout
