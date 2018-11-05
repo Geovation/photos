@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Button from '@material-ui/core/Button';
-import backButton from '../Images/left-arrow.svg';
+import backButton from '../images/left-arrow.svg';
 import styles from '../Style/MapStyle.js';
 
 class Map extends Component {

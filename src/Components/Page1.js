@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
-import backButton from '../Images/left-arrow.svg';
+import backButton from '../images/left-arrow.svg';
 import styles from '../Style/Page1Style';
 
 class Page1 extends Component {
