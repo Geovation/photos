@@ -28,7 +28,7 @@ async function addMetaDataSync(id) {
     description: `${id} some text here`
   };
 
-  console.log(`Adding ${id} with data: ${data}`);
+  console.log(`Adding ${id} with data:`, data);
 
   return await db.collection('photos').doc(id).set(data);
 }
@@ -39,7 +39,7 @@ async function addPhotoSync(id) {
   console.log(`Uploading ${id}`);
 
   // upload it as "original"
-  return await bucket.upload('tmp.jpg', { destination: `photos/${id}` });
+  return await bucket.upload('tmp.jpg', { destination: `photos/${id}/original.jpg` });
 }
 
 async function run(num) {
@@ -57,12 +57,12 @@ async function run(num) {
 
   for (let i=0; i< num; i++) {
     const id = `test_${i}`;
-    await addMetaDataSync(id);
     await addPhotoSync(id);
+    await addMetaDataSync(id);
   }
 }
 
-run(100)
+run(1)
   .then(_ => {
     console.log("END");
     process.exit(0);
