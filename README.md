@@ -6,3 +6,5 @@
  # Geovation photos demo using firebase as back end
 
 Demo PWA/Mobile app done from Geovation Photos. See a [PWA demo live](https://photos-demo-d4b14.firebaseapp.com)
+
+See more (Documentation)[doc/]
