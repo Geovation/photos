@@ -63,3 +63,4 @@ typings/
 .firebase
 build
 serviceAccountKey.json
+scripts/tmp.jpg
