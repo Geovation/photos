@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * This script just populate the DB with demo data. The ID's are prefixed with "test_" for make it easy to find them and
  * eventually delete them.
@@ -34,8 +36,6 @@ async function addMetaDataSync(id) {
 }
 
 async function addPhotoSync(id) {
-  // watermark it with id
-  image.print(font, 0, 0, id).write('tmp.jpg');
   console.log(`Uploading ${id}`);
 
   // upload it as "original"
@@ -53,10 +53,14 @@ async function run(num) {
   db.settings(settings);
 
   image = await Jimp.read(fileNameGeovation);
-  font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
+  font = await Jimp.loadFont(Jimp.FONT_SANS_128_BLACK);
 
   for (let i=0; i< num; i++) {
     const id = `test_${i}`;
+    // watermark it with id
+
+    image.print(font, 0, 0, id).write('tmp.jpg');
+
     await addPhotoSync(id);
     await addMetaDataSync(id);
   }

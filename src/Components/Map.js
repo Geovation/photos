@@ -14,16 +14,15 @@ class Map extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
     this.map = {};
   }
 
   closePage =() => {
     this.props.closePage();
-  }
+  };
 
   async componentDidMount(){
-    const photos = new Db().fetchPhotos()
+    const photos = new Db().fetchPhotos();
 
     mapboxgl.accessToken = ''; // you can add a Mapbox access token here
     this.map = new mapboxgl.Map({
@@ -34,13 +33,14 @@ class Map extends Component {
       customAttribution: 'Contains OS data &copy; Crown copyright and database rights 2018'
     });
 
-    this.map.on('load', () => {
-        photos.then( geojson => this.addFeaturesToMap(geojson.features) ); //'load'
+    this.map.on('load', async () => {
+      const geojson = await photos;
+      this.addFeaturesToMap(geojson.features);
+    });
 
-      window.gtag('event', 'page_view', {
-        'event_category': 'view',
-        'event_label': 'Map'
-      });
+    window.gtag('event', 'page_view', {
+      'event_category': 'view',
+      'event_label': 'Map'
     });
   }
 
