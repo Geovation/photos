@@ -62,7 +62,7 @@ async function run(num) {
   }
 }
 
-run(1)
+run(100)
   .then(_ => {
     console.log("END");
     process.exit(0);

@@ -2,7 +2,7 @@
 import firebase from 'firebase/app';
 // import 'firebase/auth';
 // import 'firebase/database';
-// import 'firebase/firestore';
+import 'firebase/firestore';
 // import 'firebase/messaging';
 // import 'firebase/functions';
 
@@ -15,6 +15,13 @@ const config = {
   storageBucket: "photos-demo-d4b14.appspot.com",
   messagingSenderId: "639308065605"
 };
-firebase.initializeApp(config);
+const fire = firebase.initializeApp(config);
 
-// debugger
+const firestore = fire.firestore();
+const settings = { timestampsInSnapshots: true };
+firestore.settings(settings);
+
+export {
+  fire,
+  firestore
+}
