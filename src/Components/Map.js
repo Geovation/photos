@@ -4,22 +4,38 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Button from '@material-ui/core/Button';
 import backButton from '../images/left-arrow.svg';
 import styles from '../Style/MapStyle.js';
+import Db from '../services/Db.js';
+import './Map.css';
+
+const CENTER = [-0.1019313, 51.524311];
+const ZOOM = 10;
 
 class Map extends Component {
 
-  closePage =() => {
-    this.props.closePage();
+  constructor(props) {
+    super(props);
+    this.map = {};
   }
 
-  componentDidMount(){
-    const attribution = 'Contains OS data &copy; Crown copyright and database rights 2018';
+  closePage =() => {
+    this.props.closePage();
+  };
+
+  async componentDidMount(){
+    const photos = new Db().fetchPhotos();
+
     mapboxgl.accessToken = ''; // you can add a Mapbox access token here
-    new mapboxgl.Map({
+    this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json', //stylesheet location
-      center: [-0.1019313, 51.524311], // starting position [lng, lat]
-      zoom: 17, // starting zoom
-      customAttribution:attribution
+      center: CENTER, // starting position [lng, lat]
+      zoom: ZOOM, // starting zoom
+      customAttribution: 'Contains OS data &copy; Crown copyright and database rights 2018'
+    });
+
+    this.map.on('load', async () => {
+      const geojson = await photos;
+      this.addFeaturesToMap(geojson.features);
     });
 
     window.gtag('event', 'page_view', {
@@ -28,9 +44,29 @@ class Map extends Component {
     });
   }
 
+  addFeaturesToMap = features => {
+    features.forEach( feature => {
+        // create a DOM element for the marker
+        const el = document.createElement('div');
+        el.className = 'marker';
+        el.style.backgroundImage = `url(${feature.properties.thumbnail})`;
+        el.style.width = '50px';
+        el.style.height = '50px';
+
+        el.addEventListener('click', function() {
+            window.alert(`${feature.properties.id} => ${feature.properties.description}`);
+        });
+
+        // add marker to map
+        new mapboxgl.Marker(el)
+            .setLngLat(feature.geometry.coordinates)
+            .addTo(this.map);
+    });
+  }
+
   render() {
     return (
-      <div style={styles.wrapper}>
+      <div style={styles.wrapper} className="geovation-map">
         <div style={styles.headline}>
           <div style={styles.buttonwrapper}>
             <Button onClick={this.closePage}>
