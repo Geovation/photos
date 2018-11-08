@@ -1,6 +1,6 @@
 // see https://firebase.google.com/docs/web/setup
 import firebase from 'firebase/app';
-// import 'firebase/auth';
+import 'firebase/auth';
 // import 'firebase/database';
 import 'firebase/firestore';
 // import 'firebase/messaging';
@@ -15,13 +15,14 @@ const config = {
   storageBucket: "photos-demo-d4b14.appspot.com",
   messagingSenderId: "639308065605"
 };
-const fire = firebase.initializeApp(config);
+const firebaseApp = firebase.initializeApp(config);
 
-const firestore = fire.firestore();
+const firestore = firebaseApp.firestore();
 const settings = { timestampsInSnapshots: true };
 firestore.settings(settings);
 
+const auth= firebaseApp.auth;
 export {
-  fire,
-  firestore
+  firebaseApp,
+  auth
 }
