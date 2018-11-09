@@ -1,7 +1,11 @@
 import React from 'react';
 
+import authFirebase from './authFirebase'
+
 //change the logo file to upload your own Logo
 import imgHeader from '../images/logo.svg';
+import LoginFirebase from "./LoginFirebase";
+import dbFirebase from "./dbFirebase";
 
 // change function request to add a real server to upload a photo
 // instead of a mockup with timeout
@@ -44,6 +48,7 @@ const headerstyles = {
 export default {
   Header,
   request,
-  loginComponentName: "LoginFirebase",
-  authModule: "authFirebase"
+  loginComponent: LoginFirebase,
+  authModule: authFirebase,
+  dbModule: dbFirebase
 }

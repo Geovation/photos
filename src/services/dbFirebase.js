@@ -1,12 +1,14 @@
 import firebaseApp from './firebaseInit.js';
 
+const db = firebaseApp.firestore();
+
 async function fetchPhotos() {
   const geojson = {
     "type": "FeatureCollection",
     "features": []
   };
 
-  const querySnapshot = await firebaseApp.firestore().collection("photos").get();
+  const querySnapshot = await db.collection("photos").get();
 
   querySnapshot.forEach( doc => {
       console.log(`${doc.id} =>`, doc.data());
@@ -33,4 +35,10 @@ async function fetchPhotos() {
   return geojson;
 }
 
-export default {fetchPhotos};
+async function getUser(id) {
+  const fbUser = await db.collection("users").doc(id).get();
+debugger
+  return fbUser.exists ? fbUser.data() : null;
+}
+
+export default {fetchPhotos, getUser};

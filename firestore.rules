@@ -1,12 +1,26 @@
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isAdmin() {
+    	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
+    }
+
+    function isOwner(uid) {
+    	return request.auth.uid == uid
+    }
+
     // anybody can read the photos but only admin can write
     match /photos/{photo} {
       allow read: if true;
 
       // write = update, delete, create
       allow write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
+    }
+
+    // data written by admin
+    match /users/{uid} {
+    	allow read: if isAdmin() || isOwner(uid);
+      allow write: if isAdmin();
     }
 
     // only logged in users can add

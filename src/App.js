@@ -6,7 +6,7 @@ import PhotoPage from './Components/PhotoPage';
 import LandingPage from './Components/LandingPage';
 import Map from './Components/Map';
 import Loading from './Components/Loading';
-import auth from "./services/auth";
+import config from "./services/config";
 
 class App extends Component {
   constructor(props){
@@ -92,7 +92,7 @@ class App extends Component {
   componentDidMount(){
     this.getLocation();
 
-    this.unregisterAuthObserver = auth.onAuthStateChanged((user) => {
+    this.unregisterAuthObserver = config.authModule.onAuthStateChanged((user) => {
       this.setState({isSignedIn: !!user});
     });
   }

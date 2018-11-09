@@ -14,7 +14,6 @@ import CustomPhotoDialog from './CustomPhotoDialog';
 import config from '../services/config';
 import './LandingPage.scss';
 import Login from './Login';
-import auth from "../services/auth";
 
 class LandingPage extends Component {
 
@@ -75,7 +74,7 @@ class LandingPage extends Component {
     let loginLogoutDialogOpen = true;
 
     if (this.props.isSignedIn) {
-      auth.signOut();
+      config.authModule.signOut();
       loginLogoutDialogOpen = false;
     }
 
@@ -154,7 +153,10 @@ class LandingPage extends Component {
                     <MenuItem onClick={this.openPage1}>Page 1</MenuItem>
                     <MenuItem onClick={this.openPage2}>Page 2</MenuItem>
                     <MenuItem onClick={this.openPage3}>Page 3</MenuItem>
-                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + auth.getCurrentUser().displayName : "Sign In"}</MenuItem>
+                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + config.authModule.getCurrentUser().isModerator + " " + config.authModule.getCurrentUser().displayName : "Sign In"}</MenuItem>
+                    {config.authModule.getCurrentUser().isModerator ?
+                    <MenuItem onClick={this.openPage1}>{"Moderator"}</MenuItem> : null}
+
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
@@ -187,7 +189,7 @@ class LandingPage extends Component {
         <Login
           open={this.state.loginLogoutDialogOpen && this.props.isSignedIn !== undefined && !this.state.isSignedIn}
           handleClose={this.handleLoginClose}
-          loginName={config.loginComponentName}
+          loginComponent={config.loginComponent}
         />
 
       </div>

@@ -1,5 +1,6 @@
 import User from "../types/User";
 import firebaseApp from "./firebaseInit";
+import dbFirebase from "./dbFirebase";
 
 let currentUser;
 
@@ -8,19 +9,12 @@ let currentUser;
  * @param fn
  */
 const onAuthStateChanged = async (fn) => {
-  const firebaseStatusChange = (user) => {
+  const firebaseStatusChange = async (user) => {
     currentUser = user;
-    debugger
     if (currentUser) {
-      // TODO: get user info
-      // ...
-      // TODO: return the user info
-      // ...
-      const groups = [];
+      const fbUser = await dbFirebase.getUser(user.uid);
 
-      debugger
-
-      currentUser = new User(currentUser.uid, currentUser.displayName, groups, currentUser.email, currentUser.emailVerified, currentUser.isAnonymous, currentUser.phoneNumber, currentUser.photoURL);
+      currentUser = new User(currentUser.uid, currentUser.displayName, fbUser.isModerator, currentUser.email, currentUser.emailVerified, currentUser.isAnonymous, currentUser.phoneNumber, currentUser.photoURL);
     }
     fn(currentUser);
   };
