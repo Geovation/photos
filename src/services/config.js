@@ -44,5 +44,6 @@ const headerstyles = {
 export default {
   Header,
   request,
-  loginComponentName: "LoginFirebase"
+  loginComponentName: "LoginFirebase",
+  authModule: "authFirebase"
 }

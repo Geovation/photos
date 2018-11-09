@@ -11,10 +11,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import CustomPhotoDialog from './CustomPhotoDialog';
 
-import Db from '../services/Db';
 import config from '../services/config';
 import './LandingPage.scss';
 import Login from './Login';
+import auth from "../services/auth";
 
 class LandingPage extends Component {
 
@@ -75,7 +75,7 @@ class LandingPage extends Component {
     let loginLogoutDialogOpen = true;
 
     if (this.props.isSignedIn) {
-      Db.signOut();
+      auth.signOut();
       loginLogoutDialogOpen = false;
     }
 
@@ -154,7 +154,7 @@ class LandingPage extends Component {
                     <MenuItem onClick={this.openPage1}>Page 1</MenuItem>
                     <MenuItem onClick={this.openPage2}>Page 2</MenuItem>
                     <MenuItem onClick={this.openPage3}>Page 3</MenuItem>
-                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + Db.currentUser().displayName : "Sign In"}</MenuItem>
+                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + auth.getCurrentUser().displayName : "Sign In"}</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

@@ -4,6 +4,7 @@
 - login
 - recognize moderator
 - introducing configurable components
+- get user groups
 
 ## 0.2.2 (2018-11-05)
 - fix map iOS

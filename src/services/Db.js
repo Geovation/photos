@@ -1,4 +1,4 @@
-import {firebaseApp} from './firebaseInit.js';
+import firebaseApp from './firebaseInit.js';
 
 async function fetchPhotos() {
   const geojson = {
@@ -33,20 +33,4 @@ async function fetchPhotos() {
   return geojson;
 }
 
-/**
- * When the user login call fn
- * @param fn
- */
-const onAuthStateChanged = (fn) => {
-  return firebaseApp.auth().onAuthStateChanged(fn);
-};
-
-const signOut = () => {
-  firebaseApp.auth().signOut();
-};
-
-const currentUser = () => {
-  return firebaseApp.auth().currentUser;
-};
-
-export default {fetchPhotos, onAuthStateChanged, signOut, currentUser};
+export default {fetchPhotos};
