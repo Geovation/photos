@@ -15,6 +15,10 @@ import 'firebase/auth';
 class Login extends StyledFirebaseAuth {
 
 
+  /**
+   *
+   * @param props are {open, handleClose  }
+   */
   constructor(props) {
     super(props);
 
@@ -42,21 +46,21 @@ class Login extends StyledFirebaseAuth {
 
   render() {
     return (
-    <Dialog
-      fullScreen={false}
-      open={this.props.open}
-      onClose={this.handleClose}
-      aria-labelledby="responsive-dialog-title"
-    >
-      <DialogTitle id="responsive-dialog-title">{"Login"}</DialogTitle>
-      <DialogContent>
-        <StyledFirebaseAuth
-          uiCallback={ui => ui.disableAutoSignIn()}
-          uiConfig={this.uiConfig}
-          firebaseAuth={firebaseApp.auth()}
-        />
-      </DialogContent>
-    </Dialog>
+      <Dialog
+        fullScreen={false}
+        open={this.props.open}
+        onClose={this.handleClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">{"Login/Signup"}</DialogTitle>
+        <DialogContent>
+          <StyledFirebaseAuth
+            // uiCallback={ui => ui.disableAutoSignIn()}
+            uiConfig={this.uiConfig}
+            firebaseAuth={firebaseApp.auth()}
+          />
+        </DialogContent>
+      </Dialog>
 
 
     );

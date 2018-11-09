@@ -45,7 +45,7 @@ class LandingPage extends Component {
     }
   }
 
-  openMenu = () => {
+  handleMenuClick = () => {
     this.setState(state => ({ menuOpen: !state.menuOpen }));
   }
 
@@ -119,7 +119,7 @@ class LandingPage extends Component {
     window.location = 'https://geovation.uk/';
   };
 
-  loginHandleClose = () => {
+  handleLoginClose = () => {
     this.setState({ loginLogoutDialogOpen:false});
   };
 
@@ -130,7 +130,7 @@ class LandingPage extends Component {
         <Header/>
         <div className='appbar'>
           <Button
-            onClick={this.openMenu}
+            onClick={this.handleMenuClick}
             buttonRef={node => {
                this.anchorEl = node;
             }}
@@ -185,7 +185,7 @@ class LandingPage extends Component {
 
         <Login
           open={this.state.loginLogoutDialogOpen && this.props.isSignedIn !== undefined && !this.state.isSignedIn}
-          handleClose={this.loginHandleClose}
+          handleClose={this.handleLoginClose}
         />
 
       </div>
