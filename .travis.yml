@@ -23,8 +23,6 @@ deploy:
   api_key: $NPM_TOKEN
   on:
     tags: true
-
-deploy:
   -provider: firebase
   skip_cleanup: true
   token: "$FIREBASE_TOKEN"
