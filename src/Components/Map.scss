@@ -1,0 +1,57 @@
+@import "../services/variables";
+
+.geovation-map {
+  display: flex;
+  flex-direction: column;
+
+  .marker {
+      display: block;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      padding: 0;
+      background-size: cover;
+      width: 40px !important;
+      height: 40px !important;
+  }
+
+  .marker:hover {
+  	box-shadow: inset 0 0 0 3px rgb(250, 167, 40);
+    z-index: 10;
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .headline {
+    display: flex;
+    height: 50px;
+    background-color: $color2;
+    align-items: center;
+
+    .buttonwrapper {
+      display: flex;
+      flex: 1;
+
+      .buttonback {
+        height: 25px;
+      }
+    }
+
+    .headtext {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .headspace {
+      display: flex;
+      flex: 1;
+    }
+  }
+
+  .map {
+    width: 100%;
+    height: calc(100vh - 50px);
+  }
+
+}

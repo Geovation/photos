@@ -6,9 +6,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Loading from './Loading';
-import styles from '../Style/PhotoPageStyle';
 import backButton from '../images/left-arrow.svg';
-import {request} from '../Config/config';
+import {request} from '../services/config';
+import './PhotoPage.scss';
 
 class PhotoPage extends Component {
   constructor(props) {
@@ -108,20 +108,20 @@ class PhotoPage extends Component {
       this.state.sending ?
         <Loading />
       :
-        <div style={styles.wrapper}>
-          <div style={styles.headline}>
+        <div className='geovation-photos'>
+          <div className='headline'>
             <Button onClick={this.closePage}>
-              <img style={styles.buttonback} src={backButton} alt=''/>
+              <img className='buttonback' src={backButton} alt=''/>
             </Button>
             <div>PhotoPage</div>
           </div>
-          <div style={styles.entertext}>
+          <div className='entertext'>
             Enter some text:
-            <input type='text' style={styles.inputtext} value={this.state.value} onChange={this.handleChange} />
+            <input type='text' className='inputtext' value={this.state.value} onChange={this.handleChange} />
           </div>
-          <div style={styles.picture} id='picture'></div>
-          <div style={styles.buttonwrapper}>
-            <Button style={styles.sendbutton} onClick={this.sendFile}>
+          <div className='picture' id='picture'></div>
+          <div className='buttonwrapper'>
+            <Button className='sendbutton' onClick={this.sendFile}>
               Send Photo
             </Button>
           </div>
