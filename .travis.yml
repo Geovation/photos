@@ -4,7 +4,7 @@ node_js:
 - '10'
 cache:
   directories:
-  - node_modules
+  - node_modules/
 
 script:
   - npm test -- --coverage # Include coverage when running tests
@@ -13,9 +13,23 @@ script:
 after_script: # Upload coverage reports
   - npm run coveralls # remember to st COVERALLS_REPO_TOKEN
 
+before_deploy:
+  - pushd functions && npm install && popd
+  - npm run build
+
 deploy:
-  provider: npm
+  -provider: npm
   email: sebastian.ovide@gmail.com
   api_key: $NPM_TOKEN
   on:
     tags: true
+
+deploy:
+  -provider: firebase
+  skip_cleanup: true
+  token: "$FIREBASE_TOKEN"
+env:
+  global:
+
+# "$FIREBASE_TOKEN"
+    secure: RJyCjaUK7FUg0JVEhKVXj8UAMt8McTkqi0Kb2nZVsiTu+H4ZqhEpAghiSl30s8c7dzus4DpDhk2aV/bb04AecZ6xeoDWFevIB0Vrd3ym/ezFBP/azuaNBrZW7yaUyNkuAD1PLZaBqMySZfZabyImMzFKcBZOh9iomlWKph5yzSWI/Fs13rNm61KAwiiGTIzew1zdaIFQsX7rRTPBFCzTYpQO1HyadZzacogIiwSy9FL2GLkFwxp2gf+yX2mjesmIGaNO7eImFH2YkPDoK6BogPjv+gFJBzywXds16NCzAIU+HMZxqEvxiL8mRboZ/LUnQfrN0FX3L9KMPn3bs7dZcJiEbTqtW3/RTBG/ZqVeyDL9KM7xcT9CSmbB9P4Ot3onNQFS/FsXtn3fTJH6E3qj8NdYD4CwbupJanqicTOw3Epb1zUxoU7FL4HUYPIz67pAW8ZIuS8/3EXn7pa0wgR9uaADdUQ6I3KPavH9n0Ddg1G9qqPpOef2PEyJnkdNkCbujAWimKks5cHvY+xdJQBtOUWi4G5TCjQYjGsN676wfhlvBKi3Ih8SCvzBiUFe75/y8T79AZe9Sjfdg0pr8fsE78MEs+yWdXKjpuaU03Vp2BAOR6NRzYL5JA94ZoAXLNfFnL0L9fOaKHff7ib7P2Kc07b9tr7Dwt5R70urKHSqya0=
