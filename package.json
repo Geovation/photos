@@ -1,7 +1,7 @@
 {
   "name": "geovation-photos-firebase",
-  "version": "0.0.1",
-  "description": "Demo using geovation-photos: Upload your photo in a map hosted in firebase.",
+  "version": "0.2.2",
+  "description": "Simple Reactjs PWA that allows you to upload photos into a map.",
   "main": "index.js",
   "scripts": {
     "test": "react-scripts test --env=jsdom",
@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Geovation/photos-firebase.git"
+    "url": "https://github.com/Geovation/photos.git"
   },
   "author": "Geovation, Ordnance Survey",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Geovation/photos-firebase/issues"
+    "url": "https://github.com/Geovation/photos/issues"
   },
   "homepage": "https://photos-demo-d4b14.firebaseapp.com",
   "devDependencies": {
