@@ -97,8 +97,8 @@ class App extends Component {
     });
   }
 
-  componentWillUnmount() {
-    this.unregisterAuthObserver();
+  async componentWillUnmount() {
+    await this.unregisterAuthObserver();
   }
 
   render() {
