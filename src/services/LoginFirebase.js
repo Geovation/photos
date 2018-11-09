@@ -5,15 +5,14 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import withMobileDialog from '@material-ui/core/withMobileDialog'
 
 import {firebaseApp} from './firebaseInit.js';
 import firebase from 'firebase/app';
 
 import 'firebase/auth';
 
-class Login extends StyledFirebaseAuth {
-
+class LoginFirebase extends StyledFirebaseAuth {
 
   /**
    *
@@ -32,12 +31,11 @@ class Login extends StyledFirebaseAuth {
       signInFlow: 'popup',
       signInSuccessUrl: '/',
       signInOptions: [
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
       ]
     };
   }
-
 
   handleClose = () => {
     this.props.handleClose();
@@ -47,7 +45,7 @@ class Login extends StyledFirebaseAuth {
   render() {
     return (
       <Dialog
-        fullScreen={false}
+        fullScreen={true}
         open={this.props.open}
         onClose={this.handleClose}
         aria-labelledby="responsive-dialog-title"
@@ -62,9 +60,8 @@ class Login extends StyledFirebaseAuth {
         </DialogContent>
       </Dialog>
 
-
     );
   }
 }
 
-export default Login;
+export default withMobileDialog()(LoginFirebase);

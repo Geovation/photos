@@ -1,11 +1,12 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {Header} from '../services/config';
+import config from '../services/config';
 import './Loading.scss';
 
 class Loading extends React.Component {
 
   render() {
+    const Header = config.Header;
     return (
       <div className='geovation-loading'>
         <Header/>

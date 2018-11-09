@@ -5,7 +5,7 @@ import imgHeader from '../images/logo.svg';
 
 // change function request to add a real server to upload a photo
 // instead of a mockup with timeout
-export const request = (that,data) =>{
+const request = (that,data) =>{
   let message;
   if (Math.random()<0.5){
       message = 'Photo was uploaded successfully';
@@ -16,13 +16,7 @@ export const request = (that,data) =>{
   setTimeout(()=>that.openDialog(message),1 * 1000);
 }
 
-// change the colours according to your needs
-export const colours = {
-    'color1':'#333',
-    'color2':'#faa728'
-}
-
-export const Header = () =>(
+const Header = () =>(
   <div style={headerstyles.headline}>
     <div style={headerstyles.headtext}>GEOVATION</div>
     <img style={headerstyles.headphoto} src={imgHeader} alt='header'/>
@@ -45,4 +39,10 @@ const headerstyles = {
   'headphoto':{
     height:80
   }
+}
+
+export default {
+  Header,
+  request,
+  loginComponentName: "LoginFirebase"
 }
