@@ -3,9 +3,8 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Button from '@material-ui/core/Button';
 import backButton from '../images/left-arrow.svg';
-import styles from '../Style/MapStyle.js';
 import Db from '../services/Db.js';
-import './Map.css';
+import './Map.scss';
 
 const CENTER = [-0.1019313, 51.524311];
 const ZOOM = 10;
@@ -22,7 +21,7 @@ class Map extends Component {
   };
 
   async componentDidMount(){
-    const photos = new Db().fetchPhotos();
+    const photos = Db.fetchPhotos();
 
     mapboxgl.accessToken = ''; // you can add a Mapbox access token here
     this.map = new mapboxgl.Map({
@@ -50,8 +49,6 @@ class Map extends Component {
         const el = document.createElement('div');
         el.className = 'marker';
         el.style.backgroundImage = `url(${feature.properties.thumbnail})`;
-        el.style.width = '50px';
-        el.style.height = '50px';
 
         el.addEventListener('click', function() {
             window.alert(`${feature.properties.id} => ${feature.properties.description}`);
@@ -66,17 +63,17 @@ class Map extends Component {
 
   render() {
     return (
-      <div style={styles.wrapper} className="geovation-map">
-        <div style={styles.headline}>
-          <div style={styles.buttonwrapper}>
+      <div className="geovation-map">
+        <div className="headline">
+          <div className="buttonwrapper">
             <Button onClick={this.closePage}>
-              <img style={styles.buttonback} src={backButton} alt=''/>
+              <img className="buttonback" src={backButton} alt=''/>
             </Button>
           </div>
-          <div style={styles.headtext}>Map</div>
-          <div style={styles.headspace}/>
+          <div className="headtext">Map</div>
+          <div className="headspace"/>
         </div>
-        <div id='map'style={styles.map}></div>
+        <div id='map' className="map"></div>
       </div>
     );
   }

@@ -1,0 +1,60 @@
+@import "../services/variables";
+
+.geovation-photos {
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  height:100vh;
+  background-color:$color1;
+
+  .headline {
+    display:flex;
+    height:50px;
+    background-color:$color2;
+    align-items:center;
+
+    .buttonback {
+      height:25px
+    }
+
+  }
+
+  .entertext {
+    display:flex;
+    height:30px;
+    padding-left:5px;
+    color:$color2;
+    align-items:center;
+
+    .inputtext {
+      margin-left:5px;
+      border: 1px solid black;
+    };
+
+  }
+
+  .picture {
+    display:flex;
+    flex:1;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background-color:$color1;
+  }
+
+  .buttonwrapper {
+    display:flex;
+    height:50px;
+    background-color:$color1;
+    align-items:center;
+    justify-content:center;
+
+    .sendbutton {
+      color:$color1;
+      background-color:$color2;
+    }
+
+  }
+
+
+};

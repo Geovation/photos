@@ -1,16 +1,16 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {Header} from '../Config/config';
-import styles from '../Style/LoadingStyle';
+import {Header} from '../services/config';
+import './Loading.scss';
 
 class Loading extends React.Component {
 
   render() {
     return (
-      <div style={styles.wrapper}>
+      <div className='geovation-loading'>
         <Header/>
-        <div style={styles.body}>
-          <CircularProgress style={styles.progress} size={50} thickness={6}/>
+        <div className='body'>
+          <CircularProgress className='progress' size={50} thickness={6}/>
         </div>
       </div>
     );
