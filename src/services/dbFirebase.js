@@ -1,4 +1,6 @@
-import {firebaseApp} from './firebaseInit.js';
+import firebaseApp from './firebaseInit.js';
+
+const db = firebaseApp.firestore();
 
 async function fetchPhotos() {
   const geojson = {
@@ -6,7 +8,7 @@ async function fetchPhotos() {
     "features": []
   };
 
-  const querySnapshot = await firebaseApp.firestore().collection("photos").get();
+  const querySnapshot = await db.collection("photos").get();
 
   querySnapshot.forEach( doc => {
       console.log(`${doc.id} =>`, doc.data());
@@ -33,20 +35,10 @@ async function fetchPhotos() {
   return geojson;
 }
 
-/**
- * When the user login call fn
- * @param fn
- */
-const onAuthStateChanged = (fn) => {
-  return firebaseApp.auth().onAuthStateChanged(fn);
-};
+async function getUser(id) {
+  const fbUser = await db.collection("users").doc(id).get();
+debugger
+  return fbUser.exists ? fbUser.data() : null;
+}
 
-const signOut = () => {
-  firebaseApp.auth().signOut();
-};
-
-const currentUser = () => {
-  return firebaseApp.auth().currentUser;
-};
-
-export default {fetchPhotos, onAuthStateChanged, signOut, currentUser};
+export default {fetchPhotos, getUser};

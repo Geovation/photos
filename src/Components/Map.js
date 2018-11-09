@@ -3,8 +3,8 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Button from '@material-ui/core/Button';
 import backButton from '../images/left-arrow.svg';
-import Db from '../services/Db.js';
 import './Map.scss';
+import config from "../services/config";
 
 const CENTER = [-0.1019313, 51.524311];
 const ZOOM = 10;
@@ -21,7 +21,7 @@ class Map extends Component {
   };
 
   async componentDidMount(){
-    const photos = Db.fetchPhotos();
+    const photos = config.dbModule.fetchPhotos();
 
     mapboxgl.accessToken = ''; // you can add a Mapbox access token here
     this.map = new mapboxgl.Map({

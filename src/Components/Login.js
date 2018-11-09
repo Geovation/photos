@@ -12,9 +12,7 @@ class Login extends React.Component {
     this.state = {
       open: false
     };
-
-    this.Component = require("../services/" + this.props.loginName + ".js").default;
-  }
+    }
 
   handleClose = () => {
     this.props.handleClose();
@@ -22,9 +20,9 @@ class Login extends React.Component {
   };
 
   render() {
-    const Component = this.Component;
+    const Component = this.props.loginComponent;
     return (
-      <Component key={this.props.loginName} {...this.props}/>
+      <Component key={""} {...this.props}/>
     );
   }
 }
