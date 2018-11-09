@@ -39,3 +39,10 @@ npm install geovation-photos@latest -D
 ./node_modules/.bin/geovation-photos-update
 ```
 And now just merge the changes by hand. If you kept your customisations outside Geovation photos folders, the merge should be not too bad.
+
+
+# Demo using Firebase
+
+Demo PWA/Mobile app done from Geovation Photos. See a [PWA demo live](https://photos-demo-d4b14.firebaseapp.com)
+
+See more (Documentation)[doc/]
