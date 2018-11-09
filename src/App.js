@@ -6,6 +6,7 @@ import PhotoPage from './Components/PhotoPage';
 import LandingPage from './Components/LandingPage';
 import Map from './Components/Map';
 import Loading from './Components/Loading';
+import Db from './services/Db.js';
 
 class App extends Component {
   constructor(props){
@@ -18,7 +19,8 @@ class App extends Component {
       file: null,
       map: false,
       loading: true,
-      location: {}
+      location: {},
+      isSignedIn: undefined,
     };
   }
 
@@ -89,6 +91,14 @@ class App extends Component {
   }
   componentDidMount(){
     this.getLocation();
+
+    this.unregisterAuthObserver = Db.onAuthStateChanged((user) => {
+      this.setState({isSignedIn: !!user});
+    });
+  }
+
+  async componentWillUnmount() {
+    await this.unregisterAuthObserver();
   }
 
   render() {
@@ -125,6 +135,7 @@ class App extends Component {
                     openPage3={this.openPage3}
                     openPhotoPage={this.openPhotoPage}
                     openMap={this.openMap}
+                    isSignedIn={this.state.isSignedIn}
                   />
     );
   }

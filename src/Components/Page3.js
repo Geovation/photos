@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import backButton from '../images/left-arrow.svg';
-import styles from '../Style/Page1Style';
+import './Page3.scss';
 
 class Page3 extends Component {
 
@@ -11,12 +11,12 @@ class Page3 extends Component {
 
   render() {
     return (
-      <div style={styles.wrapper}>
-        <div style={styles.headline}>
+      <div className='geovation-page3'>
+        <div className='headline'>
           <Button onClick={this.closePage}>
-            <img style={styles.buttonback} src={backButton} alt=''/>
+            <img className='buttonback' src={backButton} alt=''/>
           </Button>
-          <div style={styles.headtext}>Page 3</div>
+          <div className='headtext'>Page 3</div>
         </div>
       </div>
     );

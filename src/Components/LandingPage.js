@@ -9,17 +9,21 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
-import styles from '../Style/LandingPageStyle.js';
 import CustomPhotoDialog from './CustomPhotoDialog';
-import {Header} from '../Config/config';
+
+import Db from '../services/Db';
+import {Header} from '../services/config';
+import './LandingPage.scss';
+import Login from '../services/Login';
 
 class LandingPage extends Component {
+
   constructor(props){
     super(props);
     this.state = {
       menuOpen: false,
-      open: false,
-      photoDialog: false
+      photoDialog: false,
+      loginLogoutDialogOpen: false
     };
   }
 
@@ -41,31 +45,45 @@ class LandingPage extends Component {
     }
   }
 
-  openMenu = () => {
-    this.setState(state => ({ open: !state.open }));
+  handleMenuClick = () => {
+    this.setState(state => ({ menuOpen: !state.menuOpen }));
   }
 
   closeMenu = event => {
      if (this.anchorEl.contains(event.target)) {
        return;
      }
-     this.setState({ open: false });
+     this.setState({ menuOpen: false });
   };
 
   openPage1 = () => {
-    this.setState({ open: false });
+    this.setState({ menuOpen: false });
     this.props.openPage1();
   }
 
   openPage2 = () => {
-    this.setState({ open: false });
+    this.setState({ menuOpen: false });
     this.props.openPage2();
   }
 
   openPage3 = () => {
-    this.setState({ open: false });
+    this.setState({ menuOpen: false });
     this.props.openPage3();
   }
+
+  handleClickLoginLogout = () => {
+    let loginLogoutDialogOpen = true;
+
+    if (this.props.isSignedIn) {
+      Db.signOut();
+      loginLogoutDialogOpen = false;
+    }
+
+    this.setState({
+      menuOpen: false,
+      loginLogoutDialogOpen
+    });
+  };
 
   openMap = () => {
     this.props.openMap();
@@ -99,16 +117,20 @@ class LandingPage extends Component {
 
   setRedirect = () => {
     window.location = 'https://geovation.uk/';
-  }
+  };
+
+  handleLoginClose = () => {
+    this.setState({ loginLogoutDialogOpen:false});
+  };
+
 
   render() {
     return (
-      <div style={styles.wrapper}>
+      <div className='geovation-landingPage'>
         <Header/>
-        <div style={styles.appbar}>
+        <div className='appbar'>
           <Button
-            onClick={this.openMenu}
-            style={this.buttonappbar}
+            onClick={this.handleMenuClick}
             buttonRef={node => {
                this.anchorEl = node;
             }}
@@ -118,7 +140,7 @@ class LandingPage extends Component {
             <img src={menu} alt=''/>
           </Button>
         </div>
-        <Popper open={this.state.open} anchorEl={this.anchorEl} transition disablePortal>
+        <Popper open={this.state.menuOpen} anchorEl={this.anchorEl} transition disablePortal>
           {({ TransitionProps, placement }) => (
             <Grow
              {...TransitionProps}
@@ -131,35 +153,44 @@ class LandingPage extends Component {
                     <MenuItem onClick={this.openPage1}>Page 1</MenuItem>
                     <MenuItem onClick={this.openPage2}>Page 2</MenuItem>
                     <MenuItem onClick={this.openPage3}>Page 3</MenuItem>
+                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + Db.currentUser().displayName : "Sign In"}</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
             </Grow>
           )}
         </Popper>
-        <div style={styles.body}>
-          <div style={styles.camera}>
+        <div className='body'>
+          <div className='camera'>
             <Button onClick={this.openCamera}>
               { !window.cordova ?
-                  <input id='file-input' style={styles.inputcamera} type='file' accept='image/*'/>
+                  <input id='file-input' className='inputcamera' type='file' accept='image/*'/>
                 : null
               }
-              <img style={styles.imagecamera} src={camera} alt=''/>
+              <img className='imagecamera' src={camera} alt=''/>
             </Button>
             <CustomPhotoDialog open={this.state.photoDialog} onClose={this.handleClose}/>
           </div>
-          <div style={styles.map}>
+          <div className='map'>
             <Button onClick={this.openMap}>
-              <img style={styles.imagemap} src={map} alt=''/>
+              <img className='imagemap' src={map} alt=''/>
             </Button>
           </div>
         </div>
-        <div style={styles.externallink}>
-          <Button onClick={this.setRedirect} style={styles.buttonexternallink}>
+        <div className='externallink'>
+          <Button onClick={this.setRedirect} className='buttonexternallink'>
             External Link
           </Button>
         </div>
+
+        <Login
+          open={this.state.loginLogoutDialogOpen && this.props.isSignedIn !== undefined && !this.state.isSignedIn}
+          handleClose={this.handleLoginClose}
+        />
+
       </div>
+
+
     );
   }
 }
