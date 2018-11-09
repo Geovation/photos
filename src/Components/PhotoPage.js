@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Loading from './Loading';
 import backButton from '../images/left-arrow.svg';
-import {request} from '../services/config';
+import config from '../services/config';
 import './PhotoPage.scss';
 
 class PhotoPage extends Component {
@@ -64,7 +64,7 @@ class PhotoPage extends Component {
         data['longitude'] = location.longitude;
       }
       this.setState({ sending: true });
-      request(this, data);
+      config.request(this, data);
     } else {
       this.openDialogText();
     }

@@ -12,9 +12,9 @@ import MenuList from '@material-ui/core/MenuList';
 import CustomPhotoDialog from './CustomPhotoDialog';
 
 import Db from '../services/Db';
-import {Header} from '../services/config';
+import config from '../services/config';
 import './LandingPage.scss';
-import Login from '../services/Login';
+import Login from './Login';
 
 class LandingPage extends Component {
 
@@ -125,6 +125,7 @@ class LandingPage extends Component {
 
 
   render() {
+    const Header = config.Header;
     return (
       <div className='geovation-landingPage'>
         <Header/>
@@ -186,6 +187,7 @@ class LandingPage extends Component {
         <Login
           open={this.state.loginLogoutDialogOpen && this.props.isSignedIn !== undefined && !this.state.isSignedIn}
           handleClose={this.handleLoginClose}
+          loginName={config.loginComponentName}
         />
 
       </div>
