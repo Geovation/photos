@@ -1,4 +1,13 @@
-## 0.2.1 (2018-11-??)
+## 0.3.0 (2018-11-09)
+- added firebase example
+- show photos from firebase
+- login
+- recognize moderator
+
+## 0.2.2 (2018-11-05)
+- fix map iOS
+
+## 0.2.1 (2018-11-02)
 - fixed manifest for PWA
 
 ## 0.2.0 (2018-11-1)
