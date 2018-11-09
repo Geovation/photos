@@ -18,14 +18,14 @@ before_deploy:
   - npm run build
 
 deploy:
-  -provider: npm
-  email: sebastian.ovide@gmail.com
-  api_key: $NPM_TOKEN
-  on:
-    tags: true
-  -provider: firebase
-  skip_cleanup: true
-  token: "$FIREBASE_TOKEN"
+  - provider: firebase
+    skip_cleanup: true
+    token: "$FIREBASE_TOKEN"
+  - provider: npm
+    email: sebastian.ovide@gmail.com
+    api_key: $NPM_TOKEN
+    on:
+      tags: true
 env:
   global:
 
