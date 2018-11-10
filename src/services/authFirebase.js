@@ -28,4 +28,6 @@ const signOut = () => {
 
 const getCurrentUser = () => currentUser;
 
-export default { onAuthStateChanged, signOut, getCurrentUser }
+const isModerator = () => currentUser && currentUser.isModerator;
+
+export default { onAuthStateChanged, signOut, getCurrentUser, isModerator }
