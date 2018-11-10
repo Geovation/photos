@@ -150,12 +150,11 @@ class LandingPage extends Component {
               <Paper>
                 <ClickAwayListener onClickAway={this.closeMenu}>
                   <MenuList>
-                    <MenuItem onClick={this.openPage1}>Page 1</MenuItem>
-                    <MenuItem onClick={this.openPage2}>Page 2</MenuItem>
-                    <MenuItem onClick={this.openPage3}>Page 3</MenuItem>
-                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + config.authModule.getCurrentUser().isModerator + " " + config.authModule.getCurrentUser().displayName : "Sign In"}</MenuItem>
-                    {config.authModule.getCurrentUser().isModerator ?
-                    <MenuItem onClick={this.openPage1}>{"Moderator"}</MenuItem> : null}
+                    {!this.props.isSignedIn && <MenuItem onClick={this.openPage1}>Page for anonymous</MenuItem>}
+                    {this.props.isSignedIn && <MenuItem onClick={this.openPage2}>Page for {config.authModule.getCurrentUser().displayName}</MenuItem>}
+                    { config.authModule.isModerator() && <MenuItem onClick={this.openPage3}>Page for Moderator</MenuItem>}
+                    <MenuItem onClick={this.openPage3}>Page for everybody</MenuItem>
+                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + config.authModule.getCurrentUser().displayName : "Sign In"}</MenuItem>
 
                   </MenuList>
                 </ClickAwayListener>

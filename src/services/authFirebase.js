@@ -8,13 +8,13 @@ let currentUser;
  * When the user login call fn
  * @param fn
  */
-const onAuthStateChanged = async (fn) => {
+const onAuthStateChanged = (fn) => {
   const firebaseStatusChange = async (user) => {
     currentUser = user;
     if (currentUser) {
       const fbUser = await dbFirebase.getUser(user.uid);
-
-      currentUser = new User(currentUser.uid, currentUser.displayName, fbUser.isModerator, currentUser.email, currentUser.emailVerified, currentUser.isAnonymous, currentUser.phoneNumber, currentUser.photoURL);
+      const isModerator = fbUser ? fbUser.isModerator : false;
+      currentUser = new User(currentUser.uid, currentUser.displayName, isModerator, currentUser.email, currentUser.emailVerified, currentUser.isAnonymous, currentUser.phoneNumber, currentUser.photoURL);
     }
     fn(currentUser);
   };
@@ -28,4 +28,6 @@ const signOut = () => {
 
 const getCurrentUser = () => currentUser;
 
-export default { onAuthStateChanged, signOut, getCurrentUser }
+const isModerator = () => currentUser && currentUser.isModerator;
+
+export default { onAuthStateChanged, signOut, getCurrentUser, isModerator }
