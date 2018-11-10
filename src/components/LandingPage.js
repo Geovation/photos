@@ -11,7 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import CustomPhotoDialog from './CustomPhotoDialog';
 
-import config from '../services/config';
+import config from '../custom/config';
 import './LandingPage.scss';
 import Login from './Login';
 

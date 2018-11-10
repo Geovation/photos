@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog'
 
-import firebaseApp from './firebaseInit.js';
+import firebaseApp from '../firebaseInit.js';
 import firebase from 'firebase/app';
 
 import 'firebase/auth';

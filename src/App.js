@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
-import Page1 from './Components/Page1';
-import Page2 from './Components/Page2';
-import Page3 from './Components/Page3';
-import PhotoPage from './Components/PhotoPage';
-import LandingPage from './Components/LandingPage';
-import Map from './Components/Map';
-import Loading from './Components/Loading';
-import config from "./services/config";
+import PhotoPage from './components/PhotoPage';
+import LandingPage from './components/LandingPage';
+import Map from './components/Map';
+import Loading from './components/Loading';
+import config from "./custom/config";
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
+      page: Loading,
       page1: false,
       page2: false,
       page3: false,
@@ -92,6 +90,8 @@ class App extends Component {
   componentDidMount(){
     this.getLocation();
 
+    if (this.state.loading) { this.setState({ page: Loading}); }
+
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged((user) => {
 
       if (this.state.isSignedIn && !user) {
@@ -115,15 +115,15 @@ class App extends Component {
         :
         this.state.page1
           ?
-          <Page1 closePage={this.closePage1}/>
+          <config.Page1 closePage={this.closePage1}/>
           :
           this.state.page2
             ?
-            <Page2 closePage={this.closePage2}/>
+            <config.Page2 closePage={this.closePage2}/>
             :
             this.state.page3
               ?
-              <Page3 closePage={this.closePage3}/>
+              <config.Page3 closePage={this.closePage3}/>
               :
               this.state.photopage
                 ?

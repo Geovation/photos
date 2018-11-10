@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Loading from './Loading';
 import backButton from '../images/left-arrow.svg';
-import config from '../services/config';
+import config from '../custom/config';
 import './PhotoPage.scss';
 
 class PhotoPage extends Component {

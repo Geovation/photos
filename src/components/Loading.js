@@ -1,6 +1,6 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import config from '../services/config';
+import config from '../custom/config';
 import './Loading.scss';
 
 class Loading extends React.Component {

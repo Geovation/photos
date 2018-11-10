@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import Button from '@material-ui/core/Button';
 import backButton from '../images/left-arrow.svg';
 import './Map.scss';
-import config from "../services/config";
+import config from "../custom/config";
 
 const CENTER = [-0.1019313, 51.524311];
 const ZOOM = 10;
