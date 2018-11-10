@@ -13,8 +13,8 @@ const onAuthStateChanged = (fn) => {
     currentUser = user;
     if (currentUser) {
       const fbUser = await dbFirebase.getUser(user.uid);
-
-      currentUser = new User(currentUser.uid, currentUser.displayName, fbUser.isModerator, currentUser.email, currentUser.emailVerified, currentUser.isAnonymous, currentUser.phoneNumber, currentUser.photoURL);
+      const isModerator = fbUser ? fbUser.isModerator : false;
+      currentUser = new User(currentUser.uid, currentUser.displayName, isModerator, currentUser.email, currentUser.emailVerified, currentUser.isAnonymous, currentUser.phoneNumber, currentUser.photoURL);
     }
     fn(currentUser);
   };

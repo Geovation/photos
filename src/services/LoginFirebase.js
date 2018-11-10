@@ -28,12 +28,17 @@ class LoginFirebase extends StyledFirebaseAuth {
 
   componentDidMount() {
     this.uiConfig = {
-      //signInFlow: 'popup',
+      // signInFlow: 'popup',
       signInSuccessUrl: '/',
+      credentialHelper: 'none',
       signInOptions: [
         // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
-      ]
+      ],
+      // callbacks: {
+      //   // Avoid redirects after sign-in.
+      //   signInSuccessWithAuthResult: () => false
+      // }
     };
   }
 

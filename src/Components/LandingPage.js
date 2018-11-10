@@ -153,7 +153,7 @@ class LandingPage extends Component {
                     <MenuItem onClick={this.openPage1}>Page 1</MenuItem>
                     <MenuItem onClick={this.openPage2}>Page 2</MenuItem>
                     <MenuItem onClick={this.openPage3}>Page 3</MenuItem>
-                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + config.authModule.getCurrentUser().isModerator + " " + config.authModule.getCurrentUser().displayName : "Sign In"}</MenuItem>
+                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + config.authModule.getCurrentUser().displayName : "Sign In"}</MenuItem>
                     {this.props.isSignedIn && config.authModule.getCurrentUser().isModerator ?
                     <MenuItem onClick={this.openPage1}>{"Moderator"}</MenuItem> : null}
 
