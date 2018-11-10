@@ -93,7 +93,13 @@ class App extends Component {
     this.getLocation();
 
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged((user) => {
-      this.setState({isSignedIn: !!user});
+
+      if (this.state.isSignedIn && !user) {
+        // lets start fresh
+        window.location.reload()
+      }
+
+      this.setState({isSignedIn: user});
     });
   }
 

@@ -8,7 +8,7 @@ let currentUser;
  * When the user login call fn
  * @param fn
  */
-const onAuthStateChanged = async (fn) => {
+const onAuthStateChanged = (fn) => {
   const firebaseStatusChange = async (user) => {
     currentUser = user;
     if (currentUser) {

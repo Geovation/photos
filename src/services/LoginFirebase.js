@@ -28,7 +28,7 @@ class LoginFirebase extends StyledFirebaseAuth {
 
   componentDidMount() {
     this.uiConfig = {
-      signInFlow: 'popup',
+      //signInFlow: 'popup',
       signInSuccessUrl: '/',
       signInOptions: [
         // firebase.auth.GoogleAuthProvider.PROVIDER_ID,

@@ -37,7 +37,6 @@ async function fetchPhotos() {
 
 async function getUser(id) {
   const fbUser = await db.collection("users").doc(id).get();
-debugger
   return fbUser.exists ? fbUser.data() : null;
 }
 
