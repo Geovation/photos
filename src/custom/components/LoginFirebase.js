@@ -50,7 +50,7 @@ class LoginFirebase extends StyledFirebaseAuth {
   render() {
     return (
       <Dialog
-        fullScreen={true}
+        fullScreen={false}
         open={this.props.open}
         onClose={this.handleClose}
         aria-labelledby="responsive-dialog-title"

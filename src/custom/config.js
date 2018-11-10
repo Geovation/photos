@@ -6,9 +6,9 @@ import authFirebase from './authFirebase'
 import imgHeader from '../images/logo.svg';
 import LoginFirebase from "./components/LoginFirebase";
 import dbFirebase from "./dbFirebase";
-import Page1 from "./components/Page1";
-import Page2 from "./components/Page2";
-import Page3 from "./components/Page3";
+import AnonymousPage from "./components/AnonymousPage";
+import SignedinPage from "./components/SignedinPage";
+import ModeratorPage from "./components/ModeratorPage";
 
 // change function request to add a real server to upload a photo
 // instead of a mockup with timeout
@@ -54,7 +54,7 @@ export default {
   loginComponent: LoginFirebase,
   authModule: authFirebase,
   dbModule: dbFirebase,
-  Page1: Page1,
-  Page2: Page2,
-  Page3: Page3,
+  AnonymousPage: AnonymousPage,
+  SignedinPage: SignedinPage,
+  ModeratorPage: ModeratorPage,
 }

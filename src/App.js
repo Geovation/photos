@@ -9,61 +9,48 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      page: Loading,
-      page1: false,
-      page2: false,
-      page3: false,
-      photopage: false,
+      renderPage: () => (<Loading />),
       file: null,
-      map: false,
-      loading: true,
       location: {},
       isSignedIn: undefined,
     };
   }
 
-  openPage1 = () => {
-    this.setState({ page1: true });
-  }
+  openAnonymousPage = () => {
+    this.setState({ renderPage: () => (<config.AnonymousPage closePage={this.closePage}/>) });
+  };
 
-  closePage1 = () => {
-    this.setState({ page1: false });
-  }
+  closePage = () => {
+    this.setState({ renderPage: () => (<LandingPage
+        openMenu={this.openMenu}
+        closeMenu={this.closeMenu}
+        openAnonymousPage={this.openAnonymousPage}
+        openSignedinPage={this.openSignedinPage}
+        openModeratorPage={this.openModeratorPage}
+        openPhotoPage={this.openPhotoPage}
+        openMap={this.openMap}
+        isSignedIn={this.state.isSignedIn}
+      />) });
+  };
 
-  openPage2 = () => {
-    this.setState({ page2: true });
-  }
+  openSignedinPage = () => {
+    this.setState({ renderPage: () => (<config.SignedinPage closePage={this.closePage}/>) });
+  };
 
-  closePage2 = () => {
-    this.setState({ page2: false });
-  }
-
-  openPage3 = () => {
-    this.setState({ page3: true });
-  }
-
-  closePage3 = () => {
-    this.setState({ page3: false });
-  }
+  openModeratorPage = () => {
+    this.setState({ renderPage: () => (<config.ModeratorPage closePage={this.closePage}/>) });
+  };
 
   openPhotoPage = (file) => {
     this.setState({
-      photopage: true,
+      renderPage: () => (<PhotoPage location={this.state.location} file={this.state.file} closePage={this.closePage}/>),
       file
     });
-  }
-
-  closePhotoPage = () => {
-    this.setState({ photopage: false });
-  }
+  };
 
   openMap = () => {
-    this.setState({ map: true });
-  }
-
-  closeMap = () => {
-    this.setState({ map: false });
-  }
+    this.setState({ renderPage: () => (<Map closePage={this.closePage}/>) });
+  };
 
   getLocation() {
     if (navigator && navigator.geolocation) {
@@ -74,23 +61,23 @@ class App extends Component {
         };
         navigator.geolocation.clearWatch(geoid);
         this.setState({
-          loading: false,
           location
         });
 
+        this.closePage();
+
       }, error => {
         console.log('Error: ', error.message);
-        this.setState({ loading: false });
+        this.closePage();
       }, {
         enableHighAccuracy: false,
         timeout: 3000
       });
     }
   }
+
   componentDidMount(){
     this.getLocation();
-
-    if (this.state.loading) { this.setState({ page: Loading}); }
 
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged((user) => {
 
@@ -109,40 +96,7 @@ class App extends Component {
 
   render() {
     return (
-      this.state.loading
-        ?
-        <Loading />
-        :
-        this.state.page1
-          ?
-          <config.Page1 closePage={this.closePage1}/>
-          :
-          this.state.page2
-            ?
-            <config.Page2 closePage={this.closePage2}/>
-            :
-            this.state.page3
-              ?
-              <config.Page3 closePage={this.closePage3}/>
-              :
-              this.state.photopage
-                ?
-                <PhotoPage location={this.state.location} file={this.state.file} closePage={this.closePhotoPage}/>
-                :
-                this.state.map
-                  ?
-                  <Map closePage={this.closeMap}/>
-                  :
-                  <LandingPage
-                    openMenu={this.openMenu}
-                    closeMenu={this.closeMenu}
-                    openPage1={this.openPage1}
-                    openPage2={this.openPage2}
-                    openPage3={this.openPage3}
-                    openPhotoPage={this.openPhotoPage}
-                    openMap={this.openMap}
-                    isSignedIn={this.state.isSignedIn}
-                  />
+      this.state.renderPage()
     );
   }
 }
