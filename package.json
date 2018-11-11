@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "react-scripts test --env=jsdom",
-    "build": "npm run build:react && npm run build:cordova",
+    "build": "npm run build:react && npm run build:pwa && npm run build:cordova",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-scripts eject",
@@ -14,6 +14,7 @@
     "start": "HTTPS=true react-scripts start",
     "build:cordova": "#cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova build && cd .. ",
     "build:react": "react-scripts build",
+    "build:pwa": "workbox generateSW",
     "start:prod": "npm run build && http-server build -S -o"
   },
   "repository": {
@@ -33,7 +34,8 @@
     "http-server": "^0.11.1",
     "jimp": "^0.5.6",
     "node-sass": "^4.10.0",
-    "random-location": "^1.0.12"
+    "random-location": "^1.0.12",
+    "workbox-cli": "^3.6.3"
   },
   "dependencies": {
     "@material-ui/core": "^3.4.0",

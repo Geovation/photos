@@ -4,15 +4,15 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog'
+import * as firebaseui from 'firebaseui';
 
 import firebaseApp from '../firebaseInit.js';
 import firebase from 'firebase/app';
 
 import 'firebase/auth';
 
-class LoginFirebase extends StyledFirebaseAuth {
+class LoginFirebase extends React.Component {
 
   /**
    *
@@ -30,7 +30,7 @@ class LoginFirebase extends StyledFirebaseAuth {
     this.uiConfig = {
       // signInFlow: 'popup',
       signInSuccessUrl: '/',
-      credentialHelper: 'none',
+      credentialHelper: firebaseui.auth.CredentialHelper.NONE,
       signInOptions: [
         // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
@@ -50,12 +50,13 @@ class LoginFirebase extends StyledFirebaseAuth {
   render() {
     return (
       <Dialog
-        fullScreen={false}
+        // style={{ padding: '0px 0px 0px 0px' }}
+        // fullScreen={false}
+        // fullWidth={true}
         open={this.props.open}
         onClose={this.handleClose}
-        aria-labelledby="responsive-dialog-title"
+        // aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">{"Login/Signup"}</DialogTitle>
         <DialogContent>
           <StyledFirebaseAuth
             // uiCallback={ui => ui.disableAutoSignIn()}
@@ -64,7 +65,6 @@ class LoginFirebase extends StyledFirebaseAuth {
           />
         </DialogContent>
       </Dialog>
-
     );
   }
 }

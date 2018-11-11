@@ -70,7 +70,7 @@ class App extends Component {
         console.log('Error: ', error.message);
         this.closePage();
       }, {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
         timeout: 3000
       });
     }
@@ -81,8 +81,8 @@ class App extends Component {
 
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged((user) => {
 
+      // lets start fresh if the user logged out
       if (this.state.isSignedIn && !user) {
-        // lets start fresh
         window.location.reload()
       }
 
@@ -90,8 +90,8 @@ class App extends Component {
     });
   }
 
-  async componentWillUnmount() {
-    await this.unregisterAuthObserver();
+  componentWillUnmount() {
+    this.unregisterAuthObserver();
   }
 
   render() {
