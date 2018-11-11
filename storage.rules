@@ -2,7 +2,16 @@ service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
       allow read: if true;
-      allow write: if false;
+    }
+
+    match /photos {
+    	match /{photoId} {
+      	match /original.jpg {
+        	allow write: if resource == null
+          							&& request.resource.size < 10 * 1024 * 1024
+                    		&& request.resource.contentType.matches('image/.*')
+        }
+      }
     }
   }
 }

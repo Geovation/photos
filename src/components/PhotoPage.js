@@ -7,7 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Loading from './Loading';
 import backButton from '../images/left-arrow.svg';
-import config from '../services/config';
+import config from '../custom/config';
 import './PhotoPage.scss';
 
 class PhotoPage extends Component {
@@ -20,7 +20,9 @@ class PhotoPage extends Component {
       message: '',
       value: '',
       sending: false
-    };
+    };;
+
+    this.base64 = null;
   }
 
   handleChange = (event) => {
@@ -52,11 +54,11 @@ class PhotoPage extends Component {
     this.setState({ opendialogtext: false });
   }
 
-  sendFile = () => {
+  sendFile = async () => {
     let data = {}
     const text =  this.state.value;
-    const { file, location } = this.props;
-    data['file'] = file;
+    const { location } = this.props;
+    data.base64 = this.base64;
     if (text !== '') {
       data['text'] = text;
       if (location) {
@@ -64,7 +66,13 @@ class PhotoPage extends Component {
         data['longitude'] = location.longitude;
       }
       this.setState({ sending: true });
-      config.request(this, data);
+      try {
+        const res = await config.uploadPhoto(data);
+        console.log(res);
+        this.openDialog("Photo was uploaded successfully");
+      } catch (e) {
+        this.openDialog(e.message || e);
+      }
     } else {
       this.openDialogText();
     }
@@ -89,6 +97,8 @@ class PhotoPage extends Component {
           canvas.style.height = 'auto';
           canvas.style.maxWidth = '100%';
         }
+
+        this.base64 = canvas.toDataURL("image/jpeg").split(",")[1];
       },
       { orientation: true }
     );

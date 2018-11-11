@@ -4,21 +4,11 @@ import authFirebase from './authFirebase'
 
 //change the logo file to upload your own Logo
 import imgHeader from '../images/logo.svg';
-import LoginFirebase from "./LoginFirebase";
+import LoginFirebase from "./components/LoginFirebase";
 import dbFirebase from "./dbFirebase";
-
-// change function request to add a real server to upload a photo
-// instead of a mockup with timeout
-const request = (that,data) =>{
-  let message;
-  if (Math.random()<0.5){
-      message = 'Photo was uploaded successfully';
-  }
-  else{
-      message = 'Failed to upload. Please try again!';
-  }
-  setTimeout(()=>that.openDialog(message),1 * 1000);
-}
+import AnonymousPage from "./components/AnonymousPage";
+import SignedinPage from "./components/SignedinPage";
+import ModeratorPage from "./components/ModeratorPage";
 
 const Header = () =>(
   <div style={headerstyles.headline}>
@@ -47,8 +37,11 @@ const headerstyles = {
 
 export default {
   Header,
-  request,
+  uploadPhoto: dbFirebase.uploadPhoto,
   loginComponent: LoginFirebase,
   authModule: authFirebase,
-  dbModule: dbFirebase
+  dbModule: dbFirebase,
+  AnonymousPage: AnonymousPage,
+  SignedinPage: SignedinPage,
+  ModeratorPage: ModeratorPage,
 }

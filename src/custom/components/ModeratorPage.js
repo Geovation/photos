@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import backButton from '../images/left-arrow.svg';
-import './Page1.scss';
+import './ModeratorPage.scss';
 
-class Page1 extends Component {
+class ModeratorPage extends Component {
 
   closePage =() => {
     this.props.closePage();
@@ -11,16 +11,16 @@ class Page1 extends Component {
 
   render() {
     return (
-      <div className='geovation-page1'>
+      <div className='geovation-page3'>
         <div className='headline'>
           <Button onClick={this.closePage}>
             <img className='buttonback' src={backButton} alt=''/>
           </Button>
-          <div className='headtext'>Page 1</div>
+          <div className='headtext'>Page 3</div>
         </div>
       </div>
     );
   }
 }
 
-export default Page1;
+export default ModeratorPage;
