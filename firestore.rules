@@ -13,8 +13,9 @@ service cloud.firestore {
     match /photos/{photo} {
       allow read: if true;
 
-      // write = update, delete, create
-      allow write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
+			allow create: if true;
+
+      allow update, delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
     }
 
     // data written by admin

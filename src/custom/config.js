@@ -10,19 +10,6 @@ import AnonymousPage from "./components/AnonymousPage";
 import SignedinPage from "./components/SignedinPage";
 import ModeratorPage from "./components/ModeratorPage";
 
-// change function request to add a real server to upload a photo
-// instead of a mockup with timeout
-const request = (that,data) =>{
-  let message;
-  if (Math.random()<0.5){
-      message = 'Photo was uploaded successfully';
-  }
-  else{
-      message = 'Failed to upload. Please try again!';
-  }
-  setTimeout(()=>that.openDialog(message),1 * 1000);
-}
-
 const Header = () =>(
   <div style={headerstyles.headline}>
     <div style={headerstyles.headtext}>GEOVATION</div>
@@ -50,7 +37,7 @@ const headerstyles = {
 
 export default {
   Header,
-  request,
+  uploadPhoto: dbFirebase.uploadPhoto,
   loginComponent: LoginFirebase,
   authModule: authFirebase,
   dbModule: dbFirebase,
