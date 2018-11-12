@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import PhotoPage from './components/PhotoPage';
 import LandingPage from './components/LandingPage';
 import Map from './components/Map';
@@ -13,6 +14,7 @@ class App extends Component {
       file: null,
       location: {},
       isSignedIn: undefined,
+      photosToModerate: []
     };
   }
 
@@ -38,7 +40,7 @@ class App extends Component {
   };
 
   openModeratorPage = () => {
-    this.setState({ renderPage: () => (<config.ModeratorPage closePage={this.closePage}/>) });
+    this.setState({ renderPage: () => (<config.ModeratorPage closePage={this.closePage} photos={this.state.photosToModerate}/>) });
   };
 
   openPhotoPage = (file) => {
@@ -52,6 +54,7 @@ class App extends Component {
     this.setState({ renderPage: () => (<Map closePage={this.closePage}/>) });
   };
 
+  // TODO: make it async
   getLocation() {
     if (navigator && navigator.geolocation) {
       const geoid = navigator.geolocation.watchPosition((position) => {
@@ -77,7 +80,9 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.getLocation();
+    this.unregisterPhotosToModerate = config.dbModule.onPhotosToModerate(photosToModerate => {
+      this.setState({photosToModerate })
+    });
 
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged((user) => {
 
@@ -88,10 +93,13 @@ class App extends Component {
 
       this.setState({isSignedIn: user});
     });
+
+    this.getLocation();
   }
 
   componentWillUnmount() {
     this.unregisterAuthObserver();
+    this.unregisterPhotosToModerate();
   }
 
   render() {

@@ -11,7 +11,7 @@ async function fetchPhotos() {
     "features": []
   };
 
-  const querySnapshot = await firestore.collection("photos").get();
+  const querySnapshot = await firestore.collection("photos").where("published", "==", true).get();
 
   querySnapshot.forEach( doc => {
       console.log(`${doc.id} =>`, doc.data());
@@ -43,14 +43,13 @@ async function saveMetadata(data) {
     data.owner_id = firebase.auth().currentUser.uid;
   }
   data.updated = firebase.firestore.FieldValue.serverTimestamp();
-  const photoRef = await firestore.collection('photos').add(data);
+  data.moderated = null;
 
-  return photoRef
+  return await firestore.collection('photos').add(data);
 }
 
 async function savePhoto(id, base64) {
   const originalJpgRef = storageRef.child("photos").child(id).child("original.jpg");
-  console.log(base64)
   return await originalJpgRef.putString(base64, "base64", {contentType:"image/jpeg"});
 }
 
@@ -64,4 +63,36 @@ async function getUser(id) {
   return fbUser.exists ? fbUser.data() : null;
 }
 
-export default {fetchPhotos, getUser, uploadPhoto};
+function onPhotosToModerate(fn) {
+  return firestore.collection('photos').where("moderated", "==", null ).onSnapshot((sn) => {
+    const docs = sn.docs.map( doc => {
+      const photo = doc.data();
+      photo.id = doc.id;
+      return photo;
+    } );
+    fn(docs);
+  });
+}
+
+async function rejectPhoto(photoId) {
+  return await firestore.collection('photos').doc(photoId).update({
+    moderated: firebase.firestore.FieldValue.serverTimestamp(),
+    published: false
+  });
+}
+
+async function approvePhoto(photoId) {
+  return await firestore.collection('photos').doc(photoId).update({
+    moderated: firebase.firestore.FieldValue.serverTimestamp(),
+    published: true
+  });
+}
+
+export default {
+  fetchPhotos,
+  getUser,
+  uploadPhoto,
+  onPhotosToModerate,
+  rejectPhoto,
+  approvePhoto
+};

@@ -27,7 +27,8 @@ async function addMetaDataSync(id) {
   const data = {
     updated: admin.firestore.FieldValue.serverTimestamp(),
     location: location,
-    description: `${id} some text here`
+    description: `${id} some text here`,
+    moderated: null
   };
 
   console.log(`Adding ${id} with data:`, data);

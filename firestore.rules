@@ -5,7 +5,11 @@ service cloud.firestore {
     	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
     }
 
-    function isOwner(uid) {
+    function isModerator() {
+    	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isModerator == true
+    }
+
+    function isUser(uid) {
     	return request.auth.uid == uid
     }
 
@@ -15,21 +19,15 @@ service cloud.firestore {
 
 			allow create: if true;
 
-      allow update, delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
+      allow update: if isModerator() && resource.data.moderated == null;
+
+      allow delete: if isAdmin();
     }
 
     // data written by admin
     match /users/{uid} {
-    	allow read: if isAdmin() || isOwner(uid);
+    	allow read: if isAdmin() || isUser(uid);
       allow write: if isAdmin();
     }
-
-    // only logged in users can add
-    // owners can update
-    // admin can  do anything
-    // match /moderations/{moderation} {
-    //
-    // }
-
   }
 }

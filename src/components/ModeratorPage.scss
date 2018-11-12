@@ -1,0 +1,13 @@
+@import "../custom/variables";
+
+.geovation-moderatorPage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  //background-color: $color1;
+
+  header {
+    background-color:$color2;
+  }
+}

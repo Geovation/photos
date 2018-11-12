@@ -8,7 +8,7 @@ import LoginFirebase from "./components/LoginFirebase";
 import dbFirebase from "./dbFirebase";
 import AnonymousPage from "./components/AnonymousPage";
 import SignedinPage from "./components/SignedinPage";
-import ModeratorPage from "./components/ModeratorPage";
+import ModeratorPage from "../components/ModeratorPage";
 
 const Header = () =>(
   <div style={headerstyles.headline}>
