@@ -16,6 +16,7 @@ class App extends Component {
       isSignedIn: undefined,
       photosToModerate: []
     };
+    this._isMounted = false;
   }
 
   openAnonymousPage = () => {
@@ -85,26 +86,31 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.unregisterPhotosToModerate = config.dbModule.onPhotosToModerate(photosToModerate => {
-      this.setState({photosToModerate })
-    });
-
+    this._isMounted = true;
+    //
+    // this.unregisterPhotosToModerate = config.dbModule.onPhotosToModerate(photosToModerate => {
+    //   if(this._isMounted){
+    //     this.setState({photosToModerate })
+    //   }
+    // });
+    //
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged((user) => {
 
       // lets start fresh if the user logged out
       if (this.state.isSignedIn && !user) {
         window.location.reload()
       }
-
-      this.setState({isSignedIn: user});
+      if(this._isMounted){
+        this.setState({isSignedIn: user});
+      }
     });
-
     this.getLocation();
   }
 
-  componentWillUnmount() {
-    this.unregisterAuthObserver();
-    this.unregisterPhotosToModerate();
+  async componentWillUnmount() {
+    this._isMounted = false;
+    await this.unregisterAuthObserver();
+    // await this.unregisterPhotosToModerate();
   }
 
   render() {
