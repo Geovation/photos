@@ -23,6 +23,8 @@ service cloud.firestore {
 
       allow update: if isModerator() && resource.data.moderated == null;
 
+      // allow update: if resource.data.owner_id == request.auth.uid && resource.data.moderated=null
+
       allow write: if isAdmin();
     }
 
