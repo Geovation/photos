@@ -88,11 +88,16 @@ async function approvePhoto(photoId) {
   });
 }
 
+async function disconnect() {
+  return firebaseApp.delete();
+}
+
 export default {
   fetchPhotos,
   getUser,
   uploadPhoto,
   onPhotosToModerate,
   rejectPhoto,
-  approvePhoto
+  approvePhoto,
+  disconnect
 };

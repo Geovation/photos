@@ -102,9 +102,13 @@ class App extends Component {
     this.getLocation();
   }
 
-  componentWillUnmount() {
-    this.unregisterAuthObserver();
-    this.unregisterPhotosToModerate();
+  async componentWillUnmount() {
+    // Terrible hack !!! it will be fixed with redux
+    this.setState = console.log;
+
+    await this.unregisterAuthObserver();
+    await this.unregisterPhotosToModerate();
+    await config.dbModule.disconnect();
   }
 
   render() {
