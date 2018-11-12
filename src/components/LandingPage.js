@@ -70,6 +70,11 @@ class LandingPage extends Component {
     this.props.openModeratorPage();
   }
 
+  openEverybodyPage = () => {
+    this.setState({ menuOpen: false });
+    this.props.openEverybodyPage();
+  }
+
   handleClickLoginLogout = () => {
     let loginLogoutDialogOpen = true;
 
@@ -152,9 +157,11 @@ class LandingPage extends Component {
                   <MenuList>
                     {!this.props.isSignedIn && <MenuItem onClick={this.openAnonymousPage}>Page for anonymous</MenuItem>}
                     {this.props.isSignedIn && <MenuItem onClick={this.openSignedinPage}>Page for {config.authModule.getCurrentUser().displayName}</MenuItem>}
-                    { config.authModule.isModerator() && <MenuItem onClick={this.openModeratorPage}>Page for Moderator</MenuItem>}
-                    <MenuItem onClick={this.openModeratorPage}>Page for everybody</MenuItem>
-                    <MenuItem onClick={this.handleClickLoginLogout}>{this.props.isSignedIn ? "Sign Out " + config.authModule.getCurrentUser().displayName : "Sign In"}</MenuItem>
+                    {config.authModule.isModerator() && <MenuItem onClick={this.openModeratorPage}>Page for Moderator</MenuItem>}
+                    <MenuItem onClick={this.openEverybodyPage}>Page for everybody</MenuItem>
+
+                    {!this.props.isSignedIn && <MenuItem onClick={this.handleClickLoginLogout}>{"Sign In"}</MenuItem>}
+                    {this.props.isSignedIn && <MenuItem onClick={this.handleClickLoginLogout}>{"Sign Out " + config.authModule.getCurrentUser().displayName}</MenuItem>}
 
                   </MenuList>
                 </ClickAwayListener>

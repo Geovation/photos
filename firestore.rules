@@ -5,31 +5,33 @@ service cloud.firestore {
     	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
     }
 
-    function isOwner(uid) {
+    function isModerator() {
+    	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isModerator == true
+    }
+
+    function isUser(uid) {
     	return request.auth.uid == uid
     }
 
     // anybody can read the photos but only admin can write
     match /photos/{photo} {
+      // allow read: if request.auth.uid != null;
       allow read: if true;
 
+      // allow create: if request.auth.uid != null;
 			allow create: if true;
 
-      allow update, delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.admin == true
+      allow update: if isModerator() && resource.data.moderated == null;
+
+      // allow update: if resource.data.owner_id == request.auth.uid && resource.data.moderated=null
+
+      allow write: if isAdmin();
     }
 
     // data written by admin
     match /users/{uid} {
-    	allow read: if isAdmin() || isOwner(uid);
+    	allow read: if isAdmin() || isUser(uid);
       allow write: if isAdmin();
     }
-
-    // only logged in users can add
-    // owners can update
-    // admin can  do anything
-    // match /moderations/{moderation} {
-    //
-    // }
-
   }
 }

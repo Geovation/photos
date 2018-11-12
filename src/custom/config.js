@@ -8,7 +8,8 @@ import LoginFirebase from "./components/LoginFirebase";
 import dbFirebase from "./dbFirebase";
 import AnonymousPage from "./components/AnonymousPage";
 import SignedinPage from "./components/SignedinPage";
-import ModeratorPage from "./components/ModeratorPage";
+import ModeratorPage from "../components/ModeratorPage";
+import EverybodyPage from "./components/EverybodyPage";
 
 const Header = () =>(
   <div style={headerstyles.headline}>
@@ -44,4 +45,5 @@ export default {
   AnonymousPage: AnonymousPage,
   SignedinPage: SignedinPage,
   ModeratorPage: ModeratorPage,
+  EverybodyPage: EverybodyPage
 }

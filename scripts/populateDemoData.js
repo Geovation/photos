@@ -3,6 +3,7 @@
 /**
  * This script just populate the DB with demo data. The ID's are prefixed with "test_" for make it easy to find them and
  * eventually delete them.
+ * Run it from this folder.
  */
 const admin = require('firebase-admin');
 const randomLocation = require('random-location');
@@ -27,7 +28,8 @@ async function addMetaDataSync(id) {
   const data = {
     updated: admin.firestore.FieldValue.serverTimestamp(),
     location: location,
-    description: `${id} some text here`
+    description: `${id} some text here`,
+    moderated: null
   };
 
   console.log(`Adding ${id} with data:`, data);
