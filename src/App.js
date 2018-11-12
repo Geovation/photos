@@ -29,6 +29,7 @@ class App extends Component {
         openAnonymousPage={this.openAnonymousPage}
         openSignedinPage={this.openSignedinPage}
         openModeratorPage={this.openModeratorPage}
+        openEverybodyPage={this.openEverybodyPage}
         openPhotoPage={this.openPhotoPage}
         openMap={this.openMap}
         isSignedIn={this.state.isSignedIn}
@@ -37,6 +38,10 @@ class App extends Component {
 
   openSignedinPage = () => {
     this.setState({ renderPage: () => (<config.SignedinPage closePage={this.closePage}/>) });
+  };
+
+  openEverybodyPage = () => {
+    this.setState({ renderPage: () => (<config.EverybodyPage closePage={this.closePage}/>) });
   };
 
   openModeratorPage = () => {

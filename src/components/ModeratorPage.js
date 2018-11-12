@@ -4,8 +4,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import DeleteIcon from '@material-ui/icons/Delete';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -38,12 +38,12 @@ class ModeratorPage extends Component {
     this.props.closePage();
   };
 
-  handleDeleteClick = (photo) =>
+  handleRejectClick = (photo) =>
     () => {
       console.log(photo);
       this.setState({
-        confirmDialogContent: `Are you sure you want to delete the photo "${photo.description}" (${photo.id}) ?`,
-        confirmDialogHandleOk: this.handleDeleteDialogOk(photo.id),
+        confirmDialogContent: `Are you sure you want to reject the photo "${photo.description}" (${photo.id}) ?`,
+        confirmDialogHandleOk: this.handleRejectDialogOk(photo.id),
         confirmDialogOpen: true
     });
   };
@@ -62,7 +62,7 @@ class ModeratorPage extends Component {
     this.setState({confirmDialogOpen: false})
   };
 
-  handleDeleteDialogOk = (id) => () => {
+  handleRejectDialogOk = (id) => () => {
     config.dbModule.rejectPhoto(id);
     this.setState({confirmDialogOpen: false})
   };
@@ -92,8 +92,8 @@ class ModeratorPage extends Component {
               <Avatar alt={photo.description} src={photo.thumbnail} />
               <ListItemText primary={`${photo.description}`} />
               <ListItemSecondaryAction>
-                <IconButton aria-label="Delete" onClick={this.handleDeleteClick(photo)}>
-                  <DeleteIcon />
+                <IconButton aria-label="Reject" onClick={this.handleRejectClick(photo)}>
+                  <ThumbDownIcon />
                 </IconButton>
                 <IconButton aria-label="Approve" onClick={this.handleApproveClick(photo)}>
                   <ThumbUpIcon />

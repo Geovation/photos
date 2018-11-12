@@ -16,7 +16,7 @@ class AnonymousPage extends Component {
           <Button onClick={this.closePage}>
             <img className='buttonback' src={backButton} alt=''/>
           </Button>
-          <div className='headtext'>Page 1</div>
+          <div className='headtext'>Page for Anonymous </div>
         </div>
       </div>
     );

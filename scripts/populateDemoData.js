@@ -3,6 +3,7 @@
 /**
  * This script just populate the DB with demo data. The ID's are prefixed with "test_" for make it easy to find them and
  * eventually delete them.
+ * Run it from this folder.
  */
 const admin = require('firebase-admin');
 const randomLocation = require('random-location');
