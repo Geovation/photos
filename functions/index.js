@@ -9,12 +9,11 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
-// Max height and width of the thumbnail in pixels.
-const THUMB_MAX_HEIGHT = 50;
-const THUMB_MAX_WIDTH = 50;
-// Thumbnail prefix added to file names.
+const THUMB_MAX_SIZE = 50;
 const THUMB_NAME = 'thumbnail.jpg';
 
+const MAIN_MAX_SIZE = 1014;
+const MAIN_NAME = '1024.jpg';
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * ImageMagick.
@@ -29,9 +28,11 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   const id = path.basename(path.dirname(filePath));
   const fileName = path.basename(filePath);
   const thumbFilePath = path.normalize(path.join(fileDir, `${THUMB_NAME}`));
+  const mainFilePath = path.normalize(path.join(fileDir, `${MAIN_NAME}`));
   const tempLocalFile = path.join(os.tmpdir(), filePath);
   const tempLocalDir = path.dirname(tempLocalFile);
   const tempLocalThumbFile = path.join(os.tmpdir(), thumbFilePath);
+  const tempLocalMainFile = path.join(os.tmpdir(), mainFilePath);
 
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
@@ -47,6 +48,8 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   const bucket = admin.storage().bucket(object.bucket);
   const file = bucket.file(filePath);
   const thumbFile = bucket.file(thumbFilePath);
+  const mainFile = bucket.file(mainFilePath);
+
   const metadata = {
     contentType: contentType,
     // To enable Client-side caching you can set the Cache-Control headers here. Uncomment below.
@@ -59,14 +62,21 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   await file.download({destination: tempLocalFile});
   console.log('The file has been downloaded to', tempLocalFile);
   // Generate a thumbnail using ImageMagick.
-  await spawn('convert', [tempLocalFile, '-thumbnail', `${THUMB_MAX_WIDTH}x${THUMB_MAX_HEIGHT}>`, tempLocalThumbFile], {capture: ['stdout', 'stderr']});
+  await spawn('convert', [tempLocalFile, '-thumbnail', `${THUMB_MAX_SIZE}x${THUMB_MAX_SIZE}>`, tempLocalThumbFile], {capture: ['stdout', 'stderr']});
   console.log('Thumbnail created at', tempLocalThumbFile);
+  await spawn('convert', [tempLocalFile, '-thumbnail', `${MAIN_MAX_SIZE}x${MAIN_MAX_SIZE}>`, tempLocalMainFile], {capture: ['stdout', 'stderr']});
+  console.log('Main created at', tempLocalMainFile);
+
   // Uploading the Thumbnail.
   await bucket.upload(tempLocalThumbFile, {destination: thumbFilePath, metadata: metadata});
   console.log('Thumbnail uploaded to Storage at', thumbFilePath);
+  await bucket.upload(tempLocalMainFile, {destination: mainFilePath, metadata: metadata});
+  console.log('Main uploaded to Storage at', mainFilePath);
   // Once the image has been uploaded delete the local files to free up disk space.
   fs.unlinkSync(tempLocalFile);
   fs.unlinkSync(tempLocalThumbFile);
+  fs.unlinkSync(tempLocalMainFile);
+
   // Get the Signed URLs for the thumbnail and original image.
   const config = {
     action: 'read',
@@ -76,7 +86,13 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   const thumbResult = await thumbFile.getSignedUrl(config)
   const thumbFileUrl = thumbResult[0];
 
-  const data = {thumbnail: thumbFileUrl};
+  const mainResult = await mainFile.getSignedUrl(config)
+  const mainFileUrl = mainResult[0];
+
+  const data = {
+    thumbnail: thumbFileUrl,
+    main: mainFileUrl
+  };
   console.log("Writting DB of", id), data;
   await admin.firestore().collection('photos').doc(id).update(data);
 
