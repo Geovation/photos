@@ -30,7 +30,9 @@ class ModeratorPage extends Component {
       confirmDialogContent: "",
       confirmDialogHandleCancel: this.handleCancelDialog,
       confirmDialogHandleOk: null,
-      confirmDialogOpen: false
+      confirmDialogOpen: false,
+      photoDetailsOpen: false,
+      photoDetailsId: null
     };
   }
 
@@ -72,6 +74,10 @@ class ModeratorPage extends Component {
     this.setState({confirmDialogOpen: false})
   };
 
+  handleListItemClick = (photoDetailsId) => () => {
+    this.setState({photoDetailsOpen: true, photoDetailsId});
+  };
+
   render() {
     return (
       <div className='geovation-moderatorPage'>
@@ -88,7 +94,7 @@ class ModeratorPage extends Component {
         </AppBar>
         <List dense={false}>
           {this.props.photos.map(photo => (
-            <ListItem key={photo.id} button>
+            <ListItem key={photo.id} button onClick={() => alert(photo)}>
               <Avatar alt={photo.description} src={photo.thumbnail} />
               <ListItemText primary={`${photo.description}`} />
               <ListItemSecondaryAction>
@@ -102,6 +108,8 @@ class ModeratorPage extends Component {
             </ListItem>
           ))}
         </List>
+        <PhotoDetails open={this.state.photoDetailsOpen}
+          photoId={this.state.photoDetailsId}/>
         <Dialog open={this.state.confirmDialogOpen}>
           <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
           <DialogContent>{this.state.confirmDialogContent}</DialogContent>
