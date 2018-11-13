@@ -4,10 +4,11 @@ const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
 const admin = require('firebase-admin');
 admin.initializeApp();
-const spawn = require('child-process-promise').spawn;
+admin.firestore().settings({ timestampsInSnapshots: true });
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+const gm = require('gm').subClass({imageMagick: true});
 
 const THUMB_MAX_SIZE = 50;
 const THUMB_NAME = 'thumbnail.jpg';
@@ -62,9 +63,9 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   await file.download({destination: tempLocalFile});
   console.log('The file has been downloaded to', tempLocalFile);
   // Generate a thumbnail using ImageMagick.
-  await spawn('convert', [tempLocalFile, '-thumbnail', `${THUMB_MAX_SIZE}x${THUMB_MAX_SIZE}>`, tempLocalThumbFile], {capture: ['stdout', 'stderr']});
+  await resize(tempLocalFile, tempLocalThumbFile, THUMB_MAX_SIZE);
   console.log('Thumbnail created at', tempLocalThumbFile);
-  await spawn('convert', [tempLocalFile, '-thumbnail', `${MAIN_MAX_SIZE}x${MAIN_MAX_SIZE}>`, tempLocalMainFile], {capture: ['stdout', 'stderr']});
+  await resize(tempLocalFile, tempLocalMainFile, MAIN_MAX_SIZE);
   console.log('Main created at', tempLocalMainFile);
 
   // Uploading the Thumbnail.
@@ -98,3 +99,11 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
 
   return console.log(`Thumbnail URLs saved to database.`);
 });
+
+async function resize(inFile, outFile, maxSize) {
+  return new Promise( (resolve, reject) => {
+    gm(inFile).resize(maxSize,maxSize).write(outFile, (err) => {
+      if (err) reject(err); else resolve();
+    });
+  });
+}
