@@ -96,6 +96,7 @@ class PhotoPage extends Component {
         else {
           canvas.style.height = 'auto';
           canvas.style.maxWidth = '100%';
+          canvas.style.maxHeight = '100%';
         }
 
         this.base64 = canvas.toDataURL("image/jpeg").split(",")[1];
