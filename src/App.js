@@ -16,6 +16,7 @@ class App extends Component {
       isSignedIn: undefined,
       photosToModerate: []
     };
+    this.geoid = null;
   }
 
   openAnonymousPage = () => {
@@ -59,15 +60,13 @@ class App extends Component {
     this.setState({ renderPage: () => (<Map closePage={this.closePage}/>) });
   };
 
-  // TODO: make it async
   getLocation() {
     if (navigator && navigator.geolocation) {
-      const geoid = navigator.geolocation.watchPosition((position) => {
-      const location = {
+      this.geoid = navigator.geolocation.watchPosition(position => {
+        const location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
-        navigator.geolocation.clearWatch(geoid);
         this.setState({
           location
         });
@@ -89,7 +88,7 @@ class App extends Component {
       this.setState({photosToModerate })
     });
 
-    this.unregisterAuthObserver = config.authModule.onAuthStateChanged((user) => {
+    this.unregisterAuthObserver = config.authModule.onAuthStateChanged(user => {
 
       // lets start fresh if the user logged out
       if (this.state.isSignedIn && !user) {
@@ -109,6 +108,9 @@ class App extends Component {
     await this.unregisterAuthObserver();
     await this.unregisterPhotosToModerate();
     await config.dbModule.disconnect();
+
+    if(navigator.geolocation) navigator.geolocation.clearWatch(this.geoid);
+
   }
 
   render() {
