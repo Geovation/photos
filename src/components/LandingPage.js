@@ -145,7 +145,7 @@ class LandingPage extends Component {
             <img src={menu} alt=''/>
           </Button>
         </div>
-        <Popper open={this.state.menuOpen} anchorEl={this.anchorEl} transition disablePortal>
+        <Popper className='popper' open={this.state.menuOpen} anchorEl={this.anchorEl} transition disablePortal>
           {({ TransitionProps, placement }) => (
             <Grow
              {...TransitionProps}
