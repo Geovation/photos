@@ -32,7 +32,7 @@ class LandingPage extends Component {
       fileInput.addEventListener('change', (e) => this.openFile(e));
     }
 
-    window.gtag('event', 'page_view', {
+    window.gtag && window.gtag('event', 'page_view', {
       'event_category': 'view',
       'event_label': 'LandingPage'
     });
