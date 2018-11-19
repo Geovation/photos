@@ -101,7 +101,11 @@ class PhotoPage extends Component {
 
         this.base64 = canvas.toDataURL("image/jpeg").split(",")[1];
       },
-      { orientation: true }
+      {
+        orientation: true,
+        maxWidth: config.MAX_IMAGE_SIZE,
+        maxHeight: config.MAX_IMAGE_SIZE
+      }
     );
   }
 

@@ -45,5 +45,6 @@ export default {
   AnonymousPage: AnonymousPage,
   SignedinPage: SignedinPage,
   ModeratorPage: ModeratorPage,
-  EverybodyPage: EverybodyPage
+  EverybodyPage: EverybodyPage,
+  MAX_IMAGE_SIZE: 2048
 }
