@@ -12,18 +12,18 @@ class App extends Component {
     this.state = {
       renderPage: () => (<Loading />),
       file: null,
-      location: {},
-      isSignedIn: undefined,
+      location: null,
+      isSignedIn: null,
       photosToModerate: []
     };
     this.geoid = null;
   }
 
   openAnonymousPage = () => {
-    this.setState({ renderPage: () => (<config.AnonymousPage closePage={this.closePage}/>) });
+    this.setState({ renderPage: () => (<config.AnonymousPage closePage={this.openLandingPage}/>) });
   };
 
-  closePage = () => {
+  openLandingPage = () => {
     this.setState({ renderPage: () => (<LandingPage
         openMenu={this.openMenu}
         closeMenu={this.closeMenu}
@@ -38,47 +38,42 @@ class App extends Component {
   };
 
   openSignedinPage = () => {
-    this.setState({ renderPage: () => (<config.SignedinPage closePage={this.closePage}/>) });
+    this.setState({ renderPage: () => (<config.SignedinPage closePage={this.openLandingPage}/>) });
   };
 
   openEverybodyPage = () => {
-    this.setState({ renderPage: () => (<config.EverybodyPage closePage={this.closePage}/>) });
+    this.setState({ renderPage: () => (<config.EverybodyPage closePage={this.openLandingPage}/>) });
   };
 
   openModeratorPage = () => {
-    this.setState({ renderPage: () => (<config.ModeratorPage closePage={this.closePage} photos={this.state.photosToModerate}/>) });
+    this.setState({ renderPage: () => (<config.ModeratorPage closePage={this.openLandingPage} photos={this.state.photosToModerate}/>) });
   };
 
   openPhotoPage = (file) => {
     this.setState({
-      renderPage: () => (<PhotoPage location={this.state.location} file={this.state.file} closePage={this.closePage}/>),
+      renderPage: () => (<PhotoPage location={this.state.location} file={this.state.file} closePage={this.openLandingPage}/>),
       file
     });
   };
 
   openMap = () => {
-    this.setState({ renderPage: () => (<Map closePage={this.closePage}/>) });
+    this.setState({ renderPage: () => (<Map closePage={this.openLandingPage}/>) });
   };
 
-  getLocation() {
+  setLocationWatcher() {
     if (navigator && navigator.geolocation) {
       this.geoid = navigator.geolocation.watchPosition(position => {
         const location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
+
         this.setState({
           location
         });
 
-        this.closePage();
-
       }, error => {
         console.log('Error: ', error.message);
-        this.closePage();
-      }, {
-        enableHighAccuracy: true,
-        timeout: 3000
       });
     }
   }
@@ -98,7 +93,9 @@ class App extends Component {
       this.setState({isSignedIn: user});
     });
 
-    this.getLocation();
+    this.setLocationWatcher();
+
+    this.openLandingPage();
   }
 
   async componentWillUnmount() {
@@ -109,8 +106,7 @@ class App extends Component {
     await this.unregisterPhotosToModerate();
     await config.dbModule.disconnect();
 
-    if(navigator.geolocation) navigator.geolocation.clearWatch(this.geoid);
-
+    if(this.geoid && navigator.geolocation) navigator.geolocation.clearWatch(this.geoid);
   }
 
   render() {

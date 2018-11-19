@@ -16,7 +16,6 @@
     .buttonback {
       height:25px
     }
-
   }
 
   .entertext {
@@ -56,5 +55,8 @@
 
   }
 
+}
 
-};
+.progress {
+  color: $color2 !important;
+}
