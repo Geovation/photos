@@ -8,7 +8,7 @@ service firebase.storage {
     	match /{photoId} {
       	match /original.jpg {
         	allow write: if resource == null
-          							&& request.resource.size < 10 * 1024 * 1024
+          							&& request.resource.size < 2 * 1024 * 1024
                     		&& request.resource.contentType.matches('image/.*')
         }
       }
