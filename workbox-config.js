@@ -5,19 +5,37 @@ module.exports = {
   ],
   "swDest": "build/sw.js",
   "runtimeCaching": [{
-    urlPattern: /.*/,
+      urlPattern: /.*pbf/,
 
-    // Apply a cache-first strategy.
-    handler: 'staleWhileRevalidate',
+      // Apply a cache-first strategy.
+      handler: 'cacheFirst',
 
-    options: {
-      // Use a custom cache name.
-      cacheName: 'all',
+      options: {
+        // Use a custom cache name.
+        cacheName: 'pbf',
 
-      // Only cache 10 images.*
-      expiration: {
-        maxEntries: 10000,
+        // Only cache 10k images.*
+        expiration: {
+          // maxEntries: 10000,
+          maxAgeSeconds: 60*60*24*180 // 180 days
+        },
+      },
+    }, {
+      urlPattern: /.*/,
+
+      // Apply a cache-first strategy.
+      handler: 'staleWhileRevalidate',
+
+      options: {
+        // Use a custom cache name.
+        cacheName: 'all',
+
+        // // Only cache 10k images.*
+        // expiration: {
+        //   maxEntries: 10000,
+        // },
       },
     },
-  }]
+
+  ]
 };
