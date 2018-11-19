@@ -9,6 +9,8 @@ import Loading from './Loading';
 import backButton from '../images/left-arrow.svg';
 import config from '../custom/config';
 import './PhotoPage.scss';
+import imageCompression from 'browser-image-compression';
+
 
 class PhotoPage extends Component {
   constructor(props) {
@@ -20,7 +22,7 @@ class PhotoPage extends Component {
       message: '',
       value: '',
       sending: false
-    };;
+    };
 
     this.base64 = null;
   }
@@ -59,6 +61,7 @@ class PhotoPage extends Component {
     const text =  this.state.value;
     const { location } = this.props;
     data.base64 = this.base64;
+    console.log(data);
     if (text !== '') {
       data['text'] = text;
       if (location) {
@@ -82,21 +85,41 @@ class PhotoPage extends Component {
     this.props.closePage();
   }
 
-  loadImage = () => {
+  resize = async (file) =>{
+    const imageFile = file;
+    const maxSizeMB = 5;
+    const compressedFile = await imageCompression(imageFile, maxSizeMB);
+    try{
+      console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`,imageFile);
+      console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`,compressedFile); // smaller than maxSizeMB
+      return compressedFile;
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+
+  loadImage = async() => {
+    const file = this.props.file;
+    this.resize(file);
+
     loadImage(
-      this.props.file, (img) =>{
+      file, (img) =>{
         document.getElementById('picture').appendChild(img);
         const canvas = document.getElementsByTagName('canvas')[0];
         const width = canvas.width;
         const height = canvas.height;
+        const style = canvas.style;
+
         if(width<height){
-          canvas.style.width = 'auto';
-          canvas.style.maxHeight = '100%';
+          style.width = 'auto';
+          style.maxHeight = '100%';
+          style.maxWidth = '100%';
         }
         else {
-          canvas.style.height = 'auto';
-          canvas.style.maxWidth = '100%';
-          canvas.style.maxHeight = '100%';
+          style.height = 'auto';
+          style.maxWidth = '100%';
+          style.maxHeight = '100%';
         }
 
         this.base64 = canvas.toDataURL("image/jpeg").split(",")[1];
@@ -130,7 +153,7 @@ class PhotoPage extends Component {
             Enter some text:
             <input type='text' className='inputtext' value={this.state.value} onChange={this.handleChange} />
           </div>
-          <div className='picture' id='picture'></div>
+          <div id='picture' className='picture'></div>
           <div className='buttonwrapper'>
             <Button className='sendbutton' onClick={this.sendFile}>
               Send Photo
