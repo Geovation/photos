@@ -7,10 +7,10 @@ import { Link } from "react-router-dom";
 import backButton from '../images/left-arrow.svg';
 import './Map.scss';
 import config from "../custom/config";
+import gps_fixed from '../images/gps_fixed.svg'
 
-const CENTER = [-0.1019313, 51.524311];
+let CENTER;
 const ZOOM = 10;
-
 class Map extends Component {
 
   constructor(props) {
@@ -19,6 +19,9 @@ class Map extends Component {
   }
 
   async componentDidMount(){
+    const location = this.props.location;
+    if (location) CENTER = [location.longitude,location.latitude];
+    else CENTER = [-0.07,51.58];
     const photos = config.dbModule.fetchPhotos();
 
     mapboxgl.accessToken = ''; // you can add a Mapbox access token here
@@ -59,6 +62,14 @@ class Map extends Component {
     });
   }
 
+  flyToGpsLocation = () =>{
+    if(this.props.location){
+      this.map.flyTo({
+        center: [this.props.location.longitude,this.props.location.latitude]
+      });
+    }
+  }
+
   render() {
     return (
       <div className="geovation-map">
@@ -74,6 +85,9 @@ class Map extends Component {
           <div className="headspace"/>
         </div>
         <div id='map' className="map"></div>
+        <div onClick={this.flyToGpsLocation} className="location">
+              <img src={gps_fixed} alt=''/>
+        </div>
       </div>
     );
   }

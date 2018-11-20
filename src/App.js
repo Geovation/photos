@@ -103,7 +103,7 @@ class App extends Component {
              location={this.state.location}
           />}
         />
-        <Route path="/map" component={Map} />
+        <Route path="/map" render={(props) => <Map {...props} location={this.state.location} />}/>
         <Route path="/signedin" component={SignedinPage} />
 
       </Switch>
