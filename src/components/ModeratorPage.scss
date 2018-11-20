@@ -5,9 +5,14 @@
   flex: 1;
   flex-direction: column;
   width: 100%;
-  //background-color: $color1;
+  height: 100vh;
 
   header {
     background-color:$color2;
+  }
+
+  .content {
+    flex: 1 1 100%;
+     overflow: scroll;
   }
 }

@@ -83,22 +83,26 @@ class ModeratorPage extends Component {
               Moderate Photos
           </Toolbar>
         </AppBar>
-        <List dense={false}>
-          {this.props.photos.map(photo => (
-            <ListItem key={photo.id} button>
-              <Avatar alt={photo.description} src={photo.thumbnail} />
-              <ListItemText primary={`${photo.description}`} />
-              <ListItemSecondaryAction>
-                <IconButton aria-label="Reject" onClick={this.handleRejectClick(photo)}>
-                  <ThumbDownIcon />
-                </IconButton>
-                <IconButton aria-label="Approve" onClick={this.handleApproveClick(photo)}>
-                  <ThumbUpIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
+
+        <div className={"content"}>
+          <List dense={false}>
+            {this.props.photos.map(photo => (
+              <ListItem key={photo.id} button>
+                <Avatar alt={photo.description} src={photo.thumbnail} />
+                <ListItemText primary={`${photo.description}`} />
+                <ListItemSecondaryAction>
+                  <IconButton aria-label="Reject" onClick={this.handleRejectClick(photo)}>
+                    <ThumbDownIcon />
+                  </IconButton>
+                  <IconButton aria-label="Approve" onClick={this.handleApproveClick(photo)}>
+                    <ThumbUpIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </div>
+
         <Dialog open={this.state.confirmDialogOpen}>
           <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
           <DialogContent>{this.state.confirmDialogContent}</DialogContent>
