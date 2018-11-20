@@ -11,6 +11,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -31,7 +36,9 @@ class ModeratorPage extends Component {
       confirmDialogContent: "",
       confirmDialogHandleCancel: this.handleCancelDialog,
       confirmDialogHandleOk: null,
-      confirmDialogOpen: false
+      confirmDialogOpen: false,
+      zoomDialogOpen: false,
+      photoSelected: {}
     };
   }
 
@@ -42,8 +49,17 @@ class ModeratorPage extends Component {
         confirmDialogContent: `Are you sure you want to reject the photo "${photo.description}" (${photo.id}) ?`,
         confirmDialogHandleOk: this.handleRejectDialogOk(photo.id),
         confirmDialogOpen: true
-    });
-  };
+      });
+    };
+
+  handlePhotoClick = (photoSelected) =>
+    () => {
+      this.setState({zoomDialogOpen:true, photoSelected});
+    };
+
+  handleZoomDialogClose = () => {
+    this.setState({zoomDialogOpen:false});
+  }
 
   handleApproveClick = (photo) =>
     () => {
@@ -61,12 +77,14 @@ class ModeratorPage extends Component {
 
   handleRejectDialogOk = (id) => () => {
     config.dbModule.rejectPhoto(id);
-    this.setState({confirmDialogOpen: false})
+    this.setState({confirmDialogOpen: false});
+    this.handleZoomDialogClose();
   };
 
   handleApproveDialogOk = (id) => () => {
     config.dbModule.approvePhoto(id);
-    this.setState({confirmDialogOpen: false})
+    this.setState({confirmDialogOpen: false});
+    this.handleZoomDialogClose();
   };
 
   render() {
@@ -87,7 +105,7 @@ class ModeratorPage extends Component {
         <div className={"content"}>
           <List dense={false}>
             {this.props.photos.map(photo => (
-              <ListItem key={photo.id} button>
+              <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
                 <Avatar alt={photo.description} src={photo.thumbnail} />
                 <ListItemText primary={`${photo.description}`} />
                 <ListItemSecondaryAction>
@@ -114,6 +132,38 @@ class ModeratorPage extends Component {
               Ok
             </Button>
           </DialogActions>
+        </Dialog>
+
+        <Dialog open={this.state.zoomDialogOpen} onClose={this.handleZoomDialogClose}>
+          <DialogContent>
+            <img className={"main-image"} alt={this.state.photoSelected.description} src={this.state.photoSelected.main}/>
+
+            <Card>
+              <CardActionArea>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    Another Photo
+                  </Typography>
+                  <Typography component="p">
+                    {this.state.photoSelected.description}
+                  </Typography>
+                  <Typography component="p">
+                    Location: {JSON.stringify(this.state.photoSelected.location)}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+              <CardActions>
+                <IconButton aria-label="Reject" onClick={this.handleRejectClick(this.state.photoSelected)}>
+                  <ThumbDownIcon />
+                </IconButton>
+                <IconButton aria-label="Approve" onClick={this.handleApproveClick(this.state.photoSelected)}>
+                  <ThumbUpIcon />
+                </IconButton>
+              </CardActions>
+            </Card>
+
+          </DialogContent>
+
         </Dialog>
       </div>
     );
