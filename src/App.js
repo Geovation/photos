@@ -26,7 +26,7 @@ class App extends Component {
     this.setState({
       file
     });
-    this.props.history.push('/photo')
+    this.props.history.push('/photo');
   };
 
 
@@ -64,7 +64,7 @@ class App extends Component {
     });
 
     this.setLocationWatcher();
-    }
+  }
 
   async componentWillUnmount() {
     // Terrible hack !!! it will be fixed with redux
