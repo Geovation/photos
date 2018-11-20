@@ -17,6 +17,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
+import { Link } from "react-router-dom";
 
 import './ModeratorPage.scss';
 import config from '../custom/config';
@@ -33,10 +34,6 @@ class ModeratorPage extends Component {
       confirmDialogOpen: false
     };
   }
-
-  closePage =() => {
-    this.props.closePage();
-  };
 
   handleRejectClick = (photo) =>
     () => {
@@ -78,12 +75,12 @@ class ModeratorPage extends Component {
 
         <AppBar position="static">
           <Toolbar>
-            <IconButton color="inherit" aria-label="Home" onClick={this.closePage}>
-              <ChevronLeftIcon />
-            </IconButton>
-            {/*<Typography variant="h6" color="inherit">*/}
-              Photos
-            {/*</Typography>*/}
+            <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
+              <IconButton color="inherit" aria-label="Home" >
+                <ChevronLeftIcon />
+              </IconButton>
+            </Link>
+              Moderate Photos
           </Toolbar>
         </AppBar>
         <List dense={false}>

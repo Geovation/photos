@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
+import { Route, Switch, withRouter} from "react-router-dom";
 
 import PhotoPage from './components/PhotoPage';
 import LandingPage from './components/LandingPage';
 import Map from './components/Map';
-import Loading from './components/Loading';
 import config from "./custom/config";
+import EverybodyPage from "./custom/components/EverybodyPage";
+import AnonymousPage from "./custom/components/AnonymousPage";
+import ModeratorPage from "./components/ModeratorPage";
+import SignedinPage from "./custom/components/SignedinPage";
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      renderPage: () => (<Loading />),
       file: null,
       location: null,
       isSignedIn: null,
@@ -19,46 +22,13 @@ class App extends Component {
     this.geoid = null;
   }
 
-  openAnonymousPage = () => {
-    this.setState({ renderPage: () => (<config.AnonymousPage closePage={this.openLandingPage}/>) });
-  };
-
-  openLandingPage = () => {
-    this.setState({ renderPage: () => (<LandingPage
-        openMenu={this.openMenu}
-        closeMenu={this.closeMenu}
-        openAnonymousPage={this.openAnonymousPage}
-        openSignedinPage={this.openSignedinPage}
-        openModeratorPage={this.openModeratorPage}
-        openEverybodyPage={this.openEverybodyPage}
-        openPhotoPage={this.openPhotoPage}
-        openMap={this.openMap}
-        isSignedIn={this.state.isSignedIn}
-      />) });
-  };
-
-  openSignedinPage = () => {
-    this.setState({ renderPage: () => (<config.SignedinPage closePage={this.openLandingPage}/>) });
-  };
-
-  openEverybodyPage = () => {
-    this.setState({ renderPage: () => (<config.EverybodyPage closePage={this.openLandingPage}/>) });
-  };
-
-  openModeratorPage = () => {
-    this.setState({ renderPage: () => (<config.ModeratorPage closePage={this.openLandingPage} photos={this.state.photosToModerate}/>) });
-  };
-
   openPhotoPage = (file) => {
     this.setState({
-      renderPage: () => (<PhotoPage location={this.state.location} file={this.state.file} closePage={this.openLandingPage}/>),
       file
     });
+    this.props.history.push('/photo')
   };
 
-  openMap = () => {
-    this.setState({ renderPage: () => (<Map closePage={this.openLandingPage}/>) });
-  };
 
   setLocationWatcher() {
     if (navigator && navigator.geolocation) {
@@ -94,9 +64,7 @@ class App extends Component {
     });
 
     this.setLocationWatcher();
-
-    this.openLandingPage();
-  }
+    }
 
   async componentWillUnmount() {
     // Terrible hack !!! it will be fixed with redux
@@ -111,9 +79,36 @@ class App extends Component {
 
   render() {
     return (
-      this.state.renderPage()
+      <Switch>
+        <Route exact path="/" render={(props) =>
+          <LandingPage {...props}
+            openMenu={this.openMenu}
+            closeMenu={this.closeMenu}
+            openSignedinPage={this.openSignedinPage}
+            isSignedIn={this.state.isSignedIn}
+            openPhotoPage={this.openPhotoPage}
+          />}
+        />
+
+        <Route path="/everybody" component={EverybodyPage} />
+        <Route path="/anonymous" component={AnonymousPage} />
+        <Route path="/moderator" render={(props) =>
+          <ModeratorPage {...props}
+            photos={this.state.photosToModerate}
+          />}
+        />
+        <Route path="/photo" render={(props) =>
+          <PhotoPage {...props}
+             file={this.state.file}
+             location={this.state.location}
+          />}
+        />
+        <Route path="/map" component={Map} />
+        <Route path="/signedin" component={SignedinPage} />
+
+      </Switch>
     );
   }
 }
 
-export default App;
+export default withRouter(App);
