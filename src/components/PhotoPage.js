@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link} from "react-router-dom";
+
 import loadImage from 'blueimp-load-image';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -64,7 +66,7 @@ class PhotoPage extends Component {
         try {
           const res = await config.uploadPhoto(data);
           console.log(res);
-          this.openDialog("Photo was uploaded successfully", this.closePage);
+          this.openDialog("Photo was uploaded successfully", this.goToRoot);
 
         } catch (e) {
           this.openDialog(e.message || e);
@@ -76,8 +78,8 @@ class PhotoPage extends Component {
     }
   }
 
-  closePage = () => {
-    this.props.closePage();
+  goToRoot() {
+    this.props.history.push('/');
   }
 
   loadImage = () => {
@@ -120,9 +122,11 @@ class PhotoPage extends Component {
     return (
        <div className='geovation-photos'>
           <div className='headline'>
-            <Button onClick={this.closePage}>
-              <img className='buttonback' src={backButton} alt=''/>
-            </Button>
+            <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
+              <Button>
+                <img className='buttonback' src={backButton} alt=''/>
+              </Button>
+            </Link>
             <div>PhotoPage</div>
           </div>
           <div className='entertext'>

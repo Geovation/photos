@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Button from '@material-ui/core/Button';
+import { Link } from "react-router-dom";
+
 import backButton from '../images/left-arrow.svg';
 import './Map.scss';
 import config from "../custom/config";
@@ -15,10 +17,6 @@ class Map extends Component {
     super(props);
     this.map = {};
   }
-
-  closePage =() => {
-    this.props.closePage();
-  };
 
   async componentDidMount(){
     const photos = config.dbModule.fetchPhotos();
@@ -66,9 +64,11 @@ class Map extends Component {
       <div className="geovation-map">
         <div className="headline">
           <div className="buttonwrapper">
-            <Button onClick={this.closePage}>
-              <img className="buttonback" src={backButton} alt=''/>
-            </Button>
+            <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
+              <Button>
+                <img className='buttonback' src={backButton} alt=''/>
+              </Button>
+            </Link>
           </div>
           <div className="headtext">Map</div>
           <div className="headspace"/>

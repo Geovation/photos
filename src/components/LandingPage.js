@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import menu from '../images/menu.svg';
-import camera from '../images/camera.svg';
-import map from '../images/map.svg';
+import { Link } from "react-router-dom";
+
 import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
@@ -9,6 +8,10 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+
+import menu from '../images/menu.svg';
+import camera from '../images/camera.svg';
+import map from '../images/map.svg';
 import CustomPhotoDialog from './CustomPhotoDialog';
 
 import config from '../custom/config';
@@ -55,26 +58,6 @@ class LandingPage extends Component {
      this.setState({ menuOpen: false });
   };
 
-  openAnonymousPage = () => {
-    this.setState({ menuOpen: false });
-    this.props.openAnonymousPage();
-  }
-
-  openSignedinPage = () => {
-    this.setState({ menuOpen: false });
-    this.props.openSignedinPage();
-  }
-
-  openModeratorPage = () => {
-    this.setState({ menuOpen: false });
-    this.props.openModeratorPage();
-  }
-
-  openEverybodyPage = () => {
-    this.setState({ menuOpen: false });
-    this.props.openEverybodyPage();
-  }
-
   handleClickLoginLogout = () => {
     let loginLogoutDialogOpen = true;
 
@@ -88,10 +71,6 @@ class LandingPage extends Component {
       loginLogoutDialogOpen
     });
   };
-
-  openMap = () => {
-    this.props.openMap();
-  }
 
   openCamera = () => {
     if (window.cordova) {
@@ -155,11 +134,11 @@ class LandingPage extends Component {
               <Paper>
                 <ClickAwayListener onClickAway={this.closeMenu}>
                   <MenuList>
-                    {!this.props.isSignedIn && <MenuItem onClick={this.openAnonymousPage}>Page for anonymous</MenuItem>}
-                    {this.props.isSignedIn && <MenuItem onClick={this.openSignedinPage}>Page for {config.authModule.getCurrentUser().displayName}</MenuItem>}
-                    {config.authModule.isModerator() && <MenuItem onClick={this.openModeratorPage}>Page for Moderator</MenuItem>}
-                    <MenuItem onClick={this.openEverybodyPage}>Page for everybody</MenuItem>
 
+                    {!this.props.isSignedIn &&  <Link to="/anonymous" style={{ textDecoration: 'none', display: 'block' }}><MenuItem>Page for anonymous</MenuItem></Link>}
+                    {this.props.isSignedIn &&  <Link to="/signedin" style={{ textDecoration: 'none', display: 'block' }}><MenuItem>Page for {config.authModule.getCurrentUser().displayName}</MenuItem></Link>}
+                    {config.authModule.isModerator() && <Link to="/moderator" style={{ textDecoration: 'none', display: 'block' }}><MenuItem>Page for Moderator</MenuItem></Link>}
+                    <Link to="/everybody" style={{ textDecoration: 'none', display: 'block' }}><MenuItem>Page for everybody</MenuItem></Link>
                     {!this.props.isSignedIn && <MenuItem onClick={this.handleClickLoginLogout}>{"Sign In"}</MenuItem>}
                     {this.props.isSignedIn && <MenuItem onClick={this.handleClickLoginLogout}>{"Sign Out " + config.authModule.getCurrentUser().displayName}</MenuItem>}
 
@@ -181,9 +160,11 @@ class LandingPage extends Component {
             <CustomPhotoDialog open={this.state.photoDialog} onClose={this.handleClose}/>
           </div>
           <div className='map'>
-            <Button onClick={this.openMap}>
-              <img className='imagemap' src={map} alt=''/>
-            </Button>
+            <Link to="/map" style={{ textDecoration: 'none', display: 'block' }}>
+              <Button>
+                <img className='imagemap' src={map} alt=''/>
+              </Button>
+            </Link>
           </div>
         </div>
         <div className='externallink'>
