@@ -11,6 +11,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -131,17 +136,34 @@ class ModeratorPage extends Component {
 
         <Dialog open={this.state.zoomDialogOpen} onClose={this.handleZoomDialogClose}>
           <DialogContent>
-            <img className={"main-image"} src={this.state.photoSelected.main}/>
+            <img className={"main-image"} alt={this.state.photoSelected.description} src={this.state.photoSelected.main}/>
+
+            <Card>
+              <CardActionArea>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    Another Photo
+                  </Typography>
+                  <Typography component="p">
+                    {this.state.photoSelected.description}
+                  </Typography>
+                  <Typography component="p">
+                    Location: {JSON.stringify(this.state.photoSelected.location)}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+              <CardActions>
+                <IconButton aria-label="Reject" onClick={this.handleRejectClick(this.state.photoSelected)}>
+                  <ThumbDownIcon />
+                </IconButton>
+                <IconButton aria-label="Approve" onClick={this.handleApproveClick(this.state.photoSelected)}>
+                  <ThumbUpIcon />
+                </IconButton>
+              </CardActions>
+            </Card>
+
           </DialogContent>
 
-          <DialogActions>
-            <IconButton aria-label="Reject" onClick={this.handleRejectClick(this.state.photoSelected)}>
-              <ThumbDownIcon />
-            </IconButton>
-            <IconButton aria-label="Approve" onClick={this.handleApproveClick(this.state.photoSelected)}>
-              <ThumbUpIcon />
-            </IconButton>
-          </DialogActions>
         </Dialog>
       </div>
     );
