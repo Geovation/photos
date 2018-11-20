@@ -31,7 +31,9 @@ class ModeratorPage extends Component {
       confirmDialogContent: "",
       confirmDialogHandleCancel: this.handleCancelDialog,
       confirmDialogHandleOk: null,
-      confirmDialogOpen: false
+      confirmDialogOpen: false,
+      zoomDialogOpen: false,
+      photoSelected: {}
     };
   }
 
@@ -42,8 +44,17 @@ class ModeratorPage extends Component {
         confirmDialogContent: `Are you sure you want to reject the photo "${photo.description}" (${photo.id}) ?`,
         confirmDialogHandleOk: this.handleRejectDialogOk(photo.id),
         confirmDialogOpen: true
-    });
-  };
+      });
+    };
+
+  handlePhotoClick = (photoSelected) =>
+    () => {
+      this.setState({zoomDialogOpen:true, photoSelected});
+    };
+
+  handleZoomDialogClose = () => {
+    this.setState({zoomDialogOpen:false});
+  }
 
   handleApproveClick = (photo) =>
     () => {
@@ -61,12 +72,14 @@ class ModeratorPage extends Component {
 
   handleRejectDialogOk = (id) => () => {
     config.dbModule.rejectPhoto(id);
-    this.setState({confirmDialogOpen: false})
+    this.setState({confirmDialogOpen: false});
+    this.handleZoomDialogClose();
   };
 
   handleApproveDialogOk = (id) => () => {
     config.dbModule.approvePhoto(id);
-    this.setState({confirmDialogOpen: false})
+    this.setState({confirmDialogOpen: false});
+    this.handleZoomDialogClose();
   };
 
   render() {
@@ -87,7 +100,7 @@ class ModeratorPage extends Component {
         <div className={"content"}>
           <List dense={false}>
             {this.props.photos.map(photo => (
-              <ListItem key={photo.id} button>
+              <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
                 <Avatar alt={photo.description} src={photo.thumbnail} />
                 <ListItemText primary={`${photo.description}`} />
                 <ListItemSecondaryAction>
@@ -113,6 +126,21 @@ class ModeratorPage extends Component {
             <Button onClick={this.state.confirmDialogHandleOk} color="primary">
               Ok
             </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={this.state.zoomDialogOpen} onClose={this.handleZoomDialogClose}>
+          <DialogContent>
+            <img className={"main-image"} src={this.state.photoSelected.main}/>
+          </DialogContent>
+
+          <DialogActions>
+            <IconButton aria-label="Reject" onClick={this.handleRejectClick(this.state.photoSelected)}>
+              <ThumbDownIcon />
+            </IconButton>
+            <IconButton aria-label="Approve" onClick={this.handleApproveClick(this.state.photoSelected)}>
+              <ThumbUpIcon />
+            </IconButton>
           </DialogActions>
         </Dialog>
       </div>
