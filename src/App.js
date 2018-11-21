@@ -35,7 +35,8 @@ class App extends Component {
       this.geoid = navigator.geolocation.watchPosition(position => {
         const location = {
           latitude: position.coords.latitude,
-          longitude: position.coords.longitude
+          longitude: position.coords.longitude,
+          online: true
         };
         this.setState({
           location
@@ -43,6 +44,13 @@ class App extends Component {
 
       }, error => {
         console.log('Error: ', error.message);
+        const location = this.state.location;
+        if (location)  {
+          location.online = false;
+        }
+        this.setState({
+          location
+        });
       });
     }
   }
