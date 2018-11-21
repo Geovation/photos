@@ -3,11 +3,11 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Button from '@material-ui/core/Button';
 import { Link } from "react-router-dom";
+import GpsFixed from '@material-ui/icons/GpsFixed';
 
 import backButton from '../images/left-arrow.svg';
 import './Map.scss';
 import config from "../custom/config";
-import gps_fixed from '../images/gps_fixed.svg'
 
 let CENTER;
 const ZOOM = 10;
@@ -85,9 +85,9 @@ class Map extends Component {
           <div className="headspace"/>
         </div>
         <div id='map' className="map"></div>
-        <div onClick={this.flyToGpsLocation} className="location">
-              <img src={gps_fixed} alt=''/>
-        </div>
+        <Button variant="fab" className="location" onClick={this.flyToGpsLocation} >
+          <GpsFixed/>
+        </Button>
       </div>
     );
   }
