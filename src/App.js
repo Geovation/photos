@@ -9,12 +9,7 @@ import EverybodyPage from './custom/components/EverybodyPage';
 import AnonymousPage from './custom/components/AnonymousPage';
 import ModeratorPage from './components/ModeratorPage';
 import SignedinPage from './custom/components/SignedinPage';
-
-
 import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-
 
 class App extends Component {
   constructor(props){

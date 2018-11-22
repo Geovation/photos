@@ -27,6 +27,8 @@ import { Link } from "react-router-dom";
 import './ModeratorPage.scss';
 import config from '../custom/config';
 
+import placeholderImage from '../images/logo.svg'
+
 class ModeratorPage extends Component {
 
   constructor(props) {
@@ -106,7 +108,10 @@ class ModeratorPage extends Component {
           <List dense={false}>
             {this.props.photos.map(photo => (
               <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
-                <Avatar alt={photo.description} src={photo.thumbnail} />
+                <Avatar
+                 imgProps={{ onError: (e) => { e.target.src=placeholderImage} }}
+                 alt={photo.description}
+                 src={photo.thumbnail} />
                 <ListItemText primary={`${photo.description}`} />
                 <ListItemSecondaryAction>
                   <IconButton aria-label="Reject" onClick={this.handleRejectClick(photo)}>
