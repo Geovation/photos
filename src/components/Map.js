@@ -9,6 +9,7 @@ import GpsOff from '@material-ui/icons/GpsOff';
 import backButton from '../images/left-arrow.svg';
 import './Map.scss';
 import config from "../custom/config";
+import placeholderImage from '../images/logo.svg';
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -49,7 +50,7 @@ class Map extends Component {
         // create a DOM element for the marker
         const el = document.createElement('div');
         el.className = 'marker';
-        el.style.backgroundImage = `url(${feature.properties.thumbnail})`;
+        el.style.backgroundImage = `url(${feature.properties.thumbnail}),url(${placeholderImage})`;
 
         el.addEventListener('click', function() {
             window.alert(`${feature.properties.id} => ${feature.properties.description}`);
