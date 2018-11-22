@@ -141,7 +141,7 @@ class ModeratorPage extends Component {
 
         <Dialog open={this.state.zoomDialogOpen} onClose={this.handleZoomDialogClose}>
           <DialogContent>
-            <img className={"main-image"} alt={this.state.photoSelected.description} src={this.state.photoSelected.main}/>
+            <img onError={(e) => { e.target.src=placeholderImage}} className={"main-image"} alt={this.state.photoSelected.description} src={this.state.photoSelected.main}/>
 
             <Card>
               <CardActionArea>
