@@ -139,7 +139,7 @@ class LandingPage extends Component {
                     {this.props.isSignedIn &&  <Link to="/signedin" style={{ textDecoration: 'none', display: 'block' }}><MenuItem>Page for {config.authModule.getCurrentUser().displayName}</MenuItem></Link>}
                     {config.authModule.isModerator() && <Link to="/moderator" style={{ textDecoration: 'none', display: 'block' }}><MenuItem>Page for Moderator</MenuItem></Link>}
                     <Link to="/everybody" style={{ textDecoration: 'none', display: 'block' }}><MenuItem>Page for everybody</MenuItem></Link>
-                    {!this.props.isSignedIn && <MenuItem onClick={this.handleClickLoginLogout}>{"Sign In"}</MenuItem>}
+                    {!this.props.isSignedIn && <MenuItem disabled={!this.props.online} onClick={this.handleClickLoginLogout}>{"Sign In"}</MenuItem>}
                     {this.props.isSignedIn && <MenuItem onClick={this.handleClickLoginLogout}>{"Sign Out " + config.authModule.getCurrentUser().displayName}</MenuItem>}
 
                   </MenuList>
@@ -172,16 +172,12 @@ class LandingPage extends Component {
             External Link
           </Button>
         </div>
-
         <Login
           open={this.state.loginLogoutDialogOpen && this.props.isSignedIn !== undefined && !this.state.isSignedIn}
           handleClose={this.handleLoginClose}
           loginComponent={config.loginComponent}
         />
-
       </div>
-
-
     );
   }
 }

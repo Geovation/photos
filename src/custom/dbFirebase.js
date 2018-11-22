@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 
 import firebaseApp from './firebaseInit.js';
+import 'firebase/database';
 
 const firestore = firebaseApp.firestore();
 const storageRef = firebaseApp.storage().ref();
@@ -92,7 +93,20 @@ async function disconnect() {
   return firebaseApp.delete();
 }
 
+function onConnectionStateChanged(fn){
+
+  const conRef = firebase.database().ref('.info/connected');
+
+  function connectedCallBack(snapshot) {
+    fn(Boolean(snapshot.val()));
+  }
+  conRef.on('value', connectedCallBack);
+
+  return async () => conRef.off('value', connectedCallBack);
+}
+
 export default {
+  onConnectionStateChanged,
   fetchPhotos,
   getUser,
   uploadPhoto,

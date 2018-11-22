@@ -69,8 +69,8 @@ class Map extends Component {
   }
 
   render() {
-    const gpsOffline = !(this.props.location && this.props.location.online);
-    const gpsDisabled = !this.props.location;
+    const gpsOffline = !(this.props.location.online);
+    const gpsDisabled = !this.props.location.updated;
     return (
       <div className="geovation-map">
         <div className="headline">
