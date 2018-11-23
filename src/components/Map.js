@@ -29,7 +29,7 @@ class Map extends Component {
     this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json', //stylesheet location
-      center: location.updated ? [location.longitude,location.latitude] : CENTER, // starting position [lng, lat]
+      center: location.updated ? [location.longitude, location.latitude] : CENTER, // starting position [lng, lat]
       zoom: ZOOM, // starting zoom
       customAttribution: 'Contains OS data &copy; Crown copyright and database rights 2018'
     });
