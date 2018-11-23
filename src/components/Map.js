@@ -50,7 +50,7 @@ class Map extends Component {
         // create a DOM element for the marker
         const el = document.createElement('div');
         el.className = 'marker';
-        el.style.backgroundImage = `url(${feature.properties.thumbnail}),url(${placeholderImage})`;
+        el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage})`;
 
         el.addEventListener('click', function() {
             window.alert(`${feature.properties.id} => ${feature.properties.description}`);
@@ -65,7 +65,7 @@ class Map extends Component {
 
   flyToGpsLocation = () =>{
     this.map.flyTo({
-      center: [this.props.location.longitude,this.props.location.latitude]
+      center: [this.props.location.longitude, this.props.location.latitude]
     });
   }
 
