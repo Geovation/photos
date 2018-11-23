@@ -76,7 +76,7 @@ class Map extends Component {
               feature
             })
         });
-        console.log(Date(feature.properties.updated.seconds));
+
         // add marker to map
         new mapboxgl.Marker(el)
             .setLngLat(feature.geometry.coordinates)
