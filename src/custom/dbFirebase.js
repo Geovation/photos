@@ -1,7 +1,6 @@
 import firebase from 'firebase/app';
 
 import firebaseApp from './firebaseInit.js';
-import 'firebase/database';
 
 const firestore = firebaseApp.firestore();
 const storageRef = firebaseApp.storage().ref();
