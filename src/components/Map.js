@@ -11,6 +11,13 @@ import './Map.scss';
 import config from "../custom/config";
 import placeholderImage from '../images/logo.svg';
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
 
@@ -18,6 +25,17 @@ class Map extends Component {
 
   constructor(props) {
     super(props);
+    this.state={
+      openDialog:false,
+      feature: {
+        properties: {
+          updated:{}
+        },
+        geometry: {
+          coordinates:{}
+        }
+      }
+    }
     this.map = {};
   }
 
@@ -52,8 +70,11 @@ class Map extends Component {
         el.className = 'marker';
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage})`;
 
-        el.addEventListener('click', function() {
-            window.alert(`${feature.properties.id} => ${feature.properties.description}`);
+        el.addEventListener('click',()=> {
+            this.setState({
+              openDialog:true,
+              feature
+            })
         });
 
         // add marker to map
@@ -69,7 +90,12 @@ class Map extends Component {
     });
   }
 
+  handleDialogClose = () => {
+    this.setState({openDialog:false});
+  }
+
   render() {
+    const feature = this.state.feature;
     const gpsOffline = !(this.props.location.online);
     const gpsDisabled = !this.props.location.updated;
     return (
@@ -89,6 +115,29 @@ class Map extends Component {
         <Button variant="fab" className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
           {gpsOffline ? <GpsOff/> : <GpsFixed/>}
         </Button>
+
+        <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
+          <DialogContent>
+            <img onError={(e) => { e.target.src=placeholderImage}} className={"main-image"} alt={''} src={feature.properties.main}/>
+            <Card>
+              <CardActionArea>
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {feature.properties.description}
+                  </Typography>
+                  <Typography component="p">
+                    Coordinates: {feature.geometry.coordinates[0]}, {feature.geometry.coordinates[1]}
+                  </Typography>
+                  <Typography component="p">
+                    Time: {Date(feature.properties.updated.seconds)}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Card>
+
+          </DialogContent>
+
+        </Dialog>
       </div>
     );
   }

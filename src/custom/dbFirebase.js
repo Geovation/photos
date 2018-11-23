@@ -28,7 +28,9 @@ async function fetchPhotos() {
         "properties": {
           "id": doc.id,
           "description": doc.data().description,
-          "thumbnail": doc.data().thumbnail
+          "thumbnail": doc.data().thumbnail,
+          "main": doc.data().main,
+          "updated": doc.data().updated,
         }
       };
 
