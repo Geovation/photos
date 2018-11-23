@@ -37,7 +37,8 @@ class App extends Component {
         const location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-          online: true
+          online: true,
+          updated: new Date(position.timestamp) // it indicate the freshness of the location.
         };
         this.setState({
           location
@@ -46,9 +47,7 @@ class App extends Component {
       }, error => {
         console.log('Error: ', error.message);
         const location = this.state.location;
-        if (location)  {
-          location.online = false;
-        }
+        location.online = false;
         this.setState({
           location
         });
