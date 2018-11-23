@@ -9,6 +9,7 @@ import GpsOff from '@material-ui/icons/GpsOff';
 import backButton from '../images/left-arrow.svg';
 import './Map.scss';
 import config from "../custom/config";
+import placeholderImage from '../images/logo.svg';
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -28,7 +29,7 @@ class Map extends Component {
     this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json', //stylesheet location
-      center: location ? [location.longitude,location.latitude] : CENTER, // starting position [lng, lat]
+      center: location.updated ? [location.longitude, location.latitude] : CENTER, // starting position [lng, lat]
       zoom: ZOOM, // starting zoom
       customAttribution: 'Contains OS data &copy; Crown copyright and database rights 2018'
     });
@@ -49,7 +50,7 @@ class Map extends Component {
         // create a DOM element for the marker
         const el = document.createElement('div');
         el.className = 'marker';
-        el.style.backgroundImage = `url(${feature.properties.thumbnail})`;
+        el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage})`;
 
         el.addEventListener('click', function() {
             window.alert(`${feature.properties.id} => ${feature.properties.description}`);
@@ -64,13 +65,13 @@ class Map extends Component {
 
   flyToGpsLocation = () =>{
     this.map.flyTo({
-      center: [this.props.location.longitude,this.props.location.latitude]
+      center: [this.props.location.longitude, this.props.location.latitude]
     });
   }
 
   render() {
-    const gpsOffline = !(this.props.location && this.props.location.online);
-    const gpsDisabled = !this.props.location;
+    const gpsOffline = !(this.props.location.online);
+    const gpsDisabled = !this.props.location.updated;
     return (
       <div className="geovation-map">
         <div className="headline">
