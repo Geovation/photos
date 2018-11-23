@@ -14,7 +14,7 @@ const LONDON_COORDS = {
   latitude: 51.509865,
   longitude: -0.118092
 };
-const R = 20 * 1000;
+const R = 50 * 1000;
 
 let image;
 let font;
@@ -23,13 +23,17 @@ let bucket;
 let db;
 
 async function addMetaDataSync(id) {
+
+  const moderated = Math.random() > 0.5 ? true: null;
+
   const rndLocation = randomLocation.randomCirclePoint(LONDON_COORDS, R);
   const location = new admin.firestore.GeoPoint(rndLocation.latitude, rndLocation.longitude);
   const data = {
     updated: admin.firestore.FieldValue.serverTimestamp(),
     location: location,
     description: `${id} some text here`,
-    moderated: null
+    moderated: moderated ? admin.firestore.FieldValue.serverTimestamp() : null,
+    published: moderated 
   };
 
   console.log(`Adding ${id} with data:`, data);
