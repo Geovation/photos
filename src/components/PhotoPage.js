@@ -51,7 +51,7 @@ class PhotoPage extends Component {
     if (!this.props.location.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
     } else if(!this.props.online){
-      this.openDialog("Could not establish connection to internet. You won't be able to upload an image.");
+      this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
     } else {
 
       let data = {};
