@@ -37,6 +37,7 @@ class Map extends Component {
       }
     }
     this.map = {};
+    this.prevFeatures=[];
   }
 
   async componentDidMount(){
@@ -154,26 +155,32 @@ class Map extends Component {
     const features = this.map.queryRenderedFeatures(null,{ layers: ['unclustered-point'] });
     let sections = document.getElementsByClassName('marker');
 
-    //clear markers
-    const length = sections.length
-    for (let i = 0; i < length; i++){
+    //check for new features
+    if(JSON.stringify(features) !== JSON.stringify(this.prevFeatures)){
+      const length = sections.length;
+      for (let i = 0; i < length; i++){
         sections[0].remove()
+      }
+
+      features.forEach(feature=>{
+        const el = document.createElement('div');
+        el.className = 'marker';
+        // el.id=`${feature.properties.id}`;
+        el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage})`;
+        el.addEventListener('click',()=>this.setState({openDialog:true,feature}));
+
+        new mapboxgl.Marker(el)
+          .setLngLat(feature.geometry.coordinates)
+          .addTo(this.map);
+      })
+
     }
 
-    //add new markers
-    features.forEach(feature=>{
-      const el = document.createElement('div');
-      el.className = 'marker';
-      el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage})`;
-      el.addEventListener('click',()=>this.setState({openDialog:true,feature}));
-
-      new mapboxgl.Marker(el)
-        .setLngLat(feature.geometry.coordinates)
-        .addTo(this.map);
-    })
+    this.prevFeatures = features.slice();;
   }
 
   render() {
+
     const feature = this.state.feature;
     const gpsOffline = !(this.props.location.online);
     const gpsDisabled = !this.props.location.updated;
