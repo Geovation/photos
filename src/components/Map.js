@@ -43,7 +43,6 @@ class Map extends Component {
     const location = this.props.location;
     const photos = config.dbModule.fetchPhotos();
 
-    mapboxgl.accessToken = ''; // you can add a Mapbox access token here
     this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json', //stylesheet location
@@ -54,7 +53,7 @@ class Map extends Component {
 
     this.map.on('load', async () => {
       const geojson = await photos;
-      this.addFeaturesToMap(geojson.features);
+      this.addFeaturesToMap(geojson);
     });
 
     window.gtag('event', 'page_view', {
@@ -63,24 +62,81 @@ class Map extends Component {
     });
   }
 
-  addFeaturesToMap = features => {
-    features.forEach( feature => {
-        // create a DOM element for the marker
-        const el = document.createElement('div');
-        el.className = 'marker';
-        el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage})`;
+  addFeaturesToMap = geojson => {
+    this.map.addSource("data", {
+        type: "geojson",
+        data: geojson,
+        cluster: true,
+        clusterMaxZoom: 14, // Max zoom to cluster points on
+        clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+    });
 
-        el.addEventListener('click',()=> {
-            this.setState({
-              openDialog:true,
-              feature
-            })
-        });
+    this.map.addLayer({
+        id: "clusters",
+        type: "circle",
+        source: "data",
+        filter: ["has", "point_count"],
+        paint: {
+            // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+            // with three steps to implement three types of circles:
+            //   * Blue, 20px circles when point count is less than 100
+            //   * Yellow, 30px circles when point count is between 100 and 750
+            //   * Pink, 40px circles when point count is greater than or equal to 750
+            "circle-color": [
+                "step",
+                ["get", "point_count"],
+                "#51bbd6",
+                100,
+                "#f1f075",
+                750,
+                "#f28cb1"
+            ],
+            "circle-radius": [
+                "step",
+                ["get", "point_count"],
+                20,
+                100,
+                30,
+                750,
+                40
+            ]
+        }
+    });
 
-        // add marker to map
-        new mapboxgl.Marker(el)
-            .setLngLat(feature.geometry.coordinates)
-            .addTo(this.map);
+    this.map.addLayer({
+        id: "cluster-count",
+        type: "symbol",
+        source: "data",
+        filter: ["has", "point_count"],
+        layout: {
+            "text-field": "{point_count_abbreviated}",
+            "text-font": ["Source Sans Pro Regular"],
+            "text-size": 12
+        }
+    });
+
+    this.map.addLayer({
+        id: "unclustered-point",
+        type: "circle",
+        source: "data",
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+            "circle-color": "#11b4da",
+            "circle-radius": 4,
+            "circle-stroke-width": 1,
+            "circle-stroke-color": "#fff"
+        }
+    });
+
+    this.map.on('render', 'unclustered-point',()=> {
+      this.getMarkers();
+    });
+
+    this.map.on('mouseenter', 'unclustered-point',()=> {
+        this.map.getCanvas().style.cursor = 'pointer';
+    });
+    this.map.on('mouseleave', 'unclustered-point',()=> {
+        this.map.getCanvas().style.cursor = '';
     });
   }
 
@@ -92,6 +148,29 @@ class Map extends Component {
 
   handleDialogClose = () => {
     this.setState({openDialog:false});
+  }
+
+  getMarkers = () =>{
+    const features = this.map.queryRenderedFeatures(null,{ layers: ['unclustered-point'] });
+    let sections = document.getElementsByClassName('marker');
+
+    //clear markers
+    const length = sections.length
+    for (let i = 0; i < length; i++){
+        sections[0].remove()
+    }
+
+    //add new markers
+    features.forEach(feature=>{
+      const el = document.createElement('div');
+      el.className = 'marker';
+      el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage})`;
+      el.addEventListener('click',()=>this.setState({openDialog:true,feature}));
+
+      new mapboxgl.Marker(el)
+        .setLngLat(feature.geometry.coordinates)
+        .addTo(this.map);
+    })
   }
 
   render() {
