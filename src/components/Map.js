@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Button from '@material-ui/core/Button';
@@ -25,11 +26,11 @@ class Map extends Component {
 
   constructor(props) {
     super(props);
-    this.state={
-      openDialog:false,
+    this.state = {
+      openDialog: false,
       feature: {
         properties: {
-          updated:{}
+          updated: {}
         },
         geometry: {
           coordinates:{}
@@ -37,7 +38,7 @@ class Map extends Component {
       }
     }
     this.map = {};
-    this.prevFeatures=[];
+    this.renderedThumbnails = {};
   }
 
   async componentDidMount(){
@@ -129,15 +130,28 @@ class Map extends Component {
         }
     });
 
-    this.map.on('render', 'unclustered-point',()=> {
-      this.getMarkers();
+    this.map.on('render', 'unclustered-point', e => {
+      this.updateRenderedThumbails(e.features);
     });
 
-    this.map.on('mouseenter', 'unclustered-point',()=> {
+    this.map.on('mouseenter', 'clusters', () => {
         this.map.getCanvas().style.cursor = 'pointer';
     });
-    this.map.on('mouseleave', 'unclustered-point',()=> {
+    this.map.on('mouseleave', 'clusters', () => {
         this.map.getCanvas().style.cursor = '';
+    });
+
+    this.map.on('click', 'clusters', (e) => {
+      const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+      const clusterId = features[0].properties.cluster_id;
+      this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
+        if (err)
+            return;
+        this.map.easeTo({
+            center: features[0].geometry.coordinates,
+            zoom: zoom
+        });
+      });
     });
   }
 
@@ -151,32 +165,36 @@ class Map extends Component {
     this.setState({openDialog:false});
   }
 
-  getMarkers = () =>{
-    const features = this.map.queryRenderedFeatures(null,{ layers: ['unclustered-point'] });
-    let sections = document.getElementsByClassName('marker');
-
-    //check for new features
-    if(JSON.stringify(features) !== JSON.stringify(this.prevFeatures)){
-      const length = sections.length;
-      for (let i = 0; i < length; i++){
-        sections[0].remove()
+  updateRenderedThumbails = (visibleFeatures) =>{
+    _.forEach(this.renderedThumbnails, (thumbnailUrl, id) => {
+      const exists = !!_.find(visibleFeatures, (feature) => feature.properties.id === id);
+      // if it !exist => remove marker object - delete key from dictionary
+      if (!exists) {
+        this.renderedThumbnails[id].remove();
+        delete this.renderedThumbnails[id];
       }
+    })
 
-      features.forEach(feature=>{
+    visibleFeatures.forEach(feature => {
+      if (!this.renderedThumbnails[feature.properties.id]) {
+        //create a div element - give attributes
         const el = document.createElement('div');
         el.className = 'marker';
-        // el.id=`${feature.properties.id}`;
-        el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage})`;
-        el.addEventListener('click',()=>this.setState({openDialog:true,feature}));
-
-        new mapboxgl.Marker(el)
+        el.id = feature.properties.id;
+        el.style.backgroundImage = `url(${feature.properties.thumbnail})`;
+        el.addEventListener('click', () => this.setState({openDialog:true,feature}));
+        //create marker
+        const marker = new mapboxgl.Marker(el)
           .setLngLat(feature.geometry.coordinates)
           .addTo(this.map);
-      })
+        //save the marker object to the renderedThumbnails dictionary
+        this.renderedThumbnails[feature.properties.id] = marker;
+      }
+    });
+  }
 
-    }
-
-    this.prevFeatures = features.slice();;
+  componentWillUnmount() {
+    this.map.remove();
   }
 
   render() {
