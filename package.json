@@ -10,11 +10,11 @@
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-scripts eject",
     "geovation-photos-update": "geovation-photos-update",
-    "serve-prod": "npm run build && serve -s build",
+    "serve-prod": "npm run build && http-server build",
     "start": "HTTPS=true react-scripts start",
     "build:cordova": "#cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova build && cd .. ",
     "build:react": "react-scripts build",
-    "build:pwa": "workbox generateSW",
+    "build:pwa": "echo \"nothing to do here\"",
     "start:prod": "npm run build && http-server build -S -o"
   },
   "repository": {
