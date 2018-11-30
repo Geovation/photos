@@ -9,7 +9,7 @@ function extractPhoto(doc) {
   const prefix = `https://storage.googleapis.com/${storageRef.location.bucket}/photos/${doc.id}`;
   const photo = doc.data();
   photo.thumbnail = `${prefix}/thumbnail.jpg`;
-  photo.main = `${prefix}/main.jpg`;
+  photo.main = `${prefix}/1024.jpg`;
   photo.id = doc.id;
 
   return photo;
