@@ -2,8 +2,18 @@ import firebase from 'firebase/app';
 
 import firebaseApp from './firebaseInit.js';
 
-const firestore = firebaseApp.firestore();
-const storageRef = firebaseApp.storage().ref();
+const firestore = firebase.firestore();
+const storageRef = firebase.storage().ref();
+
+function extractPhoto(doc) {
+  const prefix = `https://storage.googleapis.com/${storageRef.location.bucket}/photos/${doc.id}`;
+  const photo = doc.data();
+  photo.thumbnail = `${prefix}/thumbnail.jpg`;
+  photo.main = `${prefix}/1024.jpg`;
+  photo.id = doc.id;
+
+  return photo;
+}
 
 async function fetchPhotos() {
 
@@ -15,23 +25,24 @@ async function fetchPhotos() {
       };
 
       querySnapshot.forEach( doc => {
-        console.log(`${doc.id} =>`, doc.data());
+        const photo = extractPhoto(doc);
+        console.log(`${doc.id} =>`, photo);
 
         const feature = {
           "type": "Feature",
           "geometry": {
             "type": "Point",
             "coordinates": [
-              doc.data().location.longitude,
-              doc.data().location.latitude
+              photo.location.longitude,
+              photo.location.latitude
             ]
           },
           "properties": {
             "id": doc.id,
-            "description": doc.data().description,
-            "thumbnail": doc.data().thumbnail,
-            "main": doc.data().main,
-            "updated": doc.data().updated,
+            "description": photo.description,
+            "thumbnail": photo.thumbnail,
+            "main": photo.main,
+            "updated": photo.updated,
           }
         };
 
@@ -85,11 +96,7 @@ async function getUser(id) {
 
 function onPhotosToModerate(fn) {
   return firestore.collection('photos').where("moderated", "==", null ).onSnapshot((sn) => {
-    const docs = sn.docs.map( doc => {
-      const photo = doc.data();
-      photo.id = doc.id;
-      return photo;
-    } );
+    const docs = sn.docs.map(extractPhoto);
     fn(docs);
   });
 }
