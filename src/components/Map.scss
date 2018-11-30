@@ -22,33 +22,6 @@
     height: 50px !important;
   }
 
-  .headline {
-    display: flex;
-    height: 50px;
-    background-color: $color2;
-    align-items: center;
-
-    .buttonwrapper {
-      display: flex;
-      flex: 1;
-
-      .buttonback {
-        height: 25px;
-      }
-    }
-
-    .headtext {
-      display: flex;
-      flex: 1;
-      justify-content: center;
-    }
-
-    .headspace {
-      display: flex;
-      flex: 1;
-    }
-  }
-
   .map {
     width: 100%;
     height: calc(100vh - 50px);
