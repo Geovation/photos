@@ -6,38 +6,56 @@ const firestore = firebaseApp.firestore();
 const storageRef = firebaseApp.storage().ref();
 
 async function fetchPhotos() {
-  const geojson = {
-    "type": "FeatureCollection",
-    "features": []
-  };
 
-  const querySnapshot = await firestore.collection("photos").where("published", "==", true).get();
-
-  querySnapshot.forEach( doc => {
-      console.log(`${doc.id} =>`, doc.data());
-
-      const feature = {
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [
-            doc.data().location.longitude,
-            doc.data().location.latitude
-          ]
-        },
-        "properties": {
-          "id": doc.id,
-          "description": doc.data().description,
-          "thumbnail": doc.data().thumbnail,
-          "main": doc.data().main,
-          "updated": doc.data().updated,
-        }
+  const promise = firestore.collection("photos").where("published", "==", true).get()
+    .then(querySnapshot => {
+      const geojson = {
+        "type": "FeatureCollection",
+        "features": []
       };
 
-      geojson.features.push(feature);
-  });
+      querySnapshot.forEach( doc => {
+        console.log(`${doc.id} =>`, doc.data());
 
-  return geojson;
+        const feature = {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              doc.data().location.longitude,
+              doc.data().location.latitude
+            ]
+          },
+          "properties": {
+            "id": doc.id,
+            "description": doc.data().description,
+            "thumbnail": doc.data().thumbnail,
+            "main": doc.data().main,
+            "updated": doc.data().updated,
+          }
+        };
+
+        geojson.features.push(feature);
+      });
+
+      localStorage.setItem("cachedGeoJson", JSON.stringify(geojson));
+
+      return geojson;
+    });
+
+  // get features from local storage
+  let geojson;
+  try {
+    geojson = JSON.parse(localStorage.getItem("cachedGeoJson"));
+  } catch (e) {
+    console.log(e);
+  }
+
+  if (!geojson) {
+    return await promise;
+  } else {
+    return geojson;
+  }
 }
 
 async function saveMetadata(data) {
