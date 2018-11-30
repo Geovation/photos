@@ -7,7 +7,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import withMobileDialog from '@material-ui/core/withMobileDialog'
 import * as firebaseui from 'firebaseui';
 
-import firebaseApp from '../firebaseInit.js';
 import firebase from 'firebase/app';
 
 import 'firebase/auth';
@@ -61,7 +60,7 @@ class LoginFirebase extends React.Component {
           <StyledFirebaseAuth
             // uiCallback={ui => ui.disableAutoSignIn()}
             uiConfig={this.uiConfig}
-            firebaseAuth={firebaseApp.auth()}
+            firebaseAuth={firebase.auth()}
           />
         </DialogContent>
       </Dialog>
