@@ -26,7 +26,6 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   const filePath = object.name;
   const contentType = object.contentType; // This is the image MIME type
   const fileDir = path.dirname(filePath);
-  const id = path.basename(path.dirname(filePath));
   const fileName = path.basename(filePath);
   const thumbFilePath = path.normalize(path.join(fileDir, `${THUMB_NAME}`));
   const mainFilePath = path.normalize(path.join(fileDir, `${MAIN_NAME}`));
@@ -58,7 +57,7 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   };
 
   // Create the temp directory where the storage file will be downloaded.
-  await mkdirp(tempLocalDir)
+  await mkdirp(tempLocalDir);
   // Download file from bucket.
   await file.download({destination: tempLocalFile});
   console.log('The file has been downloaded to', tempLocalFile);
@@ -69,35 +68,21 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   console.log('Main created at', tempLocalMainFile);
 
   // Uploading the Thumbnail.
-  await bucket.upload(tempLocalThumbFile, {destination: thumbFilePath, metadata: metadata});
+  const uploadThumb = bucket.upload(tempLocalThumbFile, {destination: thumbFilePath, metadata: metadata})
+    .then( _ => bucket.makePublic());
+  const uploadMain = bucket.upload(tempLocalMainFile, {destination: mainFilePath, metadata: metadata})
+    .then( _ => bucket.makePublic());
+
+  await Promise.all([uploadMain, uploadThumb]);
   console.log('Thumbnail uploaded to Storage at', thumbFilePath);
-  await bucket.upload(tempLocalMainFile, {destination: mainFilePath, metadata: metadata});
   console.log('Main uploaded to Storage at', mainFilePath);
+
   // Once the image has been uploaded delete the local files to free up disk space.
   fs.unlinkSync(tempLocalFile);
   fs.unlinkSync(tempLocalThumbFile);
   fs.unlinkSync(tempLocalMainFile);
 
-  // Get the Signed URLs for the thumbnail and original image.
-  const config = {
-    action: 'read',
-    expires: '03-01-2500',
-  };
-
-  const thumbResult = await thumbFile.getSignedUrl(config)
-  const thumbFileUrl = thumbResult[0];
-
-  const mainResult = await mainFile.getSignedUrl(config)
-  const mainFileUrl = mainResult[0];
-
-  const data = {
-    thumbnail: thumbFileUrl,
-    main: mainFileUrl
-  };
-  console.log("Writting DB of", id), data;
-  await admin.firestore().collection('photos').doc(id).update(data);
-
-  return console.log(`Thumbnail URLs saved to database.`);
+  return console.log(`Photos are public now`);
 });
 
 async function resize(inFile, outFile, maxSize) {
