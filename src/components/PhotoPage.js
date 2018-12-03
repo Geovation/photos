@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link} from "react-router-dom";
 
 import loadImage from 'blueimp-load-image';
 import Button from '@material-ui/core/Button';
@@ -86,7 +85,13 @@ class PhotoPage extends Component {
   loadImage = () => {
     loadImage(
       this.props.file, (img) =>{
-        document.getElementById('picture').appendChild(img);
+        const picture = document.getElementById('picture');
+
+        while (picture.firstChild) {
+          picture.removeChild(picture.firstChild);
+        }
+
+        picture.appendChild(img);
         const canvas = document.getElementsByTagName('canvas')[0];
         const width = canvas.width;
         const height = canvas.height;
@@ -111,12 +116,16 @@ class PhotoPage extends Component {
   }
 
   componentDidMount() {
-    this.loadImage();
-
     window.gtag('event', 'page_view', {
       'event_category': 'view',
       'event_label': 'PhotoPage'
     });
+  }
+
+  componentDidUpdate = (nextProps) => {
+    if (nextProps.file !== this.props.file) {
+      this.loadImage();
+    }
   }
 
   render() {

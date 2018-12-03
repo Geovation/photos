@@ -5,7 +5,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 // import IconButton from '@material-ui/core/IconButton';
 // import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
-import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 const Header = (props) =>

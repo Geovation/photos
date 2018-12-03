@@ -3,7 +3,7 @@ import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
 import GpsOff from '@material-ui/icons/GpsOff';
 import Dialog from '@material-ui/core/Dialog';
@@ -264,9 +264,9 @@ class Map extends Component {
       <div className="geovation-map">
 
         <div id='map' className="map"></div>
-        <Button variant="fab" className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+        <Fab className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
           {gpsOffline ? <GpsOff/> : <GpsFixed/>}
-        </Button>
+        </Fab>
 
         <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
           <DialogContent>

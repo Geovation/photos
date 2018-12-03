@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter} from 'react-router-dom';
+import _ from 'lodash';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -40,6 +41,7 @@ const TABS = {
 class App extends Component {
   constructor(props){
     super(props);
+
     this.state = {
       file: null,
       location: {},
@@ -47,17 +49,18 @@ class App extends Component {
       photosToModerate: [],
       online: false,
       pageTitle: "Map",
-      tab: TABS.map,
-      loginLogoutDialogOpen: false
+      tab: _.find(TABS, tab => tab.path === this.props.location.pathname),
+      loginLogoutDialogOpen: false,
     };
     this.geoid = null;
+    this.inputElement = null;
   }
 
   openPhotoPage = (file) => {
     this.setState({
       file
     });
-    this.props.history.push('/photo');
+    this.props.history.replace('/photo');
   };
 
   setLocationWatcher() {
@@ -143,9 +146,17 @@ class App extends Component {
     this.setState({ loginLogoutDialogOpen:false});
   };
 
-  render() {
-    // TODO: extract a title from the route instead of using this.props.location.pathname
+  handlePhotoClick = () => {
+    if (this.inputElement) { this.inputElement.click(); }
+  };
 
+  openFile = (e) => {
+    if (e.target.files[0]) {
+      this.openPhotoPage(e.target.files[0]);
+    }
+  }
+
+  render() {
     return (
       <div className="geovation-app">
         <Header headline={this.state.tab.title}/>
@@ -188,17 +199,23 @@ class App extends Component {
             textColor="primary"
           >
             <Tab icon={<MapIcon />} value={TABS.map}/>
-            <Tab icon={<AddAPhotoIcon />} value={TABS.photos}/>
+            <Tab icon={<AddAPhotoIcon />} value={TABS.photos} onClick={this.handlePhotoClick} />
             {/*<Tab icon={<PersonPinIcon />} value={{path: "/profile"}}/>*/}
 
-            {!this.state.isSignedIn && <Tab icon={<PersonPinIcon />} disabled={!this.state.online} onClick={this.handleClickLoginLogout}>{"Sign In"}</Tab>}
-            {this.state.isSignedIn && <Tab icon={<ExitToAppIcon />} value={{path: "/"}} onClick={this.handleClickLoginLogout}></Tab>}
-            {config.authModule.isModerator() && <Tab icon={<CheckIcon />} value={TABS.moderator}>Page for Moderator</Tab>}
+            {!this.state.isSignedIn && <Tab icon={<PersonPinIcon />} disabled={!this.state.online} onClick={this.handleClickLoginLogout}/>}
+            {this.state.isSignedIn && <Tab icon={<ExitToAppIcon />} value={{path: "/"}} onClick={this.handleClickLoginLogout}/>}
+            {config.authModule.isModerator() && <Tab icon={<CheckIcon />} value={TABS.moderator}/>}
 
           </Tabs>
         </footer>
 
         <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
+
+        {/*{ !window.cordova && <input className='hidden' type='file' accept='image/*' ref={input => this.inputElement = input}/> }*/}
+        <input className='hidden' type='file' accept='image/*'
+               ref={input => this.inputElement = input}
+               onChange={this.openFile}
+        />
 
         <Login
           open={this.state.loginLogoutDialogOpen && this.state.isSignedIn !== undefined && !this.state.isSignedIn}
