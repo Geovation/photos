@@ -1,0 +1,26 @@
+.geovation-app {
+  //background: aqua;
+
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+
+  header {
+    flex: 0 0 auto;
+  }
+
+  main {
+    flex: 1 1 auto;
+    position: relative; /* need this to position inner content */
+    overflow-y: auto;
+  }
+
+  footer {
+    flex: 0 0 auto;
+  }
+
+  .offline {
+    bottom: 50px;
+  }
+}
+

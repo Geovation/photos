@@ -19,7 +19,6 @@ import * as turf from '@turf/turf';
 import './Map.scss';
 import config from "../custom/config";
 import placeholderImage from '../images/logo.svg';
-import Header from './Header'
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -263,8 +262,6 @@ class Map extends Component {
     const gpsDisabled = !this.props.location.updated;
     return (
       <div className="geovation-map">
-
-        <Header headline="Map"/>
 
         <div id='map' className="map"></div>
         <Button variant="fab" className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>

@@ -24,7 +24,6 @@ import './ModeratorPage.scss';
 import config from '../custom/config';
 
 import placeholderImage from '../images/logo.svg'
-import Header from "./Header";
 
 class ModeratorPage extends Component {
 
@@ -89,8 +88,6 @@ class ModeratorPage extends Component {
   render() {
     return (
       <div className='geovation-moderatorPage'>
-
-        <Header headline="Moderate Photos"/>
 
         <div className={"content"}>
           <List dense={false}>

@@ -10,7 +10,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 // import Loading from './Loading';
-import backButton from '../images/left-arrow.svg';
 import config from '../custom/config';
 import './PhotoPage.scss';
 
@@ -123,14 +122,7 @@ class PhotoPage extends Component {
   render() {
     return (
        <div className='geovation-photos'>
-          <div className='headline'>
-            <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
-              <Button>
-                <img className='buttonback' src={backButton} alt=''/>
-              </Button>
-            </Link>
-            <div>PhotoPage</div>
-          </div>
+
           <div className='entertext'>
             Enter some text:
             <input type='text' className='inputtext' value={this.state.value} onChange={this.handleChange} />
