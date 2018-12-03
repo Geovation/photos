@@ -79,8 +79,16 @@ class Map extends Component {
   }
 
   currentViewContainsBounds = () => {
-    const bbox = [-11.91,49.3,3.61,61.61];  //current bbox
-    const bboxPolygon = turf.bboxPolygon(bbox);
+    const BBOX =[[
+      [-6.4234004876,49.0900561455],
+      [-4.9968673896,54.5349345357],
+      [-9.3861575351,57.3847350204],
+      [-9.3727517251,62.5022495427],
+      [2.1689766886,62.5013504742],
+      [2.1603103948,51.1599319573],
+      [-6.4234004876,49.0900561455]
+    ]];  // polygon instead of a square box
+    const bboxPolygon = turf.polygon(BBOX);
 
     const bounds = this.map.getBounds();  // bounds of current view
     const currentBounds = [bounds._ne.lng,bounds._ne.lat,bounds._sw.lng,bounds._sw.lat];
