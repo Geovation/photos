@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch, withRouter} from 'react-router-dom';
 import _ from 'lodash';
 
+import RootRef from '@material-ui/core/RootRef';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -53,7 +54,7 @@ class App extends Component {
       loginLogoutDialogOpen: false,
     };
     this.geoid = null;
-    this.inputElement = null;
+    this.domRefInput = {};
   }
 
   openPhotoPage = (file) => {
@@ -147,7 +148,7 @@ class App extends Component {
   };
 
   handlePhotoClick = () => {
-    if (this.inputElement) { this.inputElement.click(); }
+    if (this.domRefInput.current) { this.domRefInput.current.click(); }
   };
 
   openFile = (e) => {
@@ -212,10 +213,11 @@ class App extends Component {
         <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
 
         {/*{ !window.cordova && <input className='hidden' type='file' accept='image/*' ref={input => this.inputElement = input}/> }*/}
-        <input className='hidden' type='file' accept='image/*'
-               ref={input => this.inputElement = input}
-               onChange={this.openFile}
-        />
+        <RootRef rootRef={this.domRefInput}>
+          <input className='hidden' type='file' accept='image/*'
+                 onChange={this.openFile}
+          />
+        </RootRef>
 
         <Login
           open={this.state.loginLogoutDialogOpen && this.state.isSignedIn !== undefined && !this.state.isSignedIn}

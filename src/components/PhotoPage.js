@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import loadImage from 'blueimp-load-image';
+
+import RootRef from '@material-ui/core/RootRef';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -25,6 +27,7 @@ class PhotoPage extends Component {
 
     this.base64 = null;
     this.dialogCloseCallback = null;
+    this.domRefPicture = {};
   }
 
   handleChange = (event) => {
@@ -85,7 +88,8 @@ class PhotoPage extends Component {
   loadImage = () => {
     loadImage(
       this.props.file, (img) =>{
-        const picture = document.getElementById('picture');
+        // const picture = document.getElementById('picture');
+        const picture = this.domRefPicture.current;
 
         while (picture.firstChild) {
           picture.removeChild(picture.firstChild);
@@ -136,7 +140,11 @@ class PhotoPage extends Component {
             Enter some text:
             <input type='text' className='inputtext' value={this.state.value} onChange={this.handleChange} />
           </div>
-          <div className='picture' id='picture'></div>
+
+         <RootRef rootRef={this.domRefPicture}>
+           <div className='picture'></div>
+         </RootRef>
+
           <div className='buttonwrapper'>
             <Button className='sendbutton' onClick={this.sendFile}>
               Send Photo

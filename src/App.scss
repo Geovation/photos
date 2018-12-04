@@ -5,6 +5,10 @@
   flex-flow: column;
   height: 100%;
 
+  .hidden {
+    display: none;
+  }
+
   header {
     flex: 0 0 auto;
   }
