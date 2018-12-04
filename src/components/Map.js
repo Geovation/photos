@@ -252,7 +252,7 @@ class Map extends Component {
   }
 
   componentWillUnmount() {
-    this.map.remove();
+    if (this.map.remove) { this.map.remove(); }
   }
 
   render() {
