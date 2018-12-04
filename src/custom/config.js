@@ -46,5 +46,6 @@ export default {
   SignedinPage: SignedinPage,
   ModeratorPage: ModeratorPage,
   EverybodyPage: EverybodyPage,
-  MAX_IMAGE_SIZE: 2048
+  MAX_IMAGE_SIZE: 2048,
+  MAPBOX_TOKEN: "pk.eyJ1Ijoic2ViYXN0aWFub3ZpZGVnZW92YXRpb251ayIsImEiOiJjanA4ZWwwbTkxdDNxM2twZTgyMGdqOXB5In0.MrWFt3rABCo7n7MBbVRaNw"
 }
