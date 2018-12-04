@@ -17,13 +17,12 @@ const config = {
   storageBucket: "photos-demo-d4b14.appspot.com",
   messagingSenderId: "639308065605"
 };
+
 const firebaseApp = firebase.initializeApp(config);
+const firestore = firebase.firestore();
+firestore.settings({ timestampsInSnapshots: true });
 
-const firestore = firebaseApp.firestore();
-const settings = { timestampsInSnapshots: true };
-firestore.settings(settings);
-
-firebase.firestore().enablePersistence()
+firestore.enablePersistence()
   .catch(function(err) {
     if (err.code === 'failed-precondition') {
       console.error("Multiple tabs open, persistence can only be enabled in one tab at a a time.");

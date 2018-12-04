@@ -30,27 +30,29 @@
   "devDependencies": {
     "cordova": "^8.1.2",
     "coveralls": "^3.0.2",
-    "firebase-admin": "^6.2.0",
+    "firebase-admin": "^6.3.0",
     "http-server": "^0.11.1",
-    "jimp": "^0.5.6",
+    "jimp": "^0.6.0",
+    "ncp": "^2.0.0",
     "node-sass": "^4.10.0",
     "random-location": "^1.0.12",
     "workbox-cli": "^3.6.3"
   },
   "dependencies": {
-    "@material-ui/core": "^3.5.1",
+    "@material-ui/core": "^3.6.1",
     "@material-ui/icons": "^3.0.1",
     "@turf/turf": "^5.1.6",
     "blueimp-load-image": "^2.20.1",
-    "firebase": "^5.5.8",
+    "firebase": "^5.6.0",
     "lodash": "^4.17.11",
     "mapbox-gl": "^0.51.0",
-    "ncp": "^2.0.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-firebaseui": "^3.1.2",
+    "react-redux": "^5.1.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "redux": "^4.0.1"
   },
   "browserslist": [
     ">0.2%",

@@ -1,5 +1,5 @@
 import User from "../types/User";
-import firebaseApp from "./firebaseInit";
+import firebase from "firebase/app";
 import dbFirebase from "./dbFirebase";
 
 let currentUser;
@@ -19,11 +19,11 @@ const onAuthStateChanged = (fn) => {
     fn(currentUser);
   };
 
-  return firebaseApp.auth().onAuthStateChanged(firebaseStatusChange);
+  return firebase.auth().onAuthStateChanged(firebaseStatusChange);
 };
 
 const signOut = () => {
-  firebaseApp.auth().signOut();
+  firebase.auth().signOut();
 };
 
 const getCurrentUser = () => currentUser;

@@ -2,16 +2,10 @@ import React, { Component } from 'react';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Button from '@material-ui/core/Button';
-import { Link } from "react-router-dom";
+
+import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
 import GpsOff from '@material-ui/icons/GpsOff';
-
-import backButton from '../images/left-arrow.svg';
-import './Map.scss';
-import config from "../custom/config";
-import placeholderImage from '../images/logo.svg';
-
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Card from '@material-ui/core/Card';
@@ -21,6 +15,10 @@ import Typography from '@material-ui/core/Typography';
 import { OSstyle } from '../os-style/style';
 import * as turf from '@turf/turf';
 
+
+import './Map.scss';
+import config from "../custom/config";
+import placeholderImage from '../images/logo.svg';
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -264,21 +262,11 @@ class Map extends Component {
     const gpsDisabled = !this.props.location.updated;
     return (
       <div className="geovation-map">
-        <div className="headline">
-          <div className="buttonwrapper">
-            <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
-              <Button>
-                <img className='buttonback' src={backButton} alt=''/>
-              </Button>
-            </Link>
-          </div>
-          <div className="headtext">Map</div>
-          <div className="headspace"/>
-        </div>
+
         <div id='map' className="map"></div>
-        <Button variant="fab" className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+        <Fab className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
           {gpsOffline ? <GpsOff/> : <GpsFixed/>}
-        </Button>
+        </Fab>
 
         <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
           <DialogContent>

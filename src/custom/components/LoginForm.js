@@ -5,7 +5,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 
-// import {firebaseApp} from './firebaseInit.js';
 // import firebase from 'firebase/app';
 
 // import PropTypes from 'prop-types';

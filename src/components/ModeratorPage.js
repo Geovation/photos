@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Dialog from '@material-ui/core/Dialog';
@@ -22,7 +19,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
-import { Link } from "react-router-dom";
 
 import './ModeratorPage.scss';
 import config from '../custom/config';
@@ -92,17 +88,6 @@ class ModeratorPage extends Component {
   render() {
     return (
       <div className='geovation-moderatorPage'>
-
-        <AppBar position="static">
-          <Toolbar>
-            <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
-              <IconButton color="inherit" aria-label="Home" >
-                <ChevronLeftIcon />
-              </IconButton>
-            </Link>
-              Moderate Photos
-          </Toolbar>
-        </AppBar>
 
         <div className={"content"}>
           <List dense={false}>

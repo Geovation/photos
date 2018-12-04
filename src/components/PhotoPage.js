@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Link} from "react-router-dom";
 
 import loadImage from 'blueimp-load-image';
+
+import RootRef from '@material-ui/core/RootRef';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -10,7 +11,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 // import Loading from './Loading';
-import backButton from '../images/left-arrow.svg';
 import config from '../custom/config';
 import './PhotoPage.scss';
 
@@ -27,6 +27,7 @@ class PhotoPage extends Component {
 
     this.base64 = null;
     this.dialogCloseCallback = null;
+    this.domRefPicture = {};
   }
 
   handleChange = (event) => {
@@ -87,7 +88,14 @@ class PhotoPage extends Component {
   loadImage = () => {
     loadImage(
       this.props.file, (img) =>{
-        document.getElementById('picture').appendChild(img);
+        // const picture = document.getElementById('picture');
+        const picture = this.domRefPicture.current;
+
+        while (picture.firstChild) {
+          picture.removeChild(picture.firstChild);
+        }
+
+        picture.appendChild(img);
         const canvas = document.getElementsByTagName('canvas')[0];
         const width = canvas.width;
         const height = canvas.height;
@@ -112,30 +120,31 @@ class PhotoPage extends Component {
   }
 
   componentDidMount() {
-    this.loadImage();
-
     window.gtag('event', 'page_view', {
       'event_category': 'view',
       'event_label': 'PhotoPage'
     });
   }
 
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.file !== this.props.file) {
+      this.loadImage();
+    }
+  }
+
   render() {
     return (
        <div className='geovation-photos'>
-          <div className='headline'>
-            <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
-              <Button>
-                <img className='buttonback' src={backButton} alt=''/>
-              </Button>
-            </Link>
-            <div>PhotoPage</div>
-          </div>
+
           <div className='entertext'>
             Enter some text:
             <input type='text' className='inputtext' value={this.state.value} onChange={this.handleChange} />
           </div>
-          <div className='picture' id='picture'></div>
+
+         <RootRef rootRef={this.domRefPicture}>
+           <div className='picture'></div>
+         </RootRef>
+
           <div className='buttonwrapper'>
             <Button className='sendbutton' onClick={this.sendFile}>
               Send Photo
