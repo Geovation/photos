@@ -3,6 +3,7 @@
 .geovation-map {
   display: flex;
   flex-direction: column;
+  height: 100%;
 
   .marker {
       display: block;
@@ -24,7 +25,7 @@
 
   .map {
     width: 100%;
-    height: calc(100vh - 50px);
+    height: 100vh;
   }
 
   .location {
