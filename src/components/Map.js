@@ -23,7 +23,7 @@ import * as turf from '@turf/turf';
 
 
 const CENTER = [-0.07, 51.58];
-const ZOOM = 5;
+const ZOOM = 10;
 
 class Map extends Component {
 
@@ -48,7 +48,7 @@ class Map extends Component {
     const location = this.props.location;
     const photos = config.dbModule.fetchPhotos();
 
-    mapboxgl.accessToken='pk.eyJ1Ijoic2ViYXN0aWFub3ZpZGVnZW92YXRpb251ayIsImEiOiJjanA4ZWwwbTkxdDNxM2twZTgyMGdqOXB5In0.MrWFt3rABCo7n7MBbVRaNw'
+    mapboxgl.accessToken = config.MAPBOX_TOKEN;
     this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'mapbox://styles/mapbox/streets-v10',
