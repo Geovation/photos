@@ -49,7 +49,6 @@ class App extends Component {
       isSignedIn: null,
       photosToModerate: [],
       online: false,
-      pageTitle: "Map",
       tab: _.find(TABS, tab => tab.path === this.props.location.pathname),
       loginLogoutDialogOpen: false,
     };
@@ -220,7 +219,7 @@ class App extends Component {
         </RootRef>
 
         <Login
-          open={this.state.loginLogoutDialogOpen && this.state.isSignedIn !== undefined && !this.state.isSignedIn}
+          open={this.state.loginLogoutDialogOpen && !this.state.isSignedIn}
           handleClose={this.handleLoginClose}
           loginComponent={config.loginComponent}
         />

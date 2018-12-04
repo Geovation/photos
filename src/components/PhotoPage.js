@@ -126,8 +126,8 @@ class PhotoPage extends Component {
     });
   }
 
-  componentDidUpdate = (nextProps) => {
-    if (nextProps.file !== this.props.file) {
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.file !== this.props.file) {
       this.loadImage();
     }
   }
