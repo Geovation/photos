@@ -19,6 +19,8 @@ import EverybodyPage from './custom/components/EverybodyPage';
 import AnonymousPage from './custom/components/AnonymousPage';
 import ModeratorPage from './components/ModeratorPage';
 import SignedinPage from './custom/components/SignedinPage';
+import CustomPhotoDialog from './components/CustomPhotoDialog';
+
 import Header from './components/Header';
 
 import './App.scss'
@@ -51,6 +53,7 @@ class App extends Component {
       online: false,
       tab: _.find(TABS, tab => tab.path === this.props.location.pathname),
       loginLogoutDialogOpen: false,
+      openPhotoDialog: false
     };
     this.geoid = null;
     this.domRefInput = {};
@@ -147,7 +150,13 @@ class App extends Component {
   };
 
   handlePhotoClick = () => {
-    if (this.domRefInput.current) { this.domRefInput.current.click(); }
+    if (this.domRefInput.current) {
+      console.log("Clicking on photo");
+      this.domRefInput.current.click();
+    } else {
+      console.log("Opening cordova dialog");
+      this.setState({ openPhotoDialog: true });
+    }
   };
 
   openFile = (e) => {
@@ -155,6 +164,26 @@ class App extends Component {
       this.openPhotoPage(e.target.files[0]);
     }
   }
+
+  handlePhotoDialogClose = dialogSelectedValue => {
+    this.setState({ openPhotoDialog: false });
+    if (dialogSelectedValue) {
+      const Camera = navigator.camera;
+      const srcType = dialogSelectedValue === 'CAMERA' ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
+
+      Camera.getPicture(imageUri => {
+          this.openPhotoPage(imageUri);
+        }, message => {
+          console.log('Failed because: ', message);
+        },
+        {
+          quality: 50,
+          destinationType: Camera.DestinationType.FILE_URI,
+          sourceType: srcType,
+          correctOrientation: true
+        });
+    }
+  };
 
   render() {
     return (
@@ -212,11 +241,14 @@ class App extends Component {
         <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
 
         {/*{ !window.cordova && <input className='hidden' type='file' accept='image/*' ref={input => this.inputElement = input}/> }*/}
+        { !window.cordova &&
         <RootRef rootRef={this.domRefInput}>
           <input className='hidden' type='file' accept='image/*'
                  onChange={this.openFile}
           />
-        </RootRef>
+        </RootRef>}
+        { window.cordova && this.state.tab === TABS.photos &&
+        <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>}
 
         <Login
           open={this.state.loginLogoutDialogOpen && !this.state.isSignedIn}
