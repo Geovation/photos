@@ -61,7 +61,7 @@ class CustomPhotoDialog extends React.Component {
   }
 }
 
-PhotoDialog.propTypes = {
+CustomPhotoDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   onClose: PropTypes.func
 };

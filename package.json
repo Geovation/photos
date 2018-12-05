@@ -12,7 +12,7 @@
     "geovation-photos-update": "geovation-photos-update",
     "serve-prod": "npm run build && http-server build",
     "start": "HTTPS=true react-scripts start",
-    "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform add android && cordova build && cd .. ",
+    "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build && cd .. ",
     "build:react": "react-scripts build",
     "build:pwa": "echo \"nothing to do here\"",
     "start:prod": "npm run build && http-server build -S -o"
