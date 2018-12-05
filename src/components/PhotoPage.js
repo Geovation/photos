@@ -9,6 +9,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import TextField from '@material-ui/core/TextField';
 
 // import Loading from './Loading';
 import config from '../custom/config';
@@ -136,17 +137,21 @@ class PhotoPage extends Component {
     return (
        <div className='geovation-photos'>
 
-          <div className='entertext'>
-            Enter some text:
-            <input type='text' className='inputtext' value={this.state.value} onChange={this.handleChange} />
-          </div>
+          <TextField
+            id="standard-name"
+            label="Enter some text"
+            style={{width: 200, marginLeft:5}}
+            value={this.state.value}
+            onChange={this.handleChange}
+            margin="dense"
+          />
 
          <RootRef rootRef={this.domRefPicture}>
            <div className='picture'></div>
          </RootRef>
 
           <div className='buttonwrapper'>
-            <Button className='sendbutton' onClick={this.sendFile}>
+            <Button variant="outlined" color="primary" onClick={this.sendFile}>
               Send Photo
             </Button>
           </div>
