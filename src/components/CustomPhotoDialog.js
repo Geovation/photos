@@ -24,6 +24,7 @@ class CustomPhotoDialog extends React.Component {
 
   render() {
     const { classes, open } = this.props;
+    console.log("opening PhotoDialog");
 
     return (
       <Dialog onClose={this.handleClose} aria-labelledby='simple-dialog-title' open={open}>
