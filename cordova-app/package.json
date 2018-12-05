@@ -2,9 +2,11 @@
   "name": "uk.geovation.photos",
   "version": "1.1.0",
   "displayName": "Geovation Photos",
+  "homepage": "./",
   "cordova": {
     "platforms": [
-      "browser"
+      "browser",
+      "android"
     ],
     "plugins": {
       "cordova-plugin-whitelist": {},
@@ -13,6 +15,7 @@
     }
   },
   "dependencies": {
+    "cordova-android": "^7.1.4",
     "cordova-browser": "^5.0.4",
     "cordova-plugin-camera": "^4.0.3",
     "cordova-plugin-geolocation": "^4.0.1",

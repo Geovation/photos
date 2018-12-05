@@ -29,17 +29,17 @@ class LoginFirebase extends React.Component {
 
   componentDidMount() {
     this.uiConfig = {
-      // signInFlow: 'popup',
+      // signInFlow: 'redirect',
       signInSuccessUrl: '/',
       credentialHelper: firebaseui.auth.CredentialHelper.NONE,
       signInOptions: [
         // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
       ],
-      // callbacks: {
-      //   // Avoid redirects after sign-in.
-      //   signInSuccessWithAuthResult: () => false
-      // }
+      callbacks: {
+        // Avoid redirects after sign-in.
+        signInSuccessWithAuthResult: () => false
+      }
     };
   }
 
