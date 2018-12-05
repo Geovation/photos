@@ -1,21 +1,13 @@
-@import "../custom/variables";
-
 .geovation-loading {
   display:flex;
   height:100vh;
   flex-direction:column;
-  background-color:$color1;
 
   .body {
     display:flex;
     flex:1;
     justify-content:center;
     align-items:center;
-    background-color:$color2;
-
-    .progress {
-      color:$color1;
-    }
 
   }
 }
