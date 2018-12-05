@@ -1,24 +1,19 @@
-@import "../custom/variables";
-
 .geovation-landingPage {
   display:flex;
   flex:1;
   flex-direction:column;
   height:100vh;
-  background-color:$color1;
 
   .appbar {
     display:flex;
     height:50px;
     justify-content:flex-start;
-    background-color:$color2;
   }
 
   .body {
     display:flex;
     flex:1;
     flex-direction:column;
-    background-color:$color2;
 
     .camera {
       display:flex;
@@ -64,10 +59,8 @@
     height:50px;
     justify-content:center;
     align-items:center;
-    background-color:$color1;
 
     .buttonexternallink {
-      color:$color2;
       text-transform: none;
     }
   }
