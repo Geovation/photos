@@ -52,8 +52,13 @@ class Map extends Component {
       style: 'mapbox://styles/mapbox/streets-v10',
       center: location.updated ? [location.longitude, location.latitude] : CENTER, // starting position [lng, lat]
       zoom: ZOOM, // starting zoom
-      customAttribution: 'Contains OS data &copy; Crown copyright and database rights 2018'
+      attributionControl: false,
     });
+
+    this.map.addControl(new mapboxgl.AttributionControl({
+        compact: true,
+        customAttribution: 'Contains OS data &copy; Crown copyright and database rights 2018'
+    }));
 
     this.map.on('load', async () => {
       this.addOSlayers();
