@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "react-scripts test --env=jsdom",
-    "build": "npm run build:react && npm run build:pwa && npm run build:cordova",
+    "build": "npm run build:react && npm run build:pwa # && npm run build:cordova",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-scripts eject",
