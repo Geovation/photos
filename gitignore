@@ -59,10 +59,9 @@ typings/
 
 # next.js build output
 .next
-
-#editors
 .idea
-.DS_Store
-
-# ignoring compiled folder for now
+.firebase
 build
+serviceAccountKey.json
+scripts/tmp.jpg
+cordova-app/www
