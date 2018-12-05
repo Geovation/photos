@@ -281,7 +281,10 @@ class Map extends Component {
                     Coordinates: {feature.geometry.coordinates[0]}, {feature.geometry.coordinates[1]}
                   </Typography>
                   <Typography component="p">
-                    Time: {Date(feature.properties.updated.seconds)}
+                    Time: {feature.properties.updated}
+                  </Typography>
+                  <Typography component="p">
+                    Description: {feature.properties.description || "-"}
                   </Typography>
                 </CardContent>
               </CardActionArea>

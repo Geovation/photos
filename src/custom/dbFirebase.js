@@ -42,7 +42,7 @@ async function fetchPhotos() {
             "description": photo.description,
             "thumbnail": photo.thumbnail,
             "main": photo.main,
-            "updated": photo.updated,
+            "updated": photo.updated.toDate(),
           }
         };
 
