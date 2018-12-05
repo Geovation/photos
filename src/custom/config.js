@@ -1,5 +1,8 @@
 import React from 'react';
 
+
+
+
 import authFirebase from './authFirebase'
 
 //change the logo file to upload your own Logo
@@ -47,5 +50,11 @@ export default {
   ModeratorPage: ModeratorPage,
   EverybodyPage: EverybodyPage,
   MAX_IMAGE_SIZE: 2048,
+  THEME: {
+    palette: {
+      primary: { main: "#F7A70B" },
+      secondary: { main: "#5386E4"},
+    },
+  },
   MAPBOX_TOKEN: "pk.eyJ1Ijoic2ViYXN0aWFub3ZpZGVnZW92YXRpb251ayIsImEiOiJjanA4ZWwwbTkxdDNxM2twZTgyMGdqOXB5In0.MrWFt3rABCo7n7MBbVRaNw"
 }

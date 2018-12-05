@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -12,16 +11,8 @@ import Dialog from '@material-ui/core/Dialog';
 import CameraIcon from '@material-ui/icons/PhotoCamera';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import CancelIcon from '@material-ui/icons/Close';
-import blue from '@material-ui/core/colors/blue';
 
-const styles = {
-  avatar: {
-    backgroundColor: blue[100],
-    color: blue[600],
-  },
-};
-
-class PhotoDialog extends React.Component {
+class CustomPhotoDialog extends React.Component {
 
   handleClose = () => {
     this.props.onClose();
@@ -73,7 +64,5 @@ PhotoDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   onClose: PropTypes.func
 };
-
-const CustomPhotoDialog = withStyles(styles)(PhotoDialog);
 
 export default CustomPhotoDialog;
