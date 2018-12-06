@@ -9,27 +9,14 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
+import './Header.scss';
+
 import PropTypes from 'prop-types';
-
-const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-};
-
 
 class Header extends React.Component {
 
@@ -56,14 +43,14 @@ class Header extends React.Component {
     const { classes } = this.props;
     const open = Boolean(this.state.anchorEl);
 
-    return <div className={classes.root}>
+    return <div className="geovation-header">
       <AppBar position="static" className="header">
         <Toolbar>
-          <IconButton color="inherit" aria-label="Menu" className={classes.menuButton}>
+          <IconButton color="inherit" aria-label="Menu" className="menuButton">
             <MenuIcon />
           </IconButton>
 
-          <Typography variant="h6" color="inherit" className={classes.grow}>
+          <Typography variant="h6" color="inherit" className="grow">
             {this.props.headline}
           </Typography>
 
@@ -120,4 +107,4 @@ Header.propTypes = {
   handleClickLoginLogout: PropTypes.func
 };
 
-export default withStyles(styles)(Header);
+export default Header;

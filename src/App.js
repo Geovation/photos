@@ -109,7 +109,6 @@ class App extends Component {
       if (this.state.isSignedIn && !user) {
         window.location.reload();
       }
-
       this.setState({isSignedIn: user});
     });
 
