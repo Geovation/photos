@@ -2,10 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import IconButton from '@material-ui/core/IconButton';
 import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
 import CameraIcon from '@material-ui/icons/PhotoCamera';
@@ -23,46 +22,37 @@ class CustomPhotoDialog extends React.Component {
   };
 
   render() {
-    const { classes, open } = this.props;
+    const { open } = this.props;
     console.log("opening PhotoDialog");
 
     return (
-      <Dialog onClose={this.handleClose} aria-labelledby='simple-dialog-title' open={open}>
-        <div>
-          <List>
-            <ListItem button onClick={() => this.handleListItemClick('CAMERA')}>
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  <CameraIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={'Camera'} />
-            </ListItem>
-            <ListItem button onClick={() => this.handleListItemClick('PHOTOLIBRARY')}>
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  <PhotoLibraryIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={'Photo Library'} />
-            </ListItem>
-            <ListItem button onClick={this.handleClose}>
-              <ListItemAvatar>
-                <Avatar>
-                  <CancelIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary='Cancel' />
-            </ListItem>
-          </List>
-        </div>
+      <Dialog onClose={this.handleClose} open={open}>
+        <List>
+          <ListItem button onClick={() => this.handleListItemClick('CAMERA')}>
+            <IconButton color='primary'>
+              <CameraIcon />
+            </IconButton>
+            <ListItemText primary={'Camera'} />
+          </ListItem>
+          <ListItem button onClick={() => this.handleListItemClick('PHOTOLIBRARY')}>
+            <IconButton color='primary'>
+                <PhotoLibraryIcon />
+            </IconButton>
+            <ListItemText primary={'Photo Library'} />
+          </ListItem>
+          <ListItem button onClick={this.handleClose}>
+            <IconButton>
+              <CancelIcon />
+            </IconButton>
+            <ListItemText primary='Cancel' />
+          </ListItem>
+        </List>
       </Dialog>
     );
   }
 }
 
 CustomPhotoDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
   onClose: PropTypes.func
 };
 
