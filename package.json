@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "react-scripts test --env=jsdom",
-    "build": "npm run build:react && npm run build:pwa # && npm run build:cordova",
+    "build": "npm run build:react && npm run build:pwa && [ \"$BUILD_CORDOVA\" ] && npm run build:cordova",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-scripts eject",
     "geovation-photos-update": "geovation-photos-update",
     "serve-prod": "npm run build && http-server build",
     "start": "HTTPS=true react-scripts start",
-    "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build && cd .. ",
+    "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build && cd ..",
     "build:react": "react-scripts build",
     "build:pwa": "echo \"nothing to do here\"",
     "start:prod": "npm run build && http-server build -S -o"

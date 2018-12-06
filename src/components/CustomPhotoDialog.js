@@ -26,29 +26,27 @@ class CustomPhotoDialog extends React.Component {
     console.log("opening PhotoDialog");
 
     return (
-      <Dialog onClose={this.handleClose} aria-labelledby='simple-dialog-title' open={open}>
-        <div>
-          <List>
-            <ListItem button onClick={() => this.handleListItemClick('CAMERA')}>
-              <IconButton color='primary'>
-                <CameraIcon />
-              </IconButton>
-              <ListItemText primary={'Camera'} />
-            </ListItem>
-            <ListItem button onClick={() => this.handleListItemClick('PHOTOLIBRARY')}>
-              <IconButton color='primary'>
-                  <PhotoLibraryIcon />
-              </IconButton>
-              <ListItemText primary={'Photo Library'} />
-            </ListItem>
-            <ListItem button onClick={this.handleClose}>
-              <IconButton>
-                <CancelIcon />
-              </IconButton>
-              <ListItemText primary='Cancel' />
-            </ListItem>
-          </List>
-        </div>
+      <Dialog onClose={this.handleClose} open={open}>
+        <List>
+          <ListItem button onClick={() => this.handleListItemClick('CAMERA')}>
+            <IconButton color='primary'>
+              <CameraIcon />
+            </IconButton>
+            <ListItemText primary={'Camera'} />
+          </ListItem>
+          <ListItem button onClick={() => this.handleListItemClick('PHOTOLIBRARY')}>
+            <IconButton color='primary'>
+                <PhotoLibraryIcon />
+            </IconButton>
+            <ListItemText primary={'Photo Library'} />
+          </ListItem>
+          <ListItem button onClick={this.handleClose}>
+            <IconButton>
+              <CancelIcon />
+            </IconButton>
+            <ListItemText primary='Cancel' />
+          </ListItem>
+        </List>
       </Dialog>
     );
   }

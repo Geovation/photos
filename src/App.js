@@ -131,7 +131,9 @@ class App extends Component {
 
   handleTab = (event, value) => {
     this.setState({ tab: value });
-    this.props.history.push(value.path);
+    if (value !== TABS.photos) {
+      this.props.history.push(value.path);
+    }
   }
 
   handleClickLoginLogout = () => {
@@ -168,6 +170,7 @@ class App extends Component {
   handlePhotoDialogClose = dialogSelectedValue => {
     this.setState({ openPhotoDialog: false });
     if (dialogSelectedValue) {
+      this.props.history.push(TABS.photos.path);
       const Camera = navigator.camera;
       const srcType = dialogSelectedValue === 'CAMERA' ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
 
