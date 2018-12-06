@@ -22,7 +22,7 @@ class CustomPhotoDialog extends React.Component {
   };
 
   render() {
-    const { classes, open } = this.props;
+    const { open } = this.props;
     console.log("opening PhotoDialog");
 
     return (
@@ -55,7 +55,6 @@ class CustomPhotoDialog extends React.Component {
 }
 
 CustomPhotoDialog.propTypes = {
-  classes: PropTypes.object.isRequired,
   onClose: PropTypes.func
 };
 
