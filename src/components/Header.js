@@ -43,7 +43,7 @@ class Header extends React.Component {
     const open = Boolean(this.state.anchorEl);
 
     return <div className="geovation-header">
-      <AppBar position="static" className="header">
+      <AppBar position="static">
         <Toolbar>
           <IconButton color="inherit" aria-label="Menu" className="menuButton">
             <MenuIcon />
