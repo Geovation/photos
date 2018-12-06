@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
 
 import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -13,7 +14,6 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -22,10 +22,16 @@ import Avatar from '@material-ui/core/Avatar';
 
 import './ModeratorPage.scss';
 import config from '../custom/config';
+import * as actions from "../actions";
 
 import placeholderImage from '../images/logo.svg'
 
-class ModeratorPage extends Component {
+// const mapStateToProps = ({photos}) => {
+//   return { photos };
+// };
+const mapStateToProps = ({photos}) => ({ photos });
+
+class ModeratorPageComponent extends Component {
 
   constructor(props) {
     super(props);
@@ -38,6 +44,16 @@ class ModeratorPage extends Component {
       zoomDialogOpen: false,
       photoSelected: {}
     };
+  }
+
+  componentWillMount() {
+    console.log(this.props);
+    this.props.fetchPhotosToModerate();
+  }
+
+  componentWillUnmount() {
+    console.log(this.props);
+    // TODO: how can we unsubscrive to the fotos
   }
 
   handleRejectClick = (photo) =>
@@ -90,6 +106,7 @@ class ModeratorPage extends Component {
       <div className='geovation-moderatorPage'>
 
         <div className={"content"}>
+          {this.props.photos && this.props.photos.map &&
           <List dense={false}>
             {this.props.photos.map(photo => (
               <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
@@ -109,6 +126,7 @@ class ModeratorPage extends Component {
               </ListItem>
             ))}
           </List>
+          }
         </div>
 
         <Dialog open={this.state.confirmDialogOpen}>
@@ -159,5 +177,7 @@ class ModeratorPage extends Component {
     );
   }
 }
+
+const ModeratorPage = connect(mapStateToProps, actions)(ModeratorPageComponent);
 
 export default ModeratorPage;

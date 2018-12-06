@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter} from "react-router-dom";
+import { Provider } from "react-redux";
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
@@ -8,16 +9,19 @@ import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import config from './custom/config';
+import store from "./store";
 
 const theme = createMuiTheme(config.THEME);
 
 const startApp = () => {
   ReactDOM.render((
-    <HashRouter>
-      <MuiThemeProvider theme={theme}>
-        <App />
-      </MuiThemeProvider>
-    </HashRouter>
+    <Provider store={store}>
+      <HashRouter>
+        <MuiThemeProvider theme={theme}>
+          <App />
+        </MuiThemeProvider>
+      </HashRouter>
+    </Provider>
     )
     , document.getElementById('root'));
   serviceWorker.register();

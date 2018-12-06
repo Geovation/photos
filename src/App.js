@@ -100,10 +100,6 @@ class App extends Component {
       this.setState({online});
     });
 
-    this.unregisterPhotosToModerateObserver = config.dbModule.onPhotosToModerate(photosToModerate => {
-      this.setState({photosToModerate})
-    });
-
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged(user => {
 
       // lets start fresh if the user logged out
@@ -121,7 +117,6 @@ class App extends Component {
     this.setState = console.log;
 
     await this.unregisterAuthObserver();
-    await this.unregisterPhotosToModerateObserver();
     await config.dbModule.disconnect();
     await this.unregisterLocationObserver();
     await this.unregisterConnectionObserver();
@@ -200,14 +195,6 @@ class App extends Component {
 
         <main className="content" tab={this.state.tab}>
           <Switch>
-            {/*<Route exact path='/' render={(props) =>*/}
-              {/*<LandingPage {...props}*/}
-                {/*online={this.state.online}*/}
-                {/*isSignedIn={this.state.isSignedIn}*/}
-                {/*openPhotoPage={this.openPhotoPage}*/}
-              {/*/>}*/}
-            {/*/>*/}
-
             <Route path='/everybody' component={EverybodyPage} />
             <Route path='/anonymous' component={AnonymousPage} />
             <Route path={TABS.moderator.path} render={(props) =>
@@ -246,7 +233,6 @@ class App extends Component {
 
         <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
 
-        {/*{ !window.cordova && <input className='hidden' type='file' accept='image/*' ref={input => this.inputElement = input}/> }*/}
         { !window.cordova &&
           <RootRef rootRef={this.domRefInput}>
             <input className='hidden' type='file' accept='image/*'
