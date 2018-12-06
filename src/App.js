@@ -63,7 +63,8 @@ class App extends Component {
     this.setState({
       file
     });
-    this.props.history.replace('/photo');
+
+    this.goToTab(TABS.photos);
   };
 
   setLocationWatcher() {
@@ -129,10 +130,14 @@ class App extends Component {
     await this.unregisterConnectionObserver();
   }
 
+  goToTab = tab => {
+    this.setState({ tab });
+    this.props.history.push(tab.path);
+  }
+
   handleTab = (event, value) => {
-    this.setState({ tab: value });
     if (value !== TABS.photos) {
-      this.props.history.push(value.path);
+      this.goToTab(value);
     }
   }
 
@@ -152,13 +157,12 @@ class App extends Component {
   };
 
   handlePhotoClick = () => {
-    if (this.domRefInput.current) {
-      this.props.history.push(TABS.photos.path);
-      console.log("Clicking on photo");
-      this.domRefInput.current.click();
-    } else {
+    if (window.cordova) {
       console.log("Opening cordova dialog");
       this.setState({ openPhotoDialog: true });
+    } else {
+      console.log("Clicking on photo");
+      this.domRefInput.current.click();
     }
   };
 
@@ -171,7 +175,6 @@ class App extends Component {
   handlePhotoDialogClose = dialogSelectedValue => {
     this.setState({ openPhotoDialog: false });
     if (dialogSelectedValue) {
-      this.props.history.push(TABS.photos.path);
       const Camera = navigator.camera;
       const srcType = dialogSelectedValue === 'CAMERA' ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
 
@@ -206,12 +209,12 @@ class App extends Component {
 
             <Route path='/everybody' component={EverybodyPage} />
             <Route path='/anonymous' component={AnonymousPage} />
-            <Route path='/moderator' render={(props) =>
+            <Route path={TABS.moderator.path} render={(props) =>
               <ModeratorPage {...props}
                 photos={this.state.photosToModerate}
               />}
             />
-            <Route path='/photo' render={(props) =>
+            <Route path={TABS.photos.path} render={(props) =>
               <PhotoPage {...props}
                  file={this.state.file}
                  location={this.state.location}
@@ -219,7 +222,7 @@ class App extends Component {
               />}
             />
             <Route path='/signedin' component={SignedinPage} />
-            <Route path='/' render={(props) => <Map {...props} location={this.state.location} />}/>
+            <Route path={TABS.map.path} render={(props) => <Map {...props} location={this.state.location} />}/>
           </Switch>
         </main>
 
