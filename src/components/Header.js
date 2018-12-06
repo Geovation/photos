@@ -40,7 +40,6 @@ class Header extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
     const open = Boolean(this.state.anchorEl);
 
     return <div className="geovation-header">
