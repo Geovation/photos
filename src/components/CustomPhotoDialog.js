@@ -2,10 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import IconButton from '@material-ui/core/IconButton';
 import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
 import CameraIcon from '@material-ui/icons/PhotoCamera';
@@ -31,27 +30,21 @@ class CustomPhotoDialog extends React.Component {
         <div>
           <List>
             <ListItem button onClick={() => this.handleListItemClick('CAMERA')}>
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  <CameraIcon />
-                </Avatar>
-              </ListItemAvatar>
+              <IconButton color='primary'>
+                <CameraIcon />
+              </IconButton>
               <ListItemText primary={'Camera'} />
             </ListItem>
             <ListItem button onClick={() => this.handleListItemClick('PHOTOLIBRARY')}>
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
+              <IconButton color='primary'>
                   <PhotoLibraryIcon />
-                </Avatar>
-              </ListItemAvatar>
+              </IconButton>
               <ListItemText primary={'Photo Library'} />
             </ListItem>
             <ListItem button onClick={this.handleClose}>
-              <ListItemAvatar>
-                <Avatar>
-                  <CancelIcon />
-                </Avatar>
-              </ListItemAvatar>
+              <IconButton>
+                <CancelIcon />
+              </IconButton>
               <ListItemText primary='Cancel' />
             </ListItem>
           </List>
