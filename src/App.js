@@ -153,6 +153,7 @@ class App extends Component {
 
   handlePhotoClick = () => {
     if (this.domRefInput.current) {
+      this.props.history.push(TABS.photos.path);
       console.log("Clicking on photo");
       this.domRefInput.current.click();
     } else {
