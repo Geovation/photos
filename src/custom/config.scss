@@ -1,6 +1,11 @@
 $primary: #F7A70B;
 $secondary: #5386E4;
 
+:export {
+  primary: $primary;
+  secondary:$secondary;
+}
+
 .firebaseui-textfield.mdl-textfield .firebaseui-label::after {
     background: $primary !important;
 }

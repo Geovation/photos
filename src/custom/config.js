@@ -1,8 +1,4 @@
-import React from 'react';
 import authFirebase from './authFirebase'
-
-//change the logo file to upload your own Logo
-import imgHeader from '../images/logo.svg';
 import LoginFirebase from "./components/LoginFirebase";
 import dbFirebase from "./dbFirebase";
 import AnonymousPage from "./components/AnonymousPage";
@@ -10,10 +6,9 @@ import SignedinPage from "./components/SignedinPage";
 import ModeratorPage from "../components/ModeratorPage";
 import EverybodyPage from "./components/EverybodyPage";
 
-import './config.scss';
-// TODO extract primary and secondary from config.scss
-const primaryColor = "#F7A70B";
-const secondaryColor = "#5386E4";
+import styles from './config.scss';
+const primaryColor = styles.primary;
+const secondaryColor = styles.secondary;
 
 export default {
   uploadPhoto: dbFirebase.uploadPhoto,
