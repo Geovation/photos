@@ -1,14 +1,8 @@
 $primary: #F7A70B;
 $secondary: #5386E4;
 
-////.firebaseui-textfield.mdl-textfield,
-//.mdl-button--raised,
-//.mdl-button--colored {
-//    background-color: $primary !important;
-//}
-
-.firebaseui-subtitle, .firebaseui-text {
-    color: $primary !important;
+.firebaseui-textfield.mdl-textfield .firebaseui-label::after {
+    background: $primary !important;
 }
 .firebaseui-form-actions .mdl-button--raised.mdl-button--colored.firebaseui-button {
     background: $primary !important;

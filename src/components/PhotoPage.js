@@ -13,7 +13,6 @@ import TextField from '@material-ui/core/TextField';
 import imgHeader from '../images/logo.svg';
 
 
-// import Loading from './Loading';
 import config from '../custom/config';
 import './PhotoPage.scss';
 
