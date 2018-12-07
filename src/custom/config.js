@@ -14,6 +14,8 @@ import SignedinPage from "./components/SignedinPage";
 import ModeratorPage from "../components/ModeratorPage";
 import EverybodyPage from "./components/EverybodyPage";
 
+import './config.scss';
+
 const Header = () =>(
   <div style={headerstyles.headline}>
     <div style={headerstyles.headtext}>GEOVATION</div>
@@ -38,6 +40,9 @@ const headerstyles = {
     height:80
   }
 }
+
+
+// TODO extract primary and secondary from config.scss
 
 export default {
   Header,
