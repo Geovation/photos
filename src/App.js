@@ -245,13 +245,15 @@ class App extends Component {
 
         {/*{ !window.cordova && <input className='hidden' type='file' accept='image/*' ref={input => this.inputElement = input}/> }*/}
         { !window.cordova &&
-        <RootRef rootRef={this.domRefInput}>
-          <input className='hidden' type='file' accept='image/*'
-                 onChange={this.openFile}
-          />
-        </RootRef>}
-        { window.cordova && this.state.tab === TABS.photos &&
-        <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>}
+          <RootRef rootRef={this.domRefInput}>
+            <input className='hidden' type='file' accept='image/*'
+                   onChange={this.openFile}
+            />
+          </RootRef>
+        }
+        { window.cordova &&
+          <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
+        }
 
         <Login
           open={this.state.loginLogoutDialogOpen && !this.state.isSignedIn}
