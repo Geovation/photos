@@ -20,6 +20,7 @@ import SchoolIcon from '@material-ui/icons/School';
 import Collapse from '@material-ui/core/Collapse';
 
 import PhotoPage from './components/PhotoPage';
+import ProfilePage from './components/ProfilePage';
 import Map from './components/Map';
 import config from './custom/config';
 import EverybodyPage from './custom/components/EverybodyPage';
@@ -151,6 +152,7 @@ class App extends Component {
 
     if (this.state.user) {
       config.authModule.signOut();
+      this.props.history.push("/");
       loginLogoutDialogOpen = false;
     }
 
@@ -209,6 +211,7 @@ class App extends Component {
                 online={this.state.online}
                 handleClickLoginLogout={this.handleClickLoginLogout}
                 handleDrawerClick={this.toggleLeftDrawer(true)}
+                {...this.props}
         />
 
         <main className="content" tab={this.state.tab}>
@@ -230,6 +233,8 @@ class App extends Component {
               />}
             />
             <Route path='/signedin' component={SignedinPage} />
+            <Route path='/profile' render={(props) => <ProfilePage {...props} user={this.state.isSignedIn} />}/>
+            <Route path={TABS.map.path} render={(props) => <Map {...props} location={this.state.location} />}/>
           </Switch>
 
           <Collapse

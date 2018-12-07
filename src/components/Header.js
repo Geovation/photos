@@ -79,7 +79,7 @@ class Header extends React.Component {
               open={open}
               onClose={this.handleClose}
             >
-              <MenuItem onClick={this.handleClose}>
+              <MenuItem onClick={() => this.props.history.push('/profile')}>
                 <ListItemIcon>
                   <AccountCircleIcon/>
                 </ListItemIcon>
