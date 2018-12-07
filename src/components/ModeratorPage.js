@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
 
 import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -13,7 +14,6 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -22,6 +22,7 @@ import Avatar from '@material-ui/core/Avatar';
 
 import './ModeratorPage.scss';
 import config from '../custom/config';
+import * as actions from "../actions";
 
 import placeholderImage from '../images/logo.svg'
 
@@ -38,6 +39,16 @@ class ModeratorPage extends Component {
       zoomDialogOpen: false,
       photoSelected: {}
     };
+  }
+
+  componentDidMount() {
+    console.debug(this.props);
+    this.props.startFetchingPhotosToModerate();
+  }
+
+  componentWillUnmount() {
+    console.debug(this.props);
+    this.props.stopFetchingPhotosToModerate();
   }
 
   handleRejectClick = (photo) =>
@@ -160,4 +171,16 @@ class ModeratorPage extends Component {
   }
 }
 
-export default ModeratorPage;
+const mapStateToProps = state => ({
+  photos: state.photos
+})
+
+const mapDispatchToProps = dispatch => ({
+  startFetchingPhotosToModerate: actions.startFetchingPhotosToModerate(dispatch),
+  stopFetchingPhotosToModerate: actions.stopFetchingPhotosToModerate
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ModeratorPage);
