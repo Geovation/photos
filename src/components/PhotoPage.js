@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import loadImage from 'blueimp-load-image';
 
-import RootRef from '@material-ui/core/RootRef';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -11,24 +10,30 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 
+import imgHeader from '../images/logo.svg';
+
+
 // import Loading from './Loading';
 import config from '../custom/config';
 import './PhotoPage.scss';
 
+const emptyState = {
+  imgSrc: imgHeader,
+  open: false,
+  message: '',
+  value: '',
+  sending: false,
+};
+
 class PhotoPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      imgSrc: '',
-      open: false,
-      message: '',
-      value: '',
-      sending: false
-    };
-
-    this.base64 = null;
+    this.state = {...emptyState};
     this.dialogCloseCallback = null;
-    this.domRefPicture = {};
+  }
+
+  resetState = () => {
+    this.setState(emptyState);
   }
 
   handleChange = (event) => {
@@ -59,7 +64,8 @@ class PhotoPage extends Component {
       let data = {};
       const text =  this.state.value;
       const { location } = this.props;
-      data.base64 = this.base64;
+      data.base64 = this.state.imgSrc.split(",")[1];
+
       if (text !== '') {
         data['text'] = text;
         if (location) {
@@ -70,7 +76,7 @@ class PhotoPage extends Component {
         try {
           const res = await config.uploadPhoto(data);
           console.log(res);
-          this.openDialog("Photo was uploaded successfully", this.goToRoot);
+          this.openDialog("Photo was uploaded successfully", this.resetState);
 
         } catch (e) {
           this.openDialog(e.message || e);
@@ -82,35 +88,11 @@ class PhotoPage extends Component {
     }
   }
 
-  goToRoot() {
-    this.props.history.push('/');
-  }
-
   loadImage = () => {
     loadImage(
       this.props.file, (img) =>{
-        // const picture = document.getElementById('picture');
-        const picture = this.domRefPicture.current;
-
-        while (picture.firstChild) {
-          picture.removeChild(picture.firstChild);
-        }
-
-        picture.appendChild(img);
-        const canvas = document.getElementsByTagName('canvas')[0];
-        const width = canvas.width;
-        const height = canvas.height;
-        if(width<height){
-          canvas.style.width = 'auto';
-          canvas.style.maxHeight = '100%';
-        }
-        else {
-          canvas.style.height = 'auto';
-          canvas.style.maxWidth = '100%';
-          canvas.style.maxHeight = '100%';
-        }
-
-        this.base64 = canvas.toDataURL("image/jpeg").split(",")[1];
+        const imgSrc = img.toDataURL("image/jpeg");
+        this.setState({imgSrc});
       },
       {
         orientation: true,
@@ -121,13 +103,14 @@ class PhotoPage extends Component {
   }
 
   componentDidMount() {
+    this.loadImage();
     window.gtag('event', 'page_view', {
       'event_category': 'view',
       'event_label': 'PhotoPage'
     });
   }
 
-  componentDidUpdate = (prevProps) => {
+  componentDidUpdate(prevProps) {
     if (prevProps.file !== this.props.file) {
       this.loadImage();
     }
@@ -146,9 +129,9 @@ class PhotoPage extends Component {
             margin="dense"
           />
 
-         <RootRef rootRef={this.domRefPicture}>
-           <div className='picture'></div>
-         </RootRef>
+          <div className='picture'>
+           <img src={this.state.imgSrc} alt={""}/>
+          </div>
 
           <div className='buttonwrapper'>
             <Button variant="outlined" color="primary" onClick={this.sendFile}>
