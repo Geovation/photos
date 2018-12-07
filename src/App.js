@@ -8,8 +8,6 @@ import Tab from '@material-ui/core/Tab';
 import Snackbar from '@material-ui/core/Snackbar';
 import MapIcon from '@material-ui/icons/Map';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
-import PersonPinIcon from '@material-ui/icons/PersonPin';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CheckIcon from '@material-ui/icons/Check';
 
 import PhotoPage from './components/PhotoPage';
@@ -111,7 +109,6 @@ class App extends Component {
       if (this.state.isSignedIn && !user) {
         window.location.reload();
       }
-
       this.setState({isSignedIn: user});
     });
 
@@ -192,7 +189,11 @@ class App extends Component {
   render() {
     return (
       <div className="geovation-app">
-        <Header headline={this.state.tab.title}/>
+        <Header headline={this.state.tab.title}
+                user={this.state.isSignedIn}
+                online={this.state.online}
+                handleClickLoginLogout={this.handleClickLoginLogout}
+        />
 
         <main className="content" tab={this.state.tab}>
           <Switch>
@@ -235,8 +236,6 @@ class App extends Component {
             <Tab icon={<AddAPhotoIcon />} value={TABS.photos} onClick={this.handlePhotoClick} />
             {/*<Tab icon={<PersonPinIcon />} value={{path: "/profile"}}/>*/}
 
-            {!this.state.isSignedIn && <Tab icon={<PersonPinIcon />} disabled={!this.state.online} onClick={this.handleClickLoginLogout}/>}
-            {this.state.isSignedIn && <Tab icon={<ExitToAppIcon />} value={{path: "/"}} onClick={this.handleClickLoginLogout}/>}
             {config.authModule.isModerator() && <Tab icon={<CheckIcon />} value={TABS.moderator}/>}
 
           </Tabs>
