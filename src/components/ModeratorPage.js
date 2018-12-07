@@ -26,12 +26,7 @@ import * as actions from "../actions";
 
 import placeholderImage from '../images/logo.svg'
 
-// const mapStateToProps = ({photos}) => {
-//   return { photos };
-// };
-const mapStateToProps = ({photos}) => ({ photos });
-
-class ModeratorPageComponent extends Component {
+class ModeratorPage extends Component {
 
   constructor(props) {
     super(props);
@@ -46,14 +41,14 @@ class ModeratorPageComponent extends Component {
     };
   }
 
-  componentWillMount() {
-    console.log(this.props);
-    this.props.fetchPhotosToModerate();
+  componentDidMount() {
+    console.debug(this.props);
+    this.props.startFetchingPhotosToModerate();
   }
 
   componentWillUnmount() {
-    console.log(this.props);
-    // TODO: how can we unsubscrive to the fotos
+    console.debug(this.props);
+    this.props.stopFetchingPhotosToModerate();
   }
 
   handleRejectClick = (photo) =>
@@ -106,7 +101,6 @@ class ModeratorPageComponent extends Component {
       <div className='geovation-moderatorPage'>
 
         <div className={"content"}>
-          {this.props.photos && this.props.photos.map &&
           <List dense={false}>
             {this.props.photos.map(photo => (
               <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
@@ -126,7 +120,6 @@ class ModeratorPageComponent extends Component {
               </ListItem>
             ))}
           </List>
-          }
         </div>
 
         <Dialog open={this.state.confirmDialogOpen}>
@@ -178,6 +171,16 @@ class ModeratorPageComponent extends Component {
   }
 }
 
-const ModeratorPage = connect(mapStateToProps, actions)(ModeratorPageComponent);
+const mapStateToProps = state => ({
+  photos: state.photos
+})
 
-export default ModeratorPage;
+const mapDispatchToProps = dispatch => ({
+  startFetchingPhotosToModerate: actions.startFetchingPhotosToModerate(dispatch),
+  stopFetchingPhotosToModerate: actions.stopFetchingPhotosToModerate
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ModeratorPage);

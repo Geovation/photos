@@ -51,6 +51,9 @@ export default {
   EverybodyPage: EverybodyPage,
   MAX_IMAGE_SIZE: 2048,
   THEME: {
+    typography: {
+      useNextVariants: true,
+    },
     palette: {
       primary: { main: "#F7A70B" },
       secondary: { main: "#5386E4"},
