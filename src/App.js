@@ -232,7 +232,9 @@ class App extends Component {
             <Route path='/signedin' component={SignedinPage} />
           </Switch>
 
-          <Collapse in={this.props.history.location.pathname === TABS.map.path} timeout={0}>
+          <Collapse
+            className={"map-container"}
+            in={this.props.history.location.pathname === TABS.map.path} timeout={0}>
             <Map location={this.state.location}/>
           </Collapse>
 
