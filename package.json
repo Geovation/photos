@@ -1,6 +1,6 @@
 {
   "name": "geovation-photos-firebase",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Simple Reactjs PWA that allows you to upload photos into a map.",
   "main": "index.js",
   "scripts": {
