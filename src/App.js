@@ -57,7 +57,7 @@ class App extends Component {
     this.state = {
       file: null,
       location: {},
-      isSignedIn: null,
+      user: null,
       photosToModerate: [],
       online: false,
       tab: _.find(TABS, tab => tab.path === this.props.location.pathname),
@@ -113,12 +113,12 @@ class App extends Component {
     });
 
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged(user => {
-
       // lets start fresh if the user logged out
-      if (this.state.isSignedIn && !user) {
+      if (this.state.user && !user) {
+        this.props.history.push(TABS.map.path);
         window.location.reload();
       }
-      this.setState({isSignedIn: user});
+      this.setState({ user });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
@@ -148,7 +148,7 @@ class App extends Component {
   handleClickLoginLogout = () => {
     let loginLogoutDialogOpen = true;
 
-    if (this.state.isSignedIn) {
+    if (this.state.user) {
       config.authModule.signOut();
       loginLogoutDialogOpen = false;
     }
@@ -204,7 +204,7 @@ class App extends Component {
     return (
       <div className="geovation-app">
         <Header headline={this.state.tab.title}
-                user={this.state.isSignedIn}
+                user={this.state.user}
                 online={this.state.online}
                 handleClickLoginLogout={this.handleClickLoginLogout}
                 handleDrawerClick={this.toggleLeftDrawer(true)}
@@ -214,11 +214,13 @@ class App extends Component {
           <Switch>
             <Route path='/everybody' component={EverybodyPage} />
             <Route path='/anonymous' component={AnonymousPage} />
-            <Route path={TABS.moderator.path} render={(props) =>
-              <ModeratorPage {...props}
-                photos={this.state.photosToModerate}
-              />}
-            />
+            {this.state.user && this.state.user.isModerator &&
+              <Route path={TABS.moderator.path} render={(props) =>
+                <ModeratorPage {...props}
+                  photos={this.state.photosToModerate}
+                />}
+              />
+            }
             <Route path={TABS.photos.path} render={(props) =>
               <PhotoPage {...props}
                  file={this.state.file}
@@ -260,7 +262,7 @@ class App extends Component {
         }
 
         <Login
-          open={this.state.loginLogoutDialogOpen && !this.state.isSignedIn}
+          open={this.state.loginLogoutDialogOpen && !this.state.user}
           handleClose={this.handleLoginClose}
           loginComponent={config.loginComponent}
         />
