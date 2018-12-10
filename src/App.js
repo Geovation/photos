@@ -24,6 +24,7 @@ import Map from './components/Map';
 import config from './custom/config';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
 import LoginFirebase from "./components/LoginFirebase";
+import authFirebase from './authFirebase'
 
 import Header from './components/Header';
 
@@ -114,8 +115,7 @@ class App extends Component {
     this.unregisterConnectionObserver = config.dbModule.onConnectionStateChanged(online => {
       this.setState({online});
     });
-
-    this.unregisterAuthObserver = config.authModule.onAuthStateChanged(user => {
+    this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
         this.props.history.push(PAGES.map.path);
@@ -152,7 +152,7 @@ class App extends Component {
     let loginLogoutDialogOpen = true;
 
     if (this.state.user) {
-      config.authModule.signOut();
+      authFirebase.signOut();
       loginLogoutDialogOpen = false;
     }
 
@@ -241,7 +241,7 @@ class App extends Component {
             <BottomNavigationAction icon={<MapIcon />} value={PAGES.map} label={PAGES.map.label}/>
             <BottomNavigationAction icon={<AddAPhotoIcon />} value={PAGES.photos} label={PAGES.photos.label} onClick={this.handlePhotoClick} />
 
-            {config.authModule.isModerator() && <BottomNavigationAction icon={<CheckIcon />} value={PAGES.moderator} label={PAGES.moderator.label}/>}
+            {authFirebase.isModerator() && <BottomNavigationAction icon={<CheckIcon />} value={PAGES.moderator} label={PAGES.moderator.label}/>}
 
           </BottomNavigation>
         </footer>

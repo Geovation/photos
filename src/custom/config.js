@@ -1,4 +1,3 @@
-import authFirebase from '../authFirebase'
 import dbFirebase from "../dbFirebase";
 import ModeratorPage from "../components/ModeratorPage";
 
@@ -8,7 +7,6 @@ const secondaryColor = styles.secondary;
 
 export default {
   uploadPhoto: dbFirebase.uploadPhoto,
-  authModule: authFirebase,
   dbModule: dbFirebase,
   ModeratorPage: ModeratorPage,
   MAX_IMAGE_SIZE: 2048,
