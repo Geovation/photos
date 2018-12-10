@@ -238,7 +238,6 @@ class App extends Component {
             />
             <Route path='/signedin' component={SignedinPage} />
             <Route path={PAGES.profile.path} render={(props) => <ProfilePage {...props} user={this.state.user} />}/>
-            <Route path={PAGES.map.path} render={(props) => <Map {...props} location={this.state.location} />}/>
           </Switch>
 
           <Collapse
