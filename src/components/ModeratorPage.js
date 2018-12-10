@@ -21,10 +21,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 
 import './ModeratorPage.scss';
-import config from '../custom/config';
 import * as actions from "../actions";
 
 import placeholderImage from '../images/logo.svg'
+import dbFirebase from "../dbFirebase";
 
 class ModeratorPage extends Component {
 
@@ -85,13 +85,13 @@ class ModeratorPage extends Component {
   };
 
   handleRejectDialogOk = (id) => () => {
-    config.dbModule.rejectPhoto(id);
+    dbFirebase.rejectPhoto(id);
     this.setState({confirmDialogOpen: false});
     this.handleZoomDialogClose();
   };
 
   handleApproveDialogOk = (id) => () => {
-    config.dbModule.approvePhoto(id);
+    dbFirebase.approvePhoto(id);
     this.setState({confirmDialogOpen: false});
     this.handleZoomDialogClose();
   };

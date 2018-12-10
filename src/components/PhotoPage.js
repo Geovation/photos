@@ -15,6 +15,7 @@ import imgHeader from '../images/logo.svg';
 
 import config from '../custom/config';
 import './PhotoPage.scss';
+import dbFirebase from "../dbFirebase";
 
 const emptyState = {
   imgSrc: imgHeader,
@@ -73,7 +74,7 @@ class PhotoPage extends Component {
         }
         this.setState({ sending: true });
         try {
-          const res = await config.uploadPhoto(data);
+          const res = await dbFirebase.uploadPhoto(data);
           console.log(res);
           this.openDialog("Photo was uploaded successfully", this.resetState);
 

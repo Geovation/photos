@@ -21,17 +21,17 @@ import SchoolIcon from '@material-ui/icons/School';
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
 import Map from './components/Map';
-import config from './custom/config';
-import EverybodyPage from './custom/components/EverybodyPage';
-import AnonymousPage from './custom/components/AnonymousPage';
-import ModeratorPage from './components/ModeratorPage';
-import SignedinPage from './custom/components/SignedinPage';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
+import ModeratorPage from './components/ModeratorPage';
+
+import LoginFirebase from "./components/LoginFirebase";
+import authFirebase from './authFirebase'
 
 import Header from './components/Header';
 
 import './App.scss'
 import Login from "./components/Login";
+import dbFirebase from "./dbFirebase";
 
 const PAGES = {
   map: {
@@ -114,11 +114,10 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.unregisterConnectionObserver = config.dbModule.onConnectionStateChanged(online => {
+    this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
     });
-
-    this.unregisterAuthObserver = config.authModule.onAuthStateChanged(user => {
+    this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
         this.props.history.push(PAGES.map.path);
@@ -135,7 +134,7 @@ class App extends Component {
     this.setState = console.log;
 
     await this.unregisterAuthObserver();
-    await config.dbModule.disconnect();
+    await dbFirebase.disconnect();
     await this.unregisterLocationObserver();
     await this.unregisterConnectionObserver();
   }
@@ -155,7 +154,7 @@ class App extends Component {
     let loginLogoutDialogOpen = true;
 
     if (this.state.user) {
-      config.authModule.signOut();
+      authFirebase.signOut();
       loginLogoutDialogOpen = false;
     }
 
@@ -219,15 +218,14 @@ class App extends Component {
 
         <main className="content">
           <Switch>
-            <Route path='/everybody' component={EverybodyPage} />
-            <Route path='/anonymous' component={AnonymousPage} />
             { this.state.user && this.state.user.isModerator &&
-              <Route path={PAGES.moderator.path} render={(props) =>
-                <ModeratorPage {...props}
-                  photos={this.state.photosToModerate}
-                />}
-              />
+            <Route path={PAGES.moderator.path} render={(props) =>
+              <ModeratorPage {...props}
+                             photos={this.state.photosToModerate}
+              />}
+            />
             }
+
             <Route path={PAGES.photos.path} render={(props) =>
               <PhotoPage {...props}
                  file={this.state.file}
@@ -235,7 +233,6 @@ class App extends Component {
                  online={this.state.online}
               />}
             />
-            <Route path='/signedin' component={SignedinPage} />
             <Route path={PAGES.profile.path} render={(props) => <ProfilePage {...props} user={this.state.user} />}/>
           </Switch>
 
@@ -254,7 +251,7 @@ class App extends Component {
             <BottomNavigationAction icon={<MapIcon />} value={PAGES.map} label={PAGES.map.label}/>
             <BottomNavigationAction icon={<AddAPhotoIcon />} value={PAGES.photos} label={PAGES.photos.label} onClick={this.handlePhotoClick} />
 
-            {config.authModule.isModerator() && <BottomNavigationAction icon={<CheckIcon />} value={PAGES.moderator} label={PAGES.moderator.label}/>}
+            {authFirebase.isModerator() && <BottomNavigationAction icon={<CheckIcon />} value={PAGES.moderator} label={PAGES.moderator.label}/>}
 
           </BottomNavigation>
         </footer>
@@ -274,7 +271,7 @@ class App extends Component {
         <Login
           open={this.state.loginLogoutDialogOpen && !this.state.user}
           handleClose={this.handleLoginClose}
-          loginComponent={config.loginComponent}
+          loginComponent={LoginFirebase}
         />
 
         <Drawer open={this.state.leftDrawerOpen} onClose={this.toggleLeftDrawer(false)}>

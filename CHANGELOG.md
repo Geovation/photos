@@ -1,5 +1,5 @@
-## 0.3.0 (2018-11-09)
-- added firebase example
+## 0.3.0 (2018-12-10)
+- added firebase support as default
 - show photos from firebase
 - login
 - recognize moderator
