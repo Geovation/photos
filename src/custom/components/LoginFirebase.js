@@ -1,6 +1,6 @@
 import React from 'react';
 
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import FirebaseAuth from 'react-firebaseui/FirebaseAuth';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -59,7 +59,7 @@ class LoginFirebase extends React.Component {
         // aria-labelledby="responsive-dialog-title"
       >
         <DialogContent>
-          <StyledFirebaseAuth
+          <FirebaseAuth
             // uiCallback={ui => ui.disableAutoSignIn()}
             uiConfig={this.uiConfig}
             firebaseAuth={firebase.auth()}

@@ -1,0 +1,19 @@
+$primary: #F7A70B;
+$secondary: #5386E4;
+
+// export scss vars as js object
+:export {
+  primary: $primary;
+  secondary: $secondary;
+}
+
+.firebaseui-textfield.mdl-textfield .firebaseui-label::after {
+    background: $primary !important;
+}
+.firebaseui-form-actions .mdl-button--raised.mdl-button--colored.firebaseui-button {
+    background: $primary !important;
+}
+
+.firebaseui-link.firebaseui-id-secondary-link {
+    color: $secondary !important;
+}
