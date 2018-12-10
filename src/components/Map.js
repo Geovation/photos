@@ -12,11 +12,11 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import Collapse from '@material-ui/core/Collapse';
 
 import './Map.scss';
 import config from "../custom/config";
 import placeholderImage from '../images/logo.svg';
+import Show from './Show';
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -209,14 +209,11 @@ class Map extends Component {
     const gpsDisabled = !this.props.location.updated;
     return (
       <div className={"geovation-map"}>
-        <Collapse in={this.props.visible} timeout={0}>
-
+        <Show visible={this.props.visible}>
           <div id='map' className="map"></div>
-          {this.props.visible &&
-            <Fab className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
-              {gpsOffline ? <GpsOff/> : <GpsFixed/>}
-            </Fab>
-          }
+          <Fab className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+            {gpsOffline ? <GpsOff/> : <GpsFixed/>}
+          </Fab>
 
           <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
             <DialogContent>
@@ -243,7 +240,7 @@ class Map extends Component {
             </DialogContent>
 
           </Dialog>
-       </Collapse>
+        </Show>
       </div>
     );
   }
