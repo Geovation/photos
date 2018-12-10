@@ -1,5 +1,4 @@
 import authFirebase from '../authFirebase'
-import LoginFirebase from "../components/LoginFirebase";
 import dbFirebase from "../dbFirebase";
 import ModeratorPage from "../components/ModeratorPage";
 
@@ -9,7 +8,6 @@ const secondaryColor = styles.secondary;
 
 export default {
   uploadPhoto: dbFirebase.uploadPhoto,
-  loginComponent: LoginFirebase,
   authModule: authFirebase,
   dbModule: dbFirebase,
   ModeratorPage: ModeratorPage,

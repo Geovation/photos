@@ -26,7 +26,7 @@ async function fetchPhotos() {
 
       querySnapshot.forEach( doc => {
         const photo = extractPhoto(doc);
-        console.log(`${doc.id} =>`, photo);
+        console.debug(`${doc.id} =>`, photo);
 
         const feature = {
           "type": "Feature",

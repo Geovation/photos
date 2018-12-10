@@ -23,6 +23,7 @@ import ProfilePage from './components/ProfilePage';
 import Map from './components/Map';
 import config from './custom/config';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
+import LoginFirebase from "./components/LoginFirebase";
 
 import Header from './components/Header';
 
@@ -260,7 +261,7 @@ class App extends Component {
         <Login
           open={this.state.loginLogoutDialogOpen && !this.state.user}
           handleClose={this.handleLoginClose}
-          loginComponent={config.loginComponent}
+          loginComponent={LoginFirebase}
         />
 
         <Drawer open={this.state.leftDrawerOpen} onClose={this.toggleLeftDrawer(false)}>
