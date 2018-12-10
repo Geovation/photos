@@ -22,10 +22,6 @@ import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
 import Map from './components/Map';
 import config from './custom/config';
-import EverybodyPage from './custom/components/EverybodyPage';
-import AnonymousPage from './custom/components/AnonymousPage';
-import ModeratorPage from './components/ModeratorPage';
-import SignedinPage from './custom/components/SignedinPage';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
 
 import Header from './components/Header';
@@ -219,15 +215,6 @@ class App extends Component {
 
         <main className="content">
           <Switch>
-            <Route path='/everybody' component={EverybodyPage} />
-            <Route path='/anonymous' component={AnonymousPage} />
-            { this.state.user && this.state.user.isModerator &&
-              <Route path={PAGES.moderator.path} render={(props) =>
-                <ModeratorPage {...props}
-                  photos={this.state.photosToModerate}
-                />}
-              />
-            }
             <Route path={PAGES.photos.path} render={(props) =>
               <PhotoPage {...props}
                  file={this.state.file}
@@ -235,7 +222,6 @@ class App extends Component {
                  online={this.state.online}
               />}
             />
-            <Route path='/signedin' component={SignedinPage} />
             <Route path={PAGES.profile.path} render={(props) => <ProfilePage {...props} user={this.state.user} />}/>
           </Switch>
 
