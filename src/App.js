@@ -118,7 +118,7 @@ class App extends Component {
         this.props.history.push(TABS.map.path);
         window.location.reload();
       }
-      this.setState({user: user});
+      this.setState({ user });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
