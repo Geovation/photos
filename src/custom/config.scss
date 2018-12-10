@@ -13,3 +13,7 @@ $secondary: #5386E4;
 .firebaseui-form-actions .mdl-button--raised.mdl-button--colored.firebaseui-button {
     background: $primary !important;
 }
+
+.firebaseui-link.firebaseui-id-secondary-link {
+    color: $secondary !important;
+}
