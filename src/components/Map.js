@@ -52,12 +52,10 @@ class Map extends Component {
       attributionControl: false,
     });
 
-    if (config.MAPBOX) {
-      this.map.addControl(new mapboxgl.AttributionControl({
-        compact: true,
-        customAttribution: config.MAP_ATTRIBUTION
-      }));
-    }
+    this.map.addControl(new mapboxgl.AttributionControl({
+      compact: true,
+      customAttribution: config.MAP_ATTRIBUTION
+    }));
 
     this.map.on('load', async () => {
       const geojson = await photos;
