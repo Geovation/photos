@@ -45,7 +45,8 @@ class Header extends React.Component {
     return <div className="geovation-header">
       <AppBar position="static">
         <Toolbar>
-          <IconButton color="inherit" aria-label="Menu" className="menuButton">
+          <IconButton color="inherit" aria-label="Menu" className="menuButton"
+                        onClick={this.props.handleDrawerClick}>
             <MenuIcon />
           </IconButton>
 
