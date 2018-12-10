@@ -17,7 +17,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HelpIcon from '@material-ui/icons/Help';
 import SchoolIcon from '@material-ui/icons/School';
-import Collapse from '@material-ui/core/Collapse';
 
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
@@ -238,14 +237,11 @@ class App extends Component {
             />
             <Route path='/signedin' component={SignedinPage} />
             <Route path={PAGES.profile.path} render={(props) => <ProfilePage {...props} user={this.state.user} />}/>
-            <Route path={PAGES.map.path} render={(props) => <Map {...props} location={this.state.location} />}/>
           </Switch>
 
-          <Collapse
-            className={"map-container"}
-            in={this.props.history.location.pathname === PAGES.map.path} timeout={0}>
-            <Map location={this.state.location}/>
-          </Collapse>
+
+          <Map location={this.state.location}
+               visible={this.props.history.location.pathname === PAGES.map.path}/>
 
         </main>
 

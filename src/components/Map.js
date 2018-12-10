@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import './Map.scss';
 import config from "../custom/config";
 import placeholderImage from '../images/logo.svg';
+import Show from './Show';
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -207,38 +208,39 @@ class Map extends Component {
     const gpsOffline = !(this.props.location.online);
     const gpsDisabled = !this.props.location.updated;
     return (
-      <div className="geovation-map">
+      <div className={"geovation-map"}>
+        <Show visible={this.props.visible}>
+          <div id='map' className="map"></div>
+          <Fab className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+            {gpsOffline ? <GpsOff/> : <GpsFixed/>}
+          </Fab>
 
-        <div id='map' className="map"></div>
-        <Fab className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
-          {gpsOffline ? <GpsOff/> : <GpsFixed/>}
-        </Fab>
+          <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
+            <DialogContent>
+              <img onError={(e) => { e.target.src=placeholderImage}} className={"main-image"} alt={''} src={feature.properties.main}/>
+              <Card>
+                <CardActionArea>
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {feature.properties.description}
+                    </Typography>
+                    <Typography component="p">
+                      Coordinates: {feature.geometry.coordinates[0]}, {feature.geometry.coordinates[1]}
+                    </Typography>
+                    <Typography component="p">
+                      Time: {feature.properties.updated}
+                    </Typography>
+                    <Typography component="p">
+                      Description: {feature.properties.description || "-"}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
 
-        <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
-          <DialogContent>
-            <img onError={(e) => { e.target.src=placeholderImage}} className={"main-image"} alt={''} src={feature.properties.main}/>
-            <Card>
-              <CardActionArea>
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {feature.properties.description}
-                  </Typography>
-                  <Typography component="p">
-                    Coordinates: {feature.geometry.coordinates[0]}, {feature.geometry.coordinates[1]}
-                  </Typography>
-                  <Typography component="p">
-                    Time: {feature.properties.updated}
-                  </Typography>
-                  <Typography component="p">
-                    Description: {feature.properties.description || "-"}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
+            </DialogContent>
 
-          </DialogContent>
-
-        </Dialog>
+          </Dialog>
+        </Show>
       </div>
     );
   }
