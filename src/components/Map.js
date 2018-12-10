@@ -12,9 +12,6 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import { OSstyle } from '../os-style/style';
-import * as turf from '@turf/turf';
-
 
 import './Map.scss';
 import config from "../custom/config";
@@ -49,19 +46,18 @@ class Map extends Component {
     mapboxgl.accessToken = config.MAPBOX_TOKEN;
     this.map = new mapboxgl.Map({
       container: 'map', // container id
-      style: 'mapbox://styles/mapbox/streets-v10',
+      style: config.MAP_SOURCE,
       center: location.updated ? [location.longitude, location.latitude] : CENTER, // starting position [lng, lat]
       zoom: ZOOM, // starting zoom
       attributionControl: false,
     });
 
     this.map.addControl(new mapboxgl.AttributionControl({
-        compact: true,
-        customAttribution: 'Contains OS data &copy; Crown copyright and database rights 2018'
+      compact: true,
+      customAttribution: config.MAP_ATTRIBUTION
     }));
 
     this.map.on('load', async () => {
-      this.addOSlayers();
       const geojson = await photos;
       this.addFeaturesToMap(geojson);
     });
@@ -70,57 +66,6 @@ class Map extends Component {
       'event_category': 'view',
       'event_label': 'Map'
     });
-  }
-
-  addOSlayers = () =>{
-    // sources have been renamed to composite2 in order to avoid confilct
-    // with mapbox's source id composite
-    this.map.addSource('composite2',OSstyle.sources.composite2);
-    OSstyle.layers.forEach(layer=>{
-      this.map.addLayer(layer);
-    });
-  }
-
-  currentViewContainsBounds = () => {
-    const BBOX =[[
-      [-6.4234004876,49.0900561455],
-      [-4.9968673896,54.5349345357],
-      [-9.3861575351,57.3847350204],
-      [-9.3727517251,62.5022495427],
-      [2.1689766886,62.5013504742],
-      [2.1603103948,51.1599319573],
-      [-6.4234004876,49.0900561455]
-    ]];  // polygon instead of a square box
-    const bboxPolygon = turf.polygon(BBOX);
-
-    const bounds = this.map.getBounds();  // bounds of current view
-    const currentBounds = [bounds._ne.lng,bounds._ne.lat,bounds._sw.lng,bounds._sw.lat];
-    const boundsPolygon = turf.bboxPolygon(currentBounds);
-
-    const contains = turf.booleanContains(bboxPolygon, boundsPolygon);
-    return contains;
-  }
-
-  changeVisibility = (visibility) => {
-    const layers = this.map.getStyle().layers;
-    layers.forEach(layer => {
-      if (layer.source === 'composite' && layer.id !== 'water'){
-        this.map.setLayoutProperty(layer.id, 'visibility',visibility);
-      }
-    });
-  }
-
-  updateLayerVisibility = () => {
-    const isContained = this.currentViewContainsBounds();
-    // check one layer if its visible or not
-    const visibility = this.map.getLayoutProperty(this.map.getStyle().layers[1].id, 'visibility');
-
-    if(isContained && visibility==='visible'){
-      this.changeVisibility('none');
-    }
-    else if(!isContained && visibility==='none'){
-      this.changeVisibility('visible');
-    }
   }
 
   addFeaturesToMap = geojson => {
@@ -187,10 +132,6 @@ class Map extends Component {
             "circle-stroke-width": 1,
             "circle-stroke-color": "#fff"
         }
-    });
-
-    this.map.on('move', e => {
-      this.updateLayerVisibility();
     });
 
     this.map.on('render', 'unclustered-point', e => {
