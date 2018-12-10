@@ -233,7 +233,13 @@ class App extends Component {
                  online={this.state.online}
               />}
             />
-            <Route path={PAGES.profile.path} render={(props) => <ProfilePage {...props} user={this.state.user} />}/>
+            { this.state.user &&
+              <Route path={PAGES.profile.path} render={(props) =>
+                <ProfilePage {...props}
+                  user={this.state.user}
+                />}
+              />
+            }
           </Switch>
 
 
