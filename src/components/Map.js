@@ -17,7 +17,6 @@ import './Map.scss';
 import config from "../custom/config";
 import placeholderImage from '../images/logo.svg';
 import dbFirebase from "../dbFirebase";
-import Show from './Show';
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -209,8 +208,7 @@ class Map extends Component {
     const gpsOffline = !(this.props.location.online);
     const gpsDisabled = !this.props.location.updated;
     return (
-      <div className={"geovation-map"}>
-        <Show visible={this.props.visible}>
+      <div className={"geovation-map"} style={{display: this.props.visible? "block": "none"}}>
           <div id='map' className="map"></div>
           <Fab className="location" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
             {gpsOffline ? <GpsOff/> : <GpsFixed/>}
@@ -241,7 +239,6 @@ class Map extends Component {
             </DialogContent>
 
           </Dialog>
-        </Show>
       </div>
     );
   }
