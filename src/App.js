@@ -122,7 +122,7 @@ class App extends Component {
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
-        this.props.history.push(TABS.map.path);
+        this.props.history.push(PAGES.map.path);
         window.location.reload();
       }
       this.setState({ user });
@@ -157,7 +157,6 @@ class App extends Component {
 
     if (this.state.user) {
       config.authModule.signOut();
-      this.props.history.push("/");
       loginLogoutDialogOpen = false;
     }
 
@@ -211,7 +210,7 @@ class App extends Component {
   render() {
     return (
       <div className="geovation-app">
-        <Header headline={this.state.tab.title}
+        <Header headline={this.state.page.title}
                 user={this.state.user}
                 online={this.state.online}
                 handleClickLoginLogout={this.handleClickLoginLogout}
@@ -223,8 +222,8 @@ class App extends Component {
           <Switch>
             <Route path='/everybody' component={EverybodyPage} />
             <Route path='/anonymous' component={AnonymousPage} />
-            {this.state.user && this.state.user.isModerator &&
-              <Route path={TABS.moderator.path} render={(props) =>
+            { this.state.user && this.state.user.isModerator &&
+              <Route path={PAGES.moderator.path} render={(props) =>
                 <ModeratorPage {...props}
                   photos={this.state.photosToModerate}
                 />}
@@ -238,13 +237,13 @@ class App extends Component {
               />}
             />
             <Route path='/signedin' component={SignedinPage} />
-            <Route path={PAGES.profile.path} render={(props) => <ProfilePage {...props} user={this.state.isSignedIn} />}/>
+            <Route path={PAGES.profile.path} render={(props) => <ProfilePage {...props} user={this.state.user} />}/>
             <Route path={PAGES.map.path} render={(props) => <Map {...props} location={this.state.location} />}/>
           </Switch>
 
           <Collapse
             className={"map-container"}
-            in={this.props.history.location.pathname === TABS.map.path} timeout={0}>
+            in={this.props.history.location.pathname === PAGES.map.path} timeout={0}>
             <Map location={this.state.location}/>
           </Collapse>
 
