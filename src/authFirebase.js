@@ -1,4 +1,4 @@
-import User from "../types/User";
+import User from "./types/User";
 import firebase from "firebase/app";
 import dbFirebase from "./dbFirebase";
 
