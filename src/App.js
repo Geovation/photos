@@ -115,6 +115,7 @@ class App extends Component {
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
+        this.props.history.push(TABS.map.path);
         window.location.reload();
       }
       this.setState({user: user});
