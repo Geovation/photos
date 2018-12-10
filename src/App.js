@@ -9,6 +9,14 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MapIcon from '@material-ui/icons/Map';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import CheckIcon from '@material-ui/icons/Check';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import HelpIcon from '@material-ui/icons/Help';
+import SchoolIcon from '@material-ui/icons/School';
 
 import PhotoPage from './components/PhotoPage';
 import Map from './components/Map';
@@ -54,7 +62,8 @@ class App extends Component {
       online: false,
       tab: _.find(TABS, tab => tab.path === this.props.location.pathname),
       loginLogoutDialogOpen: false,
-      openPhotoDialog: false
+      openPhotoDialog: false,
+      leftDrawerOpen: false
     };
     this.geoid = null;
     this.domRefInput = {};
@@ -187,6 +196,10 @@ class App extends Component {
     }
   };
 
+  toggleLeftDrawer = (isItOpen) => () => {
+    this.setState({leftDrawerOpen: isItOpen})
+  };
+
   render() {
     return (
       <div className="geovation-app">
@@ -194,6 +207,7 @@ class App extends Component {
                 user={this.state.isSignedIn}
                 online={this.state.online}
                 handleClickLoginLogout={this.handleClickLoginLogout}
+                handleDrawerClick={this.toggleLeftDrawer(true)}
         />
 
         <main className="content" tab={this.state.tab}>
@@ -250,6 +264,31 @@ class App extends Component {
           handleClose={this.handleLoginClose}
           loginComponent={config.loginComponent}
         />
+
+        <Drawer open={this.state.leftDrawerOpen} onClose={this.toggleLeftDrawer(false)}>
+          <div
+            tabIndex={0}
+            role="button"
+            onClick={this.toggleLeftDrawer(false)}
+            onKeyDown={this.toggleLeftDrawer(false)}
+          >
+            <div>
+              <List>
+                <ListItem button>
+                  <ListItemIcon><HelpIcon /></ListItemIcon>
+                  <ListItemText primary={"about"} />
+                </ListItem>
+              </List>
+              <Divider />
+              <List>
+                <ListItem button>
+                  <ListItemIcon><SchoolIcon /></ListItemIcon>
+                  <ListItemText primary={"tutorial"} />
+                </ListItem>
+              </List>
+            </div>
+          </div>
+        </Drawer>
       </div>
     );
   }
