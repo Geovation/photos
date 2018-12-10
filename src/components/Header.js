@@ -39,6 +39,11 @@ class Header extends React.Component {
     this.setState({ anchorEl: null });
   };
 
+  handleProfileClick = () => {
+    this.handleClose();
+    this.props.handleProfileClick();
+  }
+
   render() {
     const open = Boolean(this.state.anchorEl);
 
@@ -79,7 +84,7 @@ class Header extends React.Component {
               open={open}
               onClose={this.handleClose}
             >
-              <MenuItem onClick={this.handleClose}>
+              <MenuItem onClick={this.handleProfileClick}>
                 <ListItemIcon>
                   <AccountCircleIcon/>
                 </ListItemIcon>
@@ -104,7 +109,9 @@ Header.propTypes = {
   headline: PropTypes.string.isRequired,
   user: PropTypes.object,
   online: PropTypes.bool,
-  handleClickLoginLogout: PropTypes.func
+  handleClickLoginLogout: PropTypes.func,
+  handleDrawerClick: PropTypes.func,
+  handleProfileClick: PropTypes.func
 };
 
 export default Header;

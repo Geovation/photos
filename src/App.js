@@ -20,6 +20,7 @@ import SchoolIcon from '@material-ui/icons/School';
 import Collapse from '@material-ui/core/Collapse';
 
 import PhotoPage from './components/PhotoPage';
+import ProfilePage from './components/ProfilePage';
 import Map from './components/Map';
 import config from './custom/config';
 import EverybodyPage from './custom/components/EverybodyPage';
@@ -33,7 +34,7 @@ import Header from './components/Header';
 import './App.scss'
 import Login from "./components/Login";
 
-const TABS = {
+const PAGES = {
   map: {
     path: "/",
     title: "Map",
@@ -48,7 +49,12 @@ const TABS = {
     path: "/moderator",
     title: "Moderator",
     label: "Moderate"
-  }
+  },
+  profile: {
+    path: "/profile",
+    title: "Profile",
+    label: "Profile"
+  },
 };
 
 class App extends Component {
@@ -61,7 +67,7 @@ class App extends Component {
       user: null,
       photosToModerate: [],
       online: false,
-      tab: _.find(TABS, tab => tab.path === this.props.location.pathname),
+      page: _.find(PAGES, page => page.path === this.props.location.pathname),
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false
@@ -75,7 +81,7 @@ class App extends Component {
       file
     });
 
-    this.goToTab(TABS.photos);
+    this.goToPage(PAGES.photos);
   };
 
   setLocationWatcher() {
@@ -116,7 +122,7 @@ class App extends Component {
     this.unregisterAuthObserver = config.authModule.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
-        this.props.history.push(TABS.map.path);
+        this.props.history.push(PAGES.map.path);
         window.location.reload();
       }
       this.setState({ user });
@@ -135,14 +141,14 @@ class App extends Component {
     await this.unregisterConnectionObserver();
   }
 
-  goToTab = tab => {
-    this.setState({ tab });
-    this.props.history.push(tab.path);
+  goToPage = page => {
+    this.setState({ page });
+    this.props.history.push(page.path);
   }
 
-  handleTab = (event, value) => {
-    if (value !== TABS.photos) {
-      this.goToTab(value);
+  handlePage = (event, value) => {
+    if (value !== PAGES.photos) {
+      this.goToPage(value);
     }
   }
 
@@ -204,25 +210,26 @@ class App extends Component {
   render() {
     return (
       <div className="geovation-app">
-        <Header headline={this.state.tab.title}
+        <Header headline={this.state.page.title}
                 user={this.state.user}
                 online={this.state.online}
                 handleClickLoginLogout={this.handleClickLoginLogout}
                 handleDrawerClick={this.toggleLeftDrawer(true)}
+                handleProfileClick={() => this.goToPage(PAGES.profile)}
         />
 
-        <main className="content" tab={this.state.tab}>
+        <main className="content">
           <Switch>
             <Route path='/everybody' component={EverybodyPage} />
             <Route path='/anonymous' component={AnonymousPage} />
-            {this.state.user && this.state.user.isModerator &&
-              <Route path={TABS.moderator.path} render={(props) =>
+            { this.state.user && this.state.user.isModerator &&
+              <Route path={PAGES.moderator.path} render={(props) =>
                 <ModeratorPage {...props}
                   photos={this.state.photosToModerate}
                 />}
               />
             }
-            <Route path={TABS.photos.path} render={(props) =>
+            <Route path={PAGES.photos.path} render={(props) =>
               <PhotoPage {...props}
                  file={this.state.file}
                  location={this.state.location}
@@ -230,11 +237,13 @@ class App extends Component {
               />}
             />
             <Route path='/signedin' component={SignedinPage} />
+            <Route path={PAGES.profile.path} render={(props) => <ProfilePage {...props} user={this.state.user} />}/>
+            <Route path={PAGES.map.path} render={(props) => <Map {...props} location={this.state.location} />}/>
           </Switch>
 
           <Collapse
             className={"map-container"}
-            in={this.props.history.location.pathname === TABS.map.path} timeout={0}>
+            in={this.props.history.location.pathname === PAGES.map.path} timeout={0}>
             <Map location={this.state.location}/>
           </Collapse>
 
@@ -242,15 +251,14 @@ class App extends Component {
 
         <footer>
           <BottomNavigation className="footer"
-            value={this.state.tab}
-            onChange={this.handleTab}
+            value={this.state.page}
+            onChange={this.handlePage}
             showLabels
           >
-            <BottomNavigationAction icon={<MapIcon />} value={TABS.map} label={TABS.map.label}/>
-            <BottomNavigationAction icon={<AddAPhotoIcon />} value={TABS.photos} label={TABS.photos.label} onClick={this.handlePhotoClick} />
-            {/*<Tab icon={<PersonPinIcon />} value={{path: "/profile"}}/>*/}
+            <BottomNavigationAction icon={<MapIcon />} value={PAGES.map} label={PAGES.map.label}/>
+            <BottomNavigationAction icon={<AddAPhotoIcon />} value={PAGES.photos} label={PAGES.photos.label} onClick={this.handlePhotoClick} />
 
-            {config.authModule.isModerator() && <BottomNavigationAction icon={<CheckIcon />} value={TABS.moderator} label={TABS.moderator.label}/>}
+            {config.authModule.isModerator() && <BottomNavigationAction icon={<CheckIcon />} value={PAGES.moderator} label={PAGES.moderator.label}/>}
 
           </BottomNavigation>
         </footer>
