@@ -52,10 +52,12 @@ class Map extends Component {
       attributionControl: false,
     });
 
-    this.map.addControl(new mapboxgl.AttributionControl({
+    if (config.MAPBOX) {
+      this.map.addControl(new mapboxgl.AttributionControl({
         compact: true,
         customAttribution: config.MAP_ATTRIBUTION
-    }));
+      }));
+    }
 
     this.map.on('load', async () => {
       const geojson = await photos;
@@ -198,7 +200,7 @@ class Map extends Component {
   }
 
   componentWillUnmount() {
-    if (this.map.remove) { this.map.remove(); }
+    // if (this.map.remove) { this.map.remove(); }
   }
 
   render() {

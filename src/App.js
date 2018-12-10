@@ -17,6 +17,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HelpIcon from '@material-ui/icons/Help';
 import SchoolIcon from '@material-ui/icons/School';
+import Collapse from '@material-ui/core/Collapse';
 
 import PhotoPage from './components/PhotoPage';
 import Map from './components/Map';
@@ -229,8 +230,12 @@ class App extends Component {
               />}
             />
             <Route path='/signedin' component={SignedinPage} />
-            <Route path={TABS.map.path} render={(props) => <Map {...props} location={this.state.location} />}/>
           </Switch>
+
+          <Collapse in={this.props.history.location.pathname === TABS.map.path} timeout={0}>
+            <Map location={this.state.location}/>
+          </Collapse>
+
         </main>
 
         <footer>
@@ -250,15 +255,14 @@ class App extends Component {
 
         <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
 
-        { !window.cordova &&
+        { window.cordova ?
+          <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
+        :
           <RootRef rootRef={this.domRefInput}>
             <input className='hidden' type='file' accept='image/*'
                    onChange={this.openFile}
             />
           </RootRef>
-        }
-        { window.cordova &&
-          <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
         }
 
         <Login
