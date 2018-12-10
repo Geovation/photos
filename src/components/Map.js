@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import './Map.scss';
 import config from "../custom/config";
 import placeholderImage from '../images/logo.svg';
+import dbFirebase from "../dbFirebase";
 import Show from './Show';
 
 const CENTER = [-0.07, 51.58];
@@ -42,7 +43,7 @@ class Map extends Component {
 
   async componentDidMount(){
     const location = this.props.location;
-    const photos = config.dbModule.fetchPhotos();
+    const photos = dbFirebase.fetchPhotos();
 
     mapboxgl.accessToken = config.MAPBOX_TOKEN;
     this.map = new mapboxgl.Map({

@@ -21,7 +21,6 @@ import SchoolIcon from '@material-ui/icons/School';
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
 import Map from './components/Map';
-import config from './custom/config';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
 import LoginFirebase from "./components/LoginFirebase";
 import authFirebase from './authFirebase'
@@ -30,6 +29,7 @@ import Header from './components/Header';
 
 import './App.scss'
 import Login from "./components/Login";
+import dbFirebase from "./dbFirebase";
 
 const PAGES = {
   map: {
@@ -112,7 +112,7 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.unregisterConnectionObserver = config.dbModule.onConnectionStateChanged(online => {
+    this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
     });
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
@@ -132,7 +132,7 @@ class App extends Component {
     this.setState = console.log;
 
     await this.unregisterAuthObserver();
-    await config.dbModule.disconnect();
+    await dbFirebase.disconnect();
     await this.unregisterLocationObserver();
     await this.unregisterConnectionObserver();
   }

@@ -1,14 +1,8 @@
-import dbFirebase from "../dbFirebase";
-import ModeratorPage from "../components/ModeratorPage";
-
 import styles from './config.scss';
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
 
 export default {
-  uploadPhoto: dbFirebase.uploadPhoto,
-  dbModule: dbFirebase,
-  ModeratorPage: ModeratorPage,
   MAX_IMAGE_SIZE: 2048,
   THEME: {
     typography: {

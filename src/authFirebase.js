@@ -1,5 +1,6 @@
-import User from "./types/User";
 import firebase from "firebase/app";
+
+import User from "./types/User";
 import dbFirebase from "./dbFirebase";
 
 let currentUser;
