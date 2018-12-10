@@ -3,8 +3,8 @@ import { Route, Switch, withRouter} from 'react-router-dom';
 import _ from 'lodash';
 
 import RootRef from '@material-ui/core/RootRef';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import Snackbar from '@material-ui/core/Snackbar';
 import MapIcon from '@material-ui/icons/Map';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
@@ -27,15 +27,18 @@ import Login from "./components/Login";
 const TABS = {
   map: {
     path: "/",
-    title: "Map"
+    title: "Map",
+    label: "Map"
   },
   photos: {
     path: "/photo",
-    title: "Photos"
+    title: "Photos",
+    label: "Photo"
   },
   moderator: {
     path: "/moderator",
-    title: "Moderator"
+    title: "Moderator",
+    label: "Moderate"
   }
 };
 
@@ -215,20 +218,18 @@ class App extends Component {
         </main>
 
         <footer>
-          <Tabs className="footer"
+          <BottomNavigation className="footer"
             value={this.state.tab}
             onChange={this.handleTab}
-            fullWidth
-            indicatorColor="primary"
-            textColor="primary"
+            showLabels
           >
-            <Tab icon={<MapIcon />} value={TABS.map}/>
-            <Tab icon={<AddAPhotoIcon />} value={TABS.photos} onClick={this.handlePhotoClick} />
+            <BottomNavigationAction icon={<MapIcon />} value={TABS.map} label={TABS.map.label}/>
+            <BottomNavigationAction icon={<AddAPhotoIcon />} value={TABS.photos} label={TABS.photos.label} onClick={this.handlePhotoClick} />
             {/*<Tab icon={<PersonPinIcon />} value={{path: "/profile"}}/>*/}
 
-            {config.authModule.isModerator() && <Tab icon={<CheckIcon />} value={TABS.moderator}/>}
+            {config.authModule.isModerator() && <BottomNavigationAction icon={<CheckIcon />} value={TABS.moderator} label={TABS.moderator.label}/>}
 
-          </Tabs>
+          </BottomNavigation>
         </footer>
 
         <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
