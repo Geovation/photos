@@ -29,10 +29,13 @@ import LoginFirebase from "./components/LoginFirebase";
 import authFirebase from './authFirebase'
 
 import Header from './components/Header';
+import AboutPage from './components/AboutPage';
+import TutorialPage from './components/TutorialPage';
 
 import './App.scss'
 import Login from "./components/Login";
 import dbFirebase from "./dbFirebase";
+import { Link } from "react-router-dom";
 
 const PAGES = {
   map: {
@@ -54,6 +57,16 @@ const PAGES = {
     path: "/profile",
     title: "Profile",
     label: "Profile"
+  },
+  about: {
+    path: "/about",
+    title: "About",
+    label: "About"
+  },
+  tutorial: {
+    path: "/tutorial",
+    title: "Tutorial",
+    label: "Tutorial"
   },
 };
 
@@ -221,6 +234,9 @@ class App extends Component {
 
         <main className="content">
           <Switch>
+          <Route path={PAGES.about.path} component={AboutPage} label={PAGES.about.label} />
+          <Route path={PAGES.tutorial.path} component={TutorialPage} label={PAGES.tutorial.label} />
+
             { this.state.user && this.state.user.isModerator &&
             <Route path={PAGES.moderator.path} render={(props) =>
               <ModeratorPage {...props}
@@ -236,6 +252,7 @@ class App extends Component {
                  online={this.state.online}
               />}
             />
+
             { this.state.user &&
               <Route path={PAGES.profile.path} render={(props) =>
                 <ProfilePage {...props}
@@ -244,7 +261,6 @@ class App extends Component {
               />
             }
           </Switch>
-
 
           <Map location={this.state.location}
                visible={this.props.history.location.pathname === PAGES.map.path}/>
@@ -293,15 +309,17 @@ class App extends Component {
             <div>
               <List>
                 <ListItem button>
-                  <ListItemIcon><HelpIcon /></ListItemIcon>
-                  <ListItemText primary={"about"} />
+                  <Link className='link' to={PAGES.about.path}>
+                    <ListItemIcon> <HelpIcon/> </ListItemIcon>
+                    <ListItemText primary={PAGES.about.label} />
+                  </Link>
                 </ListItem>
-              </List>
-              <Divider />
-              <List>
+                <Divider/>
                 <ListItem button>
-                  <ListItemIcon><SchoolIcon /></ListItemIcon>
-                  <ListItemText primary={"tutorial"} />
+                  <Link className='link' to={PAGES.tutorial.path}>
+                    <ListItemIcon> <SchoolIcon/> </ListItemIcon>
+                    <ListItemText primary={PAGES.tutorial.label} />
+                  </Link>
                 </ListItem>
               </List>
             </div>

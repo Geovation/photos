@@ -26,3 +26,12 @@
     bottom: 50px;
   }
 }
+
+.link {
+  display: flex;
+  text-decoration: none;
+}
+
+.link:active {
+  background-color: transparent;
+}
