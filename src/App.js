@@ -234,8 +234,8 @@ class App extends Component {
 
         <main className="content">
           <Switch>
-          <Route path={PAGES.about.path} component={AboutPage} label={PAGES.about.label} />
-          <Route path={PAGES.tutorial.path} component={TutorialPage} label={PAGES.tutorial.label} />
+          <Route path={PAGES.about.path} component={AboutPage}/>
+          <Route path={PAGES.tutorial.path} component={TutorialPage}/>
 
             { this.state.user && this.state.user.isModerator &&
             <Route path={PAGES.moderator.path} render={(props) =>
@@ -306,23 +306,21 @@ class App extends Component {
             onClick={this.toggleLeftDrawer(false)}
             onKeyDown={this.toggleLeftDrawer(false)}
           >
-            <div>
-              <List>
-                <ListItem button>
-                  <Link onClick={() => this.goToPage(PAGES.about)} className='link' to={PAGES.about.path}>
-                    <ListItemIcon> <HelpIcon/> </ListItemIcon>
-                    <ListItemText primary={PAGES.about.label} />
-                  </Link>
-                </ListItem>
-                <Divider/>
-                <ListItem button>
-                  <Link onClick={() => this.goToPage(PAGES.tutorial)} className='link' to={PAGES.tutorial.path}>
-                    <ListItemIcon> <SchoolIcon/> </ListItemIcon>
-                    <ListItemText primary={PAGES.tutorial.label} />
-                  </Link>
-                </ListItem>
-              </List>
-            </div>
+            <List>
+              <ListItem button>
+                <Link onClick={() => this.goToPage(PAGES.about)} className='link' to={PAGES.about.path}>
+                  <ListItemIcon><HelpIcon/></ListItemIcon>
+                  <ListItemText primary={PAGES.about.label} />
+                </Link>
+              </ListItem>
+              <Divider/>
+              <ListItem button>
+                <Link onClick={() => this.goToPage(PAGES.tutorial)} className='link' to={PAGES.tutorial.path}>
+                  <ListItemIcon><SchoolIcon/></ListItemIcon>
+                  <ListItemText primary={PAGES.tutorial.label} />
+                </Link>
+              </ListItem>
+            </List>
           </div>
         </Drawer>
       </div>
