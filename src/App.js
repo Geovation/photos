@@ -77,9 +77,11 @@ class App extends Component {
   constructor(props){
     super(props);
 
-    const welcomeShown = JSON.parse(localStorage.getItem("welcomeShown"));
-    if (!welcomeShown) {
-      localStorage.setItem("welcomeShown", true);
+    try {
+      this.welcomeShown = JSON.parse(localStorage.getItem("welcomeShown"));
+    } catch (err) {
+      console.log("error: ", err);
+      this.welcomeShown = false;
     }
 
     this.state = {
@@ -92,7 +94,7 @@ class App extends Component {
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false,
-      welcomeShown
+      welcomeShown: this.welcomeShown
     };
 
     this.geoid = null;
@@ -229,6 +231,10 @@ class App extends Component {
 
   handleWelcomePageClose = () => {
     this.setState({ welcomeShown: true });
+
+    if (!this.welcomeShown) {
+      localStorage.setItem("welcomeShown", true);
+    }
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
@@ -241,7 +247,7 @@ class App extends Component {
         <main className='content'>
           <Switch>
             <Route path={PAGES.about.path} component={AboutPage}/>
-            <Route path={PAGES.tutorial.path}  render={(props) => <TutorialPage {...props} />}/>
+            <Route path={PAGES.tutorial.path}  render={(props) => <TutorialPage {...props} pages={PAGES} />}/>
 
             { this.state.user && this.state.user.isModerator &&
             <Route path={PAGES.moderator.path} render={(props) =>
@@ -298,7 +304,11 @@ class App extends Component {
         <Snackbar open={!this.state.online} message='Network not available' className='offline'/>
 
         <Dialog fullScreen open={!this.state.welcomeShown}>
-          <TutorialPage {...this.props} handleWelcomePageClose={this.handleWelcomePageClose} />
+          <TutorialPage
+            {...this.props}
+            pages={PAGES}
+            handleWelcomePageClose={this.handleWelcomePageClose}
+          />
         </Dialog>
 
         { window.cordova ?
