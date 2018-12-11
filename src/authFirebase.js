@@ -1,4 +1,5 @@
 import firebase from "firebase/app";
+import ReactGA from 'react-ga';
 
 import User from "./types/User";
 import dbFirebase from "./dbFirebase";
@@ -13,6 +14,13 @@ const onAuthStateChanged = (fn) => {
   const firebaseStatusChange = async (user) => {
     currentUser = user;
     if (currentUser) {
+
+      ReactGA.event({
+        category: 'User',
+        action: 'Logged in',
+        value: user.uid
+      });
+
       const fbUser = await dbFirebase.getUser(user.uid);
       const isModerator = fbUser ? fbUser.isModerator : false;
       currentUser = new User(currentUser.uid, currentUser.displayName, isModerator, currentUser.email, currentUser.emailVerified, currentUser.isAnonymous, currentUser.phoneNumber, currentUser.photoURL);
