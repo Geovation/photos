@@ -1,3 +1,6 @@
+## NEXT: 0.3.2 (2018-12-11)
+- google analytics configurable
+
 ## 0.3.0 (2018-12-10)
 - added firebase support as default
 - show photos from firebase
