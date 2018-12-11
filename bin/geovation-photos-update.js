@@ -36,9 +36,10 @@ function mergePackages() {
 }
 
 function copySrc() {
-  ncp(path.join(geovationPhotoFolder, "src"), "src", errFunc);
-  ncp(path.join(geovationPhotoFolder, "cordova-app"), "cordova-app", errFunc);
-  ncp(path.join(geovationPhotoFolder, "public"), "public", errFunc);
+  _.forEach([ "src", "cordova-app", "public", "functions", "firebase.json", "firebase.indexes.json", "firestore.rules",
+              "storage.rules" ],
+      src => ncp(path.join(geovationPhotoFolder, src), src, errFunc));
+
   // see https://github.com/atlassubbed/atlas-npm-init/issues/1
   ncp(path.join(geovationPhotoFolder, "gitignore"), ".gitignore", { clobber : false }, errFunc);
 }

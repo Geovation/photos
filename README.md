@@ -36,7 +36,7 @@ done !. Now you can start the server with ```npm start```
 Currently it implies some manual work but with the help of a good git IDE it should not be too painful. First of all check if there is a new version with ```npm outdated```. If there is a new version you can simple run
 ```
 npm install geovation-photos@latest -D
-./node_modules/.bin/geovation-photos-update
+npm run geovation-photos-update
 ```
 And now just merge the changes by hand. If you kept your customisations outside Geovation photos folders, the merge should be not too bad.
 
