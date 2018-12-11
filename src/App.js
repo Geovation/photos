@@ -11,6 +11,7 @@ import MapIcon from '@material-ui/icons/Map';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import CheckIcon from '@material-ui/icons/Check';
 import Drawer from '@material-ui/core/Drawer';
+import Dialog from '@material-ui/core/Dialog';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -76,6 +77,11 @@ class App extends Component {
   constructor(props){
     super(props);
 
+    const welcomeShown = JSON.parse(localStorage.getItem("welcomeShown"));
+    if (!welcomeShown) {
+      localStorage.setItem("welcomeShown", true);
+    }
+
     this.state = {
       file: null,
       location: {},
@@ -85,8 +91,10 @@ class App extends Component {
       page: _.find(PAGES, page => page.path === this.props.location.pathname),
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      welcomeShown
     };
+
     this.geoid = null;
     this.domRefInput = {};
   }
@@ -219,6 +227,10 @@ class App extends Component {
     }
   };
 
+  handleWelcomePageClose = () => {
+    this.setState({ welcomeShown: true });
+  };
+
   toggleLeftDrawer = (isItOpen) => () => {
     this.setState({leftDrawerOpen: isItOpen})
   };
@@ -228,8 +240,8 @@ class App extends Component {
       <div className='geovation-app'>
         <main className='content'>
           <Switch>
-          <Route path={PAGES.about.path} component={AboutPage}/>
-          <Route path={PAGES.tutorial.path} component={TutorialPage}/>
+            <Route path={PAGES.about.path} component={AboutPage}/>
+            <Route path={PAGES.tutorial.path}  render={(props) => <TutorialPage {...props} />}/>
 
             { this.state.user && this.state.user.isModerator &&
             <Route path={PAGES.moderator.path} render={(props) =>
@@ -284,6 +296,10 @@ class App extends Component {
         </footer>
 
         <Snackbar open={!this.state.online} message='Network not available' className='offline'/>
+
+        <Dialog fullScreen open={!this.state.welcomeShown}>
+          <TutorialPage {...this.props} handleWelcomePageClose={this.handleWelcomePageClose} />
+        </Dialog>
 
         { window.cordova ?
           <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>

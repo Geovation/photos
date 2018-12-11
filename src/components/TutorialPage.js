@@ -31,6 +31,16 @@ const tutorialSteps = {
 };
 
 class TutorialPage extends React.Component {
+
+  handleClickButton = () => {
+    // To control if click the button from tutorial page or welcome page
+    if (this.props.location.pathname === '/tutorial') {
+      this.props.history.push('/'); // go to the map
+    } else {
+      this.props.handleWelcomePageClose(); // close the full-screen dialog
+    }
+  };
+
   render() {
     return (
       <div style={{backgroundColor:''}} className={'geovation-tutorial'}>
@@ -48,7 +58,14 @@ class TutorialPage extends React.Component {
             </div>
           ))}
         </List>
-        <Button className={'button'} variant="contained" color='primary'>Get Collecting</Button>
+        <Button
+          className={'button'}
+          variant='contained'
+          color='primary'
+          onClick={this.handleClickButton}
+        >
+          Get Collecting
+        </Button>
       </div>
     );
   }
