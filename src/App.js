@@ -309,14 +309,14 @@ class App extends Component {
             <div>
               <List>
                 <ListItem button>
-                  <Link className='link' to={PAGES.about.path}>
+                  <Link onClick={() => this.goToPage(PAGES.about)} className='link' to={PAGES.about.path}>
                     <ListItemIcon> <HelpIcon/> </ListItemIcon>
                     <ListItemText primary={PAGES.about.label} />
                   </Link>
                 </ListItem>
                 <Divider/>
                 <ListItem button>
-                  <Link className='link' to={PAGES.tutorial.path}>
+                  <Link onClick={() => this.goToPage(PAGES.tutorial)} className='link' to={PAGES.tutorial.path}>
                     <ListItemIcon> <SchoolIcon/> </ListItemIcon>
                     <ListItemText primary={PAGES.tutorial.label} />
                   </Link>
