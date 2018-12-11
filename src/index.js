@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter} from "react-router-dom";
 import { Provider } from "react-redux";
+import ReactGA from 'react-ga';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
@@ -11,6 +12,7 @@ import * as serviceWorker from './serviceWorker';
 import config from './custom/config';
 import store from "./store";
 
+ReactGA.initialize(config.GA_TRACKING_ID);
 const theme = createMuiTheme(config.THEME);
 
 const startApp = () => {

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter} from 'react-router-dom';
 import _ from 'lodash';
+import ReactGA from 'react-ga';
 
 import RootRef from '@material-ui/core/RootRef';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
@@ -140,6 +141,8 @@ class App extends Component {
   }
 
   goToPage = page => {
+    ReactGA.pageview(page.path);
+
     this.setState({ page });
     this.props.history.push(page.path);
   }

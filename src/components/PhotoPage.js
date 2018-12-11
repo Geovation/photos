@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import loadImage from 'blueimp-load-image';
+import ReactGA from 'react-ga';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -78,6 +79,10 @@ class PhotoPage extends Component {
           console.log(res);
           this.openDialog("Photo was uploaded successfully", this.resetState);
 
+          ReactGA.event({
+            category: 'Photo',
+            action: 'Uploaded'
+          });
         } catch (e) {
           this.openDialog(e.message || e);
         }
@@ -104,10 +109,6 @@ class PhotoPage extends Component {
 
   componentDidMount() {
     this.loadImage();
-    window.gtag('event', 'page_view', {
-      'event_category': 'view',
-      'event_label': 'PhotoPage'
-    });
   }
 
   componentDidUpdate(prevProps) {

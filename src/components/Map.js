@@ -62,11 +62,6 @@ class Map extends Component {
       const geojson = await photos;
       this.addFeaturesToMap(geojson);
     });
-
-    window.gtag('event', 'page_view', {
-      'event_category': 'view',
-      'event_label': 'Map'
-    });
   }
 
   addFeaturesToMap = geojson => {

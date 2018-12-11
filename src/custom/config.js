@@ -24,5 +24,6 @@ export default {
     projectId: "photos-demo-d4b14",
     storageBucket: "photos-demo-d4b14.appspot.com",
     messagingSenderId: "639308065605"
-  }
+  },
+  GA_TRACKING_ID: "UA-128504979-1"
 }
