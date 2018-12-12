@@ -10,8 +10,10 @@ import HelpIcon from '@material-ui/icons/Help';
 import SchoolIcon from '@material-ui/icons/School';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
+import authFirebase from '../authFirebase';
 
 import md5 from 'md5';
 import { Link } from 'react-router-dom';
@@ -26,7 +28,7 @@ const styles = theme => ({
   drawerPaper: {
     width: drawerWidth,
     maxWidth: drawerMaxWidth
-  },
+  }
 });
 
 class DrawerContainer extends Component {
@@ -61,6 +63,15 @@ class DrawerContainer extends Component {
                 <Link className='link' to={pages.account.path}>
                   <ListItemIcon><AccountCircleIcon/></ListItemIcon>
                   <ListItemText primary={pages.account.label} />
+                </Link>
+              </ListItem>
+            }
+
+            { authFirebase.isModerator() &&
+              <ListItem button>
+                <Link className='link' to={pages.moderator.path}>
+                  <ListItemIcon><CheckCircleIcon /></ListItemIcon>
+                  <ListItemText primary={pages.moderator.label} />
                 </Link>
               </ListItem>
             }
