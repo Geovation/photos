@@ -10,6 +10,13 @@
     z-index: 1100; //app bar material-ui value
   }
 
+  .camera {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1401; // higher than snackbar material-ui value
+  }
+
   .hidden {
     display: none;
   }
@@ -27,10 +34,6 @@
 
   footer {
     flex: 0 0 auto;
-  }
-
-  .offline {
-    bottom: 50px;
   }
 }
 

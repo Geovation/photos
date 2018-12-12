@@ -56,7 +56,7 @@ class Map extends Component {
     this.map.addControl(new mapboxgl.AttributionControl({
       compact: true,
       customAttribution: config.MAP_ATTRIBUTION
-    }));
+    }), "bottom-left");
 
     this.map.on('load', async () => {
       const geojson = await photos;

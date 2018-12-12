@@ -4,12 +4,10 @@ import _ from 'lodash';
 import ReactGA from 'react-ga';
 
 import RootRef from '@material-ui/core/RootRef';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import Fab from '@material-ui/core/Fab';
 import Snackbar from '@material-ui/core/Snackbar';
-import MapIcon from '@material-ui/icons/Map';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
-import CheckIcon from '@material-ui/icons/Check';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -52,8 +50,8 @@ const PAGES = {
   },
   moderator: {
     path: '/moderator',
-    title: 'Moderator',
-    label: 'Moderate'
+    title: 'Photo Approval',
+    label: 'Photo Approval'
   },
   account: {
     path: '/account',
@@ -76,8 +74,6 @@ class App extends Component {
   constructor(props){
     super(props);
 
-    this.welcomeShown = !!localStorage.getItem("welcomeShown");
-
     this.state = {
       file: null,
       location: {},
@@ -88,7 +84,7 @@ class App extends Component {
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false,
-      welcomeShown: this.welcomeShown
+      welcomeShown: !!localStorage.getItem("welcomeShown")
     };
 
     this.geoid = null;
@@ -264,14 +260,6 @@ class App extends Component {
                   />}
                 />
               }
-
-              <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
-                style={{
-                  display: this.props.history.location.pathname === PAGES.map.path
-                  ? 'block'
-                  : 'none'
-                }}
-              />
             </Switch>
           }
 
@@ -287,25 +275,27 @@ class App extends Component {
                visible={this.props.history.location.pathname === PAGES.map.path}
                welcomeShown={this.state.welcomeShown}
           />
+
+          <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
+            style={{
+              display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
+              ? 'block'
+              : 'none'
+            }}
+          />
+
+          <Fab className="camera" color="primary" onClick={this.handlePhotoClick}
+            style={{
+              display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
+              ? 'flex'
+              : 'none'
+            }}
+          >
+            <AddAPhotoIcon />
+          </Fab>
         </main>
 
-        <footer>
-          <BottomNavigation className='footer'
-            value={this.state.page}
-            onChange={this.handlePage}
-            showLabels
-          >
-            <BottomNavigationAction icon={<MapIcon />} value={PAGES.map} label={PAGES.map.label}/>
-            <BottomNavigationAction icon={<AddAPhotoIcon />} value={PAGES.photos} label={PAGES.photos.label} onClick={this.handlePhotoClick} />
-
-            {authFirebase.isModerator() && <BottomNavigationAction icon={<CheckIcon />} value={PAGES.moderator} label={PAGES.moderator.label}/>}
-
-          </BottomNavigation>
-        </footer>
-
-        { this.state.welcomeShown &&
-          <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
-        }
+        <Snackbar open={this.state.welcomeShown && !this.state.online} message='Network not available' />
 
         { window.cordova ?
           <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
@@ -333,28 +323,37 @@ class App extends Component {
             <List>
               { this.state.user &&
                 <ListItem button>
-                  <Link className='link' to={PAGES.account.path} onClick={this.handleProfileClick}>
-                    <ListItemIcon><AccountCircleIcon/></ListItemIcon>
+                  <Link className='link' to={PAGES.account.path}>
+                    <ListItemIcon><AccountCircleIcon /></ListItemIcon>
                     <ListItemText primary={PAGES.account.label} />
+                  </Link>
+                </ListItem>
+              }
+
+              { authFirebase.isModerator() &&
+                <ListItem button>
+                  <Link className='link' to={PAGES.moderator.path}>
+                    <ListItemIcon><CheckCircleIcon /></ListItemIcon>
+                    <ListItemText primary={PAGES.moderator.label} />
                   </Link>
                 </ListItem>
               }
 
               <ListItem button>
                 <Link className='link' to={PAGES.tutorial.path}>
-                  <ListItemIcon><SchoolIcon/></ListItemIcon>
+                  <ListItemIcon><SchoolIcon /></ListItemIcon>
                   <ListItemText primary={PAGES.tutorial.label} />
                 </Link>
               </ListItem>
               <ListItem button>
                 <Link className='link' to={PAGES.about.path}>
-                  <ListItemIcon><HelpIcon/></ListItemIcon>
+                  <ListItemIcon><HelpIcon /></ListItemIcon>
                   <ListItemText primary={PAGES.about.label} />
                 </Link>
               </ListItem>
 
               {this.state.online && <ListItem button onClick={this.handleClickLoginLogout}>
-                <ListItemIcon><ExitToAppIcon/></ListItemIcon>
+                <ListItemIcon><ExitToAppIcon /></ListItemIcon>
                 <ListItemText primary={this.state.user ?'Logout':'Login'} />
               </ListItem>}
 
