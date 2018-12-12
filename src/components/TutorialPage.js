@@ -31,10 +31,20 @@ const tutorialSteps = {
 };
 
 class TutorialPage extends React.Component {
+
+  handleClickButton = () => {
+    // To control if click the button from tutorial page or welcome page
+    if (this.props.location.pathname === this.props.pages.tutorial.path) {
+      this.props.history.push(this.props.pages.map.path); // go to the map
+    } else {
+      this.props.handleWelcomePageClose(); // close the welcome page
+    }
+  };
+
   render() {
     return (
-      <div style={{backgroundColor:''}} className={'geovation-tutorial'}>
-        <img className={'logo'} src={placeholderImage} alt=''/>
+      <div className={'geovation-tutorial'}>
+        <img className={'logo'} src={placeholderImage} alt='geovation'/>
         <List dense className={'list'}>
           { Object.values(tutorialSteps).map(value => (
             <div key={value.step}>
@@ -48,7 +58,14 @@ class TutorialPage extends React.Component {
             </div>
           ))}
         </List>
-        <Button className={'button'} variant="contained" color='primary'>Get Collecting</Button>
+        <Button
+          className={'button'}
+          variant='contained'
+          color='primary'
+          onClick={this.handleClickButton}
+        >
+          Get Collecting
+        </Button>
       </div>
     );
   }

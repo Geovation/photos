@@ -76,6 +76,8 @@ class App extends Component {
   constructor(props){
     super(props);
 
+    this.welcomeShown = !!localStorage.getItem("welcomeShown");
+
     this.state = {
       file: null,
       location: {},
@@ -85,8 +87,10 @@ class App extends Component {
       page: _.find(PAGES, page => page.path === this.props.location.pathname),
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      welcomeShown: this.welcomeShown
     };
+
     this.geoid = null;
     this.domRefInput = {};
   }
@@ -219,6 +223,11 @@ class App extends Component {
     }
   };
 
+  handleWelcomePageClose = () => {
+    this.setState({ welcomeShown: true });
+    localStorage.setItem("welcomeShown", true);
+  };
+
   toggleLeftDrawer = (isItOpen) => () => {
     this.setState({leftDrawerOpen: isItOpen})
   };
@@ -227,46 +236,57 @@ class App extends Component {
     return (
       <div className='geovation-app'>
         <main className='content'>
-          <Switch>
-          <Route path={PAGES.about.path} component={AboutPage}/>
-          <Route path={PAGES.tutorial.path} component={TutorialPage}/>
+          { this.state.welcomeShown &&
+            <Switch>
+              <Route path={PAGES.about.path} component={AboutPage}/>
+              <Route path={PAGES.tutorial.path} render={(props) => <TutorialPage {...props} pages={PAGES}/>}/>
 
-            { this.state.user && this.state.user.isModerator &&
-            <Route path={PAGES.moderator.path} render={(props) =>
-              <ModeratorPage {...props}
-                             photos={this.state.photosToModerate}
-              />}
-            />
-            }
+              { this.state.user && this.state.user.isModerator &&
+                <Route path={PAGES.moderator.path} render={(props) =>
+                  <ModeratorPage {...props}
+                                 photos={this.state.photosToModerate}
+                  />}
+                />
+              }
 
-            <Route path={PAGES.photos.path} render={(props) =>
-              <PhotoPage {...props}
-                 file={this.state.file}
-                 location={this.state.location}
-                 online={this.state.online}
-              />}
-            />
-
-            { this.state.user &&
-              <Route path={PAGES.account.path} render={(props) =>
-                <ProfilePage {...props}
-                  user={this.state.user}
+              <Route path={PAGES.photos.path} render={(props) =>
+                <PhotoPage {...props}
+                           file={this.state.file}
+                           location={this.state.location}
+                           online={this.state.online}
                 />}
               />
-            }
-          </Switch>
 
-          <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
-            style={{
-              display: this.props.history.location.pathname === PAGES.map.path
-              ? 'block'
-              : 'none'
-            }}
-          />
+              { this.state.user &&
+                <Route path={PAGES.account.path} render={(props) =>
+                  <ProfilePage {...props}
+                    user={this.state.user}
+                  />}
+                />
+              }
+
+              <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
+                style={{
+                  display: this.props.history.location.pathname === PAGES.map.path
+                  ? 'block'
+                  : 'none'
+                }}
+              />
+            </Switch>
+          }
+
+          { !this.state.welcomeShown &&
+            <TutorialPage
+              {...this.props}
+              pages={PAGES}
+              handleWelcomePageClose={this.handleWelcomePageClose}
+            />
+          }
 
           <Map location={this.state.location}
-               visible={this.props.history.location.pathname === PAGES.map.path}/>
-
+               visible={this.props.history.location.pathname === PAGES.map.path}
+               welcomeShown={this.state.welcomeShown}
+          />
         </main>
 
         <footer>
@@ -283,7 +303,9 @@ class App extends Component {
           </BottomNavigation>
         </footer>
 
-        <Snackbar open={!this.state.online} message='Network not available' className='offline'/>
+        { this.state.welcomeShown &&
+          <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
+        }
 
         { window.cordova ?
           <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
