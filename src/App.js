@@ -74,8 +74,6 @@ class App extends Component {
   constructor(props){
     super(props);
 
-    this.welcomeShown = !!localStorage.getItem("welcomeShown");
-
     this.state = {
       file: null,
       location: {},
@@ -86,7 +84,7 @@ class App extends Component {
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false,
-      welcomeShown: this.welcomeShown
+      welcomeShown: !!localStorage.getItem("welcomeShown")
     };
 
     this.geoid = null;
