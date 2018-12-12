@@ -25,9 +25,12 @@ const drawerWidth = '80%';
 const drawerMaxWidth = 360;
 
 const styles = theme => ({
+  root:{
+    zIndex: 1402 //hack to surpass snackbar
+  },
   drawerPaper: {
     width: drawerWidth,
-    maxWidth: drawerMaxWidth
+    maxWidth: drawerMaxWidth,
   }
 });
 
@@ -40,7 +43,7 @@ class DrawerContainer extends Component {
     }
     return (
       <Drawer open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
-        classes={{ paper: classes.drawerPaper}}>
+        classes={{ paper: classes.drawerPaper, root: classes.root}}>
         <div
           tabIndex={0}
           role='button'
