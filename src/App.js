@@ -4,10 +4,8 @@ import _ from 'lodash';
 import ReactGA from 'react-ga';
 
 import RootRef from '@material-ui/core/RootRef';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import Fab from '@material-ui/core/Fab';
 import Snackbar from '@material-ui/core/Snackbar';
-import MapIcon from '@material-ui/icons/Map';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Drawer from '@material-ui/core/Drawer';
@@ -264,14 +262,6 @@ class App extends Component {
                   />}
                 />
               }
-
-              <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
-                style={{
-                  display: this.props.history.location.pathname === PAGES.map.path
-                  ? 'block'
-                  : 'none'
-                }}
-              />
             </Switch>
           }
 
@@ -287,11 +277,27 @@ class App extends Component {
                visible={this.props.history.location.pathname === PAGES.map.path}
                welcomeShown={this.state.welcomeShown}
           />
+
+          <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
+            style={{
+              display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
+              ? 'block'
+              : 'none'
+            }}
+          />
+
+          <Fab className="camera" color="primary" onClick={this.handlePhotoClick}
+            style={{
+              display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
+              ? 'flex'
+              : 'none'
+            }}
+          >
+            <AddAPhotoIcon />
+          </Fab>
         </main>
 
-        { this.state.welcomeShown &&
-          <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
-        }
+        <Snackbar open={this.state.welcomeShown && !this.state.online} message='Network not available' />
 
         { window.cordova ?
           <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
