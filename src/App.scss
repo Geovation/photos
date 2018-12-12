@@ -3,19 +3,8 @@
   flex-flow: column;
   height: 100%;
 
-  .burger {
-    position: absolute;
-    top: 30px;
-    left: 20px;
-    z-index: 1100; //app bar material-ui value
-  }
-
   .hidden {
     display: none;
-  }
-
-  header {
-    flex: 0 0 auto;
   }
 
   main {
@@ -23,6 +12,13 @@
     position: relative; /* need this to position inner content */
     overflow-y: auto;
     height: 100%;
+
+    .burger {
+      position: absolute;
+      top: 30px;
+      left: 20px;
+      z-index: 1100; //app bar material-ui value
+    }
   }
 
   footer {

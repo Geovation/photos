@@ -10,13 +10,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MapIcon from '@material-ui/icons/Map';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import CheckIcon from '@material-ui/icons/Check';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import HelpIcon from '@material-ui/icons/Help';
-import SchoolIcon from '@material-ui/icons/School';
+
 import Dehaze from '@material-ui/icons/Dehaze';
 
 import PhotoPage from './components/PhotoPage';
@@ -31,13 +25,12 @@ import authFirebase from './authFirebase'
 import AboutPage from './components/AboutPage';
 import TutorialPage from './components/TutorialPage';
 
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import './App.scss'
 import Login from './components/Login';
 import dbFirebase from './dbFirebase';
-import { Link } from 'react-router-dom';
+
+import DrawerContainer from './components/DrawerContainer';
 
 const PAGES = {
   map: {
@@ -323,44 +316,11 @@ class App extends Component {
           loginComponent={LoginFirebase}
         />
 
-        <Drawer open={this.state.leftDrawerOpen} onClose={this.toggleLeftDrawer(false)}>
-          <div
-            tabIndex={0}
-            role='button'
-            onClick={this.toggleLeftDrawer(false)}
-            onKeyDown={this.toggleLeftDrawer(false)}
-          >
-            <List>
-              { this.state.user &&
-                <ListItem button>
-                  <Link className='link' to={PAGES.account.path} onClick={this.handleProfileClick}>
-                    <ListItemIcon><AccountCircleIcon/></ListItemIcon>
-                    <ListItemText primary={PAGES.account.label} />
-                  </Link>
-                </ListItem>
-              }
+        <DrawerContainer pages={PAGES} user={this.state.user} online={this.state.online}
+          handleClickLoginLogout={this.handleClickLoginLogout}
+          leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
+        />
 
-              <ListItem button>
-                <Link className='link' to={PAGES.tutorial.path}>
-                  <ListItemIcon><SchoolIcon/></ListItemIcon>
-                  <ListItemText primary={PAGES.tutorial.label} />
-                </Link>
-              </ListItem>
-              <ListItem button>
-                <Link className='link' to={PAGES.about.path}>
-                  <ListItemIcon><HelpIcon/></ListItemIcon>
-                  <ListItemText primary={PAGES.about.label} />
-                </Link>
-              </ListItem>
-
-              {this.state.online && <ListItem button onClick={this.handleClickLoginLogout}>
-                <ListItemIcon><ExitToAppIcon/></ListItemIcon>
-                <ListItemText primary={this.state.user ?'Logout':'Login'} />
-              </ListItem>}
-
-            </List>
-          </div>
-        </Drawer>
       </div>
     );
   }
