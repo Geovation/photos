@@ -3,6 +3,13 @@
   flex-flow: column;
   height: 100%;
 
+  .burger {
+    position: absolute;
+    top: 30px;
+    left: 20px;
+    z-index: 1;
+  }
+
   .hidden {
     display: none;
   }

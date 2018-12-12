@@ -12,12 +12,12 @@ import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import CheckIcon from '@material-ui/icons/Check';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HelpIcon from '@material-ui/icons/Help';
 import SchoolIcon from '@material-ui/icons/School';
+import Dehaze from '@material-ui/icons/Dehaze';
 
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
@@ -25,48 +25,50 @@ import Map from './components/Map';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
 import ModeratorPage from './components/ModeratorPage';
 
-import LoginFirebase from "./components/LoginFirebase";
+import LoginFirebase from './components/LoginFirebase';
 import authFirebase from './authFirebase'
 
-import Header from './components/Header';
 import AboutPage from './components/AboutPage';
 import TutorialPage from './components/TutorialPage';
 
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+
 import './App.scss'
-import Login from "./components/Login";
-import dbFirebase from "./dbFirebase";
-import { Link } from "react-router-dom";
+import Login from './components/Login';
+import dbFirebase from './dbFirebase';
+import { Link } from 'react-router-dom';
 
 const PAGES = {
   map: {
-    path: "/",
-    title: "Map",
-    label: "Map"
+    path: '/',
+    title: 'Map',
+    label: 'Map'
   },
   photos: {
-    path: "/photo",
-    title: "Photos",
-    label: "Photo"
+    path: '/photo',
+    title: 'Photos',
+    label: 'Photo'
   },
   moderator: {
-    path: "/moderator",
-    title: "Moderator",
-    label: "Moderate"
+    path: '/moderator',
+    title: 'Moderator',
+    label: 'Moderate'
   },
-  profile: {
-    path: "/profile",
-    title: "Profile",
-    label: "Profile"
+  account: {
+    path: '/account',
+    title: 'Account',
+    label: 'Account'
   },
   about: {
-    path: "/about",
-    title: "About",
-    label: "About"
+    path: '/about',
+    title: 'About',
+    label: 'About'
   },
   tutorial: {
-    path: "/tutorial",
-    title: "Tutorial",
-    label: "Tutorial"
+    path: '/tutorial',
+    title: 'Tutorial',
+    label: 'Tutorial'
   },
 };
 
@@ -183,10 +185,10 @@ class App extends Component {
 
   handlePhotoClick = () => {
     if (window.cordova) {
-      console.log("Opening cordova dialog");
+      console.log('Opening cordova dialog');
       this.setState({ openPhotoDialog: true });
     } else {
-      console.log("Clicking on photo");
+      console.log('Clicking on photo');
       this.domRefInput.current.click();
     }
   };
@@ -223,16 +225,8 @@ class App extends Component {
 
   render() {
     return (
-      <div className="geovation-app">
-        <Header headline={this.state.page.title}
-                user={this.state.user}
-                online={this.state.online}
-                handleClickLoginLogout={this.handleClickLoginLogout}
-                handleDrawerClick={this.toggleLeftDrawer(true)}
-                handleProfileClick={() => this.goToPage(PAGES.profile)}
-        />
-
-        <main className="content">
+      <div className='geovation-app'>
+        <main className='content'>
           <Switch>
           <Route path={PAGES.about.path} component={AboutPage}/>
           <Route path={PAGES.tutorial.path} component={TutorialPage}/>
@@ -254,7 +248,7 @@ class App extends Component {
             />
 
             { this.state.user &&
-              <Route path={PAGES.profile.path} render={(props) =>
+              <Route path={PAGES.account.path} render={(props) =>
                 <ProfilePage {...props}
                   user={this.state.user}
                 />}
@@ -262,13 +256,21 @@ class App extends Component {
             }
           </Switch>
 
+          <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
+            style={{
+              display: this.props.history.location.pathname === PAGES.map.path
+              ? 'block'
+              : 'none'
+            }}
+          />
+
           <Map location={this.state.location}
                visible={this.props.history.location.pathname === PAGES.map.path}/>
 
         </main>
 
         <footer>
-          <BottomNavigation className="footer"
+          <BottomNavigation className='footer'
             value={this.state.page}
             onChange={this.handlePage}
             showLabels
@@ -281,7 +283,7 @@ class App extends Component {
           </BottomNavigation>
         </footer>
 
-        <Snackbar open={!this.state.online} message='Network not available' className="offline"/>
+        <Snackbar open={!this.state.online} message='Network not available' className='offline'/>
 
         { window.cordova ?
           <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
@@ -302,24 +304,38 @@ class App extends Component {
         <Drawer open={this.state.leftDrawerOpen} onClose={this.toggleLeftDrawer(false)}>
           <div
             tabIndex={0}
-            role="button"
+            role='button'
             onClick={this.toggleLeftDrawer(false)}
             onKeyDown={this.toggleLeftDrawer(false)}
           >
             <List>
+              { this.state.user &&
+                <ListItem button>
+                  <Link className='link' to={PAGES.account.path} onClick={this.handleProfileClick}>
+                    <ListItemIcon><AccountCircleIcon/></ListItemIcon>
+                    <ListItemText primary={PAGES.account.label} />
+                  </Link>
+                </ListItem>
+              }
+
               <ListItem button>
-                <Link onClick={() => this.goToPage(PAGES.about)} className='link' to={PAGES.about.path}>
-                  <ListItemIcon><HelpIcon/></ListItemIcon>
-                  <ListItemText primary={PAGES.about.label} />
-                </Link>
-              </ListItem>
-              <Divider/>
-              <ListItem button>
-                <Link onClick={() => this.goToPage(PAGES.tutorial)} className='link' to={PAGES.tutorial.path}>
+                <Link className='link' to={PAGES.tutorial.path}>
                   <ListItemIcon><SchoolIcon/></ListItemIcon>
                   <ListItemText primary={PAGES.tutorial.label} />
                 </Link>
               </ListItem>
+              <ListItem button>
+                <Link className='link' to={PAGES.about.path}>
+                  <ListItemIcon><HelpIcon/></ListItemIcon>
+                  <ListItemText primary={PAGES.about.label} />
+                </Link>
+              </ListItem>
+
+              {this.state.online && <ListItem button onClick={this.handleClickLoginLogout}>
+                <ListItemIcon><ExitToAppIcon/></ListItemIcon>
+                <ListItemText primary={this.state.user ?'Logout':'Login'} />
+              </ListItem>}
+
             </List>
           </div>
         </Drawer>
