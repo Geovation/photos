@@ -198,16 +198,19 @@ class Map extends Component {
   }
 
   render() {
-
+    const { location, welcomeShown } = this.props;
     const feature = this.state.feature;
-    const gpsOffline = !(this.props.location.online);
-    const gpsDisabled = !this.props.location.updated;
+    const gpsOffline = !location.online;
+    const gpsDisabled = !location.updated;
+
     return (
-      <div className={"geovation-map"} style={{display: this.props.visible? "block": "none"}}>
+      <div className={"geovation-map"} style={{ display: this.props.visible ? "block" : "none" }}>
           <div id='map' className="map"></div>
-          <Fab className="location" size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
-            {gpsOffline ? <GpsOff/> : <GpsFixed/>}
-          </Fab>
+          { welcomeShown &&
+            <Fab className="location" size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+              {gpsOffline ? <GpsOff/> : <GpsFixed/>}
+            </Fab>
+          }
 
           <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
             <DialogContent>

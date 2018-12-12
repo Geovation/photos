@@ -37,14 +37,14 @@ class TutorialPage extends React.Component {
     if (this.props.location.pathname === this.props.pages.tutorial.path) {
       this.props.history.push(this.props.pages.map.path); // go to the map
     } else {
-      this.props.handleWelcomePageClose(); // close the full-screen dialog
+      this.props.handleWelcomePageClose(); // close the welcome page
     }
   };
 
   render() {
     return (
-      <div style={{backgroundColor:''}} className={'geovation-tutorial'}>
-        <img className={'logo'} src={placeholderImage} alt=''/>
+      <div className={'geovation-tutorial'}>
+        <img className={'logo'} src={placeholderImage} alt='geovation'/>
         <List dense className={'list'}>
           { Object.values(tutorialSteps).map(value => (
             <div key={value.step}>

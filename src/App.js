@@ -272,14 +272,6 @@ class App extends Component {
                   : 'none'
                 }}
               />
-
-              { this.state.user &&
-                <Route path={PAGES.profile.path} render={(props) =>
-                  <ProfilePage {...props}
-                               user={this.state.user}
-                  />}
-                />
-              }
             </Switch>
           }
 
@@ -292,8 +284,9 @@ class App extends Component {
           }
 
           <Map location={this.state.location}
-               visible={this.props.history.location.pathname === PAGES.map.path}/>
-
+               visible={this.props.history.location.pathname === PAGES.map.path}
+               welcomeShown={this.state.welcomeShown}
+          />
         </main>
 
         <footer>
