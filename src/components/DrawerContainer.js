@@ -23,9 +23,6 @@ const drawerWidth = '80%';
 const drawerMaxWidth = 360;
 
 const styles = theme => ({
-  root:{
-    zIndex: 1402 //hack to surpass snackbar
-  },
   drawerPaper: {
     width: drawerWidth,
     maxWidth: drawerMaxWidth,
@@ -36,8 +33,8 @@ class DrawerContainer extends Component {
   render() {
     const { classes, user, pages, online, leftDrawerOpen } = this.props;
     return (
-      <Drawer open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
-        classes={{ paper: classes.drawerPaper, root: classes.root}}>
+      <Drawer className='geovation-drawercontainer' open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
+        classes={{ paper: classes.drawerPaper }}>
         <div
           tabIndex={0}
           role='button'
@@ -64,7 +61,7 @@ class DrawerContainer extends Component {
               </ListItem>
             }
 
-            { user && user.isModerator && 
+            { user && user.isModerator &&
               <ListItem button>
                 <Link className='link' to={pages.moderator.path}>
                   <ListItemIcon><CheckCircleIcon /></ListItemIcon>

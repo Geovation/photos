@@ -36,8 +36,4 @@ const signOut = () => {
   firebase.auth().signOut();
 };
 
-const getCurrentUser = () => currentUser;
-
-const isModerator = () => currentUser && currentUser.isModerator;
-
-export default { onAuthStateChanged, signOut, getCurrentUser, isModerator }
+export default { onAuthStateChanged, signOut }
