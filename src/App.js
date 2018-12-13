@@ -247,9 +247,8 @@ class App extends Component {
 
               { this.state.user &&
                 <Route path={PAGES.account.path} render={(props) =>
-                  <ProfilePage {...props}
-                    user={this.state.user}
-                  />}
+                  <ProfilePage {...props} user={this.state.user}
+                  pages={PAGES} handleWelcomePageClose={this.handleWelcomePageClose} />}
                 />
               }
             </Switch>
