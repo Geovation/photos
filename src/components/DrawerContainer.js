@@ -13,7 +13,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import authFirebase from '../authFirebase';
 
 import md5 from 'md5';
 import { Link } from 'react-router-dom';
@@ -70,7 +69,7 @@ class DrawerContainer extends Component {
               </ListItem>
             }
 
-            { authFirebase.isModerator() &&
+            { user && user.isModerator
               <ListItem button>
                 <Link className='link' to={pages.moderator.path}>
                   <ListItemIcon><CheckCircleIcon /></ListItemIcon>
