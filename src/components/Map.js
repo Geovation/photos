@@ -204,7 +204,7 @@ class Map extends Component {
     const gpsDisabled = !location.updated;
 
     return (
-      <div className={"geovation-map"} style={{ display: this.props.visible ? "block" : "none" }}>
+      <div className={"geovation-map"} style={{ visibility: this.props.visible ? "visible" : "hidden" }}>
           <div id='map' className="map"></div>
           { welcomeShown &&
             <Fab className="location" size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
