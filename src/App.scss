@@ -14,15 +14,10 @@
     position: absolute;
     bottom: 20px;
     right: 20px;
-    z-index: 1401; // higher than snackbar material-ui value
   }
 
   .hidden {
     display: none;
-  }
-
-  header {
-    flex: 0 0 auto;
   }
 
   main {
@@ -30,6 +25,7 @@
     position: relative; /* need this to position inner content */
     overflow-y: auto;
     height: 100%;
+
   }
 
   footer {
