@@ -45,7 +45,7 @@ class DrawerContainer extends Component {
             <div>
               <div className='drawer-user'>
                 <Avatar alt='profile-image' src={user.photoURL} className='avatar' />
-                <Typography variant='h5'>{user.displayName}</Typography>
+                <Typography className={'drawer-typography'} variant='p'>{user.displayName}</Typography>
                 {user.isModerator && <Typography component='p'>Admin</Typography>}
               </div>
               <Divider/>
