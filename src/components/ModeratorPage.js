@@ -96,6 +96,15 @@ class ModeratorPage extends Component {
     this.handleZoomDialogClose();
   };
 
+  handleClickButton = () => {
+    // To control if click the button from tutorial page or welcome page
+    if (this.props.location.pathname === this.props.pages.moderator.path) {
+      this.props.history.push(this.props.pages.map.path); // go to the map
+    } else {
+      this.props.handleWelcomePageClose(); // close the welcome page
+    }
+  };
+
   render() {
     return (
       <div className='geovation-moderatorPage'>
@@ -120,6 +129,15 @@ class ModeratorPage extends Component {
               </ListItem>
             ))}
           </List>
+          <div className={'button'}>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={this.handleClickButton}
+            >
+              Get Collecting
+            </Button>
+          </div>
         </div>
 
         <Dialog open={this.state.confirmDialogOpen}>

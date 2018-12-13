@@ -231,8 +231,8 @@ class App extends Component {
 
               { this.state.user && this.state.user.isModerator &&
                 <Route path={PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage {...props}
-                                 photos={this.state.photosToModerate}
+                  <ModeratorPage {...props} pages={PAGES}
+                    handleWelcomePageClose={this.handleWelcomePageClose} photos={this.state.photosToModerate}
                   />}
                 />
               }
