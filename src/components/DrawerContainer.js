@@ -14,7 +14,6 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
-import md5 from 'md5';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -36,10 +35,6 @@ const styles = theme => ({
 class DrawerContainer extends Component {
   render() {
     const { classes, user, pages, online, leftDrawerOpen } = this.props;
-    let gravatarImg
-    if (user) {
-      gravatarImg = 'https://www.gravatar.com/avatar/' + md5(user.email);
-    }
     return (
       <Drawer open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
         classes={{ paper: classes.drawerPaper, root: classes.root}}>
@@ -52,7 +47,7 @@ class DrawerContainer extends Component {
           { user &&
             <div>
               <div className='drawer-user'>
-                <Avatar alt='profile-image' src={gravatarImg} className='avatar' />
+                <Avatar alt='profile-image' src={user.photoURL} className='avatar' />
                 <Typography variant='h5'>{user.displayName}</Typography>
                 {user.isModerator && <Typography component='p'>Admin</Typography>}
               </div>
@@ -69,7 +64,7 @@ class DrawerContainer extends Component {
               </ListItem>
             }
 
-            { user && user.isModerator
+            { user && user.isModerator && 
               <ListItem button>
                 <Link className='link' to={pages.moderator.path}>
                   <ListItemIcon><CheckCircleIcon /></ListItemIcon>
