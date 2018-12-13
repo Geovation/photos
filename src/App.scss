@@ -23,9 +23,8 @@
   main {
     flex: 1 1 auto;
     position: relative; /* need this to position inner content */
-    overflow-y: auto;
+    overflow: hidden;
     height: 100%;
-
   }
 
   footer {
