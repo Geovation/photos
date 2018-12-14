@@ -136,7 +136,7 @@ class PhotoPage extends Component {
        <div className='geovation-photos'>
          <AppBar elevation={0} position="static" color="default">
           <Toolbar>
-            <Typography style={{fontSize:'1rem',fontWeight:'bold'}}>
+            <Typography className='headline-title'>
               Photo Submission
             </Typography>
             <div className='close-icon'>
@@ -146,20 +146,18 @@ class PhotoPage extends Component {
           </AppBar>
           <Divider/>
 
-          <div style={{display:'flex',alignItems:'flex-end',justifyContent:'center',margin:15}}>
-            <Typography color='default' style={{marginBottom:5,marginRight:5}}>
-              I have captured
+          <div className='text-field-wrapper'>
+            <Typography color='default' className='typography1'>
+              Description
             </Typography>
             <TextField
               id="standard-name"
-              placeholder='eg. 1'
-              style={{maxWidth: 100}}
+              placeholder='eg. whatever'
+              className='text-field'
               value={this.state.value}
               onChange={this.handleChange}
             />
-            <Typography style={{marginBottom:5,marginLeft:5}}>
-              photos
-            </Typography>
+
           </div>
 
           <div className='picture'>
