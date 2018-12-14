@@ -195,9 +195,8 @@ class Map extends Component {
     if (this.map.remove) { this.map.remove(); }
   }
 
-  formatField(properties, fieldName) {
+  formatField(value, fieldName) {
     const formater = config.PHOTO_ZOOMED_FIELDS[fieldName];
-    const value = properties[fieldName];
     if (value) {
       return formater(value);
     }
@@ -229,8 +228,7 @@ class Map extends Component {
 
                     {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
                       <Typography gutterBottom key={fieldName}>
-                        {/*{fieldName} : {this.formatField(feature.properties[fieldName], config.PHOTO_ZOOMED_FIELDS[fieldName])}*/}
-                        {fieldName} : {this.formatField(feature.properties, fieldName)}
+                        {fieldName} : {this.formatField(feature.properties[fieldName], fieldName)}
                       </Typography>
                     ))}
 
