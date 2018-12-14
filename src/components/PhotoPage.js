@@ -148,11 +148,11 @@ class PhotoPage extends Component {
 
           <div className='text-field-wrapper'>
             <Typography color='default' className='typography1'>
-              Description
+              {config.PHOTO_TITLE_FIELD.title}
             </Typography>
             <TextField
               id="standard-name"
-              placeholder='eg. whatever'
+              placeholder={config.PHOTO_TITLE_FIELD.placeholder}
               className='text-field'
               value={this.state.value}
               onChange={this.handleChange}

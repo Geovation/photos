@@ -30,5 +30,9 @@ export default {
   PHOTO_ZOOMED_FIELDS: {
     "updated": s => new Date(s).toDateString(),
     "description": s => s
+  },
+  PHOTO_TITLE_FIELD:{
+    title: 'Description',
+    placeholder: 'eg. whatever'
   }
 }
