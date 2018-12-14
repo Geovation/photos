@@ -16,15 +16,12 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import CloseIcon from '@material-ui/icons/Close';
 
-import imgHeader from '../images/logo.svg';
-
-
 import config from '../custom/config';
 import './PhotoPage.scss';
 import dbFirebase from "../dbFirebase";
 
 const emptyState = {
-  imgSrc: imgHeader,
+  imgSrc: null,
   open: false,
   message: '',
   value: '',
