@@ -26,5 +26,9 @@ export default {
     storageBucket: "photos-demo-d4b14.appspot.com",
     messagingSenderId: "639308065605"
   },
-  GA_TRACKING_ID: "UA-128504979-1"
+  GA_TRACKING_ID: "UA-128504979-1",
+  PHOTO_ZOOMED_FIELDS: {
+    "updated": s => new Date(s).toDateString(),
+    "description": s => s
+  }
 }

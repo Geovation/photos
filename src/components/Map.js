@@ -195,6 +195,16 @@ class Map extends Component {
     if (this.map.remove) { this.map.remove(); }
   }
 
+  formatField(properties, fieldName) {
+    const formater = config.PHOTO_ZOOMED_FIELDS[fieldName];
+    const value = properties[fieldName];
+    if (value) {
+      return formater(value);
+    }
+
+    return "-";
+  }
+
   render() {
     const { location, welcomeShown } = this.props;
     const feature = this.state.feature;
@@ -216,18 +226,14 @@ class Map extends Component {
               <Card>
                 <CardActionArea>
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {feature.properties.description}
-                    </Typography>
-                    <Typography component="p">
-                      Coordinates: {feature.geometry.coordinates[0]}, {feature.geometry.coordinates[1]}
-                    </Typography>
-                    <Typography component="p">
-                      Time: {feature.properties.updated}
-                    </Typography>
-                    <Typography component="p">
-                      Description: {feature.properties.description || "-"}
-                    </Typography>
+
+                    {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
+                      <Typography gutterBottom key={fieldName}>
+                        {/*{fieldName} : {this.formatField(feature.properties[fieldName], config.PHOTO_ZOOMED_FIELDS[fieldName])}*/}
+                        {fieldName} : {this.formatField(feature.properties, fieldName)}
+                      </Typography>
+                    ))}
+
                   </CardContent>
                 </CardActionArea>
               </Card>
