@@ -152,12 +152,6 @@ class App extends Component {
     this.props.history.push(page.path);
   }
 
-  handlePage = (event, value) => {
-    if (value !== PAGES.photos) {
-      this.goToPage(value);
-    }
-  }
-
   handleClickLoginLogout = () => {
     let loginLogoutDialogOpen = true;
 
@@ -224,7 +218,11 @@ class App extends Component {
         <main className='content'>
           { this.state.welcomeShown &&
             <Switch>
-              <Route path={PAGES.about.path} component={AboutPage}/>
+              <Route path={PAGES.about.path} render={(props) =>
+                <AboutPage {...props}
+                              goToPage={this.goToPage}
+                              pages={PAGES}/>}
+              />
               <Route path={PAGES.tutorial.path} render={(props) =>
                 <TutorialPage {...props}
                               goToPage={this.goToPage}
