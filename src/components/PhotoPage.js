@@ -79,7 +79,7 @@ class PhotoPage extends Component {
         try {
           const res = await dbFirebase.uploadPhoto(data);
           console.log(res);
-          this.openDialog("Photo was uploaded successfully", this.resetState);
+          this.openDialog("Photo was uploaded successfully", this.handleGoBackButton);
 
           ReactGA.event({
             category: 'Photo',
@@ -114,9 +114,12 @@ class PhotoPage extends Component {
     this.props.handlePhotoClick();
   }
 
-  handleClickButton = () => {
+  handleGoBackButton = () => {
+    this.resetState();
     this.props.goToPage(this.props.pages.map); // go to the map
   };
+
+
 
   componentDidMount() {
     this.loadImage();
@@ -137,7 +140,7 @@ class PhotoPage extends Component {
               Photo Submission
             </Typography>
             <div className='close-icon'>
-              <CloseIcon onClick={this.handleClickButton}/>
+              <CloseIcon onClick={this.handleGoBackButton}/>
             </div>
             </Toolbar>
           </AppBar>
