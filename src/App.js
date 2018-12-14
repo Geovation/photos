@@ -76,7 +76,8 @@ class App extends Component {
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false,
-      welcomeShown: !!localStorage.getItem("welcomeShown")
+      welcomeShown: !!localStorage.getItem("welcomeShown"),
+      photos: Promise.resolve([])
     };
 
     this.geoid = null;
@@ -131,7 +132,7 @@ class App extends Component {
         this.props.history.push(PAGES.map.path);
         window.location.reload();
       }
-      this.setState({ user });
+      this.setState({ user, photos: dbFirebase.fetchPhotos() });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
@@ -266,6 +267,7 @@ class App extends Component {
           <Map location={this.state.location}
                visible={ this.props.history.location.pathname === PAGES.map.path}
                welcomeShown={this.state.welcomeShown}
+               photos={this.state.photos}
           />
 
           <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
