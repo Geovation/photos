@@ -4,12 +4,26 @@
   flex-direction: column;
   height: 100%;
 
-  .picture {
+  .close-icon {
     display: flex;
     flex: 1;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .buttonwrapper {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin: 5px 15px 15px 15px;
+  }
+
+  .picture {
+    display:flex;
+    flex:1;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    margin: 0 15px 0 15px;
 
     img {
       max-width: 100%;
@@ -17,12 +31,5 @@
     }
   }
 
-  .buttonwrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
 
 }

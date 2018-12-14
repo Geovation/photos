@@ -10,6 +10,11 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
+import Divider from '@material-ui/core/Divider';
+import Typography from '@material-ui/core/Typography';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import CloseIcon from '@material-ui/icons/Close';
 
 import imgHeader from '../images/logo.svg';
 
@@ -107,6 +112,20 @@ class PhotoPage extends Component {
     );
   }
 
+  retakePhoto = () => {
+    this.resetState();
+    this.props.handlePhotoClick();
+  }
+
+  handleClickButton = () => {
+    // To control if click the button from tutorial page or welcome page
+    if (this.props.history.location.pathname === this.props.pages.photos.path) {
+      this.props.history.push(this.props.pages.map.path); // go to the map
+    } else {
+      this.props.handleWelcomePageClose(); // close the welcome page
+    }
+  };
+
   componentDidMount() {
     this.loadImage();
   }
@@ -120,23 +139,47 @@ class PhotoPage extends Component {
   render() {
     return (
        <div className='geovation-photos'>
+         <AppBar elevation={0} position="static" color="default">
+          <Toolbar>
+            <Typography style={{fontSize:'1rem',fontWeight:'bold'}}>
+              Photo Submission
+            </Typography>
+            <div className='close-icon'>
+              <CloseIcon onClick={this.handleClickButton}/>
+            </div>
+            </Toolbar>
+          </AppBar>
+          <Divider/>
 
-          <TextField
-            id="standard-name"
-            label="Enter some text"
-            style={{width: 200, marginLeft:5}}
-            value={this.state.value}
-            onChange={this.handleChange}
-            margin="dense"
-          />
+          <div style={{display:'flex',alignItems:'flex-end',justifyContent:'center',margin:15}}>
+            <Typography color='default' style={{marginBottom:5,marginRight:5}}>
+              I have captured
+            </Typography>
+            <TextField
+              id="standard-name"
+              placeholder='eg. 1'
+              style={{maxWidth: 100}}
+              value={this.state.value}
+              onChange={this.handleChange}
+            />
+            <Typography style={{marginBottom:5,marginLeft:5}}>
+              photos
+            </Typography>
+          </div>
 
           <div className='picture'>
            <img src={this.state.imgSrc} alt={""}/>
           </div>
 
           <div className='buttonwrapper'>
-            <Button variant="outlined" color="primary" onClick={this.sendFile}>
-              Send Photo
+            <Button variant="outlined" fullWidth={true} onClick={this.retakePhoto}>
+              Retake
+            </Button>
+          </div>
+
+          <div className='buttonwrapper'>
+            <Button variant="contained" color="primary" fullWidth={true} onClick={this.sendFile}>
+              Upload
             </Button>
           </div>
           <Dialog

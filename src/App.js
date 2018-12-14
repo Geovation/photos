@@ -250,6 +250,9 @@ class App extends Component {
                            file={this.state.file}
                            location={this.state.location}
                            online={this.state.online}
+                           pages={PAGES}
+                           handleWelcomePageClose={this.handleWelcomePageClose}
+                           handlePhotoClick={this.handlePhotoClick}
                 />}
               />
 
