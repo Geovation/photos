@@ -1,4 +1,5 @@
 import styles from './config.scss';
+
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
 

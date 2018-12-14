@@ -1,5 +1,4 @@
 import firebase from 'firebase/app';
-
 import firebaseApp from './firebaseInit.js';
 
 const firestore = firebase.firestore();
@@ -11,6 +10,8 @@ function extractPhoto(doc) {
   photo.thumbnail = `${prefix}/thumbnail.jpg`;
   photo.main = `${prefix}/1024.jpg`;
   photo.id = doc.id;
+  photo.updated = photo.updated && photo.updated.toDate();
+  photo.moderated = photo.moderated && photo.moderated.toDate();
 
   return photo;
 }
@@ -37,13 +38,7 @@ async function fetchPhotos() {
               photo.location.latitude
             ]
           },
-          "properties": {
-            "id": doc.id,
-            "description": photo.description,
-            "thumbnail": photo.thumbnail,
-            "main": photo.main,
-            "updated": photo.updated.toDate(),
-          }
+          "properties": photo
         };
 
         geojson.features.push(feature);
