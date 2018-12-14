@@ -251,8 +251,8 @@ class App extends Component {
                            location={this.state.location}
                            online={this.state.online}
                            pages={PAGES}
-                           handleWelcomePageClose={this.handleWelcomePageClose}
                            handlePhotoClick={this.handlePhotoClick}
+                           goToPage={this.goToPage}
                 />}
               />
 

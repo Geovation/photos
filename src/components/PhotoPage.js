@@ -118,12 +118,7 @@ class PhotoPage extends Component {
   }
 
   handleClickButton = () => {
-    // To control if click the button from tutorial page or welcome page
-    if (this.props.history.location.pathname === this.props.pages.photos.path) {
-      this.props.history.push(this.props.pages.map.path); // go to the map
-    } else {
-      this.props.handleWelcomePageClose(); // close the welcome page
-    }
+    this.props.goToPage(this.props.pages.map); // go to the map
   };
 
   componentDidMount() {
