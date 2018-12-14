@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter} from 'react-router-dom';
-import _ from 'lodash';
 import ReactGA from 'react-ga';
 
 import RootRef from '@material-ui/core/RootRef';
@@ -72,7 +71,6 @@ class App extends Component {
       user: null,
       photosToModerate: [],
       online: false,
-      page: _.find(PAGES, page => page.path === this.props.location.pathname),
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false,
@@ -128,7 +126,7 @@ class App extends Component {
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
-        this.props.history.push(PAGES.map.path);
+        this.goToPage(PAGES.map);
         window.location.reload();
       }
       this.setState({ user });
@@ -150,7 +148,6 @@ class App extends Component {
   goToPage = page => {
     ReactGA.pageview(page.path);
 
-    this.setState({ page });
     this.props.history.push(page.path);
   }
 
@@ -227,12 +224,18 @@ class App extends Component {
           { this.state.welcomeShown &&
             <Switch>
               <Route path={PAGES.about.path} component={AboutPage}/>
-              <Route path={PAGES.tutorial.path} render={(props) => <TutorialPage {...props} pages={PAGES}/>}/>
+              <Route path={PAGES.tutorial.path} render={(props) =>
+                <TutorialPage {...props}
+                              goToPage={this.goToPage}
+                              pages={PAGES}/>}
+              />
 
               { this.state.user && this.state.user.isModerator &&
                 <Route path={PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage {...props} pages={PAGES}
-                    handleWelcomePageClose={this.handleWelcomePageClose} photos={this.state.photosToModerate}
+                  <ModeratorPage {...props}
+                                 pages={PAGES}
+                                 goToPage={this.goToPage}
+                                 handleWelcomePageClose={this.handleWelcomePageClose} photos={this.state.photosToModerate}
                   />}
                 />
               }
@@ -247,8 +250,12 @@ class App extends Component {
 
               { this.state.user &&
                 <Route path={PAGES.account.path} render={(props) =>
-                  <ProfilePage {...props} user={this.state.user}
-                  pages={PAGES} handleWelcomePageClose={this.handleWelcomePageClose} />}
+                  <ProfilePage {...props}
+                               user={this.state.user}
+                               goToPage={this.goToPage}
+                               pages={PAGES}
+                               handleWelcomePageClose={this.handleWelcomePageClose}
+                  />}
                 />
               }
             </Switch>
@@ -258,6 +265,7 @@ class App extends Component {
             <TutorialPage
               {...this.props}
               pages={PAGES}
+              goToPage={this.goToPage}
               handleWelcomePageClose={this.handleWelcomePageClose}
             />
           }
