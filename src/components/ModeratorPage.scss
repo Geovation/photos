@@ -7,7 +7,13 @@
 
   .content {
     flex: 1 1 100%;
-     overflow: scroll;
+    overflow: scroll;
+
+    .button {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
   }
 }
 

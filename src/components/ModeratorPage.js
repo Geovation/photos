@@ -96,6 +96,10 @@ class ModeratorPage extends Component {
     this.handleZoomDialogClose();
   };
 
+  handleClickButton = () => {
+    this.props.goToPage(this.props.pages.map); // go to the map
+  };
+
   render() {
     return (
       <div className='geovation-moderatorPage'>
@@ -120,6 +124,15 @@ class ModeratorPage extends Component {
               </ListItem>
             ))}
           </List>
+          <div className={'button'}>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={this.handleClickButton}
+            >
+              Get Collecting
+            </Button>
+          </div>
         </div>
 
         <Dialog open={this.state.confirmDialogOpen}>

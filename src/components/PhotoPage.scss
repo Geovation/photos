@@ -1,15 +1,15 @@
 .geovation-photos {
-  display:flex;
-  flex:1;
-  flex-direction:column;
-  height:100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
 
   .picture {
-    display:flex;
-    flex:1;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 
     img {
       max-width: 100%;
@@ -18,11 +18,11 @@
   }
 
   .buttonwrapper {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-top:5px;
-    margin-bottom:5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
 
 }
