@@ -236,7 +236,6 @@ class App extends Component {
                   <ModeratorPage {...props}
                                  pages={PAGES}
                                  goToPage={this.goToPage}
-                                 handleWelcomePageClose={this.handleWelcomePageClose} photos={this.state.photosToModerate}
                   />}
                 />
               }
@@ -255,7 +254,6 @@ class App extends Component {
                                user={this.state.user}
                                goToPage={this.goToPage}
                                pages={PAGES}
-                               handleWelcomePageClose={this.handleWelcomePageClose}
                   />}
                 />
               }
