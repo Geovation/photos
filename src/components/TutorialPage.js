@@ -58,14 +58,16 @@ class TutorialPage extends React.Component {
             </div>
           ))}
         </List>
-        <Button
-          className={'button'}
-          variant='contained'
-          color='primary'
-          onClick={this.handleClickButton}
-        >
-          Get Collecting
-        </Button>
+        <div className='button'>
+          <Button
+            fullWidth
+            variant='contained'
+            color='primary'
+            onClick={this.handleClickButton}
+          >
+            Get Collecting
+          </Button>
+        </div>
       </div>
     );
   }

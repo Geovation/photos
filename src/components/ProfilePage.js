@@ -23,14 +23,11 @@ class Profile extends React.Component {
           <Typography gutterBottom variant='h5'>{user.displayName}</Typography>
           <Typography component='p'>{user.email}</Typography>
         </div>
-        <Button
-          className={'button'}
-          variant='contained'
-          color='primary'
-          onClick={this.handleClickButton}
-        >
-          Get Collecting
-        </Button>
+        <div className='button'>
+          <Button color='primary' variant="contained" fullWidth={true} onClick={this.handleClickButton}>
+            Get Collecting
+          </Button>
+        </div>
       </div>
     );
   }
