@@ -16,7 +16,6 @@ import Typography from '@material-ui/core/Typography';
 import './Map.scss';
 import config from "../custom/config";
 import placeholderImage from '../images/logo.svg';
-import dbFirebase from "../dbFirebase";
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -42,7 +41,6 @@ class Map extends Component {
 
   async componentDidMount(){
     const location = this.props.location;
-    const photos = dbFirebase.fetchPhotos();
 
     mapboxgl.accessToken = config.MAPBOX_TOKEN;
     this.map = new mapboxgl.Map({
@@ -59,7 +57,7 @@ class Map extends Component {
     }), "bottom-left");
 
     this.map.on('load', async () => {
-      const geojson = await photos;
+      const geojson = await this.props.photos;
       this.addFeaturesToMap(geojson);
     });
   }
