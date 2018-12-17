@@ -291,7 +291,7 @@ class App extends Component {
             }}
           />
 
-          <Fab className="camera" color="primary" onClick={this.handlePhotoClick}
+          <Fab className="camera" color="secondary" onClick={this.handlePhotoClick}
             style={{
               display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
               ? 'flex'
