@@ -10,7 +10,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
-import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -134,7 +133,7 @@ class PhotoPage extends Component {
   render() {
     return (
        <div className='geovation-photos'>
-         <AppBar elevation={0} position="static" color="default">
+         <AppBar position="static" color="default">
           <Toolbar>
             <Typography className='headline-title'>
               Photo Submission
@@ -144,7 +143,6 @@ class PhotoPage extends Component {
             </div>
             </Toolbar>
           </AppBar>
-          <Divider/>
 
           <div className='text-field-wrapper'>
             <Typography color='default' className='typography1'>
@@ -175,6 +173,7 @@ class PhotoPage extends Component {
               Upload
             </Button>
           </div>
+
           <Dialog
             open={this.state.open}
             onClose={this.closeDialog}

@@ -1,5 +1,3 @@
-@import "./custom/config";
-
 body {
   margin: 0;
   padding: 0;
@@ -9,13 +7,3 @@ html, body, #root {
   height: 100%;
 }
 
-.firebaseui-textfield.mdl-textfield .firebaseui-label::after {
-  background: $primary !important;
-}
-.firebaseui-form-actions .mdl-button--raised.mdl-button--colored.firebaseui-button {
-  background: $primary !important;
-}
-
-.firebaseui-link.firebaseui-id-secondary-link {
-  color: $secondary !important;
-}
