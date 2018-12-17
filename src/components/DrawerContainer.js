@@ -99,7 +99,7 @@ class DrawerContainer extends Component {
           <Typography className='built-by-text'>
             Built by
           </Typography>
-          <img src={placeholderImage} className='built-by-img' />
+          <img src={placeholderImage} className='built-by-img' alt={''} />
         </div>
       </Drawer>
     );
