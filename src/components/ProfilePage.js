@@ -24,7 +24,7 @@ class Profile extends React.Component {
           <Typography component='p'>{user.email}</Typography>
         </div>
         <div className='button'>
-          <Button color='primary' variant="contained" fullWidth={true} onClick={this.handleClickButton}>
+          <Button color='secondary' variant="contained" fullWidth={true} onClick={this.handleClickButton}>
             Get Collecting
           </Button>
         </div>

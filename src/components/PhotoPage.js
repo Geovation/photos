@@ -171,7 +171,7 @@ class PhotoPage extends Component {
           </div>
 
           <div className='buttonwrapper'>
-            <Button variant="contained" color="primary" fullWidth={true} onClick={this.sendFile}>
+            <Button variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
             </Button>
           </div>
@@ -187,7 +187,7 @@ class PhotoPage extends Component {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.closeDialog} color='primary'>
+              <Button onClick={this.closeDialog} color='secondary'>
                 Ok
               </Button>
             </DialogActions>
