@@ -3,6 +3,47 @@ import styles from './config.scss';
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
 
+const CUSTOM_STRING = {
+  tutorial: {
+    "Walk around the city and take photos": "Walk around the city and take photos",
+    "Write info about the photos and upload it to the cloud": "Write info about the photos and upload it to the cloud",
+    "View your images in our interactive map": "View your images in our interactive map"
+  },
+};
+
+const PAGES = {
+  map: {
+    path: "/",
+    label: "Map"
+  },
+  embeddable: {
+    path: "/embeddable",
+    label: "Map"
+  },
+  photos: {
+    path: "/photo",
+    label: "Photo"
+  },
+  moderator: {
+    path: "/moderator",
+    label: "Photo Approval"
+  },
+  account: {
+    path: "/account",
+    label: "Account"
+  },
+  about: {
+    path: "/about",
+    label: "About"
+  },
+  tutorial: {
+    path: "/tutorial",
+    label: "Tutorial"
+  },
+};
+
+const customiseString = (page, key) => (CUSTOM_STRING[page][key] || key);
+
 export default {
   MAX_IMAGE_SIZE: 2048,
   THEME: {
@@ -34,5 +75,7 @@ export default {
   PHOTO_TITLE_FIELD:{
     title: 'Description',
     placeholder: 'eg. whatever'
-  }
+  },
+  PAGES,
+  customiseString
 }

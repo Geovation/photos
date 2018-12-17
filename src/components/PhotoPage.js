@@ -115,7 +115,7 @@ class PhotoPage extends Component {
 
   handleGoBackButton = () => {
     this.resetState();
-    this.props.goToPage(this.props.pages.map); // go to the map
+    this.props.goToPage(config.PAGES.map); // go to the map
   };
 
 

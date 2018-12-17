@@ -5,13 +5,13 @@ import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-
+import config from '../custom/config';
 import './ProfilePage.scss';
 
 class Profile extends React.Component {
 
   handleClickButton = () => {
-    this.props.goToPage(this.props.pages.map); // go to the map
+    this.props.goToPage(config.PAGES.map); // go to the map
   };
 
   render() {

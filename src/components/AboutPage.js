@@ -1,14 +1,15 @@
 import React from 'react';
-import placeholderImage from '../custom/images/geovation_logo.svg';
+import placeholderImage from '../custom/images/banner.svg';
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import config from '../custom/config';
 import './AboutPage.scss';
 
 class AboutPage extends React.Component {
 
   handleClickButton = () => {
-    this.props.goToPage(this.props.pages.map); // go to the map
+    this.props.goToPage(config.PAGES.map); // go to the map
   };
 
   render() {

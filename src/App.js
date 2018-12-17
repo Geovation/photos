@@ -6,65 +6,24 @@ import RootRef from '@material-ui/core/RootRef';
 import Fab from '@material-ui/core/Fab';
 import Snackbar from '@material-ui/core/Snackbar';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
-
 import Dehaze from '@material-ui/icons/Dehaze';
-
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
 import Map from './components/Map';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
 import ModeratorPage from './components/ModeratorPage';
-
 import LoginFirebase from './components/LoginFirebase';
 import authFirebase from './authFirebase';
-
+import dbFirebase from './dbFirebase';
+import Login from './components/Login';
 import AboutPage from './components/AboutPage';
 import TutorialPage from './components/TutorialPage';
-
-
-import './App.scss';
-import Login from './components/Login';
-import dbFirebase from './dbFirebase';
-
 import DrawerContainer from './components/DrawerContainer';
 
-const PAGES = {
-  map: {
-    path: '/',
-    title: 'Map',
-    label: 'Map'
-  },
-  embeddable: {
-    path: '/embeddable',
-    title: 'Map',
-    label: 'Map'
-  },
-  photos: {
-    path: '/photo',
-    title: 'Photos',
-    label: 'Photo'
-  },
-  moderator: {
-    path: '/moderator',
-    title: 'Photo Approval',
-    label: 'Photo Approval'
-  },
-  account: {
-    path: '/account',
-    title: 'Account',
-    label: 'Account'
-  },
-  about: {
-    path: '/about',
-    title: 'About',
-    label: 'About'
-  },
-  tutorial: {
-    path: '/tutorial',
-    title: 'Tutorial',
-    label: 'Tutorial'
-  },
-};
+import config from './custom/config';
+import './App.scss';
+
+const PAGES = config.PAGES;
 
 class App extends Component {
   constructor(props){
@@ -226,22 +185,15 @@ class App extends Component {
           { this.state.welcomeShown &&
             <Switch>
               <Route path={PAGES.about.path} render={(props) =>
-                <AboutPage {...props}
-                              goToPage={this.goToPage}
-                              pages={PAGES}/>}
+                <AboutPage {...props} goToPage={this.goToPage} />}
               />
               <Route path={PAGES.tutorial.path} render={(props) =>
-                <TutorialPage {...props}
-                              goToPage={this.goToPage}
-                              pages={PAGES}/>}
+                <TutorialPage {...props} goToPage={this.goToPage} />}
               />
 
               { this.state.user && this.state.user.isModerator &&
                 <Route path={PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage {...props}
-                                 pages={PAGES}
-                                 goToPage={this.goToPage}
-                  />}
+                  <ModeratorPage {...props} goToPage={this.goToPage} />}
                 />
               }
 
@@ -250,7 +202,6 @@ class App extends Component {
                            file={this.state.file}
                            location={this.state.location}
                            online={this.state.online}
-                           pages={PAGES}
                            handlePhotoClick={this.handlePhotoClick}
                            goToPage={this.goToPage}
                 />}
@@ -261,7 +212,6 @@ class App extends Component {
                   <ProfilePage {...props}
                                user={this.state.user}
                                goToPage={this.goToPage}
-                               pages={PAGES}
                   />}
                 />
               }
@@ -271,7 +221,6 @@ class App extends Component {
           { !this.state.welcomeShown && this.props.history.location.pathname !== PAGES.embeddable.path &&
             <TutorialPage
               {...this.props}
-              pages={PAGES}
               goToPage={this.goToPage}
               handleWelcomePageClose={this.handleWelcomePageClose}
             />
@@ -320,7 +269,7 @@ class App extends Component {
           loginComponent={LoginFirebase}
         />
 
-        <DrawerContainer pages={PAGES} user={this.state.user} online={this.state.online}
+        <DrawerContainer user={this.state.user} online={this.state.online}
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
         />

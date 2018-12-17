@@ -25,6 +25,7 @@ import * as actions from "../actions";
 
 import placeholderImage from '../images/logo.svg'
 import dbFirebase from "../dbFirebase";
+import config from '../custom/config';
 
 class ModeratorPage extends Component {
 
@@ -97,7 +98,7 @@ class ModeratorPage extends Component {
   };
 
   handleClickButton = () => {
-    this.props.goToPage(this.props.pages.map); // go to the map
+    this.props.goToPage(config.PAGES.map); // go to the map
   };
 
   render() {
