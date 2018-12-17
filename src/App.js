@@ -121,6 +121,8 @@ class App extends Component {
   }
 
   componentDidMount(){
+    this.setState({ photos: dbFirebase.fetchPhotos() });
+
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
     });
@@ -130,7 +132,7 @@ class App extends Component {
         this.goToPage(PAGES.map);
         window.location.reload();
       }
-      this.setState({ user, photos: dbFirebase.fetchPhotos() });
+      this.setState({ user });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();

@@ -18,6 +18,7 @@ function extractPhoto(doc) {
 
 async function fetchPhotos() {
 
+  // for making it realtime: https://firebase.google.com/docs/firestore/query-data/listen
   const promise = firestore.collection("photos").where("published", "==", true).get()
     .then(querySnapshot => {
       const geojson = {
