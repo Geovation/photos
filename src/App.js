@@ -250,6 +250,9 @@ class App extends Component {
                            file={this.state.file}
                            location={this.state.location}
                            online={this.state.online}
+                           pages={PAGES}
+                           handlePhotoClick={this.handlePhotoClick}
+                           goToPage={this.goToPage}
                 />}
               />
 
@@ -288,7 +291,7 @@ class App extends Component {
             }}
           />
 
-          <Fab className="camera" color="primary" onClick={this.handlePhotoClick}
+          <Fab className="camera" color="secondary" onClick={this.handlePhotoClick}
             style={{
               display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
               ? 'flex'

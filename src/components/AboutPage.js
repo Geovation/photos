@@ -24,7 +24,7 @@ class AboutPage extends React.Component {
           <Button
             fullWidth
             variant='contained'
-            color='primary'
+            color='secondary'
             onClick={this.handleClickButton}
           >
             Get Collecting

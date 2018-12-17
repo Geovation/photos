@@ -126,8 +126,9 @@ class ModeratorPage extends Component {
           </List>
           <div className={'button'}>
             <Button
+              fullWidth
               variant='contained'
-              color='primary'
+              color='secondary'
               onClick={this.handleClickButton}
             >
               Get Collecting
