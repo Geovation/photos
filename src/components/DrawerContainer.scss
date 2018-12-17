@@ -17,4 +17,20 @@
       height: 50px;
     }
   }
+
+  .built-by-geovation {
+    display: flex;
+    flex: 1;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 20px;
+  }
+
+  .built-by-text {
+    padding-right: 10px;
+  }
+
+  .built-by-img {
+    height: 20px
+  }
 }
