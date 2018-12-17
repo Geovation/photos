@@ -59,8 +59,10 @@ class PhotoPage extends Component {
   sendFile = async () => {
     if (!this.props.location.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
-    } else if(!this.props.online){
+    } else if (!this.props.online) {
       this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
+    } else if (!this.state.imgSrc) {
+      this.openDialog("No picture is selected. Please choose a picture.");
     } else {
 
       let data = {};
