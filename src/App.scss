@@ -1,3 +1,5 @@
+@import "./custom/config";
+
 .geovation-app {
   display: flex;
   flex-flow: column;
@@ -39,4 +41,16 @@
 
 .link:active {
   background-color: transparent;
+}
+
+.firebaseui-textfield.mdl-textfield .firebaseui-label::after {
+  background: $secondary !important;
+}
+.firebaseui-form-actions .mdl-button--raised.mdl-button--colored.firebaseui-button {
+  background: $secondary !important;
+}
+
+// color of the link text for forgotten passwords
+.firebaseui-link.firebaseui-id-secondary-link {
+  //color: $secondary !important;
 }
