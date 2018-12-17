@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-
+import config from '../custom/config';
 import './DrawerContainer.scss';
 
 const drawerWidth = '80%';
@@ -31,7 +31,9 @@ const styles = theme => ({
 
 class DrawerContainer extends Component {
   render() {
-    const { classes, user, pages, online, leftDrawerOpen } = this.props;
+    const { classes, user, online, leftDrawerOpen } = this.props;
+    const PAGES = config.PAGES;
+
     return (
       <Drawer className='geovation-drawercontainer' open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
         classes={{ paper: classes.drawerPaper }}>
@@ -54,32 +56,32 @@ class DrawerContainer extends Component {
           <List>
             { user &&
               <ListItem button>
-                <Link className='link' to={pages.account.path}>
+                <Link className='link' to={PAGES.account.path}>
                   <ListItemIcon><AccountCircleIcon/></ListItemIcon>
-                  <ListItemText primary={pages.account.label} />
+                  <ListItemText primary={PAGES.account.label} />
                 </Link>
               </ListItem>
             }
 
             { user && user.isModerator &&
               <ListItem button>
-                <Link className='link' to={pages.moderator.path}>
+                <Link className='link' to={PAGES.moderator.path}>
                   <ListItemIcon><CheckCircleIcon /></ListItemIcon>
-                  <ListItemText primary={pages.moderator.label} />
+                  <ListItemText primary={PAGES.moderator.label} />
                 </Link>
               </ListItem>
             }
 
             <ListItem button>
-              <Link className='link' to={pages.tutorial.path}>
+              <Link className='link' to={PAGES.tutorial.path}>
                 <ListItemIcon><SchoolIcon/></ListItemIcon>
-                <ListItemText primary={pages.tutorial.label} />
+                <ListItemText primary={PAGES.tutorial.label} />
               </Link>
             </ListItem>
             <ListItem button>
-              <Link className='link' to={pages.about.path}>
+              <Link className='link' to={PAGES.about.path}>
                 <ListItemIcon><HelpIcon/></ListItemIcon>
-                <ListItemText primary={pages.about.label} />
+                <ListItemText primary={PAGES.about.label} />
               </Link>
             </ListItem>
 

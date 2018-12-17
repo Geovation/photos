@@ -1,6 +1,6 @@
 import React from 'react';
 
-import placeholderImage from '../custom/images/geovation_logo.svg';
+import placeholderImage from '../custom/images/banner.svg';
 import LocationOn from '@material-ui/icons/LocationOn';
 import CameraAlt from '@material-ui/icons/CameraAlt';
 import CloudUpload from '@material-ui/icons/CloudUpload';
@@ -12,21 +12,20 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import './TutorialPage.scss';
 
+import config from '../custom/config';
+
 const tutorialSteps = {
-  'camera':{
-    step:1,
-    photo:<CameraAlt/>,
-    text:'Walk around the city and take photos'
+  'camera': {
+    photo: <CameraAlt />,
+    text: config.customiseString("tutorial", "Walk around the city and take photos")
   },
-  'upload':{
-    step:2,
-    photo:<CloudUpload/>,
-    text:'Write info about the photos and upload it to the cloud'
+  'upload': {
+    photo: <CloudUpload />,
+    text: config.customiseString("tutorial", "Write info about the photos and upload it to the cloud")
   },
-  'location':{
-    step:3,
-    photo:<LocationOn/>,
-    text:'View your images in our interactive map'
+  'location': {
+    photo: <LocationOn />,
+    text: config.customiseString("tutorial", "View your images in our interactive map")
   }
 };
 
@@ -34,8 +33,8 @@ class TutorialPage extends React.Component {
 
   handleClickButton = () => {
     // To control if click the button from tutorial page or welcome page
-    if (this.props.location.pathname === this.props.pages.tutorial.path) {
-      this.props.goToPage(this.props.pages.map); // go to the map
+    if (this.props.location.pathname === config.PAGES.tutorial.path) {
+      this.props.goToPage(config.PAGES.map); // go to the map
     } else {
       this.props.handleWelcomePageClose(); // close the welcome page
     }
@@ -46,12 +45,12 @@ class TutorialPage extends React.Component {
       <div className={'geovation-tutorial'}>
         <img className={'logo'} src={placeholderImage} alt='geovation'/>
         <List dense className={'list'}>
-          { Object.values(tutorialSteps).map(value => (
-            <div key={value.step}>
+          { Object.values(tutorialSteps).map((value, index) => (
+            <div key={index}>
               <ListItem className={'listItem'}>
                 <ListItemIcon>{value.photo}</ListItemIcon>
                 <ListItemText
-                  primary={<div className={'title'}>Step {value.step}</div>}
+                  primary={<div className={'title'}>Step {index + 1}</div>}
                   secondary={value.text} />
               </ListItem>
               <Divider className={'divider'}/>
