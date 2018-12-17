@@ -34,6 +34,11 @@ const PAGES = {
     title: 'Map',
     label: 'Map'
   },
+  embeddable: {
+    path: '/embeddable',
+    title: 'Map',
+    label: 'Map'
+  },
   photos: {
     path: '/photo',
     title: 'Photos',
@@ -260,7 +265,7 @@ class App extends Component {
             </Switch>
           }
 
-          { !this.state.welcomeShown &&
+          { !this.state.welcomeShown && this.props.history.location.pathname !== PAGES.embeddable.path &&
             <TutorialPage
               {...this.props}
               pages={PAGES}
@@ -270,9 +275,9 @@ class App extends Component {
           }
 
           <Map location={this.state.location}
-               visible={ this.props.history.location.pathname === PAGES.map.path}
-               welcomeShown={this.state.welcomeShown}
-               photos={this.state.photos}
+              visible={[PAGES.map.path, PAGES.embeddable.path].includes(this.props.history.location.pathname)}
+              welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === PAGES.embeddable.path}
+              photos={this.state.photos}
           />
 
           <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
