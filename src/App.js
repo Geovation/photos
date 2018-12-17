@@ -253,14 +253,6 @@ class App extends Component {
                 />}
               />
 
-              <Route path={PAGES.embeddable.path} render={(props) =>
-                <Map location={this.state.location}
-                     visible={ true}
-                     welcomeShown={this.state.welcomeShown}
-                     photos={this.state.photos}
-                />}
-              />
-
               { this.state.user &&
                 <Route path={PAGES.account.path} render={(props) =>
                   <ProfilePage {...props}
@@ -282,13 +274,11 @@ class App extends Component {
             />
           }
 
-          { this.props.history.location.pathname !== PAGES.embeddable.path &&
-            <Map location={this.state.location}
-                visible={this.props.history.location.pathname === PAGES.map.path}
-                welcomeShown={this.state.welcomeShown}
-                photos={this.state.photos}
-            />
-          }
+          <Map location={this.state.location}
+              visible={[PAGES.map.path, PAGES.embeddable.path].includes(this.props.history.location.pathname)}
+              welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === PAGES.embeddable.path}
+              photos={this.state.photos}
+          />
 
           <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
             style={{
