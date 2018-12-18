@@ -61,6 +61,9 @@ export default {
       primary: { main: primaryColor },
       secondary: { main: secondaryColor },
     },
+    spacing: {
+      unit: 10
+    }
   },
   // MAP_SOURCE: "mapbox://styles/mapbox/streets-v10",
   MAP_SOURCE: "https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json",

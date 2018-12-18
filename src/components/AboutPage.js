@@ -7,7 +7,6 @@ import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
-import './AboutPage.scss';
 
 const styles = theme => ({
   root: {
@@ -25,6 +24,17 @@ const styles = theme => ({
     flex: 1,
     whiteSpace: 'pre-wrap',
     overflowY: 'auto'
+  },
+  logo: {
+    width: "auto",
+    margin: theme.spacing.unit,
+    marginTop: theme.spacing.unit * 2,
+    // marginBottom: theme.spacing.unit,
+    // marginRight: theme.spacing.unit,
+    // marginLeft: theme.spacing.unit
+  },
+  button: {
+    margin: theme.spacing.unit,
   }
 });
 
@@ -38,11 +48,11 @@ class AboutPage extends React.Component {
     const { classes } = this.props;
     return (
       <Paper align={'center'} className={classes.root}>
-        <img className={'logo'} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>
+        <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>
         <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
           {config.customiseString('about', 'We are Geovation and we Geovate')}
         </Typography>
-        <div className='button'>
+        <div className={classes.button}>
           <Button
             fullWidth
             variant='contained'
