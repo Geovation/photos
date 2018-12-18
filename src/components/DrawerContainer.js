@@ -57,34 +57,26 @@ class DrawerContainer extends Component {
           }
           <List>
             { user &&
-              <ListItem button>
-                <Link className='link' to={PAGES.account.path}>
-                  <ListItemIcon><AccountCircleIcon/></ListItemIcon>
-                  <ListItemText primary={PAGES.account.label} />
-                </Link>
+              <ListItem button component={Link} to={PAGES.account.path}>
+                <ListItemIcon><AccountCircleIcon/></ListItemIcon>
+                <ListItemText primary={PAGES.account.label} />
               </ListItem>
             }
 
             { user && user.isModerator &&
-              <ListItem button>
-                <Link className='link' to={PAGES.moderator.path}>
-                  <ListItemIcon><CheckCircleIcon /></ListItemIcon>
-                  <ListItemText primary={PAGES.moderator.label} />
-                </Link>
+              <ListItem button component={Link} to={PAGES.moderator.path}>
+                <ListItemIcon><CheckCircleIcon /></ListItemIcon>
+                <ListItemText primary={PAGES.moderator.label} />
               </ListItem>
             }
 
-            <ListItem button>
-              <Link className='link' to={PAGES.tutorial.path}>
-                <ListItemIcon><SchoolIcon/></ListItemIcon>
-                <ListItemText primary={PAGES.tutorial.label} />
-              </Link>
+            <ListItem button component={Link} to={PAGES.tutorial.path}>
+              <ListItemIcon><SchoolIcon/></ListItemIcon>
+              <ListItemText primary={PAGES.tutorial.label} />
             </ListItem>
-            <ListItem button>
-              <Link className='link' to={PAGES.about.path}>
-                <ListItemIcon><HelpIcon/></ListItemIcon>
-                <ListItemText primary={PAGES.about.label} />
-              </Link>
+            <ListItem button component={Link} to={PAGES.about.path}>
+              <ListItemIcon><HelpIcon/></ListItemIcon>
+              <ListItemText primary={PAGES.about.label} />
             </ListItem>
 
             { online &&

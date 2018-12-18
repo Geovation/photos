@@ -34,15 +34,6 @@
   }
 }
 
-.link {
-  display: flex;
-  text-decoration: none;
-}
-
-.link:active {
-  background-color: transparent;
-}
-
 .firebaseui-textfield.mdl-textfield .firebaseui-label::after {
   background: $secondary !important;
 }
