@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 
 import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -21,10 +21,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 
 import './ModeratorPage.scss';
-import * as actions from "../actions";
+import * as actions from '../actions';
 
 import placeholderImage from '../images/logo.svg'
-import dbFirebase from "../dbFirebase";
+import dbFirebase from '../dbFirebase';
 import config from '../custom/config';
 
 class ModeratorPage extends Component {
@@ -32,8 +32,8 @@ class ModeratorPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      confirmDialogTitle: "Are you sure?",
-      confirmDialogContent: "",
+      confirmDialogTitle: 'Are you sure?',
+      confirmDialogContent: '',
       confirmDialogHandleCancel: this.handleCancelDialog,
       confirmDialogHandleOk: null,
       confirmDialogOpen: false,
@@ -56,7 +56,7 @@ class ModeratorPage extends Component {
     () => {
       console.log(photo);
       this.setState({
-        confirmDialogContent: `Are you sure you want to reject the photo "${photo.description}" (${photo.id}) ?`,
+        confirmDialogContent: `Are you sure you want to reject the photo '${photo.description}' (${photo.id}) ?`,
         confirmDialogHandleOk: this.handleRejectDialogOk(photo.id),
         confirmDialogOpen: true
       });
@@ -75,7 +75,7 @@ class ModeratorPage extends Component {
     () => {
       console.log(photo);
       this.setState({
-        confirmDialogContent: `Are you sure you want to approve the photo "${photo.description}" (${photo.id}) ?`,
+        confirmDialogContent: `Are you sure you want to approve the photo '${photo.description}' (${photo.id}) ?`,
         confirmDialogHandleOk: this.handleApproveDialogOk(photo.id),
         confirmDialogOpen: true
     });
@@ -105,7 +105,7 @@ class ModeratorPage extends Component {
     return (
       <div className='geovation-moderatorPage'>
 
-        <div className={"content"}>
+        <div className={'content'}>
           <List dense={false}>
             {this.props.photos.map(photo => (
               <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
@@ -115,10 +115,10 @@ class ModeratorPage extends Component {
                  src={photo.thumbnail} />
                 <ListItemText primary={`${photo.description}`} />
                 <ListItemSecondaryAction>
-                  <IconButton aria-label="Reject" onClick={this.handleRejectClick(photo)}>
+                  <IconButton aria-label='Reject' onClick={this.handleRejectClick(photo)}>
                     <ThumbDownIcon />
                   </IconButton>
-                  <IconButton aria-label="Approve" onClick={this.handleApproveClick(photo)}>
+                  <IconButton aria-label='Approve' onClick={this.handleApproveClick(photo)}>
                     <ThumbUpIcon />
                   </IconButton>
                 </ListItemSecondaryAction>
@@ -141,10 +141,10 @@ class ModeratorPage extends Component {
           <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
           <DialogContent>{this.state.confirmDialogContent}</DialogContent>
           <DialogActions>
-            <Button onClick={this.state.confirmDialogHandleCancel} color="primary">
+            <Button onClick={this.state.confirmDialogHandleCancel} color='secondary'>
               Cancel
             </Button>
-            <Button onClick={this.state.confirmDialogHandleOk} color="primary">
+            <Button onClick={this.state.confirmDialogHandleOk} color='secondary'>
               Ok
             </Button>
           </DialogActions>
@@ -152,27 +152,27 @@ class ModeratorPage extends Component {
 
         <Dialog open={this.state.zoomDialogOpen} onClose={this.handleZoomDialogClose}>
           <DialogContent>
-            <img onError={(e) => { e.target.src=placeholderImage}} className={"main-image"} alt={this.state.photoSelected.description} src={this.state.photoSelected.main}/>
+            <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={this.state.photoSelected.description} src={this.state.photoSelected.main}/>
 
             <Card>
               <CardActionArea>
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="h2">
+                  <Typography gutterBottom variant='h5' component='h2'>
                     Another Photo
                   </Typography>
-                  <Typography component="p">
+                  <Typography component='p'>
                     {this.state.photoSelected.description}
                   </Typography>
-                  <Typography component="p">
+                  <Typography component='p'>
                     Location: {JSON.stringify(this.state.photoSelected.location)}
                   </Typography>
                 </CardContent>
               </CardActionArea>
               <CardActions>
-                <IconButton aria-label="Reject" onClick={this.handleRejectClick(this.state.photoSelected)}>
+                <IconButton aria-label='Reject' onClick={this.handleRejectClick(this.state.photoSelected)}>
                   <ThumbDownIcon />
                 </IconButton>
-                <IconButton aria-label="Approve" onClick={this.handleApproveClick(this.state.photoSelected)}>
+                <IconButton aria-label='Approve' onClick={this.handleApproveClick(this.state.photoSelected)}>
                   <ThumbUpIcon />
                 </IconButton>
               </CardActions>
