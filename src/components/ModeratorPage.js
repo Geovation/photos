@@ -23,7 +23,7 @@ import Avatar from '@material-ui/core/Avatar';
 import './ModeratorPage.scss';
 import * as actions from '../actions';
 
-import placeholderImage from '../images/logo.svg'
+import placeholderImage from '../custom/images/logo.svg'
 import dbFirebase from '../dbFirebase';
 import config from '../custom/config';
 
