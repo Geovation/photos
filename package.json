@@ -36,6 +36,7 @@
     "ncp": "^2.0.0",
     "node-sass": "^4.11.0",
     "random-location": "^1.0.12",
+    "rimraf": "^2.6.2",
     "workbox-cli": "^3.6.3"
   },
   "dependencies": {
