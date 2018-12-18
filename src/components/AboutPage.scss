@@ -1,23 +1,9 @@
-.geovation-about {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+.logo {
+  height: 40px;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
 
-  .logo {
-    height: 40px;
-    max-width: 360px;
-    margin-top: 40px;
-    margin-bottom: 20px;
-    align-self: center;
-  }
-
-  .main {
-    display:flex;
-    flex:1;
-    justify-content:center;
-  }
-
-  .button {
-    margin: 15px;
-  }
+.button {
+  margin: 15px;
 }
