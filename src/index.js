@@ -12,6 +12,8 @@ import * as serviceWorker from './serviceWorker';
 import config from './custom/config';
 import store from "./store";
 
+serviceWorker.register();
+
 ReactGA.initialize(config.GA_TRACKING_ID);
 const theme = createMuiTheme(config.THEME);
 
@@ -26,7 +28,6 @@ const startApp = () => {
     </Provider>
     )
     , document.getElementById('root'));
-  serviceWorker.register();
 }
 
 if (!window.cordova) {
@@ -34,5 +35,3 @@ if (!window.cordova) {
 } else {
   document.addEventListener('deviceready', startApp, false);
 }
-
-serviceWorker.register();
