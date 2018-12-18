@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 
 import './Map.scss';
 import config from "../custom/config";
-import placeholderImage from '../images/logo.svg';
+import placeholderImage from '../custom/images/logo.svg';
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
@@ -121,10 +121,7 @@ class Map extends Component {
         source: "data",
         filter: ["!", ["has", "point_count"]],
         paint: {
-            "circle-color": "#11b4da",
-            "circle-radius": 4,
-            "circle-stroke-width": 1,
-            "circle-stroke-color": "#fff"
+            "circle-radius": 0,
         }
     });
 
@@ -179,7 +176,7 @@ class Map extends Component {
         const el = document.createElement('div');
         el.className = 'marker';
         el.id = feature.properties.id;
-        el.style.backgroundImage = `url(${feature.properties.thumbnail})`;
+        el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => this.setState({openDialog:true,feature}));
         //create marker
         const marker = new mapboxgl.Marker(el)
