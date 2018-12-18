@@ -23,18 +23,19 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
     whiteSpace: 'pre-wrap',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    marginBottom: theme.spacing.unit
   },
   logo: {
-    width: "auto",
-    margin: theme.spacing.unit,
-    marginTop: theme.spacing.unit * 2,
+    height: '80px',
+    margin: theme.spacing.unit * 2,
+    // marginTop: theme.spacing.unit * 2,
     // marginBottom: theme.spacing.unit,
     // marginRight: theme.spacing.unit,
     // marginLeft: theme.spacing.unit
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit * 1.5
   }
 });
 
@@ -47,7 +48,7 @@ class AboutPage extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <Paper align={'center'} className={classes.root}>
+      <Paper className={classes.root}>
         <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>
         <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
           {config.customiseString('about', 'We are Geovation and we Geovate')}
