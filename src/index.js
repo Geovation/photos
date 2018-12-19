@@ -39,10 +39,11 @@ const startApp = () => {
     , document.getElementById('root'));
 }
 
+ReactGA.event('Tech',process.env.REACT_APP_VERSION);
 if (!window.cordova) {
-  ReactGA.event('Technology','web version');
+  ReactGA.event('Tech','web version');
   startApp();
 } else {
-  ReactGA.event('Technology','cordova');
+  ReactGA.event('Tech','cordova');
   document.addEventListener('deviceready', startApp, false);
 }
