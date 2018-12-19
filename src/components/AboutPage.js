@@ -1,12 +1,11 @@
 import React from 'react';
-import placeholderImage from '../custom/images/banner.svg';
-
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
+const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
 const styles = theme => ({
   root: {

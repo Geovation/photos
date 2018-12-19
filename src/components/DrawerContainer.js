@@ -19,6 +19,7 @@ import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
 import './DrawerContainer.scss';
 
+const placeholderImage = process.env.PUBLIC_URL + "/images/geovation-banner.svg";
 const drawerWidth = '80%';
 const drawerMaxWidth = 360;
 
@@ -89,7 +90,7 @@ class DrawerContainer extends Component {
           <Typography className='built-by-text'>
             Built by
           </Typography>
-          <img src={process.env.PUBLIC_URL + "/images/geovation-banner.svg"} className='built-by-img' alt={''} />
+          <img src={placeholderImage} className='built-by-img' alt={''} />
         </div>
       </Drawer>
     );
