@@ -1,4 +1,11 @@
-## NEXT: 0.3.3 (2018-12-14)
+## 0.3.4 (2018-12-18)
+- more UI tweaks
+- console logs only in dev
+- embeddable map
+- tutorial page customizable
+- about page customizable
+
+## 0.3.3 (2018-12-14)
 - UI tweaks
 
 ## 0.3.2 (2018-12-13)
