@@ -68,6 +68,7 @@ class App extends Component {
         });
 
       }, error => {
+        ReactGA.event("User",'Location Error');
         console.log('Error: ', error.message);
         const location = this.state.location;
         location.online = false;
@@ -93,6 +94,7 @@ class App extends Component {
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
+        ReactGA.event('User','Sign out');
         this.goToPage(PAGES.map);
         window.location.reload();
       }
@@ -134,6 +136,7 @@ class App extends Component {
   };
 
   handlePhotoClick = () => {
+     ReactGA.event('User','photo modal opened');
     if (window.cordova) {
       console.log('Opening cordova dialog');
       this.setState({ openPhotoDialog: true });
@@ -175,6 +178,11 @@ class App extends Component {
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
+    const pathname = this.props.history.location.pathname;
+    if (isItOpen && pathname !== PAGES.map.path) {
+      ReactGA.modalview(pathname);
+    }
+
     this.setState({leftDrawerOpen: isItOpen})
   };
 

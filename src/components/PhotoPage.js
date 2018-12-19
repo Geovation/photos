@@ -89,16 +89,14 @@ class PhotoPage extends Component {
         try {
           const res = await dbFirebase.uploadPhoto(data);
           console.log(res);
-          this.openDialog("Photo was uploaded successfully", this.handleGoBackButton);
+          this.openDialog("Photo was uploaded successfully", this.handleClosePhotoPage);
 
-          ReactGA.event({
-            category: 'Photo',
-            action: 'Uploaded'
-          });
+          ReactGA.event({ category: 'Photo', action: 'Uploaded'});
         } catch (e) {
           this.openDialog(e.message || e);
         }
       } else {
+        ReactGA.event('Photo',"User didn't enter text");
         this.openDialog("Please enter some text");
       }
 
@@ -120,13 +118,19 @@ class PhotoPage extends Component {
   }
 
   retakePhoto = () => {
+    ReactGA.event('Photo','Retake Photo');
     this.resetState();
     this.props.handlePhotoClick();
   }
 
-  handleGoBackButton = () => {
+  handleClosePhotoPage = () => {
     this.resetState();
     this.props.goToPage(config.PAGES.map); // go to the map
+  };
+
+  handleCloseButton = () => {
+    ReactGA.event('Photo',"Photo wasn't uploaded");
+    this.handleClosePhotoPage();
   };
 
 
@@ -152,7 +156,7 @@ class PhotoPage extends Component {
               Photo Submission
             </Typography>
             <div className='close-icon'>
-              <CloseIcon onClick={this.handleGoBackButton}/>
+              <CloseIcon onClick={this.handleCloseButton}/>
             </div>
             </Toolbar>
           </AppBar>

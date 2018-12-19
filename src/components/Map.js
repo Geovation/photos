@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import ReactGA from 'react-ga';
 
 import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
@@ -151,7 +152,8 @@ class Map extends Component {
     });
   }
 
-  flyToGpsLocation = () =>{
+  flyToGpsLocation = () => {
+    ReactGA.event('Map','User pressed location fab');
     this.map.flyTo({
       center: [this.props.location.longitude, this.props.location.latitude]
     });
@@ -178,7 +180,10 @@ class Map extends Component {
         el.className = 'marker';
         el.id = feature.properties.id;
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
-        el.addEventListener('click', () => this.setState({openDialog:true,feature}));
+        el.addEventListener('click', () => {
+          ReactGA.event('Map','User opened photo on the map');
+          this.setState({openDialog:true,feature})
+        });
         //create marker
         const marker = new mapboxgl.Marker(el)
           .setLngLat(feature.geometry.coordinates)

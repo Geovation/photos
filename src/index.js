@@ -40,7 +40,9 @@ const startApp = () => {
 }
 
 if (!window.cordova) {
+  ReactGA.event('Technology','web version');
   startApp();
 } else {
+  ReactGA.event('Technology','cordova');
   document.addEventListener('deviceready', startApp, false);
 }
