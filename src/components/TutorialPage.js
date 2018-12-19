@@ -10,22 +10,33 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 import './TutorialPage.scss';
 
 import config from '../custom/config';
 
+const styles = theme => ({
+  logo: {
+    height: '80px',
+    margin: theme.spacing.unit * 3
+  },
+  button: {
+    margin: theme.spacing.unit * 1.5
+  }
+});
+
 const tutorialSteps = {
   'camera': {
     photo: <CameraAlt />,
-    text: config.customiseString("tutorial", "Walk around the city and take photos")
+    text: config.customiseString('tutorial', 'Walk around the city and take photos')
   },
   'upload': {
     photo: <CloudUpload />,
-    text: config.customiseString("tutorial", "Write info about the photos and upload it to the cloud")
+    text: config.customiseString('tutorial', 'Write info about the photos and upload it to the cloud')
   },
   'location': {
     photo: <LocationOn />,
-    text: config.customiseString("tutorial", "View your images in our interactive map")
+    text: config.customiseString('tutorial', 'View your images in our interactive map')
   }
 };
 
@@ -41,9 +52,11 @@ class TutorialPage extends React.Component {
   };
 
   render() {
+    const { classes } = this.props;
+
     return (
       <div className={'geovation-tutorial'}>
-        <img className={'logo'} src={placeholderImage} alt='geovation'/>
+        <img className={classes.logo} src={placeholderImage} alt='geovation'/>
         <List dense className={'list'}>
           { Object.values(tutorialSteps).map((value, index) => (
             <div key={index}>
@@ -53,11 +66,11 @@ class TutorialPage extends React.Component {
                   primary={<div className={'title'}>Step {index + 1}</div>}
                   secondary={value.text} />
               </ListItem>
-              <Divider className={'divider'}/>
+              <Divider variant='inset' />
             </div>
           ))}
         </List>
-        <div className='button'>
+        <div className={classes.button}>
           <Button
             fullWidth
             variant='contained'
@@ -72,4 +85,4 @@ class TutorialPage extends React.Component {
   }
 }
 
-export default TutorialPage;
+export default withStyles(styles)(TutorialPage);
