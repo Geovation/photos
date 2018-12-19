@@ -51,6 +51,8 @@ class AboutPage extends React.Component {
         <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>
         <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
           {config.customiseString('about', 'We are Geovation and we Geovate')}
+          <br /><br /><br />
+          Version {process.env.REACT_APP_VERSION}, build {process.env.REACT_APP_BUILD_NUMBER}
         </Typography>
         <div className={classes.button}>
           <Button
