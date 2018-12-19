@@ -1,6 +1,5 @@
 import React from 'react';
 
-import placeholderImage from '../custom/images/banner.svg';
 import LocationOn from '@material-ui/icons/LocationOn';
 import CameraAlt from '@material-ui/icons/CameraAlt';
 import CloudUpload from '@material-ui/icons/CloudUpload';
@@ -14,6 +13,7 @@ import { withStyles } from '@material-ui/core/styles';
 import './TutorialPage.scss';
 
 import config from '../custom/config';
+const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
 const styles = theme => ({
   logo: {

@@ -15,7 +15,8 @@ import Typography from '@material-ui/core/Typography';
 
 import './Map.scss';
 import config from "../custom/config";
-import placeholderImage from '../custom/images/logo.svg';
+
+const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;

@@ -11,9 +11,9 @@
     "eject": "react-scripts eject",
     "geovation-photos-update": "geovation-photos-update",
     "serve-prod": "npm run build && http-server build",
-    "start": "HTTPS=true react-scripts start",
+    "start": "REACT_APP_DESCRIPTION=$npm_package_description HTTPS=true react-scripts start",
     "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build && cd ..",
-    "build:react": "react-scripts build",
+    "build:react": "REACT_APP_DESCRIPTION=$npm_package_description react-scripts build",
     "build:pwa": "echo \"nothing to do here\"",
     "start:prod": "npm run build && http-server build -S -o"
   },
@@ -36,6 +36,7 @@
     "ncp": "^2.0.0",
     "node-sass": "^4.11.0",
     "random-location": "^1.0.12",
+    "rimraf": "^2.6.2",
     "workbox-cli": "^3.6.3"
   },
   "dependencies": {

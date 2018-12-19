@@ -14,6 +14,15 @@ import store from "./store";
 
 serviceWorker.register();
 
+if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
+    console.log =
+    console.info =
+    console.trace =
+    console.warn =
+    console.error =
+    console.debug = _ => {};
+}
+
 ReactGA.initialize(config.GA_TRACKING_ID);
 const theme = createMuiTheme(config.THEME);
 

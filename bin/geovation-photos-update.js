@@ -7,9 +7,14 @@
 const fs = require("fs");
 const path = require("path");
 const _ = require("lodash");
-const ncp = require("ncp").ncp;
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+const rimraf = util.promisify(require("rimraf"));
+const ncp = util.promisify(require("ncp").ncp);
 
 const geovationPhotoFolder = path.join(path.dirname(__filename), "..");
+
+console.log(`geovationPhotoFolder: ${geovationPhotoFolder}`);
 
 function mergePackages() {
   // read current project package.json
@@ -35,19 +40,28 @@ function mergePackages() {
   fs.writeFileSync("package.json", JSON.stringify(mergedPackage, null, 2));
 }
 
-function copySrc() {
-  _.forEach([ "src", "cordova-app", "public", "functions", "firebase.json", "firebase.indexes.json", "firestore.rules",
-              "storage.rules" ],
-      src => ncp(path.join(geovationPhotoFolder, src), src, errFunc));
+async function copySrc() {
+  try {
+    const pathToCopy = ["src", "cordova-app", "public", "functions", "firebase.json", "firestore.indexes.json", "firestore.rules", "storage.rules"];
 
-  // see https://github.com/atlassubbed/atlas-npm-init/issues/1
-  ncp(path.join(geovationPhotoFolder, "gitignore"), ".gitignore", { clobber : false }, errFunc);
-}
+    for (dstIdx in pathToCopy) {
+      const dst = pathToCopy[dstIdx];
+      const photosPath = path.join(geovationPhotoFolder, dst);
 
-function errFunc(err) {
-    if (err) {
-      return console.error(err);
+      await rimraf(dst);
+      console.log(`${dst} deleted`);
+
+      await ncp(photosPath, dst);
+      console.log(`... ${photosPath} copied to ${dst}\n`)
     }
+
+    // see https://github.com/atlassubbed/atlas-npm-init/issues/1
+    await ncp(path.join(geovationPhotoFolder, "gitignore"), ".gitignore", {clobber: false});
+
+    await exec('git add -A');
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 mergePackages();

@@ -19,8 +19,7 @@ import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
 import './DrawerContainer.scss';
 
-import placeholderImage from '../images/geovation-banner.svg';
-
+const placeholderImage = process.env.PUBLIC_URL + "/images/geovation-banner.svg";
 const drawerWidth = '80%';
 const drawerMaxWidth = 360;
 
