@@ -85,6 +85,7 @@ class App extends Component {
   }
 
   componentDidMount(){
+    ReactGA.pageview(this.props.location.pathname);
     this.setState({ photos: dbFirebase.fetchPhotos() });
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
