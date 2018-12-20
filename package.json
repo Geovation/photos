@@ -1,5 +1,6 @@
 {
   "name": "geovation-photos",
+  "title": "Geovation Photos",
   "version": "0.3.4",
   "description": "Simple Reactjs PWA that allows you to upload photos into a map.",
   "main": "index.js",
@@ -11,9 +12,9 @@
     "eject": "react-scripts eject",
     "geovation-photos-update": "geovation-photos-update",
     "serve-prod": "npm run build && http-server build",
-    "start": "REACT_APP_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER REACT_APP_VERSION=$npm_package_version REACT_APP_NAME=$npm_package_name HTTPS=true react-scripts start",
+    "start": "REACT_APP_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER REACT_APP_VERSION=$npm_package_version REACT_APP_TITLE=$npm_package_title HTTPS=true react-scripts start",
     "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build && cd ..",
-    "build:react": "REACT_APP_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER REACT_APP_VERSION=$npm_package_version REACT_APP_NAME=$npm_package_name react-scripts build",
+    "build:react": "REACT_APP_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER REACT_APP_VERSION=$npm_package_version REACT_APP_TITLE=$npm_package_title react-scripts build",
     "build:pwa": "echo \"nothing to do here\"",
     "start:prod": "npm run build && http-server build -S -o"
   },
