@@ -115,7 +115,6 @@ class App extends Component {
 
   goToPage = page => {
     ReactGA.pageview(page.path);
-
     this.props.history.push(page.path);
   }
 
@@ -176,11 +175,6 @@ class App extends Component {
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
-    const pathname = this.props.history.location.pathname;
-    if (isItOpen && pathname !== PAGES.map.path) {
-      ReactGA.modalview(pathname);
-    }
-
     this.setState({leftDrawerOpen: isItOpen})
   };
 

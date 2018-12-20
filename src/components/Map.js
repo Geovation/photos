@@ -37,6 +37,7 @@ class Map extends Component {
         }
       }
     }
+    this.prevZoom = ZOOM;
     this.map = {};
     this.renderedThumbnails = {};
   }
@@ -125,6 +126,19 @@ class Map extends Component {
         paint: {
             "circle-radius": 0,
         }
+    });
+
+
+    this.map.on('zoom', e => {
+      const zoom = Math.floor(this.map.getZoom());
+      if ( zoom >= this.prevZoom+1 || zoom <= this.prevZoom-1 ) {
+        ReactGA.event({
+          category: 'Map',
+          action: 'Zoom',
+          value: zoom
+        });
+        this.prevZoom = zoom;
+      }
     });
 
     this.map.on('render', 'unclustered-point', e => {
