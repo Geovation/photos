@@ -39,8 +39,23 @@ const startApp = () => {
     , document.getElementById('root'));
 }
 
+ReactGA.event({
+  category: 'Tech',
+  action: process.env.REACT_APP_VERSION,
+  nonInteraction: true
+});
 if (!window.cordova) {
+  ReactGA.event({
+    category: 'Tech',
+    action: 'web version',
+    nonInteraction: true
+  });
   startApp();
 } else {
+  ReactGA.event({ 
+    category: 'Tech',
+    action: 'cordova',
+    nonInteraction: true
+  });
   document.addEventListener('deviceready', startApp, false);
 }
