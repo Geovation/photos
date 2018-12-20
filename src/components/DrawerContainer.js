@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
 import './DrawerContainer.scss';
+import ReactGA from 'react-ga';
 
 const placeholderImage = process.env.PUBLIC_URL + "/images/geovation-banner.svg";
 const drawerWidth = '80%';
@@ -30,11 +31,15 @@ const styles = theme => ({
   }
 });
 
+const PAGES = config.PAGES;
+
 class DrawerContainer extends Component {
+  gaPageView = (page) => {
+    ReactGA.pageview(page);
+  }
+
   render() {
     const { classes, user, online, leftDrawerOpen } = this.props;
-    const PAGES = config.PAGES;
-
     return (
       <Drawer className='geovation-drawercontainer' open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
         classes={{ paper: classes.drawerPaper }}>
@@ -56,24 +61,24 @@ class DrawerContainer extends Component {
           }
           <List>
             { user &&
-              <ListItem button component={Link} to={PAGES.account.path}>
+              <ListItem button component={Link} to={PAGES.account.path} onClick={() => this.gaPageView(PAGES.account.path)}>
                 <ListItemIcon><AccountCircleIcon/></ListItemIcon>
                 <ListItemText primary={PAGES.account.label} />
               </ListItem>
             }
 
             { user && user.isModerator &&
-              <ListItem button component={Link} to={PAGES.moderator.path}>
+              <ListItem button component={Link} to={PAGES.moderator.path} onClick={() => this.gaPageView(PAGES.moderator.path)}>
                 <ListItemIcon><CheckCircleIcon /></ListItemIcon>
                 <ListItemText primary={PAGES.moderator.label} />
               </ListItem>
             }
 
-            <ListItem button component={Link} to={PAGES.tutorial.path}>
+            <ListItem button component={Link} to={PAGES.tutorial.path} onClick={() => this.gaPageView(PAGES.tutorial.path)}>
               <ListItemIcon><SchoolIcon/></ListItemIcon>
               <ListItemText primary={PAGES.tutorial.label} />
             </ListItem>
-            <ListItem button component={Link} to={PAGES.about.path}>
+            <ListItem button component={Link} to={PAGES.about.path} onClick={() => this.gaPageView(PAGES.about.path)}>
               <ListItemIcon><HelpIcon/></ListItemIcon>
               <ListItemText primary={PAGES.about.label} />
             </ListItem>
