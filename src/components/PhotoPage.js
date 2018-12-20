@@ -66,6 +66,7 @@ class PhotoPage extends Component {
   }
 
   sendFile = async () => {
+    ReactGA.event({ category: 'Photo', action: 'Upload'});
     if (!this.props.location.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
     } else if (!this.props.online) {
@@ -89,12 +90,7 @@ class PhotoPage extends Component {
         try {
           const res = await dbFirebase.uploadPhoto(data);
           console.log(res);
-          this.openDialog("Photo was uploaded successfully", this.handleGoBackButton);
-
-          ReactGA.event({
-            category: 'Photo',
-            action: 'Uploaded'
-          });
+          this.openDialog("Photo was uploaded successfully", this.handleClosePhotoPage);
         } catch (e) {
           this.openDialog(e.message || e);
         }
@@ -120,13 +116,19 @@ class PhotoPage extends Component {
   }
 
   retakePhoto = () => {
+    ReactGA.event({ category: 'Photo', action: "Retake Photo"});
     this.resetState();
     this.props.handlePhotoClick();
   }
 
-  handleGoBackButton = () => {
+  handleClosePhotoPage = () => {
     this.resetState();
     this.props.goToPage(config.PAGES.map); // go to the map
+  };
+
+  handleCloseButton = () => {
+    ReactGA.event({ category: 'Photo', action: "Postpone upload"});
+    this.handleClosePhotoPage();
   };
 
 
@@ -152,7 +154,7 @@ class PhotoPage extends Component {
               Photo Submission
             </Typography>
             <div className='close-icon'>
-              <CloseIcon onClick={this.handleGoBackButton}/>
+              <CloseIcon onClick={this.handleCloseButton}/>
             </div>
             </Toolbar>
           </AppBar>
