@@ -93,6 +93,7 @@ class App extends Component {
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
+        ReactGA.event({ category: 'User', action: 'Signed out'});
         this.goToPage(PAGES.map);
         window.location.reload();
       }
@@ -175,6 +176,11 @@ class App extends Component {
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
+    const pathname = this.props.history.location.pathname;
+    if (isItOpen && pathname !== PAGES.map.path) {
+      ReactGA.modalview(pathname);
+    }
+
     this.setState({leftDrawerOpen: isItOpen})
   };
 
