@@ -20,7 +20,6 @@ import config from '../custom/config';
 import './DrawerContainer.scss';
 
 const placeholderImage = process.env.PUBLIC_URL + "/images/geovation-banner.svg";
-
 const drawerWidth = '80%';
 const drawerMaxWidth = 360;
 
@@ -31,10 +30,11 @@ const styles = theme => ({
   }
 });
 
+const PAGES = config.PAGES;
 
 class DrawerContainer extends Component {
+
   render() {
-    const PAGES = config.PAGES;
     const { classes, user, online, leftDrawerOpen } = this.props;
 
     const ListItems = [

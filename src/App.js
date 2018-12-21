@@ -85,6 +85,7 @@ class App extends Component {
   }
 
   componentDidMount(){
+    ReactGA.pageview(this.props.location.pathname);
     this.setState({ photos: dbFirebase.fetchPhotos() });
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
@@ -93,6 +94,7 @@ class App extends Component {
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
+        ReactGA.event({ category: 'User', action: 'Signed out'});
         this.goToPage(PAGES.map);
         window.location.reload();
       }
@@ -113,9 +115,13 @@ class App extends Component {
   }
 
   goToPage = page => {
-    ReactGA.pageview(page.path);
-
     this.props.history.push(page.path);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.location !== this.props.location) {
+      ReactGA.pageview(this.props.location.pathname);
+    }
   }
 
   handleClickLoginLogout = () => {
@@ -175,6 +181,8 @@ class App extends Component {
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
+    ReactGA.event({ category: 'Menu', action: isItOpen ? 'Opened' : "Closed"});
+
     this.setState({leftDrawerOpen: isItOpen})
   };
 

@@ -15,11 +15,11 @@ const onAuthStateChanged = (fn) => {
   const firebaseStatusChange = async (user) => {
     currentUser = user;
     if (currentUser) {
-
+      ReactGA.set({userId:user.uid});
       ReactGA.event({
         category: 'User',
         action: 'Logged in',
-        value: user.uid
+        label: user.uid
       });
 
       const fbUser = await dbFirebase.getUser(user.uid);
