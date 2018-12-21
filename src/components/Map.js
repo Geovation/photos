@@ -136,7 +136,7 @@ class Map extends Component {
       const milliSeconds = 1 * 1000;
       const timeLapsed = new Date().getTime() - this.prevZoomTime;
 
-      if (this.prevZoom != zoom && timeLapsed > milliSeconds) {
+      if (this.prevZoom !== zoom && timeLapsed > milliSeconds) {
         ReactGA.event({
           category: 'Map',
           action: 'Zoom',
