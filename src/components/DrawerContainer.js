@@ -20,6 +20,7 @@ import config from '../custom/config';
 import './DrawerContainer.scss';
 
 const placeholderImage = process.env.PUBLIC_URL + "/images/geovation-banner.svg";
+
 const drawerWidth = '80%';
 const drawerMaxWidth = 360;
 
@@ -30,10 +31,44 @@ const styles = theme => ({
   }
 });
 
+
 class DrawerContainer extends Component {
   render() {
-    const { classes, user, online, leftDrawerOpen } = this.props;
     const PAGES = config.PAGES;
+    const { classes, user, online, leftDrawerOpen } = this.props;
+
+    const ListItems = [
+      {
+        visible: user,
+        path: PAGES.account.path,
+        icon: <AccountCircleIcon/>,
+        label: PAGES.account.label
+      },
+      {
+        visible: user && user.isModerator,
+        path: PAGES.moderator.path,
+        icon: <CheckCircleIcon/>,
+        label: PAGES.moderator.label
+      },
+      {
+        visible: true,
+        path: PAGES.tutorial.path,
+        icon: <SchoolIcon/>,
+        label: PAGES.tutorial.label
+      },
+      {
+        visible: true,
+        path: PAGES.about.path,
+        icon: <HelpIcon/>,
+        label: PAGES.about.label,
+      },
+      {
+        visible: online,
+        icon: <ExitToAppIcon/>,
+        label: user ? 'Logout' : 'Login',
+        click: this.props.handleClickLoginLogout
+      }
+    ];
 
     return (
       <Drawer className='geovation-drawercontainer' open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
@@ -55,35 +90,12 @@ class DrawerContainer extends Component {
             </div>
           }
           <List>
-            { user &&
-              <ListItem button component={Link} to={PAGES.account.path}>
-                <ListItemIcon><AccountCircleIcon/></ListItemIcon>
-                <ListItemText primary={PAGES.account.label} />
+            {ListItems.map( (item,index) => item.visible &&
+              <ListItem key={index} button component={item.path && Link} to={item.path} onClick={item.click}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.label} />
               </ListItem>
-            }
-
-            { user && user.isModerator &&
-              <ListItem button component={Link} to={PAGES.moderator.path}>
-                <ListItemIcon><CheckCircleIcon /></ListItemIcon>
-                <ListItemText primary={PAGES.moderator.label} />
-              </ListItem>
-            }
-
-            <ListItem button component={Link} to={PAGES.tutorial.path}>
-              <ListItemIcon><SchoolIcon/></ListItemIcon>
-              <ListItemText primary={PAGES.tutorial.label} />
-            </ListItem>
-            <ListItem button component={Link} to={PAGES.about.path}>
-              <ListItemIcon><HelpIcon/></ListItemIcon>
-              <ListItemText primary={PAGES.about.label} />
-            </ListItem>
-
-            { online &&
-              <ListItem button onClick={this.props.handleClickLoginLogout}>
-                <ListItemIcon><ExitToAppIcon/></ListItemIcon>
-                <ListItemText primary={user ?'Logout':'Login'} />
-              </ListItem>
-            }
+            )}
           </List>
         </div>
         <div className='built-by-geovation'>
