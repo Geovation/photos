@@ -115,8 +115,13 @@ class App extends Component {
   }
 
   goToPage = page => {
-    ReactGA.pageview(page.path);
     this.props.history.push(page.path);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.location !== this.props.location) {
+      ReactGA.pageview(this.props.location.pathname);
+    }
   }
 
   handleClickLoginLogout = () => {
@@ -176,6 +181,8 @@ class App extends Component {
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
+    ReactGA.event({ category: 'Menu', action: isItOpen ? 'Opened' : "Closed"});
+
     this.setState({leftDrawerOpen: isItOpen})
   };
 

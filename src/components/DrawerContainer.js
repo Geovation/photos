@@ -18,7 +18,6 @@ import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
 import './DrawerContainer.scss';
-import ReactGA from 'react-ga';
 
 const placeholderImage = process.env.PUBLIC_URL + "/images/geovation-banner.svg";
 const drawerWidth = '80%';
@@ -34,9 +33,6 @@ const styles = theme => ({
 const PAGES = config.PAGES;
 
 class DrawerContainer extends Component {
-  gaPageView = (page) => {
-    ReactGA.pageview(page);
-  }
 
   render() {
     const { classes, user, online, leftDrawerOpen } = this.props;

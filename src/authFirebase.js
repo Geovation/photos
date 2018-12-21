@@ -19,6 +19,7 @@ const onAuthStateChanged = (fn) => {
       ReactGA.event({
         category: 'User',
         action: 'Logged in',
+        label: user.uid
       });
 
       const fbUser = await dbFirebase.getUser(user.uid);
