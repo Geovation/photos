@@ -1,3 +1,6 @@
+## 0.3.5 (2018-12-21)
+- better moderators fields
+
 ## 0.3.4 (2018-12-18)
 - more UI tweaks
 - console logs only in dev

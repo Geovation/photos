@@ -13,7 +13,6 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -102,6 +101,25 @@ class ModeratorPage extends Component {
     this.props.goToPage(config.PAGES.map); // go to the map
   };
 
+  presentField(fieldName, fieldValue) {
+
+    let rtn;
+    switch (fieldName) {
+      case 'location':
+        const link = `https://www.google.com/maps/@${fieldValue.latitude},${fieldValue.longitude},18z`;
+        rtn = (<a href={link} target="_">See Google Map</a>);
+        break;
+      case 'thumbnail':
+      case 'main':
+        rtn = (<a href={fieldValue} target="_">See photo</a>);
+        break;
+      default:
+        rtn = `${fieldValue}`;
+    }
+
+    return rtn;
+  }
+
   render() {
     return (
       <div className='geovation-moderatorPage'>
@@ -153,20 +171,16 @@ class ModeratorPage extends Component {
 
         <Dialog open={this.state.zoomDialogOpen} onClose={this.handleZoomDialogClose}>
           <DialogContent>
-            <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={this.state.photoSelected.description} src={this.state.photoSelected.main}/>
+            <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={this.state.photoSelected.id} src={this.state.photoSelected.main}/>
 
             <Card>
               <CardActionArea>
                 <CardContent>
-                  <Typography gutterBottom variant='h5' component='h2'>
-                    Another Photo
-                  </Typography>
-                  <Typography component='p'>
-                    {this.state.photoSelected.description}
-                  </Typography>
-                  <Typography component='p'>
-                    Location: {JSON.stringify(this.state.photoSelected.location)}
-                  </Typography>
+                  {Object.keys(this.state.photoSelected).map(key => (
+                    <div key={key}>
+                      {key}: <strong>{this.presentField(key, this.state.photoSelected[key])}</strong>
+                    </div>
+                  ))}
                 </CardContent>
               </CardActionArea>
               <CardActions>
