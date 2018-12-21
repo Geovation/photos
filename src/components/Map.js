@@ -38,6 +38,7 @@ class Map extends Component {
       }
     }
     this.prevZoom = ZOOM;
+    this.prevZoomTime = new Date().getTime();
     this.map = {};
     this.renderedThumbnails = {};
   }
@@ -128,10 +129,14 @@ class Map extends Component {
         }
     });
 
-
     this.map.on('zoom', e => {
-      const zoom = Math.floor(this.map.getZoom());
-      if ( zoom >= this.prevZoom+1 || zoom <= this.prevZoom-1 ) {
+      console.log(e);
+      // debugger
+      const zoom = Math.round(this.map.getZoom());
+      const milliSeconds = 1 * 1000;
+      const timeLapsed = new Date().getTime() - this.prevZoomTime;
+
+      if (this.prevZoom != zoom && timeLapsed > milliSeconds) {
         ReactGA.event({
           category: 'Map',
           action: 'Zoom',
@@ -139,6 +144,26 @@ class Map extends Component {
         });
         this.prevZoom = zoom;
       }
+
+      this.prevZoomTime = new Date().getTime();
+    });
+
+    this.map.on('moveend', e => {
+      // const center = this.map.getCenter().toString();
+      // console.log(center)
+      // debugger
+
+      ReactGA.event({
+        category: 'Map',
+        action: 'Moved at zoom',
+        value: this.prevZoom
+      });
+
+      ReactGA.event({
+        category: 'Map',
+        action: 'Moved to location',
+        label: `${this.map.getCenter()}`
+      });
     });
 
     this.map.on('render', 'unclustered-point', e => {
@@ -155,7 +180,7 @@ class Map extends Component {
     this.map.on('click', 'clusters', (e) => {
       ReactGA.event({
         category: 'Map',
-        action: 'Cluster Clicked',
+        action: 'Cluster Clicked'
       });
       const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
       const clusterId = features[0].properties.cluster_id;
@@ -173,7 +198,7 @@ class Map extends Component {
   flyToGpsLocation = () => {
     ReactGA.event({
       category: 'Map',
-      action: 'Fab clicked',
+      action: 'Location FAB clicked',
     });
     this.map.flyTo({
       center: [this.props.location.longitude, this.props.location.latitude]
@@ -204,7 +229,7 @@ class Map extends Component {
         el.addEventListener('click', () => {
           ReactGA.event({
             category: 'Map',
-            action: 'Photo Openend',
+            action: 'Photo Opened',
             label: feature.properties.id
           });
           this.setState({openDialog:true,feature})
