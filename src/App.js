@@ -118,6 +118,10 @@ class App extends Component {
     this.props.history.push(page.path);
   }
 
+  goToMap = () => {
+    this.goToPage(config.PAGES.map)
+  }
+
   componentDidUpdate(prevProps) {
     if (prevProps.location !== this.props.location) {
       ReactGA.pageview(this.props.location.pathname);
@@ -178,6 +182,7 @@ class App extends Component {
   handleWelcomePageClose = () => {
     this.setState({ welcomeShown: true });
     localStorage.setItem("welcomeShown", true);
+    this.goToMap();
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
@@ -193,15 +198,15 @@ class App extends Component {
           { this.state.welcomeShown &&
             <Switch>
               <Route path={PAGES.about.path} render={(props) =>
-                <AboutPage {...props} goToPage={this.goToPage} />}
+                <AboutPage {...props} handleClose={this.goToMap} />}
               />
               <Route path={PAGES.tutorial.path} render={(props) =>
-                <TutorialPage {...props} goToPage={this.goToPage} />}
+                <TutorialPage {...props} handleClose={this.handleWelcomePageClose} />}
               />
 
               { this.state.user && this.state.user.isModerator &&
                 <Route path={PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage {...props} goToPage={this.goToPage} />}
+                  <ModeratorPage {...props} handleClose={this.goToMap} />}
                 />
               }
 
@@ -211,7 +216,7 @@ class App extends Component {
                            location={this.state.location}
                            online={this.state.online}
                            handlePhotoClick={this.handlePhotoClick}
-                           goToPage={this.goToPage}
+                           handleClose={this.goToMap}
                 />}
               />
 
@@ -219,7 +224,7 @@ class App extends Component {
                 <Route path={PAGES.account.path} render={(props) =>
                   <ProfilePage {...props}
                                user={this.state.user}
-                               goToPage={this.goToPage}
+                               handleClose={this.goToMap}
                   />}
                 />
               }
@@ -227,11 +232,7 @@ class App extends Component {
           }
 
           { !this.state.welcomeShown && this.props.history.location.pathname !== PAGES.embeddable.path &&
-            <TutorialPage
-              {...this.props}
-              goToPage={this.goToPage}
-              handleWelcomePageClose={this.handleWelcomePageClose}
-            />
+            <TutorialPage {...this.props} handleClose={this.handleWelcomePageClose}/>
           }
 
           <Map location={this.state.location}

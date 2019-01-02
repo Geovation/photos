@@ -1,20 +1,14 @@
-.geovation-tutorial {
-  display: flex;
-  flex-direction: column;
+.list {
+  width: 100%;
+  max-width: 375px;
   height: 100%;
+  align-self: center;
 
-  .list {
-    width: 100%;
-    max-width: 375px;
-    height: 100%;
-    align-self: center;
+  .listItem {
+    height: 100px;
 
-    .listItem {
-      height: 100px;
-
-      .title {
-        font-weight: bold;
-      }
+    .title {
+      font-weight: bold;
     }
   }
 }

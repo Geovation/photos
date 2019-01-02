@@ -1,24 +1,7 @@
-.geovation-profile {
+.profile-info {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  height: 100%;
-
-  .profile-info {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .avatar {
-    margin: 15px;
-    width: 100px;
-    height: 100px;
-  }
-
-  .button {
-    margin:15px;
-  }
-
+  justify-content: center;
+  align-items: center;
 }

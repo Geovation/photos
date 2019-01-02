@@ -8,12 +8,11 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import './TutorialPage.scss';
+import PageWrapper from './PageWrapper';
 
 import config from '../custom/config';
-const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
 const styles = theme => ({
   logo: {
@@ -41,22 +40,9 @@ const tutorialSteps = {
 };
 
 class TutorialPage extends React.Component {
-
-  handleClickButton = () => {
-    // To control if click the button from tutorial page or welcome page
-    if (this.props.location.pathname === config.PAGES.tutorial.path) {
-      this.props.goToPage(config.PAGES.map); // go to the map
-    } else {
-      this.props.handleWelcomePageClose(); // close the welcome page
-    }
-  };
-
   render() {
-    const { classes } = this.props;
-
     return (
-      <div className={'geovation-tutorial'}>
-        <img className={classes.logo} src={placeholderImage} alt='geovation'/>
+      <PageWrapper handleClickButton={this.props.handleClose} hasHeader={true}>
         <List dense className={'list'}>
           { Object.values(tutorialSteps).map((value, index) => (
             <div key={index}>
@@ -70,17 +56,7 @@ class TutorialPage extends React.Component {
             </div>
           ))}
         </List>
-        <div className={classes.button}>
-          <Button
-            fullWidth
-            variant='contained'
-            color='secondary'
-            onClick={this.handleClickButton}
-          >
-            Get Collecting
-          </Button>
-        </div>
-      </div>
+      </PageWrapper>
     );
   }
 }

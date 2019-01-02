@@ -4,31 +4,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import config from '../custom/config';
+import PageWrapper from './PageWrapper';
 import './ProfilePage.scss';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = {
+  avatar: {
+    margin: 10,
+    height: 100,
+    width: 100
+  },
+};
 
 class Profile extends React.Component {
-
-  handleClickButton = () => {
-    this.props.goToPage(config.PAGES.map); // go to the map
-  };
-
   render() {
-    const { user } = this.props;
+    const { user, classes } = this.props;
     return (
-      <div className='geovation-profile'>
-        <div className='profile-info'>
-          <Avatar alt='profile-image' src={user.photoURL} className='avatar' />
+      <PageWrapper handleClickButton={this.props.handleClose} header={false}>
+        <div className={'profile-info'}>
+          <Avatar className={classes.avatar} alt='profile-image' src={user.photoURL}/>
           <Typography gutterBottom variant='h5'>{user.displayName}</Typography>
           <Typography component='p'>{user.email}</Typography>
         </div>
-        <div className='button'>
-          <Button color='secondary' variant="contained" fullWidth={true} onClick={this.handleClickButton}>
-            Get Collecting
-          </Button>
-        </div>
-      </div>
+      </PageWrapper>
     );
   }
 }
@@ -37,4 +35,4 @@ Profile.propTypes = {
   user: PropTypes.object
 };
 
-export default Profile;
+export default withStyles(styles)(Profile);
