@@ -123,7 +123,7 @@ class PhotoPage extends Component {
 
   handleClosePhotoPage = () => {
     this.resetState();
-    this.props.goToPage(config.PAGES.map); // go to the map
+    this.props.handleClose(); // go to the map
   };
 
   handleCloseButton = () => {

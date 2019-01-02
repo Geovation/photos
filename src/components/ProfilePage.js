@@ -20,7 +20,7 @@ class Profile extends React.Component {
   render() {
     const { user, classes } = this.props;
     return (
-      <PageWrapper goToPage={this.props.goToPage} header={false}>
+      <PageWrapper handleClickButton={this.props.handleClose} header={false}>
         <div className={'profile-info'}>
           <Avatar className={classes.avatar} alt='profile-image' src={user.photoURL}/>
           <Typography gutterBottom variant='h5'>{user.displayName}</Typography>

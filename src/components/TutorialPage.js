@@ -42,7 +42,7 @@ const tutorialSteps = {
 class TutorialPage extends React.Component {
   render() {
     return (
-      <PageWrapper handleWelcomePageClose={this.props.handleWelcomePageClose} pathname={this.props.location.pathname} goToPage={this.props.goToPage} header={true}>
+      <PageWrapper handleClickButton={this.props.handleClose} hasHeader={true}>
         <List dense className={'list'}>
           { Object.values(tutorialSteps).map((value, index) => (
             <div key={index}>

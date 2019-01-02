@@ -123,7 +123,7 @@ class ModeratorPage extends Component {
 
   render() {
     return (
-      <PageWrapper goToPage={this.props.goToPage} header={false}>
+      <PageWrapper handleClickButton={this.props.handleClose} hasHeader={false}>
         <List dense={false}>
           {this.props.photos.map(photo => (
             <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>

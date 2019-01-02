@@ -30,29 +30,20 @@ const styles = theme => ({
 });
 
 class PageWrapper extends React.Component {
-
-  handleClickButton = () => {
-    // To control if click the button from tutorial page or welcome page
-    if (this.props.pathname === config.PAGES.map.path) {
-      this.props.handleWelcomePageClose();
-    }
-    this.props.goToPage(config.PAGES.map);
-  };
-
   render() {
-    const { classes, header } = this.props;
+    const { classes, hasHeader, handleClickButton, children } = this.props;
     return (
       <Paper className={classes.root}>
-        {header && <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>}
+        {hasHeader && <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>}
         <div className={classes.main}>
-          {this.props.children}
+          {children}
         </div>
         <div className={classes.button}>
           <Button
             fullWidth
             variant='contained'
             color='secondary'
-            onClick={this.handleClickButton}
+            onClick={handleClickButton}
           >
             Get Collecting
           </Button>

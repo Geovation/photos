@@ -15,7 +15,7 @@ class AboutPage extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <PageWrapper goToPage={this.props.goToPage} header={true}>
+      <PageWrapper handleClickButton={this.props.handleClose} hasHeader={true}>
         <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
           {config.customiseString('about', 'We are Geovation and we Geovate')}
           <br /><br /><br />
