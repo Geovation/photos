@@ -1,3 +1,3 @@
 export default {
-  TYPES: Object.freeze({"string": 1, "integer": 2})
+  TYPES: {string: "string", number: "number"}
 };

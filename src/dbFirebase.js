@@ -83,7 +83,6 @@ async function savePhoto(id, base64) {
 
 async function uploadPhoto(data) {
   const firebasePhoto = new FirebaseFoto(data.latitude, data.longitude, data.field);
-  debugger
   const photoRef = await saveMetadata(firebasePhoto.toObj());
 
   return await savePhoto(photoRef.id, data.base64);

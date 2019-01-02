@@ -19,7 +19,6 @@ import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
 import './PhotoPage.scss';
 import dbFirebase from '../dbFirebase';
-import enums from '../types/enums';
 
 const emptyState = {
   imgSrc: null,
@@ -27,6 +26,7 @@ const emptyState = {
   message: '',
   field: '',
   sending: false,
+  error: true
 };
 
 const styles = theme => ({
@@ -49,7 +49,10 @@ class PhotoPage extends Component {
   }
 
   handleChange = (event) => {
-    this.setState({ field: event.target.value });
+    this.setState({
+      error: !event.target.value.match(config.PHOTO_FIELD.regexValidation),
+      field: event.target.value
+    });
   }
 
   openDialog = (message, fn) => {
@@ -164,18 +167,19 @@ class PhotoPage extends Component {
               {config.PHOTO_FIELD.title}
             </Typography>
 
-            { config.PHOTO_FIELD.type === enums.TYPES.string &&
             <TextField
               id="standard-name"
+              type={config.PHOTO_FIELD.type}
+              required={true}
               placeholder={config.PHOTO_FIELD.placeholder}
               className='text-field'
               value={this.state.field}
               onChange={this.handleChange}
-              InputProps={{
+              error= {this.state.error}
+              InputProps={Object.assign({
                 className: classes.cssUnderline
-              }}
+              }, config.PHOTO_FIELD.inputProps)}
             />
-            }
 
           </div>
 
@@ -190,7 +194,8 @@ class PhotoPage extends Component {
           </div>
 
           <div className='buttonwrapper'>
-            <Button variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
+            <Button disabled={this.state.error}
+              variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
             </Button>
           </div>

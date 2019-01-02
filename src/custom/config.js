@@ -87,8 +87,17 @@ export default {
     name: 'description',
     title: 'Description',
     type: enums.TYPES.string,
-    placeholder: 'eg. whatever'
+    placeholder: 'eg. whatever',
+    regexValidation: '^\\w+( \\w+)*$'
   },
+  // PHOTO_FIELD: {
+  //   name: 'pieces',
+  //   title: 'Number of pieces collected',
+  //   type: enums.TYPES.number,
+  //   placeholder: 'eg. 123',
+  //   inputProps: { min: 0, step: 1},
+  //   regexValidation: '^[0-9]+'
+  // },
   PAGES,
   customiseString
 }
