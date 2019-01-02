@@ -18,13 +18,14 @@ import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
 import './PhotoPage.scss';
-import dbFirebase from "../dbFirebase";
+import dbFirebase from '../dbFirebase';
+import enums from '../types/enums';
 
 const emptyState = {
   imgSrc: null,
   open: false,
   message: '',
-  value: '',
+  field: '',
   sending: false,
 };
 
@@ -48,7 +49,7 @@ class PhotoPage extends Component {
   }
 
   handleChange = (event) => {
-    this.setState({ value: event.target.value });
+    this.setState({ field: event.target.value });
   }
 
   openDialog = (message, fn) => {
@@ -76,15 +77,14 @@ class PhotoPage extends Component {
     } else {
 
       let data = {};
-      const text =  this.state.value;
       const { location } = this.props;
       data.base64 = this.state.imgSrc.split(",")[1];
 
-      if (text !== '') {
-        data['text'] = text;
+      if (this.state.field !== '') {
+        data.field = this.state.field;
         if (location) {
-          data['latitude'] = location.latitude;
-          data['longitude'] = location.longitude;
+          data.latitude = location.latitude;
+          data.longitude = location.longitude;
         }
         this.setState({ sending: true });
         try {
@@ -161,18 +161,21 @@ class PhotoPage extends Component {
 
           <div className='text-field-wrapper'>
             <Typography className='typography1'>
-              {config.PHOTO_TITLE_FIELD.title}
+              {config.PHOTO_FIELD.title}
             </Typography>
+
+            { config.PHOTO_FIELD.type === enums.TYPES.string &&
             <TextField
               id="standard-name"
-              placeholder={config.PHOTO_TITLE_FIELD.placeholder}
+              placeholder={config.PHOTO_FIELD.placeholder}
               className='text-field'
-              value={this.state.value}
+              value={this.state.field}
               onChange={this.handleChange}
               InputProps={{
                 className: classes.cssUnderline
               }}
             />
+            }
 
           </div>
 
