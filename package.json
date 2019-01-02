@@ -5,18 +5,18 @@
   "description": "Simple Reactjs PWA that allows you to upload photos into a map.",
   "main": "index.js",
   "scripts": {
+    "start": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
+    "build": "npm run build:react",
     "test": "react-scripts test --env=jsdom",
-    "build": "npm run build:react && npm run build:pwa #&& #[ \"$BUILD_CORDOVA\" ] && npm run build:cordova",
+    "eject": "react-scripts eject",
+    "serve-prod": "npm run build:react && http-server build",
+    "build:ios": "mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform rm ios && cordova platform add ios && cordova build --prod --release --buildConfig build.json && cd ..",
+    "build:android": "mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform rm ios && cordova platform add android && cordova build --prod --release --buildConfig build.json && cd ..",
+    "build:react": "./scripts/runWithVars.sh 'react-scripts build'",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
-    "eject": "react-scripts eject",
     "geovation-photos-update": "geovation-photos-update",
-    "serve-prod": "npm run build && http-server build",
-    "start": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
-    "build:cordova": "cp .gitignore gitignore && mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build && cd ..",
-    "build:react": "./scripts/runWithVars.sh 'react-scripts build'",
-    "build:pwa": "echo \"nothing to do here\"",
-    "start:prod": "npm run build && http-server build -S -o"
+    "start:prod": "npm run build:react && http-server build -S -o"
   },
   "repository": {
     "type": "git",
