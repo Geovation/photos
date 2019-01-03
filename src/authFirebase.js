@@ -1,4 +1,5 @@
 import firebase from "firebase/app";
+import gtag from './gtag.js';
 
 import User from "./types/User";
 import dbFirebase from "./dbFirebase";
@@ -14,10 +15,10 @@ const onAuthStateChanged = (fn) => {
   const firebaseStatusChange = async (user) => {
     currentUser = user;
     if (currentUser) {
-      window.gtag('set', {
+      gtag('set', {
         'userId' : user.uid,
       });
-      window.gtag('event', 'Logged in', {
+      gtag('event', 'Logged in', {
         'event_category' : 'User',
         'event_label' : user.uid,
       });

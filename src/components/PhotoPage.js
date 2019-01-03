@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import loadImage from 'blueimp-load-image';
+import gtag from '../gtag.js';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -69,7 +70,7 @@ class PhotoPage extends Component {
   }
 
   sendFile = async () => {
-    window.gtag('event', 'Upload', {
+    gtag('event', 'Upload', {
       'event_category' : 'Photo',
     });
     if (!this.props.location.online) {
@@ -120,7 +121,7 @@ class PhotoPage extends Component {
   }
 
   retakePhoto = () => {
-    window.gtag('event', 'Retake Photo', {
+    gtag('event', 'Retake Photo', {
       'event_category' : 'Photo',
     });
     this.resetState();
@@ -133,7 +134,7 @@ class PhotoPage extends Component {
   };
 
   handleCloseButton = () => {
-    window.gtag('event', 'Postpone upload', {
+    gtag('event', 'Postpone upload', {
       'event_category' : 'Photo',
     });
     this.handleClosePhotoPage();

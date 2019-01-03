@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter} from 'react-router-dom';
+import gtag from './gtag.js';
 
 import RootRef from '@material-ui/core/RootRef';
 import Fab from '@material-ui/core/Fab';
@@ -85,7 +86,7 @@ class App extends Component {
 
 
   componentDidMount(){
-    window.gtag('config', config.GA_TRACKING_ID, {
+    gtag('config', config.GA_TRACKING_ID, {
       'page_path' : '/#' + this.props.location.pathname,
     });
     this.setState({ photos: dbFirebase.fetchPhotos() });
@@ -96,7 +97,7 @@ class App extends Component {
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
-        window.gtag('event', 'Signed out', {
+        gtag('event', 'Signed out', {
           'event_category' : 'User',
         });
 
@@ -129,7 +130,7 @@ class App extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.location !== this.props.location) {
-      window.gtag('config', config.GA_TRACKING_ID, {
+      gtag('config', config.GA_TRACKING_ID, {
         'page_path' : '/#' + this.props.location.pathname,
       });
     }
@@ -193,7 +194,7 @@ class App extends Component {
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
-    window.gtag('event', isItOpen ? 'Opened' : "Closed", {
+    gtag('event', isItOpen ? 'Opened' : "Closed", {
       'event_category' : 'Menu',
     });
     this.setState({leftDrawerOpen: isItOpen})

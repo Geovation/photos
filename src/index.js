@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router } from "react-router-dom";
 import { Provider } from "react-redux";
+import gtag from './gtag.js';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
@@ -21,10 +22,6 @@ if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
     console.error =
     console.debug = _ => {};
 }
-
-window.dataLayer = window.dataLayer || [];
-function gtag(){window.dataLayer.push(arguments);}
-window.gtag = gtag
 
 const script = document.createElement('script');
 script.type = 'text/javascript';

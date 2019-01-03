@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import gtag from '../gtag.js';
 
 import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
@@ -143,11 +144,11 @@ class Map extends Component {
     });
 
     this.map.on('moveend', e => {
-      window.gtag('event', 'Moved at zoom', {
+      gtag('event', 'Moved at zoom', {
         'event_category' : 'Map',
         'event_label' : this.prevZoom + '',
       });
-      window.gtag('event', 'Moved at location', {
+      gtag('event', 'Moved at location', {
         'event_category' : 'Map',
         'event_label' : `${this.map.getCenter()}`,
       });
@@ -165,7 +166,7 @@ class Map extends Component {
     });
 
     this.map.on('click', 'clusters', (e) => {
-      window.gtag('event', 'Cluster Clicked', {
+      gtag('event', 'Cluster Clicked', {
         'event_category' : 'Map',
       });
 
@@ -183,7 +184,7 @@ class Map extends Component {
   }
 
   flyToGpsLocation = () => {
-    window.gtag('event', 'Location FAB clicked', {
+    gtag('event', 'Location FAB clicked', {
       'event_category' : 'Map',
     });
     this.map.flyTo({
@@ -213,7 +214,7 @@ class Map extends Component {
         el.id = feature.properties.id;
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
-          window.gtag('event', 'Photo Opened', {
+          gtag('event', 'Photo Opened', {
             'event_category' : 'Map',
             'event_label' : feature.properties.id,
           });
