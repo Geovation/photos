@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import loadImage from 'blueimp-load-image';
-import ReactGA from 'react-ga';
+// import ReactGA from 'react-ga';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -70,7 +70,7 @@ class PhotoPage extends Component {
   }
 
   sendFile = async () => {
-    ReactGA.event({ category: 'Photo', action: 'Upload'});
+    // ReactGA.event({ category: 'Photo', action: 'Upload'});
     if (!this.props.location.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
     } else if (!this.props.online) {
@@ -119,7 +119,7 @@ class PhotoPage extends Component {
   }
 
   retakePhoto = () => {
-    ReactGA.event({ category: 'Photo', action: "Retake Photo"});
+    // ReactGA.event({ category: 'Photo', action: "Retake Photo"});
     this.resetState();
     this.props.handlePhotoClick();
   }
@@ -130,7 +130,7 @@ class PhotoPage extends Component {
   };
 
   handleCloseButton = () => {
-    ReactGA.event({ category: 'Photo', action: "Postpone upload"});
+    // ReactGA.event({ category: 'Photo', action: "Postpone upload"});
     this.handleClosePhotoPage();
   };
 

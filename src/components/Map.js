@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import ReactGA from 'react-ga';
+// import ReactGA from 'react-ga';
 
 import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
@@ -137,11 +137,6 @@ class Map extends Component {
       const timeLapsed = new Date().getTime() - this.prevZoomTime;
 
       if (this.prevZoom !== zoom && timeLapsed > milliSeconds) {
-        ReactGA.event({
-          category: 'Map',
-          action: 'Zoom',
-          value: zoom
-        });
         this.prevZoom = zoom;
       }
 
@@ -153,17 +148,17 @@ class Map extends Component {
       // console.log(center)
       // debugger
 
-      ReactGA.event({
-        category: 'Map',
-        action: 'Moved at zoom',
-        value: this.prevZoom
-      });
-
-      ReactGA.event({
-        category: 'Map',
-        action: 'Moved to location',
-        label: `${this.map.getCenter()}`
-      });
+      // ReactGA.event({
+      //   category: 'Map',
+      //   action: 'Moved at zoom',
+      //   value: this.prevZoom
+      // });
+      //
+      // ReactGA.event({
+      //   category: 'Map',
+      //   action: 'Moved to location',
+      //   label: `${this.map.getCenter()}`
+      // });
     });
 
     this.map.on('render', 'unclustered-point', e => {
@@ -178,10 +173,10 @@ class Map extends Component {
     });
 
     this.map.on('click', 'clusters', (e) => {
-      ReactGA.event({
-        category: 'Map',
-        action: 'Cluster Clicked'
-      });
+      // ReactGA.event({
+      //   category: 'Map',
+      //   action: 'Cluster Clicked'
+      // });
       const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
       const clusterId = features[0].properties.cluster_id;
       this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
@@ -196,10 +191,10 @@ class Map extends Component {
   }
 
   flyToGpsLocation = () => {
-    ReactGA.event({
-      category: 'Map',
-      action: 'Location FAB clicked',
-    });
+    // ReactGA.event({
+    //   category: 'Map',
+    //   action: 'Location FAB clicked',
+    // });
     this.map.flyTo({
       center: [this.props.location.longitude, this.props.location.latitude]
     });
@@ -227,11 +222,11 @@ class Map extends Component {
         el.id = feature.properties.id;
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
-          ReactGA.event({
-            category: 'Map',
-            action: 'Photo Opened',
-            label: feature.properties.id
-          });
+          // ReactGA.event({
+          //   category: 'Map',
+          //   action: 'Photo Opened',
+          //   label: feature.properties.id
+          // });
           this.setState({openDialog:true,feature})
         });
         //create marker
