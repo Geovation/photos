@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter as Router } from "react-router-dom";
 import { Provider } from "react-redux";
-// import ReactGA from 'react-ga';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
@@ -23,17 +22,18 @@ if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
     console.debug = _ => {};
 }
 
+window.dataLayer = window.dataLayer || [];
+function gtag(){window.dataLayer.push(arguments);}
+window.gtag = gtag
+
 const script = document.createElement('script');
 script.type = 'text/javascript';
 script.src = `https://www.googletagmanager.com/gtag/js?id=${config.GA_TRACKING_ID}`;
 document.body.appendChild(script);
 
-window.dataLayer = window.dataLayer || [];
-function gtag(){ window.dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config',config.GA_TRACKING_ID);
 
-// ReactGA.initialize(config.GA_TRACKING_ID);
 const theme = createMuiTheme(config.THEME);
 
 
@@ -50,34 +50,30 @@ const startApp = () => {
     , document.getElementById('root'));
 }
 
-// ReactGA.event({
-//   category: 'Tech',
-//   action: "app version",
-//   label: process.env.REACT_APP_VERSION,
-//   nonInteraction: true
-// });
-//
-// ReactGA.event({
-//   category: 'Tech',
-//   action: "build number",
-//   label: process.env.REACT_APP_BUILD_NUMBER,
-//   nonInteraction: true
-// });
+gtag('event', 'app version', {
+  'event_category' : 'Tech',
+  'event_label' : process.env.REACT_APP_VERSION,
+  'non_interaction': true
+});
+
+gtag('event', 'build number', {
+  'event_category' : 'Tech',
+  'event_label' : process.env.REACT_APP_BUILD_NUMBER,
+  'non_interaction': true
+});
 
 if (!window.cordova) {
-  // ReactGA.event({
-  //   category: 'Tech',
-  //   action: "type",
-  //   label: 'web',
-  //   nonInteraction: true
-  // });
+  gtag('event', 'type', {
+    'event_category' : 'Tech',
+    'event_label' : 'web',
+    'non_interaction': true
+  });
   startApp();
 } else {
-  // ReactGA.event({
-  //   category: 'Tech',
-  //   action: "type",
-  //   label: 'mobile',
-  //   nonInteraction: true
-  // });
+  gtag('event', 'type', {
+    'event_category' : 'Tech',
+    'event_label' : 'mobile',
+    'non_interaction': true
+  });
   document.addEventListener('deviceready', startApp, false);
 }
