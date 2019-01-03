@@ -33,8 +33,6 @@ class ModeratorPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      confirmDialogTitle: 'Are you sure?',
-      confirmDialogContent: '',
       confirmDialogHandleCancel: this.handleCancelDialog,
       confirmDialogHandleOk: null,
       confirmDialogOpen: false,
@@ -57,7 +55,7 @@ class ModeratorPage extends Component {
     () => {
       console.log(photo);
       this.setState({
-        confirmDialogContent: `Are you sure you want to reject the photo '${photo.description}' (${photo.id}) ?`,
+        confirmDialogTitle: `Are you sure you want to reject the photo ?`,
         confirmDialogHandleOk: this.handleRejectDialogOk(photo.id),
         confirmDialogOpen: true
       });
@@ -76,7 +74,7 @@ class ModeratorPage extends Component {
     () => {
       console.log(photo);
       this.setState({
-        confirmDialogContent: `Are you sure you want to approve the photo '${photo.description}' (${photo.id}) ?`,
+        confirmDialogTitle: `Are you sure you want to approve the photo  ?`,
         confirmDialogHandleOk: this.handleApproveDialogOk(photo.id),
         confirmDialogOpen: true
     });
@@ -129,9 +127,8 @@ class ModeratorPage extends Component {
             <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
               <Avatar
                imgProps={{ onError: (e) => { e.target.src=placeholderImage} }}
-               alt={photo.description}
                src={photo.thumbnail} />
-              <ListItemText primary={`${photo.description}`} />
+              <ListItemText primary={config.PHOTO_ZOOMED_FIELDS.updated(photo.updated)}/>
               <ListItemSecondaryAction>
                 <IconButton aria-label='Reject' onClick={this.handleRejectClick(photo)}>
                   <ThumbDownIcon />
@@ -146,7 +143,6 @@ class ModeratorPage extends Component {
 
         <Dialog open={this.state.confirmDialogOpen}>
           <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
-          <DialogContent>{this.state.confirmDialogContent}</DialogContent>
           <DialogActions>
             <Button onClick={this.state.confirmDialogHandleCancel} color='secondary'>
               Cancel
