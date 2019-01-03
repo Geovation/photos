@@ -153,7 +153,7 @@ class PhotoPage extends Component {
        <div className='geovation-photos'>
          <AppBar position="static">
           <Toolbar>
-            <Typography className='headline-title'>
+            <Typography variant="h6" color="inherit">
               Photo Submission
             </Typography>
             <div className='close-icon'>
