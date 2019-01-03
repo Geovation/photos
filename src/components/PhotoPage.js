@@ -18,14 +18,15 @@ import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
 import './PhotoPage.scss';
-import dbFirebase from "../dbFirebase";
+import dbFirebase from '../dbFirebase';
 
 const emptyState = {
   imgSrc: null,
   open: false,
   message: '',
-  value: '',
+  field: '',
   sending: false,
+  error: !''.match(config.PHOTO_FIELD.regexValidation)
 };
 
 const styles = theme => ({
@@ -48,7 +49,10 @@ class PhotoPage extends Component {
   }
 
   handleChange = (event) => {
-    this.setState({ value: event.target.value });
+    this.setState({
+      error: !event.target.value.match(config.PHOTO_FIELD.regexValidation),
+      field: event.target.value
+    });
   }
 
   openDialog = (message, fn) => {
@@ -76,15 +80,14 @@ class PhotoPage extends Component {
     } else {
 
       let data = {};
-      const text =  this.state.value;
       const { location } = this.props;
       data.base64 = this.state.imgSrc.split(",")[1];
 
-      if (text !== '') {
-        data['text'] = text;
+      if (this.state.field !== '') {
+        data.field = this.state.field;
         if (location) {
-          data['latitude'] = location.latitude;
-          data['longitude'] = location.longitude;
+          data.latitude = location.latitude;
+          data.longitude = location.longitude;
         }
         this.setState({ sending: true });
         try {
@@ -161,17 +164,21 @@ class PhotoPage extends Component {
 
           <div className='text-field-wrapper'>
             <Typography className='typography1'>
-              {config.PHOTO_TITLE_FIELD.title}
+              {config.PHOTO_FIELD.title}
             </Typography>
+
             <TextField
               id="standard-name"
-              placeholder={config.PHOTO_TITLE_FIELD.placeholder}
+              type={config.PHOTO_FIELD.type}
+              required={true}
+              placeholder={config.PHOTO_FIELD.placeholder}
               className='text-field'
-              value={this.state.value}
+              value={this.state.field}
               onChange={this.handleChange}
-              InputProps={{
+              error= {this.state.error}
+              InputProps={Object.assign({
                 className: classes.cssUnderline
-              }}
+              }, config.PHOTO_FIELD.inputProps)}
             />
 
           </div>
@@ -187,7 +194,8 @@ class PhotoPage extends Component {
           </div>
 
           <div className='buttonwrapper'>
-            <Button variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
+            <Button disabled={this.state.error}
+              variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
             </Button>
           </div>

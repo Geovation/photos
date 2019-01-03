@@ -1,5 +1,7 @@
 import firebase from 'firebase/app';
 import firebaseApp from './firebaseInit.js';
+import config from "./custom/config";
+import enums from './types/enums';
 
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
@@ -81,7 +83,11 @@ async function savePhoto(id, base64) {
 }
 
 async function uploadPhoto(data) {
-  const photoRef = await saveMetadata({location: new firebase.firestore.GeoPoint(data.latitude, data.longitude), description: data.text  });
+  const photoRef = await saveMetadata({
+    location: new firebase.firestore.GeoPoint(data.latitude, data.longitude),
+    [config.PHOTO_FIELD.name]: config.PHOTO_FIELD.type === enums.TYPES.number ? Number(data.field) : data.field
+  });
+
   return await savePhoto(photoRef.id, data.base64);
 }
 
