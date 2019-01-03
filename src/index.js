@@ -23,6 +23,16 @@ if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
     console.debug = _ => {};
 }
 
+const script = document.createElement('script');
+script.type = 'text/javascript';
+script.src = `https://www.googletagmanager.com/gtag/js?id=${config.GA_TRACKING_ID}`;
+document.body.appendChild(script);
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){ window.dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config',config.GA_TRACKING_ID);
+
 // ReactGA.initialize(config.GA_TRACKING_ID);
 const theme = createMuiTheme(config.THEME);
 
