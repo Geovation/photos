@@ -11,6 +11,7 @@ import SchoolIcon from '@material-ui/icons/School';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import FeedbackIcon from '@material-ui/icons/Feedback';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
@@ -62,7 +63,13 @@ class DrawerContainer extends Component {
         visible: true,
         path: PAGES.about.path,
         icon: <HelpIcon/>,
-        label: PAGES.about.label,
+        label: PAGES.about.label
+      },
+      {
+         visible: true,
+         path: PAGES.writeFeedback.path,
+         icon: <FeedbackIcon/>,
+         label: PAGES.writeFeedback.label
       },
       {
         visible: online,

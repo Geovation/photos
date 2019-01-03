@@ -18,6 +18,7 @@ import dbFirebase from './dbFirebase';
 import Login from './components/Login';
 import AboutPage from './components/AboutPage';
 import TutorialPage from './components/TutorialPage';
+import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 
 import config from './custom/config';
@@ -243,6 +244,16 @@ class App extends Component {
                   />}
                 />
               }
+
+              <Route path={PAGES.writeFeedback.path} render={(props) =>
+                 <WriteFeedbackPage {...props}
+                                    location={this.state.location}
+                                    user={this.state.user}
+                                    online={this.state.online}
+                                    handleClose={this.goToMap}
+                 />}
+               />
+
             </Switch>
           }
 

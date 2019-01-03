@@ -48,6 +48,10 @@ const PAGES = {
     path: "/tutorial",
     label: "Tutorial"
   },
+  writeFeedback: {
+    path: "/write-feedback",
+    label: "Feedback"
+  }
 };
 
 const customiseString = (page, key) => (CUSTOM_STRING[page][key] || key);
