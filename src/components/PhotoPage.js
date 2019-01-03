@@ -26,7 +26,7 @@ const emptyState = {
   message: '',
   field: '',
   sending: false,
-  error: true
+  error: !''.match(config.PHOTO_FIELD.regexValidation)
 };
 
 const styles = theme => ({
