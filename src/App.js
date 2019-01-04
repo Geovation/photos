@@ -206,6 +206,14 @@ class App extends Component {
         <main className='content'>
           { this.state.welcomeShown &&
             <Switch>
+              {config.CUSTOM_PAGES.map( (custom_page,index) => (
+                  !!custom_page.page
+                    && <Route key={index} path={custom_page.path}
+                            render={(props) =>
+                              React.cloneElement(custom_page.page, { handleClose : this.goToMap, ...props })
+                            }
+                       />
+              ))}
               <Route path={PAGES.about.path} render={(props) =>
                 <AboutPage {...props} handleClose={this.goToMap} />}
               />
