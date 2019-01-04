@@ -248,7 +248,6 @@ class App extends Component {
               <Route path={PAGES.writeFeedback.path} render={(props) =>
                  <WriteFeedbackPage {...props}
                                     location={this.state.location}
-                                    user={this.state.user}
                                     online={this.state.online}
                                     handleClose={this.goToMap}
                  />}

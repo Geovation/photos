@@ -1,7 +1,6 @@
 // let the user write a feedback.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -65,7 +64,13 @@ class WriteFeedbackPage extends React.Component {
 
   sendFeedback = () => {
     this.setState({ sending: true });
-    dbFirebase.writeFeedback({ content: this.state.feedback }).then(res => {
+    dbFirebase.writeFeedback({
+      content: this.state.feedback,
+      location: {
+        latitude: this.props.location.latitude,
+        longitude: this.props.location.longitude
+      }
+    }).then(res => {
       this.setState({ sending: false });
       this.props.handleClose();
     }).catch(err => {
@@ -75,7 +80,7 @@ class WriteFeedbackPage extends React.Component {
   }
 
   render() {
-    const { user, classes, handleClose } = this.props;
+    const { classes, handleClose } = this.props;
 
     return (
         <div className={classes.container}>
@@ -109,7 +114,7 @@ class WriteFeedbackPage extends React.Component {
           <Button
             color='secondary'
             className={classes.button}
-            disabled={this.state.isEmptyMsg}
+            disabled={!this.props.online || this.state.isEmptyMsg}
             variant='contained'
             onClick={this.sendFeedback}
           >
@@ -133,9 +138,5 @@ class WriteFeedbackPage extends React.Component {
     );
   }
 }
-
-WriteFeedbackPage.propTypes = {
-  user: PropTypes.object
-};
 
 export default withStyles(styles)(WriteFeedbackPage);
