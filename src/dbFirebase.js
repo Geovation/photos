@@ -133,14 +133,17 @@ function onConnectionStateChanged(fn){
   return async () => conRef.off('value', connectedCallBack);
 }
 
-async function writeFeedback(feedback) {
+async function writeFeedback(data) {
   if (firebase.auth().currentUser) {
-    feedback.owner_id = firebase.auth().currentUser.uid;
+    data.owner_id = firebase.auth().currentUser.uid;
   }
-  feedback.updated = firebase.firestore.FieldValue.serverTimestamp();
-  feedback.moderated = null;
+  data.updated = firebase.firestore.FieldValue.serverTimestamp();
+  data.moderated = null;
+  data.location = new firebase.firestore.GeoPoint(data.latitude, data.longitude);
+  delete data.latitude;
+  delete data.longitude;
 
-  return await firestore.collection('feedbacks').add(feedback);
+  return await firestore.collection('feedbacks').add(data);
 }
 
 export default {

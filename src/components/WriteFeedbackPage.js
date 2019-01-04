@@ -50,6 +50,7 @@ class WriteFeedbackPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      open: false,
       sending: false,
       isEmptyMsg: true
     };
@@ -62,21 +63,41 @@ class WriteFeedbackPage extends React.Component {
     });
   }
 
+  openDialog = (message) => {
+    this.setState({
+      sending: false,
+      open: true,
+      message
+    });
+  }
+
+  closeDialog = () => {
+    this.setState({ open: false });
+  }
+
   sendFeedback = () => {
     this.setState({ sending: true });
-    dbFirebase.writeFeedback({
-      content: this.state.feedback,
-      location: {
-        latitude: this.props.location.latitude,
-        longitude: this.props.location.longitude
+    const { location, online } = this.props;
+
+    if (!location.online) {
+      this.openDialog(`Could not get the location yet. You won't be able to send the feedback.`);
+    } else if (!online) {
+      this.openDialog(`Can't connect to our servers. You won't be able to send the feedback.`);
+    } else {
+      let data = {};
+      data.feedback = this.state.feedback;
+      if (location) {
+        data.latitude = location.latitude;
+        data.longitude = location.longitude;
       }
-    }).then(res => {
-      this.setState({ sending: false });
-      this.props.handleClose();
-    }).catch(err => {
-      console.log("error: ", err);
-      this.setState({ sending: false });
-    });
+
+      dbFirebase.writeFeedback(data).then(res => {
+        this.setState({ sending: false });
+        this.props.handleClose();
+      }).catch(err => {
+        this.openDialog(err);
+      });
+    }
   }
 
   render() {
@@ -114,12 +135,30 @@ class WriteFeedbackPage extends React.Component {
           <Button
             color='secondary'
             className={classes.button}
-            disabled={!this.props.online || this.state.isEmptyMsg}
+            disabled={this.state.isEmptyMsg}
             variant='contained'
             onClick={this.sendFeedback}
           >
             Send
           </Button>
+
+          <Dialog
+            open={this.state.open}
+            onClose={this.closeDialog}
+            aria-labelledby='alert-dialog-title'
+            aria-describedby='alert-dialog-description'
+          >
+            <DialogContent>
+              <DialogContentText id='alert-dialog-description'>
+                {this.state.message}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.closeDialog} color='secondary'>
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
 
           <Dialog open={this.state.sending}>
             <DialogContent>
