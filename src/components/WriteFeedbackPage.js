@@ -49,7 +49,9 @@ class WriteFeedbackPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
+      email: props.user ? props.user.email : '',
+      emailHelperText: '',
+      feedback: '',
       open: false,
       sending: false,
       isEmptyMsg: true
@@ -57,9 +59,18 @@ class WriteFeedbackPage extends React.Component {
   }
 
   handleEmailChange = (event) => {
-    this.setState({
-      email: event.target.value
-    });
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/;
+    if (!event.target.value.match(emailRegex)) {
+      this.setState({
+        emailHelperText: 'Invalid email format!',
+        email: event.target.value
+      });
+    } else {
+      this.setState({
+        emailHelperText: '',
+        email: event.target.value
+      });
+    }
   }
 
   handleFeedbackChange = (event) => {
@@ -83,7 +94,7 @@ class WriteFeedbackPage extends React.Component {
 
   sendFeedback = () => {
     this.setState({ sending: true });
-    const { user, location, online } = this.props;
+    const { location, online } = this.props;
 
     if (!location.online) {
       this.openDialog(`Could not get the location yet. You won't be able to send the feedback.`);
@@ -94,12 +105,7 @@ class WriteFeedbackPage extends React.Component {
       data.feedback = this.state.feedback;
       data.appVersion = process.env.REACT_APP_VERSION;
       data.buildNumber = process.env.REACT_APP_BUILD_NUMBER;
-
-      if (user) {
-        data.email = user.email;
-      } else {
-        data.email = this.state.email ? this.state.email : 'anonymous';
-      }
+      data.email = this.state.email ? this.state.email : 'anonymous';
 
       if (location) {
         data.latitude = location.latitude;
@@ -138,18 +144,23 @@ class WriteFeedbackPage extends React.Component {
               fullWidth
               id="filled-email-input"
               label="Email"
+              placeholder='aa@bb.com'
+              error={!!this.state.emailHelperText}
+              helperText={this.state.emailHelperText}
               type="email"
               name="email"
               autoComplete="email"
               margin="normal"
               variant="filled"
               onChange={this.handleEmailChange}
+              value={this.state.email}
             />
             <TextField
               fullWidth
               id='feedback-textfield'
               placeholder='eg. I like the app'
               onChange={this.handleFeedbackChange}
+              value={this.state.feedback}
               autoFocus
               variant='filled'
               type='string'
