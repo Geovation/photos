@@ -137,6 +137,10 @@ class Map extends Component {
       const timeLapsed = new Date().getTime() - this.prevZoomTime;
 
       if (this.prevZoom !== zoom && timeLapsed > milliSeconds) {
+        gtag('event', 'Zoom', {
+          'event_category' : 'Map',
+          'event_label' : zoom + '',
+        });
         this.prevZoom = zoom;
       }
 
