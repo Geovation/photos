@@ -133,6 +133,16 @@ function onConnectionStateChanged(fn){
   return async () => conRef.off('value', connectedCallBack);
 }
 
+async function writeFeedback(feedback) {
+  if (firebase.auth().currentUser) {
+    feedback.owner_id = firebase.auth().currentUser.uid;
+  }
+  feedback.updated = firebase.firestore.FieldValue.serverTimestamp();
+  feedback.moderated = null;
+
+  return await firestore.collection('feedbacks').add(feedback);
+}
+
 export default {
   onConnectionStateChanged,
   fetchPhotos,
@@ -141,5 +151,6 @@ export default {
   onPhotosToModerate,
   rejectPhoto,
   approvePhoto,
-  disconnect
+  disconnect,
+  writeFeedback,
 };

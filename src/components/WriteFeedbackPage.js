@@ -3,12 +3,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
+
+import dbFirebase from '../dbFirebase';
 
 const styles = theme => ({
   container: {
@@ -34,21 +41,36 @@ const styles = theme => ({
   button: {
     width: '80%',
     marginTop: theme.spacing.unit * 3
-  }
+  },
+  progress: {
+    margin: theme.spacing.unit * 2
+  },
 });
 
 class WriteFeedbackPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: true
+      sending: false,
+      isEmptyMsg: true
     };
   }
 
   handleChange = (event) => {
     this.setState({
-      error: !event.target.value,
+      isEmptyMsg: !event.target.value,
       feedback: event.target.value
+    });
+  }
+
+  sendFeedback = () => {
+    this.setState({ sending: true });
+    dbFirebase.writeFeedback({ content: this.state.feedback }).then(res => {
+      this.setState({ sending: false });
+      this.props.handleClose();
+    }).catch(err => {
+      console.log("error: ", err);
+      this.setState({ sending: false });
     });
   }
 
@@ -87,12 +109,26 @@ class WriteFeedbackPage extends React.Component {
           <Button
             color='secondary'
             className={classes.button}
-            disabled={this.state.error}
+            disabled={this.state.isEmptyMsg}
             variant='contained'
-            onClick={() => {}}
+            onClick={this.sendFeedback}
           >
-            Submit
+            Send
           </Button>
+
+          <Dialog open={this.state.sending}>
+            <DialogContent>
+              <DialogContentText id='loading-dialog-text'>
+                Sending ;)
+              </DialogContentText>
+              <CircularProgress
+                className={classes.progress}
+                color='secondary'
+                size={50}
+                thickness={6}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
     );
   }
