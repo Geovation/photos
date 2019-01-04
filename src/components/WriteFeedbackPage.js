@@ -34,8 +34,7 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 3
   },
   content: {
-    width: '80%',
-    marginTop: theme.spacing.unit * 2
+    width: '80%'
   },
   button: {
     width: '80%',
@@ -50,13 +49,20 @@ class WriteFeedbackPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      email: '',
       open: false,
       sending: false,
       isEmptyMsg: true
     };
   }
 
-  handleChange = (event) => {
+  handleEmailChange = (event) => {
+    this.setState({
+      email: event.target.value
+    });
+  }
+
+  handleFeedbackChange = (event) => {
     this.setState({
       isEmptyMsg: !event.target.value,
       feedback: event.target.value
@@ -91,6 +97,8 @@ class WriteFeedbackPage extends React.Component {
 
       if (user) {
         data.email = user.email;
+      } else {
+        data.email = this.state.email ? this.state.email : 'anonymous';
       }
 
       if (location) {
@@ -125,20 +133,33 @@ class WriteFeedbackPage extends React.Component {
           <Typography align='left' variant='subtitle1' color='inherit' className={classes.subtitle}>
             We would appreciate if you can provide any feedback:
           </Typography>
-          <TextField
-            className={classes.content}
-            id='feedback-textfield'
-            placeholder='eg. I like the app'
-            onChange={this.handleChange}
-            autoFocus
-            variant='filled'
-            type='string'
-            required
-            margin='dense'
-            rows='20'
-            rowsMax='50'
-            multiline
-          />
+          <div className={classes.content}>
+            <TextField
+              fullWidth
+              id="filled-email-input"
+              label="Email"
+              type="email"
+              name="email"
+              autoComplete="email"
+              margin="normal"
+              variant="filled"
+              onChange={this.handleEmailChange}
+            />
+            <TextField
+              fullWidth
+              id='feedback-textfield'
+              placeholder='eg. I like the app'
+              onChange={this.handleFeedbackChange}
+              autoFocus
+              variant='filled'
+              type='string'
+              required
+              margin='dense'
+              rows='15'
+              rowsMax='30'
+              multiline
+            />
+          </div>
           <Button
             color='secondary'
             className={classes.button}
