@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter} from 'react-router-dom';
-import ReactGA from 'react-ga';
+import gtag from './gtag.js';
 
 import RootRef from '@material-ui/core/RootRef';
 import Fab from '@material-ui/core/Fab';
@@ -84,8 +84,11 @@ class App extends Component {
     }
   }
 
+
   componentDidMount(){
-    ReactGA.pageview('/#' + this.props.location.pathname);
+    gtag('config', config.GA_TRACKING_ID, {
+      'page_path' : '/#' + this.props.location.pathname,
+    });
     this.setState({ photos: dbFirebase.fetchPhotos() });
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
@@ -94,7 +97,10 @@ class App extends Component {
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
-        ReactGA.event({ category: 'User', action: 'Signed out'});
+        gtag('event', 'Signed out', {
+          'event_category' : 'User',
+        });
+
         this.goToPage(PAGES.map);
         window.location.reload();
       }
@@ -124,7 +130,9 @@ class App extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.location !== this.props.location) {
-      ReactGA.pageview('/#' + this.props.location.pathname);
+      gtag('config', config.GA_TRACKING_ID, {
+        'page_path' : '/#' + this.props.location.pathname,
+      });
     }
   }
 
@@ -186,8 +194,9 @@ class App extends Component {
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
-    ReactGA.event({ category: 'Menu', action: isItOpen ? 'Opened' : "Closed"});
-
+    gtag('event', isItOpen ? 'Opened' : "Closed", {
+      'event_category' : 'Menu',
+    });
     this.setState({leftDrawerOpen: isItOpen})
   };
 
