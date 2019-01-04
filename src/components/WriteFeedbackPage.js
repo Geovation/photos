@@ -77,7 +77,7 @@ class WriteFeedbackPage extends React.Component {
 
   sendFeedback = () => {
     this.setState({ sending: true });
-    const { location, online } = this.props;
+    const { user, location, online } = this.props;
 
     if (!location.online) {
       this.openDialog(`Could not get the location yet. You won't be able to send the feedback.`);
@@ -86,6 +86,13 @@ class WriteFeedbackPage extends React.Component {
     } else {
       let data = {};
       data.feedback = this.state.feedback;
+      data.appVersion = process.env.REACT_APP_VERSION;
+      data.buildNumber = process.env.REACT_APP_BUILD_NUMBER;
+
+      if (user) {
+        data.email = user.email;
+      }
+
       if (location) {
         data.latitude = location.latitude;
         data.longitude = location.longitude;

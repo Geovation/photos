@@ -36,7 +36,7 @@ service cloud.firestore {
 
       allow create: if true;
 
-      // allow update: if resource.data.owner_id == request.auth.uid && resource.data.moderated == null;
+      // allow update: if resource.data.owner_id == request.auth.uid
 
       // allow delete: if isModerator() || isAdmin();
     }

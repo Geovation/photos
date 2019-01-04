@@ -138,7 +138,6 @@ async function writeFeedback(data) {
     data.owner_id = firebase.auth().currentUser.uid;
   }
   data.updated = firebase.firestore.FieldValue.serverTimestamp();
-  data.moderated = null;
   data.location = new firebase.firestore.GeoPoint(data.latitude, data.longitude);
   delete data.latitude;
   delete data.longitude;
