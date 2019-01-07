@@ -22,24 +22,24 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    height: '100%',
-    alignItems: 'center'
+    height: '100%'
   },
   closeIcon: {
     display: 'flex',
     flex: 1,
     justifyContent: 'flex-end'
   },
-  subtitle: {
-    marginTop: theme.spacing.unit * 2,
-    marginLeft: theme.spacing.unit * 3
-  },
   content: {
-    width: '80%'
+    marginTop: theme.spacing.unit * 0.5,
+    marginLeft: theme.spacing.unit * 1.5,
+    marginRight: theme.spacing.unit * 1.5
   },
   button: {
-    width: '80%',
-    marginTop: theme.spacing.unit * 3
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    margin: theme.spacing.unit * 1.5
   },
   progress: {
     margin: theme.spacing.unit * 2
@@ -141,9 +141,6 @@ class WriteFeedbackPage extends React.Component {
               </div>
             </Toolbar>
           </AppBar>
-          <Typography align='left' variant='subtitle1' color='inherit' className={classes.subtitle}>
-            We would appreciate if you can provide any feedback:
-          </Typography>
           <div className={classes.content}>
             <TextField
               fullWidth
@@ -171,20 +168,22 @@ class WriteFeedbackPage extends React.Component {
               type='string'
               required
               margin='dense'
-              rows='15'
-              rowsMax='30'
+              rows={window.innerHeight > 667 ? 25 : window.innerHeight > 640 ? 21 : window.innerHeight > 480 ? 16 : 11}
+              rowsMax={window.innerHeight > 667 ? 26 : window.innerHeight > 640 ? 22 : window.innerHeight > 480 ? 17 : 12}
               multiline
             />
           </div>
-          <Button
-            color='secondary'
-            className={classes.button}
-            disabled={!!this.state.emailHelperText || !this.state.feedback}
-            variant='contained'
-            onClick={this.sendFeedback}
-          >
-            Send
-          </Button>
+          <div className={classes.button}>
+            <Button
+              color='secondary'
+              fullWidth
+              disabled={!!this.state.emailHelperText || !this.state.feedback}
+              variant='contained'
+              onClick={this.sendFeedback}
+            >
+              Send
+            </Button>
+          </div>
 
           <Dialog
             open={this.state.open}
