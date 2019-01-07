@@ -30,16 +30,14 @@ const styles = theme => ({
     flex: 1,
     justifyContent: 'flex-end'
   },
-  subtitle: {
-    marginTop: theme.spacing.unit * 2,
-    marginLeft: theme.spacing.unit * 3
-  },
   content: {
-    width: '80%'
+    width: '80%',
+    paddingTop: theme.spacing.unit,
+    paddingBottom: theme.spacing.unit,
   },
   button: {
     width: '80%',
-    marginTop: theme.spacing.unit * 3
+    marginTop: theme.spacing.unit * 2
   },
   progress: {
     margin: theme.spacing.unit * 2
@@ -141,9 +139,6 @@ class WriteFeedbackPage extends React.Component {
               </div>
             </Toolbar>
           </AppBar>
-          <Typography align='left' variant='subtitle1' color='inherit' className={classes.subtitle}>
-            We would appreciate if you can provide any feedback:
-          </Typography>
           <div className={classes.content}>
             <TextField
               fullWidth
@@ -171,8 +166,8 @@ class WriteFeedbackPage extends React.Component {
               type='string'
               required
               margin='dense'
-              rows='15'
-              rowsMax='30'
+              rows='10'
+              rowsMax='11'
               multiline
             />
           </div>
