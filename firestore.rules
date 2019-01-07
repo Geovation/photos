@@ -29,6 +29,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // anybody can create a feedback but only login user can update
+    // only moderator or admin can delete the feedback
+    match /feedbacks/{feedback} {
+      // allow read: if isModerator() || isAdmin();
+
+      allow create: if true;
+
+      // allow update: if resource.data.owner_id == request.auth.uid
+
+      // allow delete: if isModerator() || isAdmin();
+    }
+
     // data written by admin
     match /users/{uid} {
     	allow read: if isAdmin() || isUser(uid);
