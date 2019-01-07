@@ -90,6 +90,9 @@ class WriteFeedbackPage extends React.Component {
 
   closeDialog = () => {
     this.setState({ open: false });
+    if (!this.state.sending) {
+      this.props.handleClose();
+    }
   }
 
   sendFeedback = () => {
@@ -114,10 +117,10 @@ class WriteFeedbackPage extends React.Component {
 
       dbFirebase.writeFeedback(data).then(res => {
         this.setState({ sending: false });
-        this.props.handleClose();
+        this.openDialog('Feedback sent, our team will reply as soon as possible!');
       }).catch(err => {
         console.log(err.toString());
-        this.openDialog('Sorry, we have mice in our servers eating the cables.');
+        this.openDialog('Something went wrong. Try again later or please email us to admin@geovation.uk');
       });
     }
   }
