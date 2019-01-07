@@ -53,29 +53,29 @@ class WriteFeedbackPage extends React.Component {
       emailHelperText: '',
       feedback: '',
       open: false,
-      sending: false,
-      isEmptyMsg: true
+      sending: false
     };
   }
 
   handleEmailChange = (event) => {
+    const email = event.target.value;
     const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/;
-    if (!event.target.value.match(emailRegex)) {
+
+    if (email && !email.match(emailRegex)) {
       this.setState({
-        emailHelperText: 'Invalid email format!',
-        email: event.target.value
+        email,
+        emailHelperText: 'Invalid email format!'
       });
     } else {
       this.setState({
-        emailHelperText: '',
-        email: event.target.value
+        email,
+        emailHelperText: ''
       });
     }
   }
 
   handleFeedbackChange = (event) => {
     this.setState({
-      isEmptyMsg: !event.target.value,
       feedback: event.target.value
     });
   }
@@ -116,7 +116,8 @@ class WriteFeedbackPage extends React.Component {
         this.setState({ sending: false });
         this.props.handleClose();
       }).catch(err => {
-        this.openDialog(err);
+        console.log(err.toString());
+        this.openDialog('Sorry, we have mice in our servers eating the cables.');
       });
     }
   }
@@ -174,7 +175,7 @@ class WriteFeedbackPage extends React.Component {
           <Button
             color='secondary'
             className={classes.button}
-            disabled={this.state.isEmptyMsg}
+            disabled={!!this.state.emailHelperText || !this.state.feedback}
             variant='contained'
             onClick={this.sendFeedback}
           >
