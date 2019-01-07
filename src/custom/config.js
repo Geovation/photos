@@ -99,5 +99,6 @@ export default {
   //   regexValidation: '^[0-9]+'
   // },
   PAGES,
+  CUSTOM_PAGES:[],
   customiseString
 }

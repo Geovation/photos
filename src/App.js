@@ -206,6 +206,12 @@ class App extends Component {
         <main className='content'>
           { this.state.welcomeShown &&
             <Switch>
+              {config.CUSTOM_PAGES.map( (CustomPage,index) => (
+                !!CustomPage.page &&
+                  <Route key={index} path={CustomPage.path}
+                    render={(props) => <CustomPage.page {...props} handleClose={this.goToMap}/>}
+                  />
+              ))}
               <Route path={PAGES.about.path} render={(props) =>
                 <AboutPage {...props} handleClose={this.goToMap} />}
               />

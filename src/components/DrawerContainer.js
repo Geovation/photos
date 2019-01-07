@@ -36,8 +36,7 @@ class DrawerContainer extends Component {
 
   render() {
     const { classes, user, online, leftDrawerOpen } = this.props;
-
-    const ListItems = [
+    const ListItemsTop = [
       {
         visible: user,
         path: PAGES.account.path,
@@ -56,6 +55,9 @@ class DrawerContainer extends Component {
         icon: <SchoolIcon/>,
         label: PAGES.tutorial.label
       },
+    ];
+    const ListItemsConfigurable = config.CUSTOM_PAGES;
+    const ListItemsBottom = [
       {
         visible: true,
         path: PAGES.about.path,
@@ -69,7 +71,7 @@ class DrawerContainer extends Component {
         click: this.props.handleClickLoginLogout
       }
     ];
-
+    const ListItems = ListItemsTop.concat(ListItemsConfigurable,ListItemsBottom)
     return (
       <Drawer className='geovation-drawercontainer' open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
         classes={{ paper: classes.drawerPaper }}>
