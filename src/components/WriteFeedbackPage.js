@@ -14,6 +14,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 
+import config from '../custom/config';
 import dbFirebase from '../dbFirebase';
 
 const styles = theme => ({
@@ -120,7 +121,7 @@ class WriteFeedbackPage extends React.Component {
         this.openDialog('Feedback sent, our team will reply as soon as possible!');
       }).catch(err => {
         console.log(err.toString());
-        this.openDialog('Something went wrong. Try again later or please email us to admin@geovation.uk');
+        this.openDialog('Something went wrong. Try again later or please email us to ' + config.customiseString('writeFeedback', 'admin@geovation.uk'));
       });
     }
   }
