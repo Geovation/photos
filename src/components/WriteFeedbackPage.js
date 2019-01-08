@@ -81,49 +81,46 @@ class WriteFeedbackPage extends React.Component {
     });
   }
 
-  openDialog = (message) => {
+  openDialog = (message, isError) => {
     this.setState({
       sending: false,
       open: true,
-      message
+      message,
+      isError
     });
   }
 
   closeDialog = () => {
     this.setState({ open: false });
-    if (!this.state.sending) {
+
+    // if it is NOT error...
+    if (!this.state.isError) {
       this.props.handleClose();
     }
   }
 
   sendFeedback = () => {
     this.setState({ sending: true });
-    const { location, online } = this.props;
+    const { location } = this.props;
 
-    if (!location.online) {
-      this.openDialog(`Could not get the location yet. You won't be able to send the feedback.`);
-    } else if (!online) {
-      this.openDialog(`Can't connect to our servers. You won't be able to send the feedback.`);
-    } else {
-      let data = {};
-      data.feedback = this.state.feedback;
-      data.appVersion = process.env.REACT_APP_VERSION;
-      data.buildNumber = process.env.REACT_APP_BUILD_NUMBER;
-      data.email = this.state.email ? this.state.email : 'anonymous';
+    let data = {};
+    data.feedback = this.state.feedback;
+    data.appVersion = process.env.REACT_APP_VERSION;
+    data.buildNumber = process.env.REACT_APP_BUILD_NUMBER;
+    data.email = this.state.email ? this.state.email : 'anonymous';
 
-      if (location) {
-        data.latitude = location.latitude;
-        data.longitude = location.longitude;
-      }
-
-      dbFirebase.writeFeedback(data).then(res => {
-        this.setState({ sending: false });
-        this.openDialog('Feedback sent, our team will reply as soon as possible!');
-      }).catch(err => {
-        console.log(err.toString());
-        this.openDialog('Something went wrong. Try again later or please email us to ' + config.customiseString('writeFeedback', 'admin@geovation.uk'));
-      });
+    if (location) {
+      data.latitude = location.latitude;
+      data.longitude = location.longitude;
     }
+
+    dbFirebase.writeFeedback(data).then(res => {
+      this.setState({ sending: false });
+      this.openDialog('Feedback sent, our team will reply as soon as possible!');
+    }).catch(err => {
+      console.log(err.toString());
+      this.openDialog('Something went wrong. Try again later or please email us to ' + config.customiseString('writeFeedback', 'admin@geovation.uk'), true);
+    });
   }
 
   render() {
@@ -177,7 +174,7 @@ class WriteFeedbackPage extends React.Component {
             <Button
               color='secondary'
               fullWidth
-              disabled={!!this.state.emailHelperText || !this.state.feedback}
+              disabled={!!this.state.emailHelperText || !this.state.feedback || !this.props.online}
               variant='contained'
               onClick={this.sendFeedback}
             >
