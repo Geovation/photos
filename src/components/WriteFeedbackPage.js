@@ -165,8 +165,8 @@ class WriteFeedbackPage extends React.Component {
               type='string'
               required
               margin='dense'
-              rows={window.innerHeight > 667 ? 25 : window.innerHeight > 640 ? 21 : window.innerHeight > 480 ? 16 : 11}
-              rowsMax={window.innerHeight > 667 ? 26 : window.innerHeight > 640 ? 22 : window.innerHeight > 480 ? 17 : 12}
+              rows={window.innerHeight > 667 ? 25 : window.innerHeight > 640 ? 21 : window.innerHeight > 480 ? 13 : 11}
+              rowsMax={window.innerHeight > 667 ? 26 : window.innerHeight > 640 ? 22 : window.innerHeight > 480 ? 14 : 12}
               multiline
             />
           </div>
