@@ -30,13 +30,15 @@ const styles = theme => ({
     justifyContent: 'flex-end'
   },
   content: {
+    height: '100%',
+    overflow:'auto',
     marginTop: theme.spacing.unit * 0.5,
+    marginBottom: theme.spacing.unit * 0.5,
     marginLeft: theme.spacing.unit * 1.5,
     marginRight: theme.spacing.unit * 1.5
   },
   button: {
     display: 'flex',
-    flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-end',
     margin: theme.spacing.unit * 1.5
