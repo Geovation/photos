@@ -4,7 +4,8 @@ module.exports = function(ctx) {
   var configXml = configXmlHelper.readConfigXML();
   var widget = configXml.getElementsByTagName("widget")[0];
 
-  var version = widget.getAttribute("version");
+  var version = process.env.REACT_APP_VERSION || "0";
+
   var androidVersionCode = widget.getAttribute("android-versionCode");
   var iosCFBundleVersion = widget.getAttribute("ios-CFBundleVersion");
 
@@ -12,7 +13,7 @@ module.exports = function(ctx) {
   versionSplit[2] = parseInt(process.env.TRAVIS_BUILD_NUMBER || "0");
 
   var newAndroidVersionCode = versionSplit[0] * 10000000 + versionSplit[1] * 10000 + versionSplit[2];
-  var newVersion = versionSplit.join(".");
+  var newVersion = version;
   var newIosCFBundleVersion = newVersion;
 
   console.log("Version:", version);
