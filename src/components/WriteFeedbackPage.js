@@ -22,7 +22,11 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    height: '100%'
+    height: '100%',
+    position:'fixed',
+    right:0,
+    left:0,
+    bottom:0,
   },
   closeIcon: {
     display: 'flex',
