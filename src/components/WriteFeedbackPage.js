@@ -36,6 +36,7 @@ const styles = theme => ({
   content: {
     height: '100%',
     overflow:'auto',
+    '-webkit-overflow-scrolling': 'touch',
     marginTop: theme.spacing.unit * 0.5,
     marginBottom: theme.spacing.unit * 0.5,
     marginLeft: theme.spacing.unit * 1.5,

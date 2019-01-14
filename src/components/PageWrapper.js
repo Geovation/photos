@@ -23,6 +23,7 @@ const styles = theme => ({
     flexDirection:'column',
     flex: 1,
     overflowY: 'auto',
+    '-webkit-overflow-scrolling': 'touch'
   },
   logo: {
     height: '80px',
