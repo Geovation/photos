@@ -45,7 +45,7 @@ const styles = theme => ({
   button: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     margin: theme.spacing.unit * 1.5
   },
   progress: {
@@ -172,8 +172,8 @@ class WriteFeedbackPage extends React.Component {
               type='string'
               required
               margin='dense'
-              rows={window.innerHeight > 667 ? 25 : window.innerHeight > 640 ? 21 : window.innerHeight > 480 ? 13 : 11}
-              rowsMax={window.innerHeight > 667 ? 26 : window.innerHeight > 640 ? 22 : window.innerHeight > 480 ? 14 : 12}
+              rows={window.innerHeight > 667 ? 23 : window.innerHeight > 640 ? 19 : window.innerHeight > 480 ? 11 : 9}
+              rowsMax={window.innerHeight > 667 ? 24 : window.innerHeight > 640 ? 20 : window.innerHeight > 480 ? 12 : 10}
               multiline
             />
           </div>
