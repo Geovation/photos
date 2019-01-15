@@ -44,7 +44,7 @@ const styles = theme => ({
   },
   button: {
     display: 'flex',
-    flexDirection: 'column',
+    alignItems: 'center',
     justifyContent: 'center',
     margin: theme.spacing.unit * 1.5
   },
