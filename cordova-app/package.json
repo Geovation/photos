@@ -11,8 +11,13 @@
     ],
     "plugins": {
       "cordova-plugin-whitelist": {},
-      "cordova-plugin-geolocation": {},
-      "cordova-plugin-camera": {},
+      "cordova-plugin-geolocation": {
+        "GEOLOCATION_USAGE_DESCRIPTION": "Geovation needs to know where you are so it can place your photo in the map"
+      },
+      "cordova-plugin-camera": {
+        "CAMERA_USAGE_DESCRIPTION": "Geovation needs camera access to take pictures.",
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": "Geovation needs photo library access to get the picture"
+      },
       "cordova-plugin-splashscreen": {}
     }
   },

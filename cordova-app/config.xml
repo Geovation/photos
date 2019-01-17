@@ -13,6 +13,9 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <preference name="webviewbounce" value="false" />
+    <preference name="UIWebViewBounce" value="false" />
+    <preference name="CameraUsesGeolocation" value="true" />
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="ldpi" src="res/icon/android/icon-36-ldpi.png" />
@@ -50,14 +53,29 @@
         <icon src="res/icon/ios/icon-small.png" width="29" />
         <icon src="res/icon/ios/icon-small@2x.png" width="58" />
         <icon src="res/icon/ios/icon-small@3x.png" width="87" />
+        <icon src="res/icon/ios/icon-1024.png" width="1024" />
         <splash src="res/screen/ios/Default@2x~universal~anyany.png" />
         <preference name="DisallowOverscroll" value="true" />
     </platform>
     <hook src="scripts/changeVersion.js" type="before_prepare" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
-    <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
-    <plugin name="cordova-plugin-camera" spec="^4.0.3" />
+    <plugin name="cordova-plugin-geolocation" spec="^4.0.1">
+        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="Geovation needs to know where you are so it can place your photo in the map" />
+    </plugin>
+    <plugin name="cordova-plugin-camera" spec="^4.0.3">
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="Geovation needs camera access to take pictures." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Geovation needs photo library access to get the picture" />
+    </plugin>
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
+    <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
+        <string>Geovation needs photo library access to get the picture.</string>
+    </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
+        <string>Geovation needs to know where you are so it can place your photo in the map</string>
+    </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+        <string>Geovation needs camera access to take pictures.</string>
+    </edit-config>
     <engine name="browser" spec="^5.0.4" />
     <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="^7.1.4" />

@@ -31,15 +31,25 @@
         -->
 
     <meta http-equiv="Content-Security-Policy" content="
-        default-src * data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline' file://* blob:;
+        default-src * data: gap://ready https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline' file://* blob:;
         connect-src * 'unsafe-inline';
         style-src * data: blob: 'unsafe-inline';
         font-src * data: blob: 'unsafe-inline';
         media-src * 'unsafe-inline';
         script-src * 'unsafe-inline' 'unsafe-eval';
         worker-src * 'unsafe-inline' 'unsafe-eval' blob:;
-        frame-src *;
+        frame-src * gap://ready;
         img-src * 'self' data: content: blob: 'unsafe-inline';">
+
+    <script>
+      const isCordovaApp = document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1;
+      if (isCordovaApp) {
+        let script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'cordova.js';
+        document.head.appendChild(script);
+      }
+    </script>
 
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
@@ -64,15 +74,6 @@
 
 <body>
     <div id="root"></div>
-    <script>
-        const isCordovaApp = document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1;
-        if (isCordovaApp) {
-          let script = document.createElement('script');
-          script.type = 'text/javascript';
-          script.src = 'cordova.js';
-          document.body.appendChild(script);
-        }
-    </script>
 </body>
 
 </html>
