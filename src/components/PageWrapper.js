@@ -15,7 +15,8 @@ const styles = theme => ({
     position:'fixed',
     right:0,
     left:0,
-    bottom:0
+    bottom:0,
+    zIndex: 3
   },
   main:{
     marginBottom: theme.spacing.unit,
