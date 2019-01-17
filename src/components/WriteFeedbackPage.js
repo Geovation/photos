@@ -16,6 +16,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import config from '../custom/config';
 import dbFirebase from '../dbFirebase';
+import { device } from '../utils';
 
 const styles = theme => ({
   container: {
@@ -115,7 +116,8 @@ class WriteFeedbackPage extends React.Component {
     data.appVersion = process.env.REACT_APP_VERSION;
     data.buildNumber = process.env.REACT_APP_BUILD_NUMBER;
     data.email = this.state.email ? this.state.email : 'anonymous';
-
+    data.device = device();
+    data.userAgent = navigator.userAgent;
     if (location) {
       data.latitude = location.latitude;
       data.longitude = location.longitude;
