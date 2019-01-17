@@ -34,9 +34,6 @@ if (!isInIframe()) {
     } else {
       console.error("Error firestore.enablePersistence(); didn't work" );
     }
-    else {
-      console.log("Error firestore.enablePersistence(); didn't work" );
-    }
   });
 } else {
   console.log("Cannot enable persistence inside an iframe")
