@@ -35,6 +35,9 @@ const styles = theme => ({
       borderBottomColor: theme.palette.secondary.main,
     },
   },
+  progress: {
+    margin: theme.spacing.unit * 2
+  },
 });
 
 class PhotoPage extends Component {
@@ -229,7 +232,11 @@ class PhotoPage extends Component {
               <DialogContentText id="loading-dialog-text">
                 Be patient ;)
               </DialogContentText>
-              <CircularProgress color='secondary' size={50} thickness={6}/>
+              <CircularProgress
+              className={classes.progress}
+               color='secondary'
+               size={50}
+               thickness={6}/>
             </DialogContent>
           </Dialog>
 

@@ -22,7 +22,11 @@ const styles = theme => ({
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
-    height: '100%'
+    height: '100%',
+    position:'fixed',
+    right:0,
+    left:0,
+    bottom:0,
   },
   closeIcon: {
     display: 'flex',
@@ -32,6 +36,7 @@ const styles = theme => ({
   content: {
     height: '100%',
     overflow:'auto',
+    '-webkit-overflow-scrolling': 'touch',
     marginTop: theme.spacing.unit * 0.5,
     marginBottom: theme.spacing.unit * 0.5,
     marginLeft: theme.spacing.unit * 1.5,
@@ -39,8 +44,8 @@ const styles = theme => ({
   },
   button: {
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
+    alignItems: 'center',
+    justifyContent: 'center',
     margin: theme.spacing.unit * 1.5
   },
   progress: {
@@ -167,8 +172,8 @@ class WriteFeedbackPage extends React.Component {
               type='string'
               required
               margin='dense'
-              rows={window.innerHeight > 667 ? 25 : window.innerHeight > 640 ? 21 : window.innerHeight > 480 ? 13 : 11}
-              rowsMax={window.innerHeight > 667 ? 26 : window.innerHeight > 640 ? 22 : window.innerHeight > 480 ? 14 : 12}
+              rows={window.innerHeight > 667 ? 23 : window.innerHeight > 640 ? 19 : window.innerHeight > 480 ? 11 : 9}
+              rowsMax={window.innerHeight > 667 ? 24 : window.innerHeight > 640 ? 20 : window.innerHeight > 480 ? 12 : 10}
               multiline
             />
           </div>
