@@ -20,6 +20,9 @@ firestore.enablePersistence()
     } else if (err.code === 'unimplemented') {
       console.error("The current browser does not support all of the features required to enable persistence  ...");
     }
+    else {
+      console.log("Error firestore.enablePersistence(); didn't work" );
+    }
   });
 
 export default firebaseApp;
