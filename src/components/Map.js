@@ -16,11 +16,23 @@ import Typography from '@material-ui/core/Typography';
 
 import './Map.scss';
 import config from "../custom/config";
+import { isIphoneWithNotchAndCordova } from '../utils';
+import { withStyles } from '@material-ui/core/styles';
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 const CENTER = [-0.07, 51.58];
 const ZOOM = 10;
+
+const styles = theme => ({
+  location: {
+    position: 'absolute',
+    top: isIphoneWithNotchAndCordova() ? 'calc(env(safe-area-inset-top) + 20px)' : 20,
+    right: 20,
+    zIndex: 1100, //app bar material-ui value
+  },
+});
+
 
 class Map extends Component {
 
@@ -248,7 +260,7 @@ class Map extends Component {
   }
 
   render() {
-    const { location, welcomeShown } = this.props;
+    const { location, welcomeShown, classes } = this.props;
     const feature = this.state.feature;
     const gpsOffline = !location.online;
     const gpsDisabled = !location.updated;
@@ -257,7 +269,7 @@ class Map extends Component {
       <div className={"geovation-map"} style={{ visibility: this.props.visible ? "visible" : "hidden" }}>
           <div id='map' className="map"></div>
           { welcomeShown &&
-            <Fab className="location" size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+            <Fab className={classes.location} size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
               {gpsOffline ? <GpsOff/> : <GpsFixed/>}
             </Fab>
           }
@@ -287,4 +299,4 @@ class Map extends Component {
   }
 }
 
-export default Map;
+export default withStyles(styles)(Map);
