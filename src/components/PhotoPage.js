@@ -39,23 +39,18 @@ const styles = theme => ({
   progress: {
     margin: theme.spacing.unit * 2
   },
-  appbar: {
+  button: {
+    display: 'flex',
+    justifyContent:'center',
+    alignItems: 'center',
+    margin: theme.spacing.unit * 1.5,
+  },
+  notchTop: {
     paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
   },
-  buttonretake: {
-    display: 'flex',
-    justifyContent:'center',
-    alignItems: 'center',
-    margin: theme.spacing.unit * 1.5,
-    marginBottom: 0
-  },
-  buttonupload: {
-    display: 'flex',
-    justifyContent:'center',
-    alignItems: 'center',
-    margin: theme.spacing.unit * 1.5,
+  notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
-  },
+  }
 });
 
 class PhotoPage extends Component {
@@ -192,7 +187,7 @@ class PhotoPage extends Component {
 
     return (
        <div className='geovation-photos'>
-         <AppBar position="static" className={classes.appbar}>
+         <AppBar position="static" className={classes.notchTop}>
           <Toolbar>
             <Typography variant="h6" color="inherit">
               Photo Submission
@@ -228,18 +223,20 @@ class PhotoPage extends Component {
            <img src={this.state.imgSrc} alt={""}/>
           </div>
 
-          <div className={classes.buttonretake}>
+          <div className={classes.button}>
             <Button variant="outlined" fullWidth={true} onClick={this.retakePhoto}>
               Retake
             </Button>
           </div>
 
-          <div className={classes.buttonupload}>
+          <div className={classes.button}>
             <Button disabled={this.state.error}
               variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
             </Button>
           </div>
+
+          <div className={classes.notchBottom}/>
 
           <Dialog
             open={this.state.open}

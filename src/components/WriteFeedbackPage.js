@@ -49,11 +49,13 @@ const styles = theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     margin: theme.spacing.unit * 1.5,
-    paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
   },
-  appbar: {
+  notchTop: {
     paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
   },
+  notchBottom: {
+    paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
+  }
 });
 
 class WriteFeedbackPage extends React.Component {
@@ -164,7 +166,7 @@ class WriteFeedbackPage extends React.Component {
 
     return (
         <div className={classes.container}>
-          <AppBar position='static' className={classes.appbar}>
+          <AppBar position='static' className={classes.notchTop}>
             <Toolbar>
               <Typography variant='h6' color='inherit'>
                 Feedback
@@ -217,6 +219,9 @@ class WriteFeedbackPage extends React.Component {
               Send
             </Button>
           </div>
+
+          <div className={classes.notchBottom}/>
+
 
           <Dialog
             open={this.state.open}
