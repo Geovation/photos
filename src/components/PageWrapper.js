@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
-
+import { isIphoneWithNotchAndCordova } from '../utils';
 import config from '../custom/config';
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
@@ -29,9 +29,11 @@ const styles = theme => ({
   logo: {
     height: '80px',
     margin: theme.spacing.unit * 2,
+    paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
   },
   button: {
-    margin: theme.spacing.unit * 1.5
+    margin: theme.spacing.unit * 1.5,
+    paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
   }
 });
 
