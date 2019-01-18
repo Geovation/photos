@@ -5,19 +5,6 @@
   flex-flow: column;
   height: 100%;
 
-  .burger {
-    position: absolute;
-    top: 30px;
-    left: 20px;
-    z-index: 1100; //app bar material-ui value
-  }
-
-  .camera {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-  }
-
   .hidden {
     display: none;
   }

@@ -11,8 +11,13 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import config from './custom/config';
 import store from "./store";
+import { isIphoneWithNotchAndCordova } from './utils';
 
 serviceWorker.register();
+
+if (isIphoneWithNotchAndCordova() && window.StatusBar){
+  window.StatusBar.styleDefault();
+}
 
 if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
     console.log =

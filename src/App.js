@@ -23,8 +23,25 @@ import DrawerContainer from './components/DrawerContainer';
 
 import config from './custom/config';
 import './App.scss';
+import { withStyles } from '@material-ui/core/styles';
+import { isIphoneWithNotchAndCordova } from './utils';
+
 
 const PAGES = config.PAGES;
+
+const styles = theme => ({
+  burger: {
+    position: 'absolute',
+    top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing.unit * 3})` : theme.spacing.unit * 3,
+    left: theme.spacing.unit * 2,
+    zIndex: theme.zIndex.appBar, //app bar material-ui value
+  },
+  camera: {
+    position: 'absolute',
+    bottom: theme.spacing.unit * 2,
+    right: theme.spacing.unit * 2
+  }
+});
 
 class App extends Component {
   constructor(props){
@@ -202,6 +219,7 @@ class App extends Component {
   };
 
   render() {
+    const { classes } = this.props;
     return (
       <div className='geovation-app'>
         <main className='content'>
@@ -267,7 +285,7 @@ class App extends Component {
               photos={this.state.photos}
           />
 
-          <Dehaze className='burger' onClick={this.toggleLeftDrawer(true)}
+          <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}
             style={{
               display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
               ? 'block'
@@ -275,7 +293,7 @@ class App extends Component {
             }}
           />
 
-          <Fab className="camera" color="secondary" onClick={this.handlePhotoClick}
+          <Fab className={classes.camera} color="secondary" onClick={this.handlePhotoClick}
             style={{
               display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
               ? 'flex'
@@ -314,4 +332,4 @@ class App extends Component {
   }
 }
 
-export default withRouter(App);
+export default withRouter(withStyles(styles)(App));

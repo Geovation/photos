@@ -17,6 +17,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import config from '../custom/config';
 import dbFirebase from '../dbFirebase';
 import { device } from '../utils';
+import { isIphoneWithNotchAndCordova } from '../utils';
 
 const styles = theme => ({
   container: {
@@ -47,11 +48,14 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: theme.spacing.unit * 1.5
+    margin: theme.spacing.unit * 1.5,
   },
-  progress: {
-    margin: theme.spacing.unit * 2
+  notchTop: {
+    paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
   },
+  notchBottom: {
+    paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
+  }
 });
 
 class WriteFeedbackPage extends React.Component {
@@ -99,6 +103,8 @@ class WriteFeedbackPage extends React.Component {
   }
 
   closeDialog = () => {
+    this.changeStatusBarColorToDefault();
+
     this.setState({ open: false });
 
     // if it is NOT error...
@@ -132,18 +138,41 @@ class WriteFeedbackPage extends React.Component {
     });
   }
 
+  handleClose = () => {
+    this.changeStatusBarColorToDefault();
+    this.props.handleClose();
+  }
+
+  changeStatusBarColorToDefault = () => {
+    const palette = this.props.theme.palette;
+    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
+      window.StatusBar.styleDefault();
+    }
+  }
+
+  changeStatusBarColorToLight = () => {
+    const palette = this.props.theme.palette;
+    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
+      window.StatusBar.styleDefault();
+    }
+  }
+
+  componentDidMount(){
+    this.changeStatusBarColorToLight();
+  }
+
   render() {
-    const { classes, handleClose } = this.props;
+    const { classes } = this.props;
 
     return (
         <div className={classes.container}>
-          <AppBar position='static'>
+          <AppBar position='static' className={classes.notchTop}>
             <Toolbar>
               <Typography variant='h6' color='inherit'>
                 Feedback
               </Typography>
               <div className={classes.closeIcon}>
-                <CloseIcon onClick={handleClose} />
+                <CloseIcon onClick={this.handleClose} />
               </div>
             </Toolbar>
           </AppBar>
@@ -191,6 +220,9 @@ class WriteFeedbackPage extends React.Component {
             </Button>
           </div>
 
+          <div className={classes.notchBottom}/>
+
+
           <Dialog
             open={this.state.open}
             onClose={this.closeDialog}
@@ -227,4 +259,4 @@ class WriteFeedbackPage extends React.Component {
   }
 }
 
-export default withStyles(styles)(WriteFeedbackPage);
+export default withStyles(styles, { withTheme: true })(WriteFeedbackPage);
