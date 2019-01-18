@@ -29,10 +29,14 @@ const styles = theme => ({
   logo: {
     height: '80px',
     margin: theme.spacing.unit * 2,
-    paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
   },
   button: {
     margin: theme.spacing.unit * 1.5,
+  },
+  notchTop: {
+    paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
+  },
+  notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
   }
 });
@@ -42,6 +46,9 @@ class PageWrapper extends React.Component {
     const { classes, hasHeader, handleClickButton, children } = this.props;
     return (
       <Paper className={classes.root}>
+
+        <div className={classes.notchTop}/>
+
         {hasHeader && <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>}
         <div className={classes.main}>
           {children}
@@ -56,6 +63,9 @@ class PageWrapper extends React.Component {
             Get Collecting
           </Button>
         </div>
+
+        <div className={classes.notchBottom}/>
+
       </Paper>
     );
   }
