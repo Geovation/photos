@@ -27,9 +27,9 @@ const ZOOM = 10;
 const styles = theme => ({
   location: {
     position: 'absolute',
-    top: isIphoneWithNotchAndCordova() ? 'calc(env(safe-area-inset-top) + 20px)' : 20,
-    right: 20,
-    zIndex: 1100, //app bar material-ui value
+    top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing.unit * 2})` : theme.spacing.unit * 2,
+    right: theme.spacing.unit * 2,
+    zIndex: theme.zIndex.appBar, //app bar material-ui value
   },
 });
 

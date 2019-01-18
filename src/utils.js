@@ -21,31 +21,50 @@ export const device = () => {
 };
 
 export const isIphoneWithNotchAndCordova = () => {
+  const IPHONEX = {
+    width : 1125,
+    height: 2436
+  }
 
-      // Really basic check for the ios platform
-    // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
-    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const IPHONEXR = {
+    width : 828,
+    height: 1792
+  }
 
-      // Get the device pixel ratio
-    const ratio = window.devicePixelRatio || 1;
+  const IPHONEXSMAX = {
+    width : 1242,
+    height: 2688
+  }
 
-      // Define the users device screen dimensions
-    const screen = {
-      width : window.screen.width * ratio,
-      height : window.screen.height * ratio
-    };
+  // Really basic check for the ios platform
+  // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
+  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-      // iPhone X Detection
-    if (iOS && window.cordova && ((screen.width === 1125 && screen.height === 2436) || (screen.height === 1125 && screen.width === 2436))) {
-      return true;
-    }
-    // iPhone XR Detection
-    else if (iOS && window.cordova && ((screen.width === 828 && screen.height === 1792) || (screen.height === 1792 && screen.width === 828))) {
-      return true;
-    }
-    // iPhone XS Max Detection
-    else if (iOS && window.cordova && ((screen.width === 1242 && screen.height === 2688) || (screen.height === 1242 && screen.width === 2688))) {
-      return true;
-    }
-    return false;
+    // Get the device pixel ratio
+  const ratio = window.devicePixelRatio || 1;
+
+    // Define the users device screen dimensions
+  const screen = {
+    width : window.screen.width * ratio,
+    height : window.screen.height * ratio
+  };
+
+  // check if device is iOS and cordova exists
+  const cordovaIOS = !!(iOS && window.cordova);
+
+  // check the screen dimensions either in portrait or landscape mode
+
+  // iPhone X Detection
+  if (cordovaIOS && ((screen.width === IPHONEX.width && screen.height === IPHONEX.height) || (screen.height === IPHONEX.width && screen.width === IPHONEX.height))) {
+    return true;
+  }
+  // iPhone XR Detection
+  else if (cordovaIOS && ((screen.width === IPHONEXR.width && screen.height === IPHONEXR.height) || (screen.height === IPHONEXR.width && screen.width === IPHONEXR.height))) {
+    return true;
+  }
+  // iPhone XS Max Detection
+  else if (cordovaIOS && ((screen.width === IPHONEXSMAX.width && screen.height === IPHONEXSMAX.height) || (screen.height === IPHONEXSMAX.width && screen.width === IPHONEXSMAX.height))) {
+    return true;
+  }
+  return false;
 }

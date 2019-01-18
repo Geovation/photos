@@ -16,7 +16,7 @@ const styles = theme => ({
     right:0,
     left:0,
     bottom:0,
-    zIndex: 3
+    zIndex: theme.zIndex.appBar
   },
   main:{
     marginBottom: theme.spacing.unit,
