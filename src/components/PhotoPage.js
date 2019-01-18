@@ -19,6 +19,7 @@ import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
 import './PhotoPage.scss';
 import dbFirebase from '../dbFirebase';
+import { isIphoneWithNotchAndCordova } from '../utils'
 
 const emptyState = {
   imgSrc: null,
@@ -37,6 +38,23 @@ const styles = theme => ({
   },
   progress: {
     margin: theme.spacing.unit * 2
+  },
+  appbar: {
+    paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
+  },
+  buttonretake: {
+    display: 'flex',
+    justifyContent:'center',
+    alignItems: 'center',
+    margin: theme.spacing.unit * 1.5,
+    marginBottom: 0
+  },
+  buttonupload: {
+    display: 'flex',
+    justifyContent:'center',
+    alignItems: 'center',
+    margin: theme.spacing.unit * 1.5,
+    paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
   },
 });
 
@@ -140,12 +158,26 @@ class PhotoPage extends Component {
     gtag('event', 'Postpone upload', {
       'event_category' : 'Photo',
     });
+    this.changeStatusBarColorToLight();
     this.handleClosePhotoPage();
   };
 
+  changeStatusBarColorToDefault = () => {
+    const palette = this.props.theme.palette;
+    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
+      window.StatusBar.styleDefault();
+    }
+  }
 
+  changeStatusBarColorToLight = () => {
+    const palette = this.props.theme.palette;
+    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
+      window.StatusBar.styleDefault();
+    }
+  }
 
   componentDidMount() {
+    this.changeStatusBarColorToDefault();
     this.loadImage();
   }
 
@@ -160,7 +192,7 @@ class PhotoPage extends Component {
 
     return (
        <div className='geovation-photos'>
-         <AppBar position="static">
+         <AppBar position="static" className={classes.appbar}>
           <Toolbar>
             <Typography variant="h6" color="inherit">
               Photo Submission
@@ -196,13 +228,13 @@ class PhotoPage extends Component {
            <img src={this.state.imgSrc} alt={""}/>
           </div>
 
-          <div className='buttonwrapper'>
+          <div className={classes.buttonretake}>
             <Button variant="outlined" fullWidth={true} onClick={this.retakePhoto}>
               Retake
             </Button>
           </div>
 
-          <div className='buttonwrapper'>
+          <div className={classes.buttonupload}>
             <Button disabled={this.state.error}
               variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
@@ -245,4 +277,4 @@ class PhotoPage extends Component {
   }
 }
 
-export default withStyles(styles)(PhotoPage);
+export default withStyles(styles, { withTheme: true })(PhotoPage);
