@@ -153,7 +153,7 @@ class PhotoPage extends Component {
     gtag('event', 'Postpone upload', {
       'event_category' : 'Photo',
     });
-    this.changeStatusBarColorToLight();
+    this.changeStatusBarColorToDefault();
     this.handleClosePhotoPage();
   };
 
@@ -167,12 +167,12 @@ class PhotoPage extends Component {
   changeStatusBarColorToLight = () => {
     const palette = this.props.theme.palette;
     if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
-      window.StatusBar.styleDefault();
+      window.StatusBar.styleLightContent();
     }
   }
 
   componentDidMount() {
-    this.changeStatusBarColorToDefault();
+    this.changeStatusBarColorToLight();
     this.loadImage();
   }
 
