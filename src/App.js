@@ -32,7 +32,7 @@ const PAGES = config.PAGES;
 const styles = theme => ({
   burger: {
     position: 'absolute',
-    top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing.unit * 3}px)` : theme.spacing.unit * 3,
+    top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing.unit}px)` : theme.spacing.unit * 3,
     left: theme.spacing.unit * 2,
     zIndex: theme.zIndex.appBar, //app bar material-ui value
   },
