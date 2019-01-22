@@ -4,7 +4,8 @@ const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
 const admin = require('firebase-admin');
 admin.initializeApp();
-admin.firestore().settings({ timestampsInSnapshots: true });
+const firestore = admin.firestore()
+firestore.settings({ timestampsInSnapshots: true });
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
@@ -15,6 +16,11 @@ const THUMB_NAME = 'thumbnail.jpg';
 
 const MAIN_MAX_SIZE = 1014;
 const MAIN_NAME = '1024.jpg';
+
+const cors = require('cors')({
+  origin: true,
+});
+
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * ImageMagick.
@@ -47,8 +53,6 @@ exports.generateThumbnail = functions.storage.object().onFinalize(async (object)
   // Cloud Storage files.
   const bucket = admin.storage().bucket(object.bucket);
   const file = bucket.file(filePath);
-  const thumbFile = bucket.file(thumbFilePath);
-  const mainFile = bucket.file(mainFilePath);
 
   const metadata = {
     contentType: contentType,
@@ -92,3 +96,40 @@ async function resize(inFile, outFile, maxSize) {
     });
   });
 }
+
+exports.stats = functions.https.onRequest((req, res) => {
+  if (req.method !== 'GET') {
+    return res.status(403).send('Forbidden!');
+  }
+
+  // set cache so it won't be calculated again: 1 day (in seconds)
+  const AGE = 1 * 24 * 60 * 60;
+  res.set('Cache-Control', `public, max-age=${AGE}, s-maxage=${AGE * 2}`);
+
+  return cors(req, res, async () => {
+    const stats = {
+      totalUploaded: 0,
+      moderated: 0,
+      published: 0,
+      pieces: 0
+    };
+
+    const querySnapshot = await firestore.collection("photos").get();
+
+    querySnapshot.forEach( doc => {
+      const data = doc.data();
+      stats.totalUploaded++;
+
+      if (data.moderated) stats.moderated++;
+
+      if (data.published) {
+        stats.published++;
+
+        const pieces = Number(data.pieces);
+        if (!isNaN(pieces) && pieces > 0 ) stats.pieces += pieces;
+      }
+    });
+
+    res.json(stats);
+  });
+});
