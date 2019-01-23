@@ -17,10 +17,6 @@ const THUMB_NAME = 'thumbnail.jpg';
 const MAIN_MAX_SIZE = 1014;
 const MAIN_NAME = '1024.jpg';
 
-const cors = require('cors')({
-  origin: true,
-});
-
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * ImageMagick.
@@ -97,7 +93,7 @@ async function resize(inFile, outFile, maxSize) {
   });
 }
 
-exports.stats = functions.https.onRequest((req, res) => {
+exports.stats = functions.https.onRequest(async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(403).send('Forbidden!');
   }
@@ -106,30 +102,28 @@ exports.stats = functions.https.onRequest((req, res) => {
   const AGE = 1 * 24 * 60 * 60;
   res.set('Cache-Control', `public, max-age=${AGE}, s-maxage=${AGE * 2}`);
 
-  return cors(req, res, async () => {
-    const stats = {
-      totalUploaded: 0,
-      moderated: 0,
-      published: 0,
-      pieces: 0
-    };
+  const stats = {
+    totalUploaded: 0,
+    moderated: 0,
+    published: 0,
+    pieces: 0
+  };
 
-    const querySnapshot = await firestore.collection("photos").get();
+  const querySnapshot = await firestore.collection("photos").get();
 
-    querySnapshot.forEach( doc => {
-      const data = doc.data();
-      stats.totalUploaded++;
+  querySnapshot.forEach( doc => {
+    const data = doc.data();
+    stats.totalUploaded++;
 
-      if (data.moderated) stats.moderated++;
+    if (data.moderated) stats.moderated++;
 
-      if (data.published) {
-        stats.published++;
+    if (data.published) {
+      stats.published++;
 
-        const pieces = Number(data.pieces);
-        if (!isNaN(pieces) && pieces > 0 ) stats.pieces += pieces;
-      }
-    });
-
-    res.json(stats);
+      const pieces = Number(data.pieces);
+      if (!isNaN(pieces) && pieces > 0 ) stats.pieces += pieces;
+    }
   });
+
+  res.json(stats);
 });
