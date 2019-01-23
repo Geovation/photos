@@ -29,6 +29,12 @@ const styles = theme => ({
   drawerPaper: {
     width: drawerWidth,
     maxWidth: drawerMaxWidth,
+  },
+  stats: {
+    position: 'absolute',
+    bottom: theme.spacing.unit * 3,
+    alignSelf: 'center',
+    paddingBottom: theme.spacing.unit * 2
   }
 });
 
@@ -37,7 +43,7 @@ const PAGES = config.PAGES;
 class DrawerContainer extends Component {
 
   render() {
-    const { classes, user, online, leftDrawerOpen } = this.props;
+    const { classes, user, online, leftDrawerOpen, stats } = this.props;
     const ListItemsTop = [
       {
         visible: user,
@@ -109,6 +115,9 @@ class DrawerContainer extends Component {
             )}
           </List>
         </div>
+        <Typography className={classes.stats} color={'secondary'}>
+          {`${stats | 0} ${config.customiseString('drawer', 'photos published so far!')}`}
+        </Typography>
         <div className='built-by-geovation'>
           <Typography className='built-by-text'>
             Built by

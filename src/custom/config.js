@@ -5,6 +5,9 @@ const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
 
 const CUSTOM_STRING = {
+  drawer: {
+    "photos published so far!": "photos published so far!"
+  },
   tutorial: {
     "Walk around the city and take photos": "Walk around the city and take photos",
     "Write info about the photos and upload it to the cloud": "Write info about the photos and upload it to the cloud",
@@ -59,6 +62,11 @@ const PAGES = {
 
 const customiseString = (page, key) => (CUSTOM_STRING[page][key] || key);
 
+const getStats = async (photos) => {
+  const photoObj = await photos;
+  return Object.keys(photoObj.features).length;
+}
+
 export default {
   MAX_IMAGE_SIZE: 2048,
   THEME: {
@@ -107,5 +115,6 @@ export default {
   // },
   PAGES,
   CUSTOM_PAGES:[],
-  customiseString
+  customiseString,
+  getStats
 }

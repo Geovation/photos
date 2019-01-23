@@ -107,7 +107,14 @@ class App extends Component {
     gtag('config', config.GA_TRACKING_ID, {
       'page_path' : '/#' + this.props.location.pathname,
     });
-    this.setState({ photos: dbFirebase.fetchPhotos() });
+
+    const photos = dbFirebase.fetchPhotos();
+    config.getStats(photos).then(stats => {
+      this.setState({ photos, stats });
+    }).catch(err => {
+      console.error('Get Stats: ', err.message);
+      this.setState({ photos, stats: 0 });
+    });
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
@@ -325,6 +332,7 @@ class App extends Component {
         <DrawerContainer user={this.state.user} online={this.state.online}
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
+          stats={this.state.stats}
         />
 
       </div>
