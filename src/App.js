@@ -112,7 +112,7 @@ class App extends Component {
     config.getStats(photos).then(stats => {
       this.setState({ photos, stats });
     }).catch(err => {
-      console.log('Error: ', err.message);
+      console.error('Get Stats: ', err.message);
       this.setState({ photos, stats: 0 });
     });
 
