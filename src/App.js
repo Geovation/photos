@@ -109,11 +109,11 @@ class App extends Component {
     });
 
     const photos = dbFirebase.fetchPhotos();
-    config.countTotal(photos).then(totalNumber => {
-      this.setState({ photos, totalNumber });
+    config.getStats(photos).then(stats => {
+      this.setState({ photos, stats });
     }).catch(err => {
       console.log('Error: ', err.message);
-      this.setState({ photos, totalNumber: 0 });
+      this.setState({ photos, stats: 0 });
     });
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
@@ -332,7 +332,7 @@ class App extends Component {
         <DrawerContainer user={this.state.user} online={this.state.online}
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
-          totalNumber={this.state.totalNumber}
+          stats={this.state.stats}
         />
 
       </div>

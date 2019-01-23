@@ -62,7 +62,7 @@ const PAGES = {
 
 const customiseString = (page, key) => (CUSTOM_STRING[page][key] || key);
 
-const countTotal = async (photos) => {
+const getStats = async (photos) => {
   const photoObj = await photos;
   return Object.keys(photoObj.features).length;
 }
@@ -116,5 +116,5 @@ export default {
   PAGES,
   CUSTOM_PAGES:[],
   customiseString,
-  countTotal
+  getStats
 }
