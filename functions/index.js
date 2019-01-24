@@ -3,9 +3,8 @@
 const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
 const admin = require('firebase-admin');
-admin.initializeApp();
-const firestore = admin.firestore();
-firestore.settings({ timestampsInSnapshots: true });
+const cors = require('cors')({origin: true});
+const {PubSub} = require('@google-cloud/pubsub');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
@@ -17,16 +16,58 @@ const THUMB_NAME = 'thumbnail.jpg';
 const MAIN_MAX_SIZE = 1014;
 const MAIN_NAME = '1024.jpg';
 
-const cors = require('cors')({
-  origin: true,
-});
-
-const {PubSub} = require('@google-cloud/pubsub');
-const pubsub = new PubSub();
 const TOPIC = "update-stats";
 const DB_CACHE_AGE_MS = 1000 * 60 * 60 * 24 * 1; // 1 day
 const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
 
+admin.initializeApp();
+const firestore = admin.firestore();
+firestore.settings({ timestampsInSnapshots: true });
+const pubsub = new PubSub();
+
+/** private functions **/
+async function resize(inFile, outFile, maxSize) {
+  return new Promise( (resolve, reject) => {
+    gm(inFile).resize(maxSize,maxSize).write(outFile, (err) => {
+      if (err) reject(err); else resolve();
+    });
+  });
+}
+
+/**
+ * It publish a message indicating to recalculate the stats if the data doesn't have the field "updated".
+ *
+ * @param data "/sys/stats" coming from firebase
+ *
+ * @returns {Promise<boolean>}
+ */
+async function pubIfNecessary(doc) {
+  let recalculate = true;
+
+  try {
+    const updatedTimestamp = doc.data().updated.toDate().getTime();
+    recalculate =  (doc.getReadTime().toDate().getTime() - updatedTimestamp) > DB_CACHE_AGE_MS;
+  } catch(e) {
+    console.error("states is corrupted. It will be re calculated")
+  }
+
+  if (recalculate) {
+    console.info("Need to recreate stats");
+
+    try {
+      await pubsub.createTopic(TOPIC);
+    } catch(e) {
+      console.log("topic already created");
+    }
+
+    const messageId = await pubsub.topic(TOPIC).publish(Buffer.from("Recreate the stats"));
+    console.log(`Message ${messageId} published.`);
+  }
+
+  return true;
+}
+
+/** Public functions **/
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * ImageMagick.
@@ -95,40 +136,6 @@ const generateThumbnail = functions.storage.object().onFinalize(async (object) =
   return console.log(`Photos are public now`);
 });
 
-async function resize(inFile, outFile, maxSize) {
-  return new Promise( (resolve, reject) => {
-    gm(inFile).resize(maxSize,maxSize).write(outFile, (err) => {
-      if (err) reject(err); else resolve();
-    });
-  });
-}
-
-async function pubIfNecessary(data) {
-  let recalculate = true;
-
-  try {
-    const updatedTimestamp = data.updated.toDate().getTime();
-    recalculate =  (new Date().getTime() - updatedTimestamp) > DB_CACHE_AGE_MS;
-  } catch(e) {
-    console.log("it will be calculated")
-  }
-
-  if (recalculate) {
-    console.info("Need to recreate stats");
-
-    try {
-      await pubsub.createTopic(TOPIC);
-    } catch(e) {
-      console.log("topic already created");
-    }
-
-    const messageId = await pubsub.topic(TOPIC).publish(Buffer.from("Recreate the stats"));
-    console.log(`Message ${messageId} published.`);
-  }
-
-  return true;
-}
-
 const stats = functions.https.onRequest(async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(403).send('Forbidden!');
@@ -144,7 +151,7 @@ const stats = functions.https.onRequest(async (req, res) => {
         data.updated = data.updated.toDate();
         data.serverTime = new Date();
         res.json(data);
-        pubIfNecessary(data);
+        pubIfNecessary(doc);
         return true;
       } else {
         pubIfNecessary();
