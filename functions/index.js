@@ -4,7 +4,7 @@ const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
 const admin = require('firebase-admin');
 admin.initializeApp();
-const firestore = admin.firestore()
+const firestore = admin.firestore();
 firestore.settings({ timestampsInSnapshots: true });
 const path = require('path');
 const os = require('os');
@@ -21,13 +21,19 @@ const cors = require('cors')({
   origin: true,
 });
 
+const {PubSub} = require('@google-cloud/pubsub');
+const pubsub = new PubSub();
+const TOPIC = "update-stats";
+const DB_CACHE_AGE_MS = 1000 * 60 * 60 * 24 * 1; // 1 day
+const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
+
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * ImageMagick.
  * After the thumbnail has been generated and uploaded to Cloud Storage,
  * we write the public URL to the Firebase Realtime Database.
  */
-exports.generateThumbnail = functions.storage.object().onFinalize(async (object) => {
+const generateThumbnail = functions.storage.object().onFinalize(async (object) => {
   // File and directory paths.
   const filePath = object.name;
   const contentType = object.contentType; // This is the image MIME type
@@ -97,39 +103,90 @@ async function resize(inFile, outFile, maxSize) {
   });
 }
 
-exports.stats = functions.https.onRequest((req, res) => {
+async function pubIfNecessary(data) {
+  let recalculate = true;
+
+  try {
+    const updatedTimestamp = data.updated.toDate().getTime();
+    recalculate =  (new Date().getTime() - updatedTimestamp) > DB_CACHE_AGE_MS;
+  } catch(e) {
+    console.log("it will be calculated")
+  }
+
+  if (recalculate) {
+    console.info("Need to recreate stats");
+
+    try {
+      await pubsub.createTopic(TOPIC);
+    } catch(e) {
+      console.log("topic already created");
+    }
+
+    const messageId = await pubsub.topic(TOPIC).publish(Buffer.from("Recreate the stats"));
+    console.log(`Message ${messageId} published.`);
+  }
+
+  return true;
+}
+
+const stats = functions.https.onRequest(async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(403).send('Forbidden!');
   }
 
-  // set cache so it won't be calculated again: 1 day (in seconds)
-  const AGE = 1 * 24 * 60 * 60;
-  res.set('Cache-Control', `public, max-age=${AGE}, s-maxage=${AGE * 2}`);
+  res.set('Cache-Control', `public, max-age=${WEB_CACHE_AGE_S}, s-maxage=${WEB_CACHE_AGE_S * 2}`);
 
   return cors(req, res, async () => {
-    const stats = {
-      totalUploaded: 0,
-      moderated: 0,
-      published: 0,
-      pieces: 0
-    };
-
-    const querySnapshot = await firestore.collection("photos").get();
-
-    querySnapshot.forEach( doc => {
-      const data = doc.data();
-      stats.totalUploaded++;
-
-      if (data.moderated) stats.moderated++;
-
-      if (data.published) {
-        stats.published++;
-
-        const pieces = Number(data.pieces);
-        if (!isNaN(pieces) && pieces > 0 ) stats.pieces += pieces;
+    try {
+      const doc = await firestore.collection('sys').doc('stats').get();
+      if (doc.exists) {
+        const data = doc.data();
+        data.updated = data.updated.toDate();
+        data.serverTime = new Date();
+        res.json(data);
+        pubIfNecessary(data);
+        return true;
+      } else {
+        pubIfNecessary();
+        return res.status(503).send('stats not ready yet');
       }
-    });
-
-    res.json(stats);
+    } catch (e) {
+      pubIfNecessary();
+      return res.status(503).send(e);
+    }
   });
 });
+
+const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, context) => {
+  const stats = {
+    totalUploaded: 0,
+    moderated: 0,
+    published: 0,
+    pieces: 0,
+    updated: admin.firestore.FieldValue.serverTimestamp()
+  };
+
+  const querySnapshot = await firestore.collection("photos").get();
+
+  querySnapshot.forEach( doc => {
+    const data = doc.data();
+    stats.totalUploaded++;
+
+    if (data.moderated) stats.moderated++;
+
+    if (data.published) {
+      stats.published++;
+
+      const pieces = Number(data.pieces);
+      if (!isNaN(pieces) && pieces > 0 ) stats.pieces += pieces;
+    }
+  });
+
+  return await firestore.collection('sys').doc('stats').set(stats);
+});
+
+module.exports = {
+  stats,
+  generateThumbnail,
+  updateStats
+};

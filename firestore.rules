@@ -46,5 +46,10 @@ service cloud.firestore {
     	allow read: if isAdmin() || isUser(uid);
       allow write: if isAdmin();
     }
+
+    // Collection with system data. The Doc stats contains statistics.
+    match /sys/stats {
+      allow read: true;
+    }
   }
 }
