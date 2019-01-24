@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import gtag from '../gtag.js';
+import { gtagEvent } from '../gtag.js';
 
 import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
@@ -149,10 +149,7 @@ class Map extends Component {
       const timeLapsed = new Date().getTime() - this.prevZoomTime;
 
       if (this.prevZoom !== zoom && timeLapsed > milliSeconds) {
-        gtag('event', 'Zoom', {
-          'event_category' : 'Map',
-          'event_label' : zoom + '',
-        });
+        gtagEvent('Zoom','Map',zoom + '');
         this.prevZoom = zoom;
       }
 
@@ -160,14 +157,8 @@ class Map extends Component {
     });
 
     this.map.on('moveend', e => {
-      gtag('event', 'Moved at zoom', {
-        'event_category' : 'Map',
-        'event_label' : this.prevZoom + '',
-      });
-      gtag('event', 'Moved at location', {
-        'event_category' : 'Map',
-        'event_label' : `${this.map.getCenter()}`,
-      });
+      gtagEvent('Moved at zoom', 'Map', this.prevZoom + '');
+      gtagEvent('Moved at location', 'Map', `${this.map.getCenter()}`);
     });
 
     this.map.on('render', 'unclustered-point', e => {
@@ -182,10 +173,7 @@ class Map extends Component {
     });
 
     this.map.on('click', 'clusters', (e) => {
-      gtag('event', 'Cluster Clicked', {
-        'event_category' : 'Map',
-      });
-
+      gtagEvent('Cluster Clicked', 'Map');
       const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
       const clusterId = features[0].properties.cluster_id;
       this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
@@ -200,9 +188,7 @@ class Map extends Component {
   }
 
   flyToGpsLocation = () => {
-    gtag('event', 'Location FAB clicked', {
-      'event_category' : 'Map',
-    });
+    gtagEvent('Location FAB clicked', 'Map');
     this.map.flyTo({
       center: [this.props.location.longitude, this.props.location.latitude]
     });
@@ -230,10 +216,7 @@ class Map extends Component {
         el.id = feature.properties.id;
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
-          gtag('event', 'Photo Opened', {
-            'event_category' : 'Map',
-            'event_label' : feature.properties.id,
-          });
+          gtagEvent('Photo Opened', 'Map', feature.properties.id);
           this.setState({openDialog:true,feature})
         });
         //create marker
