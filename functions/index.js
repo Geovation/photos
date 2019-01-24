@@ -37,18 +37,22 @@ async function resize(inFile, outFile, maxSize) {
 /**
  * It publish a message indicating to recalculate the stats if the data doesn't have the field "updated".
  *
- * @param data "/sys/stats" coming from firebase
+ * @param doc "/sys/stats" doc coming from firebase
  *
  * @returns {Promise<boolean>}
  */
 async function pubIfNecessary(doc) {
+  console.debug("xxxxx: ", new Date());
+
   let recalculate = true;
 
   try {
     const updatedTimestamp = doc.data().updated.toDate().getTime();
-    recalculate =  (doc.getReadTime().toDate().getTime() - updatedTimestamp) > DB_CACHE_AGE_MS;
+    const age = new Date().getTime() - updatedTimestamp;
+    recalculate = age > DB_CACHE_AGE_MS;
+    console.info(`States is ${age / 1000 / 60 / 60 } hours old`);
   } catch(e) {
-    console.error("states is corrupted. It will be re calculated")
+    console.error("states is corrupted. It will be re calculated: ", e)
   }
 
   if (recalculate) {
@@ -57,7 +61,7 @@ async function pubIfNecessary(doc) {
     try {
       await pubsub.createTopic(TOPIC);
     } catch(e) {
-      console.log("topic already created");
+      console.debug("topic already created");
     }
 
     const messageId = await pubsub.topic(TOPIC).publish(Buffer.from("Recreate the stats"));
@@ -159,7 +163,8 @@ const stats = functions.https.onRequest(async (req, res) => {
       }
     } catch (e) {
       pubIfNecessary();
-      return res.status(503).send(e);
+      console.error(e);
+      return res.status(503).send('stats not ready yet');
     }
   });
 });
