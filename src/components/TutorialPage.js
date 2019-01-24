@@ -8,21 +8,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Divider from '@material-ui/core/Divider';
-import { withStyles } from '@material-ui/core/styles';
 import './TutorialPage.scss';
 import PageWrapper from './PageWrapper';
 
 import config from '../custom/config';
-
-const styles = theme => ({
-  logo: {
-    height: '80px',
-    margin: theme.spacing.unit * 3
-  },
-  button: {
-    margin: theme.spacing.unit * 1.5
-  }
-});
 
 const tutorialSteps = {
   'camera': {
@@ -61,4 +50,4 @@ class TutorialPage extends React.Component {
   }
 }
 
-export default withStyles(styles)(TutorialPage);
+export default TutorialPage;
