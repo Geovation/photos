@@ -159,6 +159,7 @@ const stats = functions.https.onRequest(async (req, res) => {
         return true;
       } else {
         pubIfNecessary();
+        console.error("/sys/stats doesn't exist");
         return res.status(503).send('stats not ready yet');
       }
     } catch (e) {
