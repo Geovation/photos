@@ -158,9 +158,7 @@ const stats = functions.https.onRequest(async (req, res) => {
         pubIfNecessary(doc);
         return true;
       } else {
-        pubIfNecessary();
-        console.error("/sys/stats doesn't exist");
-        return res.status(503).send('stats not ready yet');
+        throw "/sys/stats doesn't exist";
       }
     } catch (e) {
       pubIfNecessary();
@@ -170,11 +168,17 @@ const stats = functions.https.onRequest(async (req, res) => {
   });
 });
 
+/**
+ * recalculate the stats and save them in the DB
+ *
+ * @type {CloudFunction<Message>}
+ */
 const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, context) => {
   const stats = {
     totalUploaded: 0,
     moderated: 0,
     published: 0,
+    rejected: 0,
     pieces: 0,
     updated: admin.firestore.FieldValue.serverTimestamp()
   };
@@ -185,14 +189,21 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
     const data = doc.data();
     stats.totalUploaded++;
 
-    if (data.moderated) stats.moderated++;
+    // has the upload been reviewed by a moderator ?
+    if (data.moderated) {
+      stats.moderated++;
 
-    if (data.published) {
-      stats.published++;
+      // has it been approved ?
+      if (data.published) {
+        stats.published++;
 
-      const pieces = Number(data.pieces);
-      if (!isNaN(pieces) && pieces > 0 ) stats.pieces += pieces;
+        const pieces = Number(data.pieces);
+        if (!isNaN(pieces) && pieces > 0 ) stats.pieces += pieces;
+      } else {
+        stats.rejected++;
+      }
     }
+
   });
 
   return await firestore.collection('sys').doc('stats').set(stats);
