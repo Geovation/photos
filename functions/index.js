@@ -9,6 +9,7 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 const gm = require('gm').subClass({imageMagick: true});
+const express = require('express');
 
 const THUMB_MAX_SIZE = 50;
 const THUMB_NAME = 'thumbnail.jpg';
@@ -24,8 +25,9 @@ admin.initializeApp();
 const firestore = admin.firestore();
 firestore.settings({ timestampsInSnapshots: true });
 const pubsub = new PubSub();
+const app = express();
+app.use(cors);
 
-/** private functions **/
 async function resize(inFile, outFile, maxSize) {
   return new Promise( (resolve, reject) => {
     gm(inFile).resize(maxSize,maxSize).write(outFile, (err) => {
@@ -42,8 +44,6 @@ async function resize(inFile, outFile, maxSize) {
  * @returns {Promise<boolean>}
  */
 async function pubIfNecessary(doc) {
-  console.debug("xxxxx: ", new Date());
-
   let recalculate = true;
 
   try {
@@ -65,13 +65,12 @@ async function pubIfNecessary(doc) {
     }
 
     const messageId = await pubsub.topic(TOPIC).publish(Buffer.from("Recreate the stats"));
-    console.log(`Message ${messageId} published.`);
+    console.info(`Message ${messageId} published.`);
   }
 
   return true;
 }
 
-/** Public functions **/
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
  * ImageMagick.
@@ -93,12 +92,12 @@ const generateThumbnail = functions.storage.object().onFinalize(async (object) =
 
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
-    return console.log('This is not an image.', filePath);
+    return console.error('This is not an image.', filePath);
   }
 
   // Exit if the image is already a thumbnail.
   if (fileName !== "original.jpg") {
-    return console.log("I won't create a thumbnail for ",filePath);
+    return console.error("I won't create a thumbnail for ",filePath);
   }
 
   // Cloud Storage files.
@@ -115,12 +114,12 @@ const generateThumbnail = functions.storage.object().onFinalize(async (object) =
   await mkdirp(tempLocalDir);
   // Download file from bucket.
   await file.download({destination: tempLocalFile});
-  console.log('The file has been downloaded to', tempLocalFile);
+  console.info('The file has been downloaded to', tempLocalFile);
   // Generate a thumbnail using ImageMagick.
   await resize(tempLocalFile, tempLocalThumbFile, THUMB_MAX_SIZE);
-  console.log('Thumbnail created at', tempLocalThumbFile);
+  console.info('Thumbnail created at', tempLocalThumbFile);
   await resize(tempLocalFile, tempLocalMainFile, MAIN_MAX_SIZE);
-  console.log('Main created at', tempLocalMainFile);
+  console.info('Main created at', tempLocalMainFile);
 
   // Uploading the Thumbnail.
   const uploadThumb = bucket.upload(tempLocalThumbFile, {destination: thumbFilePath, metadata: metadata})
@@ -129,43 +128,42 @@ const generateThumbnail = functions.storage.object().onFinalize(async (object) =
     .then( _ => bucket.makePublic());
 
   await Promise.all([uploadMain, uploadThumb]);
-  console.log('Thumbnail uploaded to Storage at', thumbFilePath);
-  console.log('Main uploaded to Storage at', mainFilePath);
+  console.info('Thumbnail uploaded to Storage at', thumbFilePath);
+  console.info('Main uploaded to Storage at', mainFilePath);
 
   // Once the image has been uploaded delete the local files to free up disk space.
   fs.unlinkSync(tempLocalFile);
   fs.unlinkSync(tempLocalThumbFile);
   fs.unlinkSync(tempLocalMainFile);
 
-  return console.log(`Photos are public now`);
+  return console.info(`Photos are public now`);
 });
 
-const stats = functions.https.onRequest(async (req, res) => {
+app.get('/stats', async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(403).send('Forbidden!');
   }
 
   res.set('Cache-Control', `public, max-age=${WEB_CACHE_AGE_S}, s-maxage=${WEB_CACHE_AGE_S * 2}`);
 
-  return cors(req, res, async () => {
-    try {
-      const doc = await firestore.collection('sys').doc('stats').get();
-      if (doc.exists) {
-        const data = doc.data();
-        data.updated = data.updated.toDate();
-        data.serverTime = new Date();
-        res.json(data);
-        pubIfNecessary(doc);
-        return true;
-      } else {
-        throw "/sys/stats doesn't exist";
-      }
-    } catch (e) {
-      pubIfNecessary();
-      console.error(e);
-      return res.status(503).send('stats not ready yet');
+  try {
+    const doc = await firestore.collection('sys').doc('stats').get();
+    if (doc.exists) {
+      const data = doc.data();
+      data.updated = data.updated.toDate();
+      data.serverTime = new Date();
+      res.json(data);
+      pubIfNecessary(doc);
+      console.debug(data);
+      return true;
+    } else {
+      throw new Error("/sys/stats doesn't exist");
     }
-  });
+  } catch (e) {
+    pubIfNecessary();
+    console.error(e);
+    return res.status(503).send('stats not ready yet');
+  }
 });
 
 /**
@@ -210,7 +208,7 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
 });
 
 module.exports = {
-  stats,
+  api: functions.https.onRequest(app),
   generateThumbnail,
   updateStats
 };
