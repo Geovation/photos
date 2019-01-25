@@ -19,7 +19,8 @@
         "PHOTOLIBRARY_USAGE_DESCRIPTION": "Geovation needs photo library access to get the picture"
       },
       "cordova-plugin-splashscreen": {},
-      "cordova-plugin-statusbar": {}
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-google-analytics": {}
     }
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "cordova-ios": "^4.5.5",
     "cordova-plugin-camera": "^4.0.3",
     "cordova-plugin-geolocation": "^4.0.1",
+    "cordova-plugin-google-analytics": "^1.8.6",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
     "cordova-plugin-whitelist": "^1.3.3"

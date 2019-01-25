@@ -1,5 +1,5 @@
 import firebase from "firebase/app";
-import gtag from './gtag.js';
+import { gtagEvent,gtagSetId } from './gtag.js';
 
 import User from "./types/User";
 import dbFirebase from "./dbFirebase";
@@ -15,13 +15,8 @@ const onAuthStateChanged = (fn) => {
   const firebaseStatusChange = async (user) => {
     currentUser = user;
     if (currentUser) {
-      gtag('set', {
-        'userId' : user.uid,
-      });
-      gtag('event', 'Logged in', {
-        'event_category' : 'User',
-        'event_label' : user.uid,
-      });
+      gtagSetId(user.uid)
+      gtagEvent('Logged in','User',user.uid)
 
       const fbUser = await dbFirebase.getUser(user.uid);
       const isModerator = fbUser ? fbUser.isModerator : false;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import loadImage from 'blueimp-load-image';
-import gtag from '../gtag.js';
+import { gtagEvent } from '../gtag.js';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -86,9 +86,7 @@ class PhotoPage extends Component {
   }
 
   sendFile = async () => {
-    gtag('event', 'Upload', {
-      'event_category' : 'Photo',
-    });
+    gtagEvent('Upload', 'Photo');
     if (!this.props.location.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
     } else if (!this.props.online) {
@@ -137,9 +135,7 @@ class PhotoPage extends Component {
   }
 
   retakePhoto = () => {
-    gtag('event', 'Retake Photo', {
-      'event_category' : 'Photo',
-    });
+    gtagEvent('Retake Photo', 'Photo');
     this.resetState();
     this.props.handlePhotoClick();
   }
@@ -150,9 +146,7 @@ class PhotoPage extends Component {
   };
 
   handleCloseButton = () => {
-    gtag('event', 'Postpone upload', {
-      'event_category' : 'Photo',
-    });
+    gtagEvent('Postpone upload', 'Photo');
     this.changeStatusBarColorToDefault();
     this.handleClosePhotoPage();
   };
