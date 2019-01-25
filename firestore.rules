@@ -49,7 +49,7 @@ service cloud.firestore {
 
     // Collection with system data. The Doc stats contains statistics.
     match /sys/stats {
-      allow read: true;
+      allow read: if true;
     }
   }
 }
