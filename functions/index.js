@@ -52,7 +52,7 @@ async function pubIfNecessary(doc) {
     recalculate = age > DB_CACHE_AGE_MS;
     console.info(`States is ${age / 1000 / 60 / 60 } hours old`);
   } catch(e) {
-    console.error("states is corrupted. It will be re calculated: ", e)
+    console.error("states is corrupted. It will be re calculated: ", e);
   }
 
   if (recalculate) {
