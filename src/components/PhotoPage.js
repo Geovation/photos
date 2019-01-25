@@ -109,7 +109,7 @@ class PhotoPage extends Component {
         try {
           const res = await dbFirebase.uploadPhoto(data);
           console.log(res);
-          this.openDialog("Photo was uploaded successfully", this.handleClosePhotoPage);
+          this.openDialog("Photo was uploaded successfully. It will be reviewed by our moderation team.", this.handleClosePhotoPage);
         } catch (e) {
           this.openDialog(e.message || e);
         }
