@@ -139,7 +139,7 @@ const generateThumbnail = functions.storage.object().onFinalize(async (object) =
   return console.info(`Photos are public now`);
 });
 
-app.get('/stats', async (req, res) => {
+app.get('/api/stats', async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(403).send('Forbidden!');
   }
