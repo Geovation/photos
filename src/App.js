@@ -283,6 +283,7 @@ class App extends Component {
               visible={[PAGES.map.path, PAGES.embeddable.path].includes(this.props.history.location.pathname)}
               welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === PAGES.embeddable.path}
               photos={this.state.photos}
+              user={this.state.user}
           />
 
           <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}

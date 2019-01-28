@@ -22,7 +22,7 @@ service cloud.firestore {
       // allow create: if request.auth.uid != null;
 			allow create: if true;
 
-      allow update: if isModerator() && resource.data.moderated == null;
+      allow update: if isModerator();
 
       // allow update: if resource.data.owner_id == request.auth.uid && resource.data.moderated=null
 
