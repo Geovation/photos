@@ -92,12 +92,12 @@ const generateThumbnail = functions.storage.object().onFinalize(async (object) =
 
   // Exit if this is triggered on a file that is not an image.
   if (!contentType.startsWith('image/')) {
-    return console.error('This is not an image.', filePath);
+    return console.info('This is not an image.', filePath);
   }
 
   // Exit if the image is already a thumbnail.
   if (fileName !== "original.jpg") {
-    return console.error("I won't create a thumbnail for ",filePath);
+    return console.info(`I won't create a thumbnail for ${filePath} as it is not called "original.jpg"`);
   }
 
   // Cloud Storage files.
