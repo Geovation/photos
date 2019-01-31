@@ -269,7 +269,7 @@ class Map extends Component {
   };
 
   rejectPhoto = () => {
-    dbFirebase.rejectPhoto(this.state.feature.properties.id);
+    dbFirebase.rejectPhoto(this.state.feature.properties.id,this.props.user ? this.props.user.id : null);
     this.handleConfirmDialogClose();
     this.handleDialogClose();
   }

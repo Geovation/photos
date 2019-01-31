@@ -103,17 +103,19 @@ function onPhotosToModerate(fn) {
   });
 }
 
-async function rejectPhoto(photoId) {
+async function rejectPhoto(photoId,userId) {
   return await firestore.collection('photos').doc(photoId).update({
     moderated: firebase.firestore.FieldValue.serverTimestamp(),
-    published: false
+    published: false,
+    moderator_id: userId
   });
 }
 
-async function approvePhoto(photoId) {
+async function approvePhoto(photoId,userId) {
   return await firestore.collection('photos').doc(photoId).update({
     moderated: firebase.firestore.FieldValue.serverTimestamp(),
-    published: true
+    published: true,
+    moderator_id: userId
   });
 }
 
