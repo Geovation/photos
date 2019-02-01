@@ -128,13 +128,10 @@ class PhotoPage extends Component {
       this.openDialog("No picture is selected. Please choose a picture.");
     } else {
 
-      let data = {};
-      const location = Object.assign({}, this.props.location, photoLocation);
-      data.base64 = this.state.imgSrc.split(",")[1];
+      const data = Object.assign({}, this.props.location, photoLocation, { base64: this.state.imgSrc.split(",")[1]});
 
       if (this.state.field !== '') {
-
-        Object.assign(data, location, { field: this.state.field });
+        data.field = this.state.field;
         this.setState({ sending: true });
 
         try {
