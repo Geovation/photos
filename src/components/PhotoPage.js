@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-
 import loadImage from 'blueimp-load-image';
-import { gtagEvent } from '../gtag.js';
+import dms2dec from 'dms2dec';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -17,6 +16,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
+import { gtagEvent } from '../gtag.js';
 import './PhotoPage.scss';
 import dbFirebase from '../dbFirebase';
 import { isIphoneWithNotchAndCordova } from '../utils'
@@ -87,9 +87,40 @@ class PhotoPage extends Component {
     this.dialogCloseCallback ? this.dialogCloseCallback() : this.setState({ open: false });
   }
 
+  /**
+   * Given an exif object, return the coordinates {latitude, longitude} or undefined if an error occurs
+   */
+  exifGpsToLocation = exif => {
+
+    let location = undefined;
+
+    try {
+      // https://www.npmjs.com/package/dms2dec
+      const lat = this.state.imgExif.GPSLatitude.split(",").map(Number);
+      const latRef = this.state.imgExif.GPSLatitudeRef;
+      const lon = this.state.imgExif.GPSLongitude.split(",").map(Number);
+      const lonRef = this.state.imgExif.GPSLongitudeRef;
+
+      const latLon = dms2dec(lat, latRef, lon, lonRef);
+      location = {
+        latitude: latLon[0],
+        longitude: latLon[1]
+      };
+
+    } catch (e) {
+      console.debug(`Error extracting GPS from file; ${e}`);
+    }
+
+    return location;
+  }
+
   sendFile = async () => {
     gtagEvent('Upload', 'Photo');
-    if (!this.props.location.online) {
+
+    // try getting the location from the photo first
+    let photoLocation = this.exifGpsToLocation(this.state.imgExif);
+
+    if (!photoLocation && !this.props.location.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
     } else if (!this.props.online) {
       this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
@@ -98,16 +129,14 @@ class PhotoPage extends Component {
     } else {
 
       let data = {};
-      const { location } = this.props;
+      const location = Object.assign({}, this.props.location, photoLocation);
       data.base64 = this.state.imgSrc.split(",")[1];
 
       if (this.state.field !== '') {
-        data.field = this.state.field;
-        if (location) {
-          data.latitude = location.latitude;
-          data.longitude = location.longitude;
-        }
+
+        Object.assign(data, location, { field: this.state.field });
         this.setState({ sending: true });
+
         try {
           const res = await dbFirebase.uploadPhoto(data);
           console.log(res);
