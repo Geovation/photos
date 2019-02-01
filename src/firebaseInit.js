@@ -20,8 +20,6 @@ function isInIframe () {
   }
 }
 
-firestore.settings({ timestampsInSnapshots: true });
-
 // iFrames may break things for security policies. We found it happens at least in safari.
 // more info in https://firebase.google.com/docs/firestore/manage-data/enable-offline
 if (!isInIframe()) {

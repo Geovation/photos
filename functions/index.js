@@ -23,7 +23,6 @@ const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
 
 admin.initializeApp();
 const firestore = admin.firestore();
-firestore.settings({ timestampsInSnapshots: true });
 const pubsub = new PubSub();
 const app = express();
 app.use(cors);
