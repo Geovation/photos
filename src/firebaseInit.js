@@ -1,5 +1,5 @@
 // see https://firebase.google.com/docs/web/setup
-import firebase from 'firebase/app';
+import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/firestore';
@@ -9,7 +9,7 @@ import 'firebase/storage';
 
 import config from './custom/config'
 // Initialize Firebase
-const firebaseApp = firebase.initializeApp(config.FIREBASE);
+const firebaseApp = !firebase.apps.length ? firebase.initializeApp(config.FIREBASE) : firebase.app();
 const firestore = firebase.firestore();
 
 function isInIframe () {
