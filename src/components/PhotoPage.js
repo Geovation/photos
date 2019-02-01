@@ -23,6 +23,8 @@ import { isIphoneWithNotchAndCordova } from '../utils'
 
 const emptyState = {
   imgSrc: null,
+  imgExif: null,
+  imgIptc: null,
   open: false,
   message: '',
   field: '',
@@ -121,10 +123,25 @@ class PhotoPage extends Component {
   }
 
   loadImage = () => {
+    let imgExif = null;
+    let imgIptc = null;
+
+    // https://github.com/blueimp/JavaScript-Load-Image#meta-data-parsing
+    loadImage.parseMetaData(
+      this.props.file, data => {
+        imgExif = data.exif ? data.exif.getAll() : imgExif;
+        imgIptc = data.iptc ? data.iptc.getAll() : imgIptc;
+      },
+      {
+        maxMetaDataSize: 262144,
+        disableImageHead: false
+      }
+    );
+
     loadImage(
       this.props.file, (img) =>{
         const imgSrc = img.toDataURL("image/jpeg");
-        this.setState({imgSrc});
+        this.setState({imgSrc, imgExif, imgIptc});
       },
       {
         orientation: true,
