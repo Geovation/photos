@@ -13,6 +13,13 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import CardActions from '@material-ui/core/CardActions';
+import IconButton from '@material-ui/core/IconButton';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
+import dbFirebase from '../dbFirebase';
 
 import './Map.scss';
 import config from "../custom/config";
@@ -47,7 +54,10 @@ class Map extends Component {
         geometry: {
           coordinates:{}
         }
-      }
+      },
+      confirmDialogOpen: false,
+      confirmDialogTitle: '',
+      confirmDialogHandleOk: null,
     }
     this.prevZoom = ZOOM;
     this.prevZoomTime = new Date().getTime();
@@ -195,7 +205,7 @@ class Map extends Component {
   }
 
   handleDialogClose = () => {
-    this.setState({openDialog:false});
+    this.setState({ openDialog: false });
   }
 
   updateRenderedThumbails = (visibleFeatures) =>{
@@ -217,7 +227,7 @@ class Map extends Component {
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
           gtagEvent('Photo Opened', 'Map', feature.properties.id);
-          this.setState({openDialog:true,feature})
+          this.setState({ openDialog: true, feature });
         });
         //create marker
         const marker = new mapboxgl.Marker(el)
@@ -242,6 +252,32 @@ class Map extends Component {
     return "-";
   }
 
+  handleRejectClick = () => {
+    this.setState({
+      confirmDialogOpen: true ,
+      confirmDialogTitle: `Are you sure you want to reject the photo ?`,
+      confirmDialogHandleOk: this.rejectPhoto
+    });
+  };
+
+  handleApproveClick = () => {
+    this.setState({
+      confirmDialogOpen: true ,
+      confirmDialogTitle: `Are you sure you want to approve the photo ?`,
+      confirmDialogHandleOk: this.approvePhoto
+    });
+  };
+
+  rejectPhoto = () => {
+    dbFirebase.rejectPhoto(this.state.feature.properties.id,this.props.user ? this.props.user.id : null);
+    this.handleConfirmDialogClose();
+    this.handleDialogClose();
+  }
+
+  handleConfirmDialogClose = () => {
+    this.setState({ confirmDialogOpen: false });
+  }
+
   render() {
     const { location, welcomeShown, classes } = this.props;
     const feature = this.state.feature;
@@ -257,6 +293,17 @@ class Map extends Component {
             </Fab>
           }
 
+          <Dialog open={this.state.confirmDialogOpen} onClose={this.handleConfirmDialogClose}>
+            <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
+            <DialogActions>
+              <Button onClick={this.handleConfirmDialogClose} color='secondary'>
+                Cancel
+              </Button>
+              <Button onClick={this.state.confirmDialogHandleOk} color='secondary'>
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
           <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
             <DialogContent>
               <img onError={(e) => { e.target.src=placeholderImage}} className={"main-image"} alt={''} src={feature.properties.main}/>
@@ -272,6 +319,13 @@ class Map extends Component {
 
                   </CardContent>
                 </CardActionArea>
+                {this.props.user && this.props.user.isModerator &&
+                  <CardActions>
+                    <IconButton aria-label='Reject' onClick={this.handleRejectClick}>
+                      <ThumbDownIcon />
+                    </IconButton>
+                  </CardActions>
+                }
               </Card>
 
             </DialogContent>

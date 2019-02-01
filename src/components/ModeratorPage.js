@@ -85,13 +85,13 @@ class ModeratorPage extends Component {
   };
 
   handleRejectDialogOk = (id) => () => {
-    dbFirebase.rejectPhoto(id);
+    dbFirebase.rejectPhoto(id,this.props.user.id);
     this.setState({confirmDialogOpen: false});
     this.handleZoomDialogClose();
   };
 
   handleApproveDialogOk = (id) => () => {
-    dbFirebase.approvePhoto(id);
+    dbFirebase.approvePhoto(id,this.props.user.id);
     this.setState({confirmDialogOpen: false});
     this.handleZoomDialogClose();
   };

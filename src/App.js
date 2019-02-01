@@ -240,7 +240,7 @@ class App extends Component {
 
               { this.state.user && this.state.user.isModerator &&
                 <Route path={PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage {...props} handleClose={this.goToMap} />}
+                  <ModeratorPage {...props} handleClose={this.goToMap} user={this.state.user} />}
                 />
               }
 
@@ -283,6 +283,7 @@ class App extends Component {
               visible={[PAGES.map.path, PAGES.embeddable.path].includes(this.props.history.location.pathname)}
               welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === PAGES.embeddable.path}
               photos={this.state.photos}
+              user={this.state.user}
           />
 
           <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}
