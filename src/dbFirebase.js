@@ -1,4 +1,6 @@
 import firebase from 'firebase/app';
+import * as _ from 'lodash'
+
 import firebaseApp from './firebaseInit.js';
 import config from "./custom/config";
 import enums from './types/enums';
@@ -8,7 +10,18 @@ const storageRef = firebase.storage().ref();
 
 function extractPhoto(doc) {
   const prefix = `https://storage.googleapis.com/${storageRef.location.bucket}/photos/${doc.id}`;
-  const photo = doc.data();
+
+  // some data from Firebase cannot be stringified into json, so we need to convert it into other format first.
+  const photo = _.mapValues(doc.data(), (fieldValue, fieldKey, doc) => {
+    switch (fieldValue && fieldValue.constructor.name) {
+      case "DocumentReference":
+        return fieldValue.path;
+
+      default:
+        return fieldValue
+    }}
+  );
+
   photo.thumbnail = `${prefix}/thumbnail.jpg`;
   photo.main = `${prefix}/1024.jpg`;
   photo.id = doc.id;

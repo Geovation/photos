@@ -33,7 +33,7 @@ async function addMetaDataSync(id) {
     location: location,
     description: `${id} some text here`,
     moderated: moderated ? admin.firestore.FieldValue.serverTimestamp() : null,
-    published: moderated 
+    published: moderated
   };
 
   console.log(`Adding ${id} with data:`, data);
@@ -55,8 +55,6 @@ async function run(num) {
   });
   bucket = admin.storage().bucket();
   db = admin.firestore();
-  const settings = {timestampsInSnapshots: true};
-  db.settings(settings);
 
   image = await Jimp.read(fileNameGeovation);
   font = await Jimp.loadFont(Jimp.FONT_SANS_128_BLACK);
