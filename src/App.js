@@ -228,19 +228,19 @@ class App extends Component {
               {config.CUSTOM_PAGES.map( (CustomPage,index) => (
                 !!CustomPage.page &&
                   <Route key={index} path={CustomPage.path}
-                    render={(props) => <CustomPage.page {...props} handleClose={this.goToMap}/>}
+                    render={(props) => <CustomPage.page {...props} handleClose={this.goToMap} label={CustomPage.label}/>}
                   />
               ))}
               <Route path={PAGES.about.path} render={(props) =>
-                <AboutPage {...props} handleClose={this.goToMap} />}
+                <AboutPage label={PAGES.about.label} {...props} handleClose={this.goToMap} />}
               />
               <Route path={PAGES.tutorial.path} render={(props) =>
-                <TutorialPage {...props} handleClose={this.handleWelcomePageClose} />}
+                <TutorialPage label={PAGES.tutorial.label} {...props} handleClose={this.handleWelcomePageClose} />}
               />
 
               { this.state.user && this.state.user.isModerator &&
                 <Route path={PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage {...props} handleClose={this.goToMap} user={this.state.user} />}
+                  <ModeratorPage label={PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
                 />
               }
 
@@ -251,6 +251,7 @@ class App extends Component {
                            online={this.state.online}
                            handlePhotoClick={this.handlePhotoClick}
                            handleClose={this.goToMap}
+                           label={PAGES.photos.label}
                 />}
               />
 
@@ -259,6 +260,7 @@ class App extends Component {
                   <ProfilePage {...props}
                                user={this.state.user}
                                handleClose={this.goToMap}
+                               label={PAGES.about.label}
                   />}
                 />
               }
@@ -269,6 +271,7 @@ class App extends Component {
                                     location={this.state.location}
                                     online={this.state.online}
                                     handleClose={this.goToMap}
+                                    label={PAGES.writeFeedback.label}
                  />}
                />
 
@@ -276,7 +279,7 @@ class App extends Component {
           }
 
           { !this.state.welcomeShown && this.props.history.location.pathname !== PAGES.embeddable.path &&
-            <TutorialPage {...this.props} handleClose={this.handleWelcomePageClose}/>
+            <TutorialPage label={PAGES.tutorial.label} {...this.props} handleClose={this.handleWelcomePageClose}/>
           }
 
           <Map location={this.state.location}

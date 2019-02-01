@@ -11,15 +11,14 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
 import './PhotoPage.scss';
 import dbFirebase from '../dbFirebase';
 import { isIphoneWithNotchAndCordova } from '../utils'
+
+import PageWrapper from './PageWrapper';
 
 const emptyState = {
   imgSrc: null,
@@ -147,26 +146,10 @@ class PhotoPage extends Component {
 
   handleCloseButton = () => {
     gtagEvent('Postpone upload', 'Photo');
-    this.changeStatusBarColorToDefault();
     this.handleClosePhotoPage();
   };
 
-  changeStatusBarColorToDefault = () => {
-    const palette = this.props.theme.palette;
-    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
-      window.StatusBar.styleDefault();
-    }
-  }
-
-  changeStatusBarColorToLight = () => {
-    const palette = this.props.theme.palette;
-    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
-      window.StatusBar.styleLightContent();
-    }
-  }
-
   componentDidMount() {
-    this.changeStatusBarColorToLight();
     this.loadImage();
   }
 
@@ -177,93 +160,78 @@ class PhotoPage extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-
+    const { classes, label } = this.props;
     return (
-       <div className='geovation-photos'>
-         <AppBar position="static" className={classes.notchTop}>
-          <Toolbar>
-            <Typography variant="h6" color="inherit">
-              Photo Submission
-            </Typography>
-            <div className='close-icon'>
-              <CloseIcon onClick={this.handleCloseButton}/>
-            </div>
-            </Toolbar>
-          </AppBar>
+      <PageWrapper label={label} handleClose={this.props.handleClose}>
+        <div className='text-field-wrapper'>
+          <Typography className='typography1'>
+            {config.PHOTO_FIELD.title}
+          </Typography>
 
-          <div className='text-field-wrapper'>
-            <Typography className='typography1'>
-              {config.PHOTO_FIELD.title}
-            </Typography>
-
-            <TextField
-              id="standard-name"
-              type={config.PHOTO_FIELD.type}
-              required={true}
-              placeholder={config.PHOTO_FIELD.placeholder}
-              className='text-field'
-              value={this.state.field}
-              onChange={this.handleChange}
-              error= {this.state.error}
-              InputProps={Object.assign({
-                className: classes.cssUnderline
-              }, config.PHOTO_FIELD.inputProps)}
-            />
-
-          </div>
-
-          <div className='picture'>
-           <img src={this.state.imgSrc} alt={""}/>
-          </div>
-
-          <div className={classes.button}>
-            <Button variant="outlined" fullWidth={true} onClick={this.retakePhoto}>
-              Retake
-            </Button>
-          </div>
-
-          <div className={classes.button}>
-            <Button disabled={this.state.error}
-              variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
-              Upload
-            </Button>
-          </div>
-
-          <div className={classes.notchBottom}/>
-
-          <Dialog
-            open={this.state.open}
-            onClose={this.closeDialog}
-            aria-labelledby='alert-dialog-title'
-            aria-describedby='alert-dialog-description'
-          >
-            <DialogContent>
-              <DialogContentText id='alert-dialog-description'>
-                {this.state.message}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.closeDialog} color='secondary'>
-                Ok
-              </Button>
-            </DialogActions>
-          </Dialog>
-
-          <Dialog open={this.state.sending}>
-            <DialogContent>
-              <DialogContentText id="loading-dialog-text">
-                Be patient ;)
-              </DialogContentText>
-              <CircularProgress
-              className={classes.progress}
-               color='secondary'
-               size={50}
-               thickness={6}/>
-            </DialogContent>
-          </Dialog>
+          <TextField
+            id="standard-name"
+            type={config.PHOTO_FIELD.type}
+            required={true}
+            placeholder={config.PHOTO_FIELD.placeholder}
+            className='text-field'
+            value={this.state.field}
+            onChange={this.handleChange}
+            error= {this.state.error}
+            InputProps={Object.assign({
+              className: classes.cssUnderline
+            }, config.PHOTO_FIELD.inputProps)}
+          />
 
         </div>
+
+        <div className='picture'>
+         <img src={this.state.imgSrc} alt={""}/>
+        </div>
+
+        <div className={classes.button}>
+          <Button variant="outlined" fullWidth={true} onClick={this.retakePhoto}>
+            Retake
+          </Button>
+        </div>
+
+        <div className={classes.button}>
+          <Button disabled={this.state.error}
+            variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
+            Upload
+          </Button>
+        </div>
+
+        <Dialog
+          open={this.state.open}
+          onClose={this.closeDialog}
+          aria-labelledby='alert-dialog-title'
+          aria-describedby='alert-dialog-description'
+        >
+          <DialogContent>
+            <DialogContentText id='alert-dialog-description'>
+              {this.state.message}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.closeDialog} color='secondary'>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={this.state.sending}>
+          <DialogContent>
+            <DialogContentText id="loading-dialog-text">
+              Be patient ;)
+            </DialogContentText>
+            <CircularProgress
+            className={classes.progress}
+             color='secondary'
+             size={50}
+             thickness={6}/>
+          </DialogContent>
+        </Dialog>
+      </PageWrapper>
     );
   }
 }
