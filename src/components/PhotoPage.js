@@ -90,7 +90,7 @@ class PhotoPage extends Component {
   /**
    * Given an exif object, return the coordinates {latitude, longitude} or undefined if an error occurs
    */
-  exifGpsToLocation = exif => {
+  getLocationFromExifMetadata = exif => {
 
     let location = undefined;
 
@@ -118,7 +118,7 @@ class PhotoPage extends Component {
     gtagEvent('Upload', 'Photo');
 
     // try getting the location from the photo first
-    const photoLocation = this.exifGpsToLocation(this.state.imgExif);
+    const photoLocation = this.getLocationFromExifMetadata(this.state.imgExif);
 
     if (!photoLocation && !this.props.location.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
