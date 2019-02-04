@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import loadImage from 'blueimp-load-image';
 import dms2dec from 'dms2dec';
 
@@ -120,7 +121,7 @@ class PhotoPage extends Component {
     // try getting the location from the photo first
     const photoLocation = this.getLocationFromExifMetadata(this.state.imgExif);
 
-    if (!photoLocation && !this.props.location.online) {
+    if (!photoLocation && !this.props.gpsLocation.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
     } else if (!this.props.online) {
       this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
@@ -128,7 +129,7 @@ class PhotoPage extends Component {
       this.openDialog("No picture is selected. Please choose a picture.");
     } else {
 
-      const data = Object.assign({}, this.props.location, photoLocation, { base64: this.state.imgSrc.split(",")[1]});
+      const data = Object.assign({}, this.props.gpsLocation, photoLocation, { base64: this.state.imgSrc.split(",")[1]});
 
       if (this.state.field !== '') {
         data.field = this.state.field;
@@ -310,5 +311,13 @@ class PhotoPage extends Component {
     );
   }
 }
+
+PhotoPage.propTypes = {
+  gpsLocation: PropTypes.object.isRequired,
+  online: PropTypes.bool.isRequired,
+  file: PropTypes.object,
+  handleClose: PropTypes.func.isRequired,
+  handlePhotoClick: PropTypes.func.isRequired
+};
 
 export default withStyles(styles, { withTheme: true })(PhotoPage);
