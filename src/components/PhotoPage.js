@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-
+import PropTypes from 'prop-types';
 import loadImage from 'blueimp-load-image';
-import { gtagEvent } from '../gtag.js';
+import dms2dec from 'dms2dec';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -17,12 +17,15 @@ import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
+import { gtagEvent } from '../gtag.js';
 import './PhotoPage.scss';
 import dbFirebase from '../dbFirebase';
 import { isIphoneWithNotchAndCordova } from '../utils'
 
 const emptyState = {
   imgSrc: null,
+  imgExif: null,
+  imgIptc: null,
   open: false,
   message: '',
   field: '',
@@ -85,9 +88,40 @@ class PhotoPage extends Component {
     this.dialogCloseCallback ? this.dialogCloseCallback() : this.setState({ open: false });
   }
 
+  /**
+   * Given an exif object, return the coordinates {latitude, longitude} or undefined if an error occurs
+   */
+  getLocationFromExifMetadata = exif => {
+
+    let location = undefined;
+
+    try {
+      // https://www.npmjs.com/package/dms2dec
+      const lat = this.state.imgExif.GPSLatitude.split(",").map(Number);
+      const latRef = this.state.imgExif.GPSLatitudeRef;
+      const lon = this.state.imgExif.GPSLongitude.split(",").map(Number);
+      const lonRef = this.state.imgExif.GPSLongitudeRef;
+
+      const latLon = dms2dec(lat, latRef, lon, lonRef);
+      location = {
+        latitude: latLon[0],
+        longitude: latLon[1]
+      };
+
+    } catch (e) {
+      console.debug(`Error extracting GPS from file; ${e}`);
+    }
+
+    return location;
+  }
+
   sendFile = async () => {
     gtagEvent('Upload', 'Photo');
-    if (!this.props.location.online) {
+
+    // try getting the location from the photo first
+    const photoLocation = this.getLocationFromExifMetadata(this.state.imgExif);
+
+    if (!photoLocation && !this.props.gpsLocation.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
     } else if (!this.props.online) {
       this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
@@ -95,17 +129,16 @@ class PhotoPage extends Component {
       this.openDialog("No picture is selected. Please choose a picture.");
     } else {
 
-      let data = {};
-      const { location } = this.props;
-      data.base64 = this.state.imgSrc.split(",")[1];
+      const data = {
+        ...this.props.gpsLocation,
+        ...photoLocation,
+        base64: this.state.imgSrc.split(",")[1]
+      };
 
       if (this.state.field !== '') {
         data.field = this.state.field;
-        if (location) {
-          data.latitude = location.latitude;
-          data.longitude = location.longitude;
-        }
         this.setState({ sending: true });
+
         try {
           const res = await dbFirebase.uploadPhoto(data);
           console.log(res);
@@ -121,10 +154,25 @@ class PhotoPage extends Component {
   }
 
   loadImage = () => {
+    let imgExif = null;
+    let imgIptc = null;
+
+    // https://github.com/blueimp/JavaScript-Load-Image#meta-data-parsing
+    loadImage.parseMetaData(
+      this.props.file, data => {
+        imgExif = data.exif ? data.exif.getAll() : imgExif;
+        imgIptc = data.iptc ? data.iptc.getAll() : imgIptc;
+      },
+      {
+        maxMetaDataSize: 262144,
+        disableImageHead: false
+      }
+    );
+
     loadImage(
       this.props.file, (img) =>{
         const imgSrc = img.toDataURL("image/jpeg");
-        this.setState({imgSrc});
+        this.setState({imgSrc, imgExif, imgIptc});
       },
       {
         orientation: true,
@@ -267,5 +315,13 @@ class PhotoPage extends Component {
     );
   }
 }
+
+PhotoPage.propTypes = {
+  gpsLocation: PropTypes.object.isRequired,
+  online: PropTypes.bool.isRequired,
+  file: PropTypes.object,
+  handleClose: PropTypes.func.isRequired,
+  handlePhotoClick: PropTypes.func.isRequired
+};
 
 export default withStyles(styles, { withTheme: true })(PhotoPage);

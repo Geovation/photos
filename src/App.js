@@ -247,7 +247,7 @@ class App extends Component {
               <Route path={PAGES.photos.path} render={(props) =>
                 <PhotoPage {...props}
                            file={this.state.file}
-                           location={this.state.location}
+                           gpsLocation={this.state.location}
                            online={this.state.online}
                            handlePhotoClick={this.handlePhotoClick}
                            handleClose={this.goToMap}
