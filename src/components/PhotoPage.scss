@@ -1,40 +1,38 @@
-.close-icon {
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-}
+.geovation-photos {
 
-.text-field-wrapper {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  margin: 15px;
+  .text-field-wrapper {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin: 15px;
 
-  .typography1 {
-    margin-bottom: 5px;
-    margin-right: 5px;
+    .typography1 {
+      margin-bottom: 5px;
+      margin-right: 5px;
+    }
+
+    .text-field {
+      max-width: 100px;
+    }
+
+    .typography2 {
+      margin-bottom: 5px;
+      margin-left: 5px;
+    }
   }
 
-  .text-field {
-    max-width: 100px;
+  .picture {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0 15px 0 15px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+    }
   }
 
-  .typography2 {
-    margin-bottom: 5px;
-    margin-left: 5px;
-  }
-}
-
-.picture {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin: 0 15px 0 15px;
-
-  img {
-    max-width: 100%;
-    max-height: 100%;
-  }
 }

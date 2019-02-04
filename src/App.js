@@ -18,6 +18,7 @@ import dbFirebase from './dbFirebase';
 import Login from './components/Login';
 import AboutPage from './components/AboutPage';
 import TutorialPage from './components/TutorialPage';
+import WelcomePage from './components/WelcomePage';
 import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 
@@ -235,7 +236,7 @@ class App extends Component {
                 <AboutPage label={PAGES.about.label} {...props} handleClose={this.goToMap} />}
               />
               <Route path={PAGES.tutorial.path} render={(props) =>
-                <TutorialPage label={PAGES.tutorial.label} {...props} handleClose={this.handleWelcomePageClose} />}
+                <TutorialPage label={PAGES.tutorial.label} {...props} handleClose={this.goToMap} />}
               />
 
               { this.state.user && this.state.user.isModerator &&
@@ -279,7 +280,7 @@ class App extends Component {
           }
 
           { !this.state.welcomeShown && this.props.history.location.pathname !== PAGES.embeddable.path &&
-            <TutorialPage label={PAGES.tutorial.label} {...this.props} handleClose={this.handleWelcomePageClose}/>
+            <WelcomePage label={PAGES.tutorial.label} {...this.props} handleClose={this.handleWelcomePageClose}/>
           }
 
           <Map location={this.state.location}
