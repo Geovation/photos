@@ -118,7 +118,7 @@ class PhotoPage extends Component {
     gtagEvent('Upload', 'Photo');
 
     // try getting the location from the photo first
-    let photoLocation = this.exifGpsToLocation(this.state.imgExif);
+    const photoLocation = this.exifGpsToLocation(this.state.imgExif);
 
     if (!photoLocation && !this.props.location.online) {
       this.openDialog("Could not get the location yet. You won't be able to upload an image.");
