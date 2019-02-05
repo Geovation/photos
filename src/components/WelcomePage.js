@@ -65,7 +65,7 @@ const tutorialSteps = {
   }
 };
 
-class PageWrapper extends React.Component {
+class WelcomePage extends React.Component {
   render() {
     const { classes, handleClose } = this.props;
     return (
@@ -103,4 +103,4 @@ class PageWrapper extends React.Component {
   }
 }
 
-export default withStyles(styles)(PageWrapper);
+export default withStyles(styles)(WelcomePage);

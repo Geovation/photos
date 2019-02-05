@@ -280,7 +280,7 @@ class App extends Component {
           }
 
           { !this.state.welcomeShown && this.props.history.location.pathname !== PAGES.embeddable.path &&
-            <WelcomePage label={PAGES.tutorial.label} {...this.props} handleClose={this.handleWelcomePageClose}/>
+            <WelcomePage handleClose={this.handleWelcomePageClose}/>
           }
 
           <Map location={this.state.location}

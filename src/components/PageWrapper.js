@@ -86,8 +86,8 @@ class PageWrapper extends React.Component {
               </div>
             </Toolbar>
           </AppBar>
+          {hasLogo && <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>}
           <div className={classes.main}>
-            {hasLogo && <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>}
             {children}
           </div>
 
