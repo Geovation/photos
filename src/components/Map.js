@@ -58,6 +58,7 @@ class Map extends Component {
       confirmDialogOpen: false,
       confirmDialogTitle: '',
       confirmDialogHandleOk: null,
+      geojson: null,
     }
     this.prevZoom = ZOOM;
     this.prevZoomTime = new Date().getTime();
@@ -84,6 +85,7 @@ class Map extends Component {
 
     this.map.on('load', async () => {
       const geojson = await this.props.photos;
+      this.setState({geojson})
       this.addFeaturesToMap(geojson);
     });
   }
@@ -239,11 +241,16 @@ class Map extends Component {
     });
   }
 
+  componentDidUpdate(prevProps,prevState){
+
+  }
+
   componentWillUnmount() {
     if (this.map.remove) { this.map.remove(); }
   }
 
   formatField(value, fieldName) {
+    // console.log('value',value,'fieldName',fieldName,'feature',this.state.feature,Object.keys(this.renderedThumbnails),'photos',this.state.photos);
     const formater = config.PHOTO_ZOOMED_FIELDS[fieldName];
     if (value) {
       return formater(value);
@@ -255,21 +262,42 @@ class Map extends Component {
   handleRejectClick = () => {
     this.setState({
       confirmDialogOpen: true ,
-      confirmDialogTitle: `Are you sure you want to reject the photo ?`,
+      confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
       confirmDialogHandleOk: this.rejectPhoto
     });
   };
 
-  handleApproveClick = () => {
-    this.setState({
-      confirmDialogOpen: true ,
-      confirmDialogTitle: `Are you sure you want to approve the photo ?`,
-      confirmDialogHandleOk: this.approvePhoto
-    });
-  };
-
   rejectPhoto = () => {
-    dbFirebase.rejectPhoto(this.state.feature.properties.id,this.props.user ? this.props.user.id : null);
+
+    //remove layers and source
+    // this.map.removeLayer('clusters');
+    // this.map.removeLayer('cluster-count');
+    // this.map.removeLayer('unclustered-point');
+    // this.map.removeSource("data")
+
+    // update state by removing selected element
+    const id = this.state.feature.properties.id;  // selected thumbnail id
+    const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
+    const geojson = {
+      "type": "FeatureCollection",
+      "features": updatedFeatures
+    };
+    this.setState({geojson});
+    this.map.getSource('data').setData(geojson);
+    // rerender items in the map
+    // this.addFeaturesToMap(geojson);
+
+    // unpublish photo in firestore
+    // dbFirebase.rejectPhoto(this.state.feature.properties.id,this.props.user ? this.props.user.id : null);
+
+    // remove thumbnail from the map
+    this.renderedThumbnails[id].remove();
+    delete this.renderedThumbnails[id];
+
+    // update localStorage
+    localStorage.setItem("cachedGeoJson",geojson);
+
+    // close dialogs
     this.handleConfirmDialogClose();
     this.handleDialogClose();
   }
