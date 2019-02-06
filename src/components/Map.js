@@ -262,30 +262,40 @@ class Map extends Component {
     });
   };
 
-  rejectPhoto = () => {
-    // update state by removing selected element
+  rejectPhoto = async () => {
     const id = this.state.feature.properties.id;  // selected thumbnail id
-    const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
-    const geojson = {
-      "type": "FeatureCollection",
-      "features": updatedFeatures
-    };
-    this.setState({ geojson });
-    this.map.getSource('data').setData(geojson);
-
-    // unpublish photo in firestore
-    dbFirebase.rejectPhoto(this.state.feature.properties.id,this.props.user ? this.props.user.id : null);
-
-    // remove thumbnail from the map
-    this.renderedThumbnails[id].remove();
-    delete this.renderedThumbnails[id];
-
-    // update localStorage
-    localStorage.setItem("cachedGeoJson", JSON.stringify(geojson));
 
     // close dialogs
     this.handleConfirmDialogClose();
     this.handleDialogClose();
+
+    // unpublish photo in firestore
+    try {
+      await dbFirebase.rejectPhoto(this.state.feature.properties.id, this.props.user ? this.props.user.id : null);
+
+      const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
+      const geojson = {
+        "type": "FeatureCollection",
+        "features": updatedFeatures
+      };
+      // update localStorage
+      localStorage.setItem("cachedGeoJson", JSON.stringify(geojson));
+
+      // remove thumbnail from the map
+      this.setState({ geojson }); //update state for next updatedFeatures
+      this.map.getSource('data').setData(geojson); //update source data
+
+      this.renderedThumbnails[id].remove();
+      delete this.renderedThumbnails[id];
+
+    } catch (e) {
+      this.setState({
+        confirmDialogOpen: true ,
+        confirmDialogTitle: `The photo wasn't deleted please try again, id:${id}`,
+        confirmDialogHandleOk: this.handleConfirmDialogClose
+      });
+    }
+
   }
 
   handleConfirmDialogClose = () => {
