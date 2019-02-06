@@ -13,9 +13,9 @@ const styles = theme => ({
 
 class AboutPage extends React.Component {
   render() {
-    const { classes } = this.props;
+    const { classes, label } = this.props;
     return (
-      <PageWrapper handleClickButton={this.props.handleClose} hasHeader={true}>
+      <PageWrapper label={label} handleClose={this.props.handleClose} hasLogo={true}>
         <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
           {config.customiseString('about', 'We are Geovation and we Geovate')}
           <br /><br /><br />

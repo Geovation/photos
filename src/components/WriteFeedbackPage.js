@@ -8,33 +8,15 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
 
 import config from '../custom/config';
 import dbFirebase from '../dbFirebase';
 import { device } from '../utils';
-import { isIphoneWithNotchAndCordova } from '../utils';
+
+import PageWrapper from './PageWrapper';
 
 const styles = theme => ({
-  container: {
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    height: '100%',
-    position:'fixed',
-    right:0,
-    left:0,
-    bottom:0,
-  },
-  closeIcon: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end'
-  },
   content: {
     height: '100%',
     overflow:'auto',
@@ -49,12 +31,6 @@ const styles = theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     margin: theme.spacing.unit * 1.5,
-  },
-  notchTop: {
-    paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
-  },
-  notchBottom: {
-    paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
   }
 });
 
@@ -103,8 +79,6 @@ class WriteFeedbackPage extends React.Component {
   }
 
   closeDialog = () => {
-    this.changeStatusBarColorToDefault();
-
     this.setState({ open: false });
 
     // if it is NOT error...
@@ -138,44 +112,11 @@ class WriteFeedbackPage extends React.Component {
     });
   }
 
-  handleClose = () => {
-    this.changeStatusBarColorToDefault();
-    this.props.handleClose();
-  }
-
-  changeStatusBarColorToDefault = () => {
-    const palette = this.props.theme.palette;
-    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
-      window.StatusBar.styleDefault();
-    }
-  }
-
-  changeStatusBarColorToLight = () => {
-    const palette = this.props.theme.palette;
-    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
-      window.StatusBar.styleLightContent();
-    }
-  }
-
-  componentDidMount(){
-    this.changeStatusBarColorToLight();
-  }
-
   render() {
-    const { classes } = this.props;
+    const { classes, label } = this.props;
 
     return (
-        <div className={classes.container}>
-          <AppBar position='static' className={classes.notchTop}>
-            <Toolbar>
-              <Typography variant='h6' color='inherit'>
-                Feedback
-              </Typography>
-              <div className={classes.closeIcon}>
-                <CloseIcon onClick={this.handleClose} />
-              </div>
-            </Toolbar>
-          </AppBar>
+      <PageWrapper label={label} handleClose={this.props.handleClose}>
           <div className={classes.content}>
             <TextField
               fullWidth
@@ -220,9 +161,6 @@ class WriteFeedbackPage extends React.Component {
             </Button>
           </div>
 
-          <div className={classes.notchBottom}/>
-
-
           <Dialog
             open={this.state.open}
             onClose={this.closeDialog}
@@ -254,9 +192,9 @@ class WriteFeedbackPage extends React.Component {
               />
             </DialogContent>
           </Dialog>
-        </div>
+        </PageWrapper>
     );
   }
 }
 
-export default withStyles(styles, { withTheme: true })(WriteFeedbackPage);
+export default withStyles(styles)(WriteFeedbackPage);

@@ -1,18 +1,4 @@
 .geovation-photos {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  height: 100%;
-  position:fixed;
-  right:0;
-  left:0;
-  bottom:0;
-
-  .close-icon {
-    display: flex;
-    flex: 1;
-    justify-content: flex-end;
-  }
 
   .text-field-wrapper {
     display: flex;
@@ -48,6 +34,5 @@
       max-height: 100%;
     }
   }
-
 
 }

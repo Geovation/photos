@@ -11,9 +11,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
@@ -21,6 +18,8 @@ import { gtagEvent } from '../gtag.js';
 import './PhotoPage.scss';
 import dbFirebase from '../dbFirebase';
 import { isIphoneWithNotchAndCordova } from '../utils'
+
+import PageWrapper from './PageWrapper';
 
 const emptyState = {
   imgSrc: null,
@@ -195,26 +194,10 @@ class PhotoPage extends Component {
 
   handleCloseButton = () => {
     gtagEvent('Postpone upload', 'Photo');
-    this.changeStatusBarColorToDefault();
     this.handleClosePhotoPage();
   };
 
-  changeStatusBarColorToDefault = () => {
-    const palette = this.props.theme.palette;
-    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
-      window.StatusBar.styleDefault();
-    }
-  }
-
-  changeStatusBarColorToLight = () => {
-    const palette = this.props.theme.palette;
-    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
-      window.StatusBar.styleLightContent();
-    }
-  }
-
   componentDidMount() {
-    this.changeStatusBarColorToLight();
     this.loadImage();
   }
 
@@ -225,21 +208,10 @@ class PhotoPage extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-
+    const { classes, label } = this.props;
     return (
-       <div className='geovation-photos'>
-         <AppBar position="static" className={classes.notchTop}>
-          <Toolbar>
-            <Typography variant="h6" color="inherit">
-              Photo Submission
-            </Typography>
-            <div className='close-icon'>
-              <CloseIcon onClick={this.handleCloseButton}/>
-            </div>
-            </Toolbar>
-          </AppBar>
-
+      <div className='geovation-photos'>
+        <PageWrapper label={label} handleClose={this.props.handleClose}>
           <div className='text-field-wrapper'>
             <Typography className='typography1'>
               {config.PHOTO_FIELD.title}
@@ -278,8 +250,6 @@ class PhotoPage extends Component {
             </Button>
           </div>
 
-          <div className={classes.notchBottom}/>
-
           <Dialog
             open={this.state.open}
             onClose={this.closeDialog}
@@ -310,8 +280,8 @@ class PhotoPage extends Component {
                thickness={6}/>
             </DialogContent>
           </Dialog>
-
-        </div>
+        </PageWrapper>
+      </div>
     );
   }
 }

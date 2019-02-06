@@ -30,8 +30,9 @@ const tutorialSteps = {
 
 class TutorialPage extends React.Component {
   render() {
+    const { handleClose, label } = this.props;
     return (
-      <PageWrapper handleClickButton={this.props.handleClose} hasHeader={true}>
+      <PageWrapper label={label} handleClose={handleClose} hasLogo={true}>
         <List dense className={'list'}>
           { Object.values(tutorialSteps).map((value, index) => (
             <div key={index}>

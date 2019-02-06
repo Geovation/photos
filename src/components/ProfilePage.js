@@ -18,9 +18,9 @@ const styles = {
 
 class Profile extends React.Component {
   render() {
-    const { user, classes } = this.props;
+    const { user, classes,label } = this.props;
     return (
-      <PageWrapper handleClickButton={this.props.handleClose} header={false}>
+      <PageWrapper label={label} handleClose={this.props.handleClose} header={false}>
         <div className={'profile-info'}>
           <Avatar className={classes.avatar} alt='profile-image' src={user.photoURL}/>
           <Typography gutterBottom variant='h5'>{user.displayName}</Typography>

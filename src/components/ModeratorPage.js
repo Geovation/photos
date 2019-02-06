@@ -120,10 +120,12 @@ class ModeratorPage extends Component {
   }
 
   render() {
+    const { label, photos, handleClose } = this.props;
+
     return (
-      <PageWrapper handleClickButton={this.props.handleClose} hasHeader={false}>
+      <PageWrapper label={label} handleClose={handleClose} hasHeader={false}>
         <List dense={false}>
-          {this.props.photos.map(photo => (
+          {photos.map(photo => (
             <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
               <Avatar
                imgProps={{ onError: (e) => { e.target.src=placeholderImage} }}
