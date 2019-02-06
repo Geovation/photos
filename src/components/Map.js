@@ -58,6 +58,7 @@ class Map extends Component {
       confirmDialogOpen: false,
       confirmDialogTitle: '',
       confirmDialogHandleOk: null,
+      geojson: null,
     }
     this.prevZoom = ZOOM;
     this.prevZoomTime = new Date().getTime();
@@ -84,6 +85,7 @@ class Map extends Component {
 
     this.map.on('load', async () => {
       const geojson = await this.props.photos;
+      this.setState({ geojson })
       this.addFeaturesToMap(geojson);
     });
   }
@@ -255,23 +257,45 @@ class Map extends Component {
   handleRejectClick = () => {
     this.setState({
       confirmDialogOpen: true ,
-      confirmDialogTitle: `Are you sure you want to reject the photo ?`,
+      confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
       confirmDialogHandleOk: this.rejectPhoto
     });
   };
 
-  handleApproveClick = () => {
-    this.setState({
-      confirmDialogOpen: true ,
-      confirmDialogTitle: `Are you sure you want to approve the photo ?`,
-      confirmDialogHandleOk: this.approvePhoto
-    });
-  };
+  rejectPhoto = async () => {
+    const id = this.state.feature.properties.id;  // selected thumbnail id
 
-  rejectPhoto = () => {
-    dbFirebase.rejectPhoto(this.state.feature.properties.id,this.props.user ? this.props.user.id : null);
+    // close dialogs
     this.handleConfirmDialogClose();
     this.handleDialogClose();
+
+    // unpublish photo in firestore
+    try {
+      await dbFirebase.rejectPhoto(this.state.feature.properties.id, this.props.user ? this.props.user.id : null);
+
+      const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
+      const geojson = {
+        "type": "FeatureCollection",
+        "features": updatedFeatures
+      };
+      // update localStorage
+      localStorage.setItem("cachedGeoJson", JSON.stringify(geojson));
+
+      // remove thumbnail from the map
+      this.setState({ geojson }); //update state for next updatedFeatures
+      this.map.getSource('data').setData(geojson); //update source data
+
+      this.renderedThumbnails[id].remove();
+      delete this.renderedThumbnails[id];
+
+    } catch (e) {
+      this.setState({
+        confirmDialogOpen: true ,
+        confirmDialogTitle: `The photo wasn't deleted please try again, id:${id}`,
+        confirmDialogHandleOk: this.handleConfirmDialogClose
+      });
+    }
+
   }
 
   handleConfirmDialogClose = () => {
