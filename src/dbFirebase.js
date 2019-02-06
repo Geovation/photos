@@ -13,12 +13,10 @@ function extractPhoto(doc) {
 
   // some data from Firebase cannot be stringified into json, so we need to convert it into other format first.
   const photo = _.mapValues(doc.data(), (fieldValue, fieldKey, doc) => {
-    switch (fieldValue && fieldValue.constructor.name) {
-      case "DocumentReference":
-        return fieldValue.path;
-
-      default:
-        return fieldValue
+    if (fieldValue instanceof firebase.firestore.DocumentReference) {
+      return fieldValue.path;
+    } else {
+      return fieldValue;
     }}
   );
 
