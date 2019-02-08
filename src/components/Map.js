@@ -13,12 +13,16 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import CardActions from '@material-ui/core/CardActions';
-import IconButton from '@material-ui/core/IconButton';
-import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CardComponent from './CardComponent';
+
 import dbFirebase from '../dbFirebase';
 
 import './Map.scss';
@@ -38,6 +42,11 @@ const styles = theme => ({
     right: theme.spacing.unit * 2,
     zIndex: theme.zIndex.appBar, //app bar material-ui value
   },
+  expansionDetails: {
+    padding:0,
+    'overflow-wrap': 'break-word',
+    'word-wrap': 'break-word'
+  }
 });
 
 
@@ -344,11 +353,22 @@ class Map extends Component {
                   </CardContent>
                 </CardActionArea>
                 {this.props.user && this.props.user.isModerator &&
-                  <CardActions>
-                    <IconButton aria-label='Reject' onClick={this.handleRejectClick}>
-                      <ThumbDownIcon />
-                    </IconButton>
-                  </CardActions>
+                  <div>
+                    <Divider/>
+                    <div>
+                      <ExpansionPanel>
+                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                          <Typography className={classes.heading}>Moderator Details</Typography>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
+                          <CardComponent
+                            photoSelected={feature.properties}
+                            handleRejectClick={this.handleRejectClick}
+                          />
+                        </ExpansionPanelDetails>
+                      </ExpansionPanel>
+                    </div>
+                  </div>
                 }
               </Card>
 
