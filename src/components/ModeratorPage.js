@@ -48,18 +48,16 @@ class ModeratorPage extends Component {
     this.props.stopFetchingPhotosToModerate();
   }
 
-  handleRejectClick = (photo) =>
-    () => {
+  handleRejectClick = (photo) => {
       console.log(photo);
       this.setState({
         confirmDialogTitle: `Are you sure you want to reject the photo ?`,
-        confirmDialogHandleOk: this.handleRejectDialogOk(photo.id),
+        confirmDialogHandleOk: () => this.handleRejectDialogOk(photo.id),
         confirmDialogOpen: true
       });
     };
 
-  handlePhotoClick = (photoSelected) =>
-    () => {
+  handlePhotoClick = (photoSelected) => {
       this.setState({zoomDialogOpen:true, photoSelected});
     };
 
@@ -67,8 +65,7 @@ class ModeratorPage extends Component {
     this.setState({zoomDialogOpen:false});
   }
 
-  handleApproveClick = (photo) =>
-    () => {
+  handleApproveClick = (photo) => {
       console.log(photo);
       this.setState({
         confirmDialogTitle: `Are you sure you want to approve the photo  ?`,
@@ -81,7 +78,7 @@ class ModeratorPage extends Component {
     this.setState({confirmDialogOpen: false})
   };
 
-  handleRejectDialogOk = (id) => () => {
+  handleRejectDialogOk = (id) => {
     dbFirebase.rejectPhoto(id,this.props.user.id);
     this.setState({confirmDialogOpen: false});
     this.handleZoomDialogClose();
@@ -104,16 +101,16 @@ class ModeratorPage extends Component {
       <PageWrapper label={label} handleClose={handleClose} hasHeader={false}>
         <List dense={false}>
           {photos.map(photo => (
-            <ListItem key={photo.id} button onClick={this.handlePhotoClick(photo)}>
+            <ListItem key={photo.id} button onClick={() => this.handlePhotoClick(photo)}>
               <Avatar
                imgProps={{ onError: (e) => { e.target.src=placeholderImage} }}
                src={photo.thumbnail} />
               <ListItemText primary={config.PHOTO_ZOOMED_FIELDS.updated(photo.updated)}/>
               <ListItemSecondaryAction>
-                <IconButton aria-label='Reject' onClick={this.handleRejectClick(photo)}>
+                <IconButton aria-label='Reject' onClick={() => this.handleRejectClick(photo)}>
                   <ThumbDownIcon />
                 </IconButton>
-                <IconButton aria-label='Approve' onClick={this.handleApproveClick(photo)}>
+                <IconButton aria-label='Approve' onClick={() => this.handleApproveClick(photo)}>
                   <ThumbUpIcon />
                 </IconButton>
               </ListItemSecondaryAction>

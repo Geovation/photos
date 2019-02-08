@@ -263,7 +263,7 @@ class Map extends Component {
     return "-";
   }
 
-  handleRejectClick = () => () => {
+  handleRejectClick = () => {
     this.setState({
       confirmDialogOpen: true ,
       confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,

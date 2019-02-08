@@ -48,12 +48,12 @@ class CardComponent extends React.Component {
         </CardActionArea>
         <CardActions>
         { handleRejectClick &&
-          <IconButton aria-label='Reject' onClick={handleRejectClick(photoSelected)}>
+          <IconButton aria-label='Reject' onClick={() => handleRejectClick(photoSelected)}>
             <ThumbDownIcon />
           </IconButton>
         }
         { handleApproveClick &&
-          <IconButton aria-label='Approve' onClick={handleApproveClick(photoSelected)}>
+          <IconButton aria-label='Approve' onClick={() => handleApproveClick(photoSelected)}>
             <ThumbUpIcon />
           </IconButton>
         }
