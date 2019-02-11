@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import loadImage from 'blueimp-load-image';
 import dms2dec from 'dms2dec';
+import firebase from 'firebase/app';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -30,6 +31,7 @@ const emptyState = {
   message: '',
   field: '',
   sending: false,
+  sendingProgress: 0,
   error: !''.match(config.PHOTO_FIELD.regexValidation)
 };
 
@@ -77,6 +79,7 @@ class PhotoPage extends Component {
   openDialog = (message, fn) => {
     this.setState({
       sending: false,
+      sendingProgress: 0,
       open: true,
       message
     });
@@ -135,6 +138,8 @@ class PhotoPage extends Component {
       return;
     }
 
+    debugger
+
     if (this.state.imgFromCamera) {
       location = this.props.gpsLocation;
       if (!this.props.gpsLocation.online) {
@@ -155,15 +160,39 @@ class PhotoPage extends Component {
     };
 
     data.field = this.state.field;
-    this.setState({ sending: true });
+    this.setState({ sending: true, sendingProgress: 0 });
 
-    try {
-      const res = await dbFirebase.uploadPhoto(data);
-      console.log(res);
-      this.openDialog("Photo was uploaded successfully. It will be reviewed by our moderation team.", this.handleClosePhotoPage);
-    } catch (e) {
-      this.openDialog(e.message || e);
-    }
+    const photoRef = await dbFirebase.saveMetadata(data);
+    const uploadTask = dbFirebase.savePhoto(photoRef.id, data.base64);
+
+    uploadTask.on('state_changed', snapshot => {
+      const sendingProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      this.setState({ sendingProgress });
+      console.log(snapshot.state);
+
+      debugger
+
+
+      switch (snapshot.state) {
+        case firebase.storage.TaskState.PAUSED: // or 'paused'
+          console.log('Upload is paused');
+          break;
+        case firebase.storage.TaskState.RUNNING: // or 'running'
+          console.log('Upload is running');
+          break;
+        default:
+          console.log(snapshot.state);
+      }
+
+      }, error => {
+        this.openDialog(error.message || error);
+        debugger
+      }, () => {
+        this.openDialog("Photo was uploaded successfully. It will be reviewed by our moderation team.", this.handleClosePhotoPage);
+        debugger
+      }
+    );
+
 
   }
 
@@ -288,7 +317,7 @@ class PhotoPage extends Component {
           <Dialog open={this.state.sending}>
             <DialogContent>
               <DialogContentText id="loading-dialog-text">
-                Be patient ;)
+                {this.state.sendingProgress} % done. Be patient ;)
               </DialogContentText>
               <CircularProgress
               className={classes.progress}
