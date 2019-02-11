@@ -25,6 +25,7 @@ const emptyState = {
   imgSrc: null,
   imgExif: null,
   imgIptc: null,
+  imgFromCamera: null,
   open: false,
   message: '',
   field: '',
@@ -115,41 +116,55 @@ class PhotoPage extends Component {
   }
 
   sendFile = async () => {
+    let location;
+
     gtagEvent('Upload', 'Photo');
 
-    // try getting the location from the photo first
-    const photoLocation = this.getLocationFromExifMetadata(this.state.imgExif);
-
-    if (!photoLocation && !this.props.gpsLocation.online) {
-      this.openDialog("Could not get the location yet. You won't be able to upload an image.");
-    } else if (!this.props.online) {
-      this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
-    } else if (!this.state.imgSrc) {
+    if (!this.state.imgSrc) {
       this.openDialog("No picture is selected. Please choose a picture.");
-    } else {
-
-      const data = {
-        ...this.props.gpsLocation,
-        ...photoLocation,
-        base64: this.state.imgSrc.split(",")[1]
-      };
-
-      if (this.state.field !== '') {
-        data.field = this.state.field;
-        this.setState({ sending: true });
-
-        try {
-          const res = await dbFirebase.uploadPhoto(data);
-          console.log(res);
-          this.openDialog("Photo was uploaded successfully. It will be reviewed by our moderation team.", this.handleClosePhotoPage);
-        } catch (e) {
-          this.openDialog(e.message || e);
-        }
-      } else {
-        this.openDialog("Please enter some text");
-      }
-
+      return;
     }
+
+    if (this.state.field === '') {
+      this.openDialog("Please enter some text");
+      return;
+    }
+
+    if (!this.props.online) {
+      this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
+      return;
+    }
+
+    if (this.state.imgFromCamera) {
+      location = this.props.gpsLocation;
+      if (!this.props.gpsLocation.online) {
+        this.openDialog("Could not get the location yet. You won't be able to upload an image.");
+        return;
+      }
+    } else {
+      location = this.getLocationFromExifMetadata(this.state.imgExif);
+      if (!location) {
+        this.openDialog("Your picture is not geo tagged. Cannot be uploaded");
+        return;
+      }
+    }
+
+    const data = {
+      ...location,
+      base64: this.state.imgSrc.split(",")[1]
+    };
+
+    data.field = this.state.field;
+    this.setState({ sending: true });
+
+    try {
+      const res = await dbFirebase.uploadPhoto(data);
+      console.log(res);
+      this.openDialog("Photo was uploaded successfully. It will be reviewed by our moderation team.", this.handleClosePhotoPage);
+    } catch (e) {
+      this.openDialog(e.message || e);
+    }
+
   }
 
   loadImage = () => {
@@ -171,7 +186,9 @@ class PhotoPage extends Component {
     loadImage(
       this.props.file, (img) =>{
         const imgSrc = img.toDataURL("image/jpeg");
-        this.setState({imgSrc, imgExif, imgIptc});
+        const ageInMinutes = (new Date().getTime() - this.props.file.lastModified)/1000/60;
+        const imgFromCamera = ageInMinutes < 5;
+        this.setState({imgSrc, imgExif, imgIptc, imgFromCamera});
       },
       {
         orientation: true,
