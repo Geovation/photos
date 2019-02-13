@@ -187,7 +187,7 @@ class PhotoPage extends Component {
       this.props.file, (img) =>{
         const imgSrc = img.toDataURL("image/jpeg");
         const ageInMinutes = (new Date().getTime() - this.props.file.lastModified)/1000/60;
-        const imgFromCamera = ageInMinutes < 5;
+        const imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 5;
         this.setState({imgSrc, imgExif, imgIptc, imgFromCamera});
       },
       {
