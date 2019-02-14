@@ -20,7 +20,6 @@ import dbFirebase from '../dbFirebase';
 import { isIphoneWithNotchAndCordova } from '../utils'
 
 import PageWrapper from './PageWrapper';
-import { device } from '../utils';
 
 const emptyState = {
   imgSrc: null,
@@ -190,18 +189,10 @@ class PhotoPage extends Component {
         let fileDate;
         const imgSrc = img.toDataURL("image/jpeg");
         if (window.cordova){
-          if (device() === 'iOS') {
-            if (!imgExif.DateTimeOriginal){
-              fileDate = null;
-            }
-            else{
-              const datetime = imgExif.DateTimeOriginal.split(' ');
-              const date = datetime[0].replace(/:/g,'-');
-              const DateTimeOriginalTimestamp = date + 'T' + datetime[1];
-              fileDate = new Date(DateTimeOriginalTimestamp).getTime();
-            }
+          if (!imgExif.DateTimeOriginal){   // iOS from camera doesnt have the necessary metadata
+            fileDate = null;
           }
-          else if (device() === 'Android') {
+          else{ // android from camera or filesystem || iOS from filesystem
             const datetime = imgExif.DateTimeOriginal.split(' ');
             const date = datetime[0].replace(/:/g,'-');
             const DateTimeOriginalTimestamp = date + 'T' + datetime[1];
