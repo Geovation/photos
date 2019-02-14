@@ -20,6 +20,7 @@ import dbFirebase from '../dbFirebase';
 import { isIphoneWithNotchAndCordova } from '../utils'
 
 import PageWrapper from './PageWrapper';
+import { device } from '../utils';
 
 const emptyState = {
   imgSrc: null,
@@ -185,9 +186,34 @@ class PhotoPage extends Component {
 
     loadImage(
       this.props.file, (img) =>{
+
+        let fileDate;
         const imgSrc = img.toDataURL("image/jpeg");
-        const ageInMinutes = (new Date().getTime() - this.props.file.lastModified)/1000/60;
-        const imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 5;
+        if (window.cordova){
+          if (device() === 'iOS') {
+            if (!imgExif.DateTimeOriginal){
+              fileDate = null;
+            }
+            else{
+              const datetime = imgExif.DateTimeOriginal.split(' ');
+              const date = datetime[0].replace(/:/g,'-');
+              const DateTimeOriginalTimestamp = date + 'T' + datetime[1];
+              fileDate = new Date(DateTimeOriginalTimestamp).getTime();
+            }
+          }
+          else if (device() === 'Android') {
+            const datetime = imgExif.DateTimeOriginal.split(' ');
+            const date = datetime[0].replace(/:/g,'-');
+            const DateTimeOriginalTimestamp = date + 'T' + datetime[1];
+            fileDate = new Date(DateTimeOriginalTimestamp).getTime();
+          }
+        }
+        else {
+          fileDate = this.props.file.lastModified;
+        }
+
+        const ageInMinutes = (new Date().getTime() - fileDate)/1000/60;
+        const imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 0.5;
         this.setState({imgSrc, imgExif, imgIptc, imgFromCamera});
       },
       {
