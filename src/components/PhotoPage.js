@@ -185,9 +185,26 @@ class PhotoPage extends Component {
 
     loadImage(
       this.props.file, (img) =>{
+
+        let fileDate;
         const imgSrc = img.toDataURL("image/jpeg");
-        const ageInMinutes = (new Date().getTime() - this.props.file.lastModified)/1000/60;
-        const imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 5;
+        if (window.cordova){
+          if (!imgExif.DateTimeOriginal){   // iOS from camera doesnt have the necessary metadata
+            fileDate = null;
+          }
+          else{ // android from camera or filesystem || iOS from filesystem
+            const datetime = imgExif.DateTimeOriginal.split(' ');
+            const date = datetime[0].replace(/:/g,'-');
+            const DateTimeOriginalTimestamp = date + 'T' + datetime[1];
+            fileDate = new Date(DateTimeOriginalTimestamp).getTime();
+          }
+        }
+        else {
+          fileDate = this.props.file.lastModified;
+        }
+
+        const ageInMinutes = (new Date().getTime() - fileDate)/1000/60;
+        const imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 0.5;
         this.setState({imgSrc, imgExif, imgIptc, imgFromCamera});
       },
       {

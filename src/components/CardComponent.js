@@ -7,6 +7,13 @@ import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  card : {
+    width:'100%'
+  }
+});
 
 class CardComponent extends React.Component {
 
@@ -34,9 +41,9 @@ class CardComponent extends React.Component {
   }
 
   render() {
-    const { photoSelected, handleRejectClick, handleApproveClick } = this.props;
+    const { photoSelected, handleRejectClick, handleApproveClick, classes } = this.props;
     return (
-      <Card>
+      <Card className={classes.card}>
         <CardActionArea>
           <CardContent>
             {Object.keys(photoSelected).map(key => (
@@ -63,4 +70,4 @@ class CardComponent extends React.Component {
   }
 }
 
-export default CardComponent;
+export default withStyles(styles)(CardComponent);
