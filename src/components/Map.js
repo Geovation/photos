@@ -339,7 +339,9 @@ class Map extends Component {
           </Dialog>
           <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
             <DialogContent>
-              <img onError={(e) => { e.target.src=placeholderImage}} className={"main-image"} alt={''} src={feature.properties.main}/>
+              <div style={{ textAlign: 'center' }}>
+                <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={''} src={feature.properties.main}/>
+              </div>
               <Card>
                 <CardActionArea>
                   <CardContent>
