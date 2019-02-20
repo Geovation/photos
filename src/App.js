@@ -58,7 +58,9 @@ class App extends Component {
       openPhotoDialog: false,
       leftDrawerOpen: false,
       welcomeShown: !!localStorage.getItem("welcomeShown"),
-      photos: Promise.resolve([])
+      photos: Promise.resolve([]),
+      srcType: null,
+      cordovaMetadata : {}
     };
 
     this.geoid = null;
@@ -194,8 +196,12 @@ class App extends Component {
       const Camera = navigator.camera;
       const srcType = dialogSelectedValue === 'CAMERA' ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
 
+      this.setState({ srcType  : dialogSelectedValue === 'CAMERA' ? 'camera' : 'filesystem' });
       Camera.getPicture(imageUri => {
-          this.openPhotoPage(imageUri);
+          const file = JSON.parse(imageUri);
+          const cordovaMetadata = JSON.parse(file.json_metadata);
+          this.setState({ cordovaMetadata });
+          this.openPhotoPage(file.filename);
         }, message => {
           console.log('Failed because: ', message);
         },
@@ -253,6 +259,8 @@ class App extends Component {
                            handlePhotoClick={this.handlePhotoClick}
                            handleClose={this.goToMap}
                            label={PAGES.photos.label}
+                           srcType={this.state.srcType}
+                           cordovaMetadata={this.state.cordovaMetadata}
                 />}
               />
 
