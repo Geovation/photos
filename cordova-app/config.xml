@@ -63,10 +63,6 @@
     <plugin name="cordova-plugin-geolocation" spec="^4.0.1">
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="Geovation needs to know where you are so it can place your photo in the map" />
     </plugin>
-    <plugin name="cordova-plugin-camera" spec="^4.0.3">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="Geovation needs camera access to take pictures." />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Geovation needs photo library access to get the picture" />
-    </plugin>
     <plugin name="cordova-plugin-splashscreen" spec="^5.0.2" />
     <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
         <string>Geovation needs photo library access to get the picture.</string>
@@ -79,6 +75,11 @@
     </edit-config>
     <plugin name="cordova-plugin-google-analytics" spec="^1.8.6" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
+    <plugin name="cordova-plugin-camera-with-exif" spec="^1.2.5">
+        <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="Geovation needs camera access to take pictures." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Geovation needs photo library access to get the picture" />
+    </plugin>
     <engine name="browser" spec="^5.0.4" />
     <engine name="ios" spec="^4.5.5" />
     <engine name="android" spec="^7.1.4" />
