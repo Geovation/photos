@@ -19,7 +19,7 @@ import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
 import './DrawerContainer.scss';
-import { isIphoneWithNotchAndCordova } from '../utils';
+import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../utils';
 
 const placeholderImage = process.env.PUBLIC_URL + "/images/geovation-banner.svg";
 const drawerWidth = '80%';
@@ -94,7 +94,9 @@ class DrawerContainer extends Component {
           role='button'
           onClick={this.props.toggleLeftDrawer(false)}
           onKeyDown={this.props.toggleLeftDrawer(false)}
-          style={{ paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0 }}
+          style={{ paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
+            isIphoneAndCordova ? this.props.theme.spacing.unit * 1.5 : null
+          }}
         >
           { user &&
             <div>
@@ -128,4 +130,4 @@ class DrawerContainer extends Component {
     );
   }
 }
-export default withStyles(styles)(DrawerContainer);
+export default withStyles(styles,{withTheme:true})(DrawerContainer);
