@@ -78,7 +78,10 @@ async function fetchPhotos() {
   }
 }
 
-async function saveMetadata(data) {
+function saveMetadata(data) {
+  data.location = new firebase.firestore.GeoPoint(data.latitude, data.longitude);
+  data[config.PHOTO_FIELD.name]= config.PHOTO_FIELD.type === enums.TYPES.number ? Number(data.field) : data.field
+
   if (firebase.auth().currentUser) {
     data.owner_id = firebase.auth().currentUser.uid;
   }
@@ -86,21 +89,18 @@ async function saveMetadata(data) {
   data.moderated = null;
 
   const fieldsToSave = [config.PHOTO_FIELD.name, "moderated", "updated", "location", "owner_id"];
-  return await firestore.collection('photos').add(_.pick(data, fieldsToSave));
+  return firestore.collection('photos').add(_.pick(data, fieldsToSave));
 }
 
-async function savePhoto(id, base64) {
+/**
+ *
+ * @param id
+ * @param base64 image in base64 format
+ * @returns {firebase.storage.UploadTask}
+ */
+function savePhoto(id, base64) {
   const originalJpgRef = storageRef.child("photos").child(id).child("original.jpg");
-  return await originalJpgRef.putString(base64, "base64", {contentType:"image/jpeg"});
-}
-
-async function uploadPhoto(data) {
-  const photoRef = await saveMetadata({
-    location: new firebase.firestore.GeoPoint(data.latitude, data.longitude),
-    [config.PHOTO_FIELD.name]: config.PHOTO_FIELD.type === enums.TYPES.number ? Number(data.field) : data.field
-  });
-
-  return await savePhoto(photoRef.id, data.base64);
+  return originalJpgRef.putString(base64, "base64", {contentType:"image/jpeg"});
 }
 
 async function getUser(id) {
@@ -166,7 +166,8 @@ export default {
   onConnectionStateChanged,
   fetchPhotos,
   getUser,
-  uploadPhoto,
+  savePhoto,
+  saveMetadata,
   onPhotosToModerate,
   rejectPhoto,
   approvePhoto,
