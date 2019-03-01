@@ -33,6 +33,7 @@ const emptyState = {
   sending: false,
   sendingProgress: 0,
   error: !''.match(config.PHOTO_FIELD.regexValidation),
+  enabledButton :true
 };
 
 const styles = theme => ({
@@ -188,11 +189,11 @@ class PhotoPage extends Component {
     };
 
     data.field = this.state.field;
-    this.setState({ sending: true, sendingProgress: 0 });
+    this.setState({ sending: true, sendingProgress: 0, enabledButton :false });
     this.uploadTask = null;
     this.cancelClickUpload = false;
     const photoRef = await dbFirebase.saveMetadata(data);
-    this.setState({ sendingProgress : 1 });
+    this.setState({ sendingProgress : 1 ,enabledButton: true});
 
     if(!this.cancelClickUpload){
 
@@ -214,7 +215,7 @@ class PhotoPage extends Component {
         }
 
         }, error => {
-          this.openDialog('Photo upload was canceled 2');
+          this.openDialog('Photo upload was canceled');
         }, () => {
           this.openDialog("Photo was uploaded successfully. It will be reviewed by our moderation team.", this.handleClosePhotoPage);
         }
@@ -289,7 +290,7 @@ class PhotoPage extends Component {
     }
     else {
       this.cancelClickUpload = true;
-      this.openDialog('Photo upload was canceled 1');
+      this.openDialog('Photo upload was canceled');
     }
   }
 
@@ -340,7 +341,7 @@ class PhotoPage extends Component {
           </div>
 
           <div className={classes.button}>
-            <Button disabled={this.state.error}
+            <Button disabled={this.state.error || !this.state.enabledButton}
               variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
             </Button>
