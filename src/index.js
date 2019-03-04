@@ -10,12 +10,12 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import config from './custom/config';
 import store from "./store";
-import { isIphoneWithNotchAndCordova } from './utils';
+import { isIphoneAndCordova } from './utils';
 import { gtagInit } from './gtag.js';
 
 serviceWorker.register();
 
-if (isIphoneWithNotchAndCordova() && window.StatusBar){
+if (isIphoneAndCordova) {
   window.StatusBar.styleDefault();
 }
 

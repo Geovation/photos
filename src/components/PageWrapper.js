@@ -4,7 +4,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
-import { isIphoneWithNotchAndCordova } from '../utils';
+import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../utils';
 import config from '../custom/config';
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
@@ -33,7 +33,8 @@ const styles = theme => ({
     justifyContent: 'flex-end'
   },
   notchTop: {
-    paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
+    paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
+      isIphoneAndCordova ? theme.spacing.unit * 1.5 : null
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
@@ -52,14 +53,14 @@ class PageWrapper extends React.Component {
 
   changeStatusBarColorToDefault = () => {
     const palette = this.props.theme.palette;
-    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
+    if( isIphoneAndCordova && palette.primary.main === palette.common.black){
       window.StatusBar.styleDefault();
     }
   }
 
   changeStatusBarColorToLight = () => {
     const palette = this.props.theme.palette;
-    if(isIphoneWithNotchAndCordova() && palette.primary.main === palette.common.black){
+    if( isIphoneAndCordova && palette.primary.main === palette.common.black){
       window.StatusBar.styleLightContent();
     }
   }

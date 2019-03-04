@@ -20,6 +20,8 @@ export const device = () => {
   }
 };
 
+export const isIphoneAndCordova = !!(device() === 'iOS' && window.cordova);
+
 export const isIphoneWithNotchAndCordova = () => {
   const IPHONEX = {
     width : 1125,
