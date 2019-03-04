@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import loadImage from 'blueimp-load-image';
 import dms2dec from 'dms2dec';
+import firebase from 'firebase/app';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -20,6 +20,7 @@ import dbFirebase from '../dbFirebase';
 import { isIphoneWithNotchAndCordova, device } from '../utils';
 
 import PageWrapper from './PageWrapper';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const emptyState = {
   imgSrc: null,
@@ -30,7 +31,9 @@ const emptyState = {
   message: '',
   field: '',
   sending: false,
-  error: !''.match(config.PHOTO_FIELD.regexValidation)
+  sendingProgress: 0,
+  error: !''.match(config.PHOTO_FIELD.regexValidation),
+  enabledUploadButton :true
 };
 
 const styles = theme => ({
@@ -48,6 +51,15 @@ const styles = theme => ({
     alignItems: 'center',
     margin: theme.spacing.unit * 1.5,
   },
+  dialogContentProgress: {
+    display: 'flex',
+    flexDirection:'column',
+    alignItems: 'center'
+  },
+  linearProgress : {
+    width:'100%',
+    height:'100%'
+  },
   notchTop: {
     paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
   },
@@ -61,6 +73,7 @@ class PhotoPage extends Component {
     super(props);
     this.state = {...emptyState};
     this.dialogCloseCallback = null;
+    this.cancelClickUpload = false;
   }
 
   resetState = () => {
@@ -77,6 +90,7 @@ class PhotoPage extends Component {
   openDialog = (message, fn) => {
     this.setState({
       sending: false,
+      sendingProgress: 0,
       open: true,
       message
     });
@@ -175,16 +189,38 @@ class PhotoPage extends Component {
     };
 
     data.field = this.state.field;
-    this.setState({ sending: true });
+    this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
+    this.uploadTask = null;
+    this.cancelClickUpload = false;
+    const photoRef = await dbFirebase.saveMetadata(data);
+    this.setState({ sendingProgress : 1 ,enabledUploadButton: true});
 
-    try {
-      const res = await dbFirebase.uploadPhoto(data);
-      console.log(res);
-      this.openDialog("Photo was uploaded successfully. It will be reviewed by our moderation team.", this.handleClosePhotoPage);
-    } catch (e) {
-      this.openDialog(e.message || e);
+    if(!this.cancelClickUpload){
+
+      this.uploadTask = dbFirebase.savePhoto(photoRef.id, data.base64);
+
+      this.uploadTask.on('state_changed', snapshot => {
+        const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
+        this.setState({ sendingProgress });
+
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+          default:
+            console.log(snapshot.state);
+        }
+
+        }, error => {
+          this.openDialog('Photo upload was canceled');
+        }, () => {
+          this.openDialog("Photo was uploaded successfully. It will be reviewed by our moderation team.", this.handleClosePhotoPage);
+        }
+      );
     }
-
   }
 
   loadImage = () => {
@@ -246,6 +282,18 @@ class PhotoPage extends Component {
     this.handleClosePhotoPage();
   };
 
+  handleCancel = () => {
+    this.setState({ sending:false });
+
+    if (this.uploadTask) {
+      this.uploadTask.cancel();
+    }
+    else {
+      this.cancelClickUpload = true;
+      this.openDialog('Photo upload was canceled');
+    }
+  }
+
   componentDidMount() {
     this.loadImage();
   }
@@ -293,7 +341,7 @@ class PhotoPage extends Component {
           </div>
 
           <div className={classes.button}>
-            <Button disabled={this.state.error}
+            <Button disabled={this.state.error || !this.state.enabledUploadButton}
               variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
             </Button>
@@ -318,16 +366,20 @@ class PhotoPage extends Component {
           </Dialog>
 
           <Dialog open={this.state.sending}>
-            <DialogContent>
+            <DialogContent className={classes.dialogContentProgress}>
               <DialogContentText id="loading-dialog-text">
-                Be patient ;)
+                {this.state.sendingProgress} % done. Be patient ;)
               </DialogContentText>
-              <CircularProgress
-              className={classes.progress}
-               color='secondary'
-               size={50}
-               thickness={6}/>
+              <div className={classes.linearProgress}>
+                <br/>
+                <LinearProgress variant="determinate" color='secondary' value={this.state.sendingProgress} />
+              </div>
             </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleCancel} color='secondary'>
+                Cancel
+              </Button>
+            </DialogActions>
           </Dialog>
         </PageWrapper>
       </div>
