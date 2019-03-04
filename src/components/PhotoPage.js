@@ -21,6 +21,7 @@ import { isIphoneWithNotchAndCordova, device } from '../utils';
 
 import PageWrapper from './PageWrapper';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Link from '@material-ui/core/Link';
 
 const emptyState = {
   imgSrc: null,
@@ -59,6 +60,9 @@ const styles = theme => ({
   linearProgress : {
     width:'100%',
     height:'100%'
+  },
+  link: {
+    color: theme.palette.secondary.main
   },
   notchTop: {
     paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
@@ -172,13 +176,23 @@ class PhotoPage extends Component {
     if (this.state.imgFromCamera) {
       location = this.props.gpsLocation;
       if (!this.props.gpsLocation.online) {
-        this.openDialog("Could not get the location yet. You won't be able to upload an image.");
+        this.openDialog("We couldn't find your location so you won't be able to upload an image right now. Enable GPS on your phone and retake the photo to upload it.");
         return;
       }
     } else {
       location = this.getLocationFromExifMetadata(this.state.imgExif);
       if (!location) {
-        this.openDialog("Your picture is not geo tagged. Cannot be uploaded");
+        this.openDialog(
+          <span style={{fontWeight:500}}>
+            Your photo isn't geo-tagged so it can't be uploaded.
+            To fix this manually, you can geo-tag it online with a tool like&nbsp;
+            <Link href={'https://tool.geoimgr.com/'} className={this.props.classes.link}>
+              Geoimgr
+            </Link>.
+            In future, make sure GPS is enabled and your
+            camera has access to it.
+          </span>
+        );
         return;
       }
     }
