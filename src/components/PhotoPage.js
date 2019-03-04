@@ -33,7 +33,7 @@ const emptyState = {
   sending: false,
   sendingProgress: 0,
   error: !''.match(config.PHOTO_FIELD.regexValidation),
-  enabledButton :true
+  enabledUploadButton :true
 };
 
 const styles = theme => ({
@@ -73,7 +73,7 @@ class PhotoPage extends Component {
     super(props);
     this.state = {...emptyState};
     this.dialogCloseCallback = null;
-    this.cancelClickUpload = false
+    this.cancelClickUpload = false;
   }
 
   resetState = () => {
@@ -189,11 +189,11 @@ class PhotoPage extends Component {
     };
 
     data.field = this.state.field;
-    this.setState({ sending: true, sendingProgress: 0, enabledButton :false });
+    this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
     this.uploadTask = null;
     this.cancelClickUpload = false;
     const photoRef = await dbFirebase.saveMetadata(data);
-    this.setState({ sendingProgress : 1 ,enabledButton: true});
+    this.setState({ sendingProgress : 1 ,enabledUploadButton: true});
 
     if(!this.cancelClickUpload){
 
@@ -282,7 +282,7 @@ class PhotoPage extends Component {
     this.handleClosePhotoPage();
   };
 
-  handleClose = () => {
+  handleCancel = () => {
     this.setState({ sending:false });
 
     if (this.uploadTask) {
@@ -341,7 +341,7 @@ class PhotoPage extends Component {
           </div>
 
           <div className={classes.button}>
-            <Button disabled={this.state.error || !this.state.enabledButton}
+            <Button disabled={this.state.error || !this.state.enabledUploadButton}
               variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
             </Button>
@@ -376,7 +376,7 @@ class PhotoPage extends Component {
               </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.handleClose} color='secondary'>
+              <Button onClick={this.handleCancel} color='secondary'>
                 Cancel
               </Button>
             </DialogActions>
