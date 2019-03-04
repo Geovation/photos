@@ -51,7 +51,7 @@ async function pubIfNecessary(doc) {
     recalculate = age > DB_CACHE_AGE_MS;
     console.info(`States is ${age / 1000 / 60 / 60 } hours old`);
   } catch(e) {
-    console.error("states is corrupted. It will be re calculated: ", e);
+    console.info("states is corrupted. It will be re calculated: ", e);
   }
 
   if (recalculate) {
@@ -160,7 +160,7 @@ app.get('/api/stats', async (req, res) => {
     }
   } catch (e) {
     pubIfNecessary();
-    console.error(e);
+    console.info(e);
     return res.status(503).send('stats not ready yet');
   }
 });
