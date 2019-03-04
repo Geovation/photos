@@ -323,8 +323,8 @@ class App extends Component {
           <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
         :
           <RootRef rootRef={this.domRefInput}>
-            <input className='hidden' type='file' accept='image/*'
-                   onChange={this.openFile}
+            <input className='hidden' type='file' accept='image/*' id={'fileInput'}
+                   onChange={this.openFile} onClick={(e)=> e.target.value = null}
             />
           </RootRef>
         }
