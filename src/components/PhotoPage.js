@@ -200,7 +200,7 @@ class PhotoPage extends Component {
       this.uploadTask = dbFirebase.savePhoto(photoRef.id, data.base64);
 
       this.uploadTask.on('state_changed', snapshot => {
-        const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 99 + 1);
+        const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
         this.setState({ sendingProgress });
 
         switch (snapshot.state) {
