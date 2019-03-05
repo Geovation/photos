@@ -88,7 +88,7 @@ function saveMetadata(data) {
   data.updated = firebase.firestore.FieldValue.serverTimestamp();
   data.moderated = null;
 
-  const fieldsToSave = [config.PHOTO_FIELD.name, "moderated", "updated", "location", "owner_id"];
+  const fieldsToSave = [config.PHOTO_FIELD.name, "moderated", "updated", "location", "owner_id","photo_type"];
   return firestore.collection('photos').add(_.pick(data, fieldsToSave));
 }
 

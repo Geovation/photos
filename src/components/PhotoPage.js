@@ -22,6 +22,7 @@ import { isIphoneWithNotchAndCordova, device } from '../utils';
 import PageWrapper from './PageWrapper';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Link from '@material-ui/core/Link';
+import SelectControl from './SelectControl';
 
 const emptyState = {
   imgSrc: null,
@@ -34,7 +35,8 @@ const emptyState = {
   sending: false,
   sendingProgress: 0,
   error: !''.match(config.PHOTO_FIELD.regexValidation),
-  enabledUploadButton :true
+  enabledUploadButton :true,
+  photoCategories: null
 };
 
 const styles = theme => ({
@@ -202,6 +204,7 @@ class PhotoPage extends Component {
       base64: this.state.imgSrc.split(",")[1]
     };
 
+    data.photo_type =  this.state.photoCategories;
     data.field = this.state.field;
     this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
     this.uploadTask = null;
@@ -308,6 +311,10 @@ class PhotoPage extends Component {
     }
   }
 
+  getPhotoTypes = (photoCategories) => {
+    this.setState({ photoCategories });
+  }
+
   componentDidMount() {
     this.loadImage();
   }
@@ -344,6 +351,9 @@ class PhotoPage extends Component {
 
           </div>
 
+          <div className='text-field-wrapper'>
+            <SelectControl getPhotoTypes={this.getPhotoTypes}/>
+          </div>
           <div className='picture'>
            <img src={this.state.imgSrc} alt={""}/>
           </div>
