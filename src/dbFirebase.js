@@ -29,6 +29,10 @@ function extractPhoto(doc) {
   return photo;
 }
 
+/**
+ *
+ * @returns {Promise<{geojson}>}
+ */
 async function fetchPhotos() {
 
   // for making it realtime: https://firebase.google.com/docs/firestore/query-data/listen
@@ -72,10 +76,9 @@ async function fetchPhotos() {
   }
 
   if (!geojson) {
-    return await promise;
-  } else {
-    return geojson;
+    geojson = await promise;
   }
+  return geojson;
 }
 
 function saveMetadata(data) {

@@ -93,13 +93,30 @@ class Map extends Component {
     }), "bottom-left");
 
     this.map.on('load', async () => {
-      const geojson = await this.props.photos;
-      this.setState({ geojson })
+      const geojson = this.props.geojson;
+      this.setState({ geojson });
       this.addFeaturesToMap(geojson);
     });
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.geojson && this.props.geojson.features && this.props.geojson.features.length
+        && this.props.geojson !== prevProps.geojson) {
+
+        this.addFeaturesToMap(this.props.geojson);
+    }
+  }
+
   addFeaturesToMap = geojson => {
+    if (!this.map.loaded()) {
+      return
+    }
+
+    if (this.map.getLayer("clusters")) this.map.removeLayer("clusters")
+    if (this.map.getLayer("cluster-count")) this.map.removeLayer("cluster-count")
+    if (this.map.getLayer("unclustered-point")) this.map.removeLayer("unclustered-point")
+    if (this.map.getSource("data")) this.map.removeSource("data")
+
     this.map.addSource("data", {
         type: "geojson",
         data: geojson,
@@ -164,7 +181,6 @@ class Map extends Component {
 
     this.map.on('zoom', e => {
       console.log(e);
-      // debugger
       const zoom = Math.round(this.map.getZoom());
       const milliSeconds = 1 * 1000;
       const timeLapsed = new Date().getTime() - this.prevZoomTime;

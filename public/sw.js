@@ -11,7 +11,7 @@
  * See https://goo.gl/2aRDsh
  */
 
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.0.0/workbox-sw.js");
 
 
 workbox.routing.registerRoute(/.*pbf/, workbox.strategies.cacheFirst({ "cacheName":"pbf", plugins: [new workbox.expiration.Plugin({"maxAgeSeconds":15552000,"purgeOnQuotaError":false})] }), 'GET');
