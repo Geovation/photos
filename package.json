@@ -7,7 +7,7 @@
   "scripts": {
     "start": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
     "build": "npm run build:react",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --forceExit",
     "eject": "react-scripts eject",
     "serve-prod": "npm run build:react && http-server build",
     "build:ios": "./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm ios && cordova platform add ios && cordova build ios --prod --release --device --buildConfig build.json && cd ..'",
