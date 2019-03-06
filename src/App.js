@@ -58,7 +58,7 @@ class App extends Component {
       openPhotoDialog: false,
       leftDrawerOpen: false,
       welcomeShown: !!localStorage.getItem("welcomeShown"),
-      photos: Promise.resolve([]),
+      geojson: {},
       srcType: null,
       cordovaMetadata : {}
     };
@@ -106,16 +106,15 @@ class App extends Component {
   }
 
 
-
-  componentDidMount(){
+  async componentDidMount(){
     gtagPageView(this.props.location.pathname);
 
-    const photos = dbFirebase.fetchPhotos();
-    config.getStats(photos).then(stats => {
-      this.setState({ photos, stats });
+    const geojson = await dbFirebase.fetchPhotos();
+    config.getStats(geojson).then(stats => {
+      this.setState({ geojson, stats });
     }).catch(err => {
       console.error('Get Stats: ', err.message);
-      this.setState({ photos, stats: 0 });
+      this.setState({ geojson, stats: 0 });
     });
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
@@ -294,7 +293,7 @@ class App extends Component {
           <Map location={this.state.location}
               visible={[PAGES.map.path, PAGES.embeddable.path].includes(this.props.history.location.pathname)}
               welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === PAGES.embeddable.path}
-              photos={this.state.photos}
+              geojson={this.state.geojson}
               user={this.state.user}
           />
 
