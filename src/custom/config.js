@@ -1,7 +1,5 @@
 import styles from './config.scss';
 import enums from '../types/enums';
-
-import React, { Component } from 'react';
 import PhotoPageFieldText from '../components/PhotoPageFieldText';
 
 const primaryColor = styles.primary;
@@ -101,13 +99,26 @@ export default {
     "updated": s => new Date(s).toDateString(),
     "description": s => s
   },
-  PHOTO_FIELD : {
-    component : PhotoPageFieldText,
-    name: 'description',
-    title: 'Description',
-    type: enums.TYPES.string,
-    placeholder: 'eg. whatever',
-    regexValidation: '^\\w+( \\w+)*$'
+  PHOTO_FIELDS : {
+    description: {
+      component : PhotoPageFieldText,
+      componentType: 'PhotoPageFieldText',
+      name: 'description',
+      title: 'Description',
+      type: enums.TYPES.string,
+      placeholder: 'eg. whatever',
+      regexValidation: '^\\w+( \\w+)*$'
+    },
+    notes: {
+      component : PhotoPageFieldText,
+      componentType : 'PhotoPageFieldText',
+      inputProps: { min: 0, step: 1},
+      name: 'notes',
+      title: 'Notes',
+      type: enums.TYPES.number,
+      placeholder: 'eg. 1',
+      regexValidation: '^[0-9]+'
+    },
   },
   // PHOTO_FIELD: {
   //   name: 'pieces',
