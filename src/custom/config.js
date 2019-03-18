@@ -1,6 +1,9 @@
 import styles from './config.scss';
 import enums from '../types/enums';
 
+import React, { Component } from 'react';
+import PhotoPageFieldText from '../components/PhotoPageFieldText';
+
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
 
@@ -98,7 +101,8 @@ export default {
     "updated": s => new Date(s).toDateString(),
     "description": s => s
   },
-  PHOTO_FIELD: {
+  PHOTO_FIELD : {
+    component : PhotoPageFieldText,
     name: 'description',
     title: 'Description',
     type: enums.TYPES.string,

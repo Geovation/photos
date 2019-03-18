@@ -9,8 +9,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
@@ -320,30 +318,21 @@ class PhotoPage extends Component {
 
   render() {
     const { classes, label } = this.props;
+    const PhotoPageFieldText = config.PHOTO_FIELD.component;
     return (
       <div className='geovation-photos'>
         <PageWrapper label={label} handleClose={this.props.handleClose}>
-          <div className='text-field-wrapper'>
-            <Typography className='typography1'>
-              {config.PHOTO_FIELD.title}
-            </Typography>
+          <PhotoPageFieldText
+            handleChange={this.handleChange}
+            classes={classes}
+            field={this.state.field}
+            error={this.state.error}
 
-            <TextField
-              id="standard-name"
-              type={config.PHOTO_FIELD.type}
-              required={true}
-              placeholder={config.PHOTO_FIELD.placeholder}
-              className='text-field'
-              value={this.state.field}
-              onChange={this.handleChange}
-              error= {this.state.error}
-              InputProps={Object.assign({
-                className: classes.cssUnderline
-              }, config.PHOTO_FIELD.inputProps)}
-            />
-
-          </div>
-
+            type={config.PHOTO_FIELD.type}
+            title={config.PHOTO_FIELD.title}
+            placeholder={config.PHOTO_FIELD.placeholder}
+            inputProps={config.PHOTO_FIELD.inputProps}
+          />
           <div className='picture'>
            <img src={this.state.imgSrc} alt={""}/>
           </div>
