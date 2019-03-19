@@ -3,11 +3,11 @@ import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
-class PhotoPageFieldText extends React.Component {
+class PhotoPageFieldText extends Component {
   render() {
     const {
-      type,title,placeholder,inputProps,
-      classes,field,error,handleChange,
+      type,title,placeholder,inputProps,elementId,
+      classes,field,errors,handleChange,
     } = this.props;
     return (
       <div className='text-field-wrapper'>
@@ -16,14 +16,14 @@ class PhotoPageFieldText extends React.Component {
         </Typography>
 
         <TextField
-          id="standard-name"
+          id={'textfield' + title}
           type={type}
           required={true}
           placeholder={placeholder}
           className='text-field'
           value={field}
-          onChange={handleChange}
-          error= {error}
+          onChange={(e)=>handleChange(e,elementId)}
+          error= {errors}
           InputProps={Object.assign({
             className: classes.cssUnderline
           }, inputProps)}

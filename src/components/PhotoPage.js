@@ -20,6 +20,12 @@ import { isIphoneWithNotchAndCordova, device } from '../utils';
 import PageWrapper from './PageWrapper';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Link from '@material-ui/core/Link';
+import _ from 'lodash';
+
+let errors = [];
+let fields = [];
+_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PhotoPageFieldText' && fields.push(''));
+_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PhotoPageFieldText' && errors.push(!''.match(field.regexValidation)));
 
 const emptyState = {
   imgSrc: null,
@@ -28,10 +34,10 @@ const emptyState = {
   imgFromCamera: null,
   open: false,
   message: '',
-  field: '',
+  fields: fields,
   sending: false,
   sendingProgress: 0,
-  error: !''.match(config.PHOTO_FIELD.regexValidation),
+  errors: errors,
   enabledUploadButton :true
 };
 
@@ -82,11 +88,16 @@ class PhotoPage extends Component {
     this.setState(emptyState);
   }
 
-  handleChange = (event) => {
-    this.setState({
-      error: !event.target.value.match(config.PHOTO_FIELD.regexValidation),
-      field: event.target.value
-    });
+  // update the field and the error state of a selected field
+  handleChange = (event,id) => {
+    const fields = this.state.fields.map((field,index) =>
+       id === index ? event.target.value : field
+    );
+    const errors = this.state.errors.map((field,index) =>
+       id === index ? !event.target.value.match(field.regexValidation) : field
+    );
+
+    this.setState({ fields, errors });
   }
 
   openDialog = (message, fn) => {
@@ -161,7 +172,16 @@ class PhotoPage extends Component {
       return;
     }
 
-    if (this.state.field === '') {
+    // checks if all the textfields are not empty
+    // otherwise show error.
+    let textfieldEmpty = false;
+    this.state.fields.forEach(field => {
+      if(field ==='') {
+        textfieldEmpty = true;
+      }
+    });
+
+    if (textfieldEmpty) {
       this.openDialog("Please enter some text");
       return;
     }
@@ -195,12 +215,13 @@ class PhotoPage extends Component {
       }
     }
 
-    const data = {
-      ...location,
-      base64: this.state.imgSrc.split(",")[1]
-    };
+    const data = { ...location};
+    Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
+      if (field.componentType === 'PhotoPageFieldText') {
+        data[field.name] = this.state.fields[index];
+      }
+    });
 
-    data.field = this.state.field;
     this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
     this.uploadTask = null;
     this.cancelClickUpload = false;
@@ -209,7 +230,8 @@ class PhotoPage extends Component {
 
     if(!this.cancelClickUpload){
 
-      this.uploadTask = dbFirebase.savePhoto(photoRef.id, data.base64);
+      const base64 = this.state.imgSrc.split(",")[1];
+      this.uploadTask = dbFirebase.savePhoto(photoRef.id, base64);
 
       this.uploadTask.on('state_changed', snapshot => {
         const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
@@ -318,21 +340,27 @@ class PhotoPage extends Component {
 
   render() {
     const { classes, label } = this.props;
-    const PhotoPageFieldText = config.PHOTO_FIELD.component;
     return (
       <div className='geovation-photos'>
         <PageWrapper label={label} handleClose={this.props.handleClose}>
-          <PhotoPageFieldText
-            handleChange={this.handleChange}
-            classes={classes}
-            field={this.state.field}
-            error={this.state.error}
+          {Object.values(config.PHOTO_FIELDS).map((field,index) => {
+            return(
+              <field.component
+                elementId={index}
+                key={index}
+                handleChange={this.handleChange}
+                classes={classes}
+                field={this.state.fields[index]}
+                error={this.state.errors}
 
-            type={config.PHOTO_FIELD.type}
-            title={config.PHOTO_FIELD.title}
-            placeholder={config.PHOTO_FIELD.placeholder}
-            inputProps={config.PHOTO_FIELD.inputProps}
-          />
+                type={field.type}
+                title={field.title}
+                placeholder={field.placeholder}
+                inputProps={field.inputProps}
+
+              />
+            )
+          })}
           <div className='picture'>
            <img src={this.state.imgSrc} alt={""}/>
           </div>

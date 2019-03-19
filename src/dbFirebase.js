@@ -3,7 +3,6 @@ import * as _ from 'lodash'
 
 import firebaseApp from './firebaseInit.js';
 import config from "./custom/config";
-import enums from './types/enums';
 
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
@@ -83,7 +82,8 @@ async function fetchPhotos() {
 
 function saveMetadata(data) {
   data.location = new firebase.firestore.GeoPoint(data.latitude, data.longitude);
-  data[config.PHOTO_FIELD.name]= config.PHOTO_FIELD.type === enums.TYPES.number ? Number(data.field) : data.field
+  delete data.latitude;
+  delete data.longitude;
 
   if (firebase.auth().currentUser) {
     data.owner_id = firebase.auth().currentUser.uid;
@@ -91,7 +91,9 @@ function saveMetadata(data) {
   data.updated = firebase.firestore.FieldValue.serverTimestamp();
   data.moderated = null;
 
-  const fieldsToSave = [config.PHOTO_FIELD.name, "moderated", "updated", "location", "owner_id"];
+  let fieldsToSave = ["moderated", "updated", "location", "owner_id"];
+  _.forEach(config.PHOTO_FIELDS,field => fieldsToSave.push(field.name));
+
   return firestore.collection('photos').add(_.pick(data, fieldsToSave));
 }
 
