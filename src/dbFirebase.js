@@ -92,7 +92,7 @@ function saveMetadata(data) {
   data.moderated = null;
 
   let fieldsToSave = ["moderated", "updated", "location", "owner_id"];
-  Object.values(config.PHOTO_FIELDS).forEach(field => fieldsToSave.push(field.name));
+  _.forEach(config.PHOTO_FIELDS,field => fieldsToSave.push(field.name));
 
   return firestore.collection('photos').add(_.pick(data, fieldsToSave));
 }

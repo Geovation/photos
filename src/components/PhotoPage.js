@@ -20,11 +20,12 @@ import { isIphoneWithNotchAndCordova, device } from '../utils';
 import PageWrapper from './PageWrapper';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Link from '@material-ui/core/Link';
+import _ from 'lodash';
 
-let _errors = [];
-const _fields = [];
-Object.values(config.PHOTO_FIELDS).forEach(field => field.componentType === 'PhotoPageFieldText' && _fields.push(''));
-Object.values(config.PHOTO_FIELDS).forEach(field => field.componentType === 'PhotoPageFieldText' && _errors.push(!''.match(field.regexValidation)));
+let errors = [];
+let fields = [];
+_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PhotoPageFieldText' && fields.push(''));
+_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PhotoPageFieldText' && errors.push(!''.match(field.regexValidation)));
 
 const emptyState = {
   imgSrc: null,
@@ -33,10 +34,10 @@ const emptyState = {
   imgFromCamera: null,
   open: false,
   message: '',
-  fields: _fields,
+  fields: fields,
   sending: false,
   sendingProgress: 0,
-  errors: _errors,
+  errors: errors,
   enabledUploadButton :true
 };
 
@@ -87,6 +88,7 @@ class PhotoPage extends Component {
     this.setState(emptyState);
   }
 
+  // update the field and the error state of a selected field
   handleChange = (event,id) => {
     const fields = this.state.fields.map((field,index) =>
        id === index ? event.target.value : field
@@ -170,6 +172,8 @@ class PhotoPage extends Component {
       return;
     }
 
+    // checks if all the textfields are not empty
+    // otherwise show error.
     let textfieldEmpty = false;
     this.state.fields.forEach(field => {
       if(field ==='') {
