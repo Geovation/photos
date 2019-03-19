@@ -7,7 +7,7 @@ class PhotoPageFieldText extends Component {
   render() {
     const {
       type,title,placeholder,inputProps,elementId,
-      classes,field,errors,handleChange,
+      classes,field,error,handleChange,
     } = this.props;
     return (
       <div className='text-field-wrapper'>
@@ -23,7 +23,7 @@ class PhotoPageFieldText extends Component {
           className='text-field'
           value={field}
           onChange={(e)=>handleChange(e,elementId)}
-          error= {errors}
+          error= {error}
           InputProps={Object.assign({
             className: classes.cssUnderline
           }, inputProps)}
