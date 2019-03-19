@@ -21,10 +21,11 @@ import PageWrapper from './PageWrapper';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Link from '@material-ui/core/Link';
 import _ from 'lodash';
+import enums from '../types/enums';
 
-let errors = [];
 let fields = [];
 _.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PhotoPageFieldText' && fields.push(''));
+let errors = [];
 _.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PhotoPageFieldText' && errors.push(!''.match(field.regexValidation)));
 
 const emptyState = {
@@ -38,7 +39,8 @@ const emptyState = {
   sending: false,
   sendingProgress: 0,
   errors: errors,
-  enabledUploadButton :true
+  enabledUploadButton :true,
+  textfieldsEmpty: true
 };
 
 const styles = theme => ({
@@ -93,11 +95,23 @@ class PhotoPage extends Component {
     const fields = this.state.fields.map((field,index) =>
        id === index ? event.target.value : field
     );
-    const errors = this.state.errors.map((field,index) =>
-       id === index ? !event.target.value.match(field.regexValidation) : field
-    );
 
-    this.setState({ fields, errors });
+    const errors = [...this.state.errors];
+    Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
+      if (id === index) {
+        errors[id] = !event.target.value.match(field.regexValidation)
+      }
+    });
+
+    // block the user from uploading if he didn't filled the text fields
+    let textfieldsEmpty = false;
+    fields.forEach(field => {
+      if (field === '') {
+        textfieldsEmpty = true;
+      }
+    });
+
+    this.setState({ fields, errors, textfieldsEmpty });
   }
 
   openDialog = (message, fn) => {
@@ -172,16 +186,7 @@ class PhotoPage extends Component {
       return;
     }
 
-    // checks if all the textfields are not empty
-    // otherwise show error.
-    let textfieldEmpty = false;
-    this.state.fields.forEach(field => {
-      if(field ==='') {
-        textfieldEmpty = true;
-      }
-    });
-
-    if (textfieldEmpty) {
+    if (this.state.textfieldsEmpty) {
       this.openDialog("Please enter some text");
       return;
     }
@@ -216,9 +221,10 @@ class PhotoPage extends Component {
     }
 
     const data = { ...location};
+
     Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
       if (field.componentType === 'PhotoPageFieldText') {
-        data[field.name] = this.state.fields[index];
+        data[field.name] = field.type === enums.TYPES.number ? Number(this.state.fields[index]) : this.state.fields[index];
       }
     });
 
@@ -351,7 +357,7 @@ class PhotoPage extends Component {
                 handleChange={this.handleChange}
                 classes={classes}
                 field={this.state.fields[index]}
-                error={this.state.errors}
+                error={this.state.errors[index]}
 
                 type={field.type}
                 title={field.title}
@@ -372,7 +378,7 @@ class PhotoPage extends Component {
           </div>
 
           <div className={classes.button}>
-            <Button disabled={this.state.error || !this.state.enabledUploadButton}
+            <Button disabled={this.state.textfieldsEmpty || !this.state.enabledUploadButton}
               variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
               Upload
             </Button>
