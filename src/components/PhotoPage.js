@@ -19,14 +19,15 @@ import { isIphoneWithNotchAndCordova, device } from '../utils';
 
 import PageWrapper from './PageWrapper';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import PhotoPageFields from './PhotoPageFields';
 import Link from '@material-ui/core/Link';
 import _ from 'lodash';
 import enums from '../types/enums';
 
 let fields = [];
-_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PhotoPageFieldText' && fields.push(''));
+_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PageFieldText' && fields.push(''));
 let errors = [];
-_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PhotoPageFieldText' && errors.push(!''.match(field.regexValidation)));
+_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PageFieldText' && errors.push(!''.match(field.regexValidation)));
 
 const emptyState = {
   imgSrc: null,
@@ -40,7 +41,8 @@ const emptyState = {
   sendingProgress: 0,
   errors: errors,
   enabledUploadButton :true,
-  textfieldsEmpty: true
+  textfieldsEmpty: true,
+  next: false
 };
 
 const styles = theme => ({
@@ -223,7 +225,7 @@ class PhotoPage extends Component {
     const data = { ...location};
 
     Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
-      if (field.componentType === 'PhotoPageFieldText') {
+      if (field.componentType === 'PageFieldText') {
         data[field.name] = field.type === enums.TYPES.number ? Number(this.state.fields[index]) : this.state.fields[index];
       }
     });
@@ -231,7 +233,15 @@ class PhotoPage extends Component {
     this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
     this.uploadTask = null;
     this.cancelClickUpload = false;
-    const photoRef = await dbFirebase.saveMetadata(data);
+
+    let photoRef;
+    try{
+      photoRef = await dbFirebase.saveMetadata(data);
+    }
+    catch(error){
+      console.log(error);
+    }
+
     this.setState({ sendingProgress : 1 ,enabledUploadButton: true});
 
     if(!this.cancelClickUpload){
@@ -334,6 +344,18 @@ class PhotoPage extends Component {
     }
   }
 
+  handleNext = () => {
+    this.setState({ next:true });
+  }
+
+  handlePrev = () => {
+    this.setState({ next:false });
+  }
+
+  getPhotoTypes = (photoCategories) => {
+    this.setState({ photoCategories });
+  }
+
   componentDidMount() {
     this.loadImage();
   }
@@ -348,42 +370,41 @@ class PhotoPage extends Component {
     const { classes, label } = this.props;
     return (
       <div className='geovation-photos'>
-        <PageWrapper label={label} handleClose={this.props.handleClose}>
-          {Object.values(config.PHOTO_FIELDS).map((field,index) => {
-            return(
-              <field.component
-                elementId={index}
-                key={index}
-                handleChange={this.handleChange}
-                classes={classes}
-                field={this.state.fields[index]}
-                error={this.state.errors[index]}
+        <PageWrapper
+          handlePrev={this.handlePrev}
+          handleNext={this.handleNext}
+          nextClicked={this.state.next}
+          error={this.state.textfieldsEmpty || !this.state.enabledUploadButton}
+          sendFile={this.sendFile}
+          photoPage={true}
+          label={label}
+          imgSrc={this.state.imgSrc}
+          handleClose={this.props.handleClose}>
 
-                type={field.type}
-                title={field.title}
-                placeholder={field.placeholder}
-                inputProps={field.inputProps}
-
+          {this.state.next
+            ?
+            <PhotoPageFields
+              handleChange={this.handleChange}
+              sendFile={this.sendFile}
+              enabledUploadButton={this.state.enabledUploadButton}
+              getPhotoTypes={this.getPhotoTypes}
+              imgSrc={this.state.imgSrc}
+              errors={this.state.errors}
+              fields={this.state.fields}
               />
-            )
-          })}
-          <div className='picture'>
-           <img src={this.state.imgSrc} alt={""}/>
-          </div>
+            :
+            <div style={{display:'flex',flexDirection:'column',flex:1}}>
+              <div className='picture'>
+               <img src={this.state.imgSrc} alt={""}/>
+              </div>
 
-          <div className={classes.button}>
-            <Button variant="outlined" fullWidth={true} onClick={this.retakePhoto}>
-              Retake
-            </Button>
-          </div>
-
-          <div className={classes.button}>
-            <Button disabled={this.state.textfieldsEmpty || !this.state.enabledUploadButton}
-              variant="contained" color="secondary" fullWidth={true} onClick={this.sendFile}>
-              Upload
-            </Button>
-          </div>
-
+              <div className={classes.button}>
+                <Button variant="outlined" fullWidth={true} onClick={this.retakePhoto}>
+                  Retake
+                </Button>
+              </div>
+            </div>
+          }
           <Dialog
             open={this.state.open}
             onClose={this.closeDialog}
