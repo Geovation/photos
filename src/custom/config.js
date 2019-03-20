@@ -97,7 +97,8 @@ export default {
   GA_TRACKING_ID: "UA-128504979-1",
   PHOTO_ZOOMED_FIELDS: {
     "updated": s => new Date(s).toDateString(),
-    "description": s => s
+    "description": s => s,
+    "notes": s => s
   },
   PHOTO_FIELDS : {
     description: {
