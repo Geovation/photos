@@ -25,9 +25,18 @@ import _ from 'lodash';
 import enums from '../../types/enums';
 
 let fields = [];
-_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'TitleTextField' && fields.push(''));
 let errors = [];
-_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'TitleTextField' && errors.push(!''.match(field.regexValidation)));
+let photoCategories = [];
+
+_.forEach(config.PHOTO_FIELDS, field => {
+  if (field.componentType === 'TitleTextField') {
+    errors.push(!''.match(field.regexValidation));
+    fields.push('');
+  }
+  else if (field.componentType === 'SelectControl') {
+    photoCategories.push([]);
+  }
+});
 
 const emptyState = {
   imgSrc: null,
@@ -43,7 +52,7 @@ const emptyState = {
   enabledUploadButton :true,
   textfieldsEmpty: true,
   next: false,
-  photoCategories: null,
+  photoCategories: photoCategories,
 };
 
 const styles = theme => ({
@@ -356,7 +365,10 @@ class PhotoPage extends Component {
     this.setState({ next:false });
   }
 
-  getPhotoTypes = (photoCategories) => {
+  getPhotoTypes = (photoCategory,id) => {
+    const photoCategories = this.state.photoCategories.map((category,index) =>
+       id === index ? photoCategory : category
+    );
     this.setState({ photoCategories });
   }
 

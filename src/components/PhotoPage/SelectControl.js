@@ -18,7 +18,7 @@ import { emphasize } from '@material-ui/core/styles/colorManipulator';
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
+    // flexGrow: 1,
     margin: 15,
     textAlign: 'center',
   },
@@ -213,8 +213,8 @@ class SelectControl extends React.Component {
       // console.log('findvaluePath','values',findvaluePath,values);
 
       this.setState({ [name]: findvaluePath });
-      this.props.getPhotoTypes(findvaluePath);
-      console.log(findvaluePath);
+      this.props.getPhotoTypes(findvaluePath,this.props.selectId);
+
       Object.values(findvaluePath).forEach(value => {
         current_data = current_data[value.key].children;
         if (!current_data) {
@@ -227,7 +227,7 @@ class SelectControl extends React.Component {
       this.controlMenuVisibility(current_data,new_values);
     }
     else {
-      this.props.getPhotoTypes([]);
+      this.props.getPhotoTypes([],this.props.selectId);
       this.setState({ [name]: [] });
       this.initializeOptions(this.props.data)
       this.controlMenuVisibility(this.props.data,[]);

@@ -4,7 +4,8 @@ import './style.scss';
 
 class Fields extends Component {
   render() {
-    const { classes } = this.props;
+    let titleTextId = -1;
+    let selectId = -1;
     return (
       <div style={{display:'flex',flexDirection:'column',flex:1,height:'100%'}}>
         <div style={{
@@ -20,14 +21,22 @@ class Fields extends Component {
           </div>
         </div>
         {Object.values(config.PHOTO_FIELDS).map((field,index) => {
+          if (field.componentType === 'TitleTextField'){
+            titleTextId = titleTextId + 1;
+          }
+          else if (field.componentType === 'SelectControl') {
+            selectId = selectId + 1;
+          }
           return(
             <field.component
-              elementId={index}
+              titleTextId={titleTextId}
+              selectId={selectId}
+
               key={index}
               handleChange={this.props.handleChange}
               getPhotoTypes={this.props.getPhotoTypes}
-              field={this.props.fields[index]}
-              error={this.props.errors[index]}
+              field={this.props.fields[titleTextId]}
+              error={this.props.errors[titleTextId]}
 
               type={field.type}
               title={field.title}
