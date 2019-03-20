@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import config from '../custom/config';
+import config from '../../custom/config';
 import './PhotoPage.scss';
 
 const styles = theme => ({
@@ -12,10 +12,6 @@ const styles = theme => ({
 });
 
 class PhotoPageFields extends Component {
-  getPhotoTypes = (photoCategories) => {
-    this.props.getPhotoTypes(photoCategories);
-  }
-
   render() {
     const { classes } = this.props;
     return (

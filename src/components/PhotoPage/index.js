@@ -11,18 +11,18 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import { withStyles } from '@material-ui/core/styles';
 
-import config from '../custom/config';
-import { gtagEvent } from '../gtag.js';
+import config from '../../custom/config';
+import { gtagEvent } from '../../gtag.js';
 import './PhotoPage.scss';
-import dbFirebase from '../dbFirebase';
-import { isIphoneWithNotchAndCordova, device } from '../utils';
+import dbFirebase from '../../dbFirebase';
+import { isIphoneWithNotchAndCordova, device } from '../../utils';
 
-import PageWrapper from './PageWrapper';
+import PageWrapper from '../PageWrapper';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import PhotoPageFields from './PhotoPageFields';
 import Link from '@material-ui/core/Link';
 import _ from 'lodash';
-import enums from '../types/enums';
+import enums from '../../types/enums';
 
 let fields = [];
 _.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PageFieldText' && fields.push(''));
@@ -387,7 +387,6 @@ class PhotoPage extends Component {
               handleChange={this.handleChange}
               sendFile={this.sendFile}
               enabledUploadButton={this.state.enabledUploadButton}
-              getPhotoTypes={this.getPhotoTypes}
               imgSrc={this.state.imgSrc}
               errors={this.state.errors}
               fields={this.state.fields}

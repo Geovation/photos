@@ -1,6 +1,6 @@
 import styles from './config.scss';
 import enums from '../types/enums';
-import PageFieldText from '../components/PageFieldText';
+import PageFieldText from '../components/PhotoPage/PageFieldText';
 
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
