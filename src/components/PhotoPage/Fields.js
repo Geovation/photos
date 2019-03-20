@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import config from '../../custom/config';
-import './PhotoPage.scss';
+import './style.scss';
 
 const styles = theme => ({
   cssUnderline: {
@@ -11,7 +11,7 @@ const styles = theme => ({
   },
 });
 
-class PhotoPageFields extends Component {
+class Fields extends Component {
   render() {
     const { classes } = this.props;
     return (
@@ -51,4 +51,4 @@ class PhotoPageFields extends Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(PhotoPageFields);
+export default withStyles(styles, { withTheme: true })(Fields);

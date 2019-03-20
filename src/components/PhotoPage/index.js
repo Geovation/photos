@@ -13,21 +13,21 @@ import { withStyles } from '@material-ui/core/styles';
 
 import config from '../../custom/config';
 import { gtagEvent } from '../../gtag.js';
-import './PhotoPage.scss';
+import './style.scss';
 import dbFirebase from '../../dbFirebase';
 import { isIphoneWithNotchAndCordova, device } from '../../utils';
 
 import PageWrapper from '../PageWrapper';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import PhotoPageFields from './PhotoPageFields';
+import Fields from './Fields';
 import Link from '@material-ui/core/Link';
 import _ from 'lodash';
 import enums from '../../types/enums';
 
 let fields = [];
-_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PageFieldText' && fields.push(''));
+_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'TitleTextField' && fields.push(''));
 let errors = [];
-_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'PageFieldText' && errors.push(!''.match(field.regexValidation)));
+_.forEach(config.PHOTO_FIELDS, field => field.componentType === 'TitleTextField' && errors.push(!''.match(field.regexValidation)));
 
 const emptyState = {
   imgSrc: null,
@@ -225,7 +225,7 @@ class PhotoPage extends Component {
     const data = { ...location};
 
     Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
-      if (field.componentType === 'PageFieldText') {
+      if (field.componentType === 'TitleTextField') {
         data[field.name] = field.type === enums.TYPES.number ? Number(this.state.fields[index]) : this.state.fields[index];
       }
     });
@@ -383,7 +383,7 @@ class PhotoPage extends Component {
 
           {this.state.next
             ?
-            <PhotoPageFields
+            <Fields
               handleChange={this.handleChange}
               sendFile={this.sendFile}
               enabledUploadButton={this.state.enabledUploadButton}
