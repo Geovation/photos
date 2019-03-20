@@ -188,43 +188,38 @@ class SelectControl extends React.Component {
     menuIsOpen: false,
   };
 
-  control = true;
+  onBlurMenuShouldClose = true;
   options = [];
-  flatTree = [];
-  input = '';
+  items = [];
 
   handleInputChange = (input) => {
-
     let options;
-    if (input===''){
+    if (input==='') {
       options = this.options;
     }
     else{
-      options = this.flatTree;
+      options = this.items;
     }
-    this.setState({ options })
-    this.input = input;
+    this.setState({ options });
   }
 
   handleChange = name => values => {
-    if (values.length!==0) {
+    if (values.length !== 0) {
       let current_data = {...this.props.data};
       const findvaluePath = this.findOptions(this.props.data,values[values.length - 1].key);
-      // console.log('findvaluePath','values',findvaluePath,values);
 
-      this.setState({ [name]: findvaluePath });
+      this.setState({ [name] : findvaluePath });
       this.props.getPhotoTypes(findvaluePath,this.props.selectId);
 
       Object.values(findvaluePath).forEach(value => {
         current_data = current_data[value.key].children;
         if (!current_data) {
-          current_data = {}
+          current_data = {};
         }
       });
       const new_values = this.changeOptions(current_data);
       this.options = new_values;
       this.setState({ options: new_values });
-      // console.log('current_data','new_values',current_data,new_values);
       this.controlMenuVisibility(current_data,new_values);
     }
     else {
@@ -237,10 +232,10 @@ class SelectControl extends React.Component {
 
   controlMenuVisibility = (data,values) => {
     if (values.length === 0) {
-      this.control = true;
+      this.onBlurMenuShouldClose = true;
     }
     else {
-      this.control = false;
+      this.onBlurMenuShouldClose = false;
     }
 
     if (Object.entries(data).length === 0) {
@@ -261,43 +256,42 @@ class SelectControl extends React.Component {
 
   findOptions = (tree,key_to_find) => {
 
-    const templist = [];
-    let listWithChildren = [];
+    const stack = [];
+    let listWithNodes = [];
 
-    function searchTreeData(tree,key_to_find) {
+    function findPathOfFoundedNode(tree,key_to_find) {
       Object.entries(tree).forEach(([key,value]) => {
         if (key_to_find === key){
-          const currentChild = { label:value.label,key:key }
-          listWithChildren = [...templist,currentChild];
+          const foundedNode = { label:value.label,key:key }
+          listWithNodes = [...stack,foundedNode];
         }
         if(value.children){
-          templist.push({ label:value.label, key:key })
-          searchTreeData(value.children,key_to_find);
-          templist.pop()
+          stack.push({ label:value.label, key:key });
+          findPathOfFoundedNode(value.children,key_to_find);
+          stack.pop();
         }
-
       });
     }
-    searchTreeData(tree,key_to_find);
-    return listWithChildren;
+    findPathOfFoundedNode(tree,key_to_find);
+    return listWithNodes;
   }
 
-  getflatTreeData = (tree) => {
-    let flatTree = [];
+  getItems = (tree) => {
+    let items = [];
 
-    function getChildren(tree){
+    function getNodesInLowestHierarchy(tree){
       Object.entries(tree).forEach( ([key,value]) => {
         if (!value.children) {
-          flatTree.push({ label: value.label, key: key });
+          items.push({ label: value.label, key: key });
         }
         else {
-          getChildren(value.children);
+          getNodesInLowestHierarchy(value.children);
         }
       });
     }
 
-    getChildren(tree);
-    return flatTree;
+    getNodesInLowestHierarchy(tree);
+    return items;
   }
 
   initializeOptions = (data) => {
@@ -309,12 +303,12 @@ class SelectControl extends React.Component {
   }
 
   componentDidMount(){
-    this.flatTree = this.getflatTreeData(this.props.data);
+    this.items = this.getItems(this.props.data);
     this.initializeOptions(this.props.data);
   }
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme, noOptionsMessage} = this.props;
 
     const selectStyles = {
       input: base => ({
@@ -339,13 +333,12 @@ class SelectControl extends React.Component {
             options={this.state.options}
             isMulti
             getOptionValue={(option) => (option['label'])}
-            noOptionsMessage={()=>'No more categories'}
-
+            noOptionsMessage={() => noOptionsMessage}
             onInputChange={(e) => this.handleInputChange(e)}
             menuIsOpen={this.state.menuIsOpen}
             onFocus={() => this.setState({ menuIsOpen: true })}
-            onBlur={()=> {
-              if (this.control) {
+            onBlur={() => {
+              if (this.onBlurMenuShouldClose) {
                 this.setState({ menuIsOpen: false });
               }
             }}

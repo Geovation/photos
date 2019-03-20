@@ -29,20 +29,22 @@ class Fields extends Component {
           }
           return(
             <field.component
-              titleTextId={titleTextId}
-              selectId={selectId}
-
               key={index}
+
+              placeholder={field.placeholder}
+
+              titleTextId={titleTextId}
               handleChange={this.props.handleChange}
-              getPhotoTypes={this.props.getPhotoTypes}
               field={this.props.fields[titleTextId]}
               error={this.props.errors[titleTextId]}
-
-              type={field.type}
               title={field.title}
-              placeholder={field.placeholder}
+              type={field.type}
               inputProps={field.inputProps}
+
+              selectId={selectId}
+              getPhotoTypes={this.props.getPhotoTypes}
               data={field.data}
+              noOptionsMessage={field.noOptionsMessage}
             />
           )
         })}

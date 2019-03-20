@@ -127,7 +127,8 @@ export default {
       componentType : 'SelectControl',
       name: 'categories',
       placeholder: 'Search multiple photo categories',
-      data: data
+      data: data,
+      noOptionsMessage: 'No more categories'
     },
   },
   // PHOTO_FIELD: {
