@@ -223,6 +223,7 @@ class SelectControl extends React.Component {
       });
       const new_values = this.changeOptions(current_data);
       this.options = new_values;
+      this.setState({ options: new_values });
       // console.log('current_data','new_values',current_data,new_values);
       this.controlMenuVisibility(current_data,new_values);
     }
@@ -338,6 +339,7 @@ class SelectControl extends React.Component {
             options={this.state.options}
             isMulti
             getOptionValue={(option) => (option['label'])}
+            noOptionsMessage={()=>'No more categories'}
 
             onInputChange={(e) => this.handleInputChange(e)}
             menuIsOpen={this.state.menuIsOpen}
