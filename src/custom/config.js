@@ -1,6 +1,6 @@
 import styles from './config.scss';
 import enums from '../types/enums';
-import PhotoPageFieldText from '../components/PhotoPageFieldText';
+import TitleTextField from '../components/PhotoPage/TitleTextField';
 
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
@@ -101,8 +101,8 @@ export default {
   },
   PHOTO_FIELDS : {
     description: {
-      component : PhotoPageFieldText,
-      componentType: 'PhotoPageFieldText',
+      component : TitleTextField,
+      componentType: 'TitleTextField',
       name: 'description',
       title: 'Description',
       type: enums.TYPES.string,
@@ -110,8 +110,8 @@ export default {
       regexValidation: '^\\w+( \\w+)*$'
     },
     notes: {
-      component : PhotoPageFieldText,
-      componentType : 'PhotoPageFieldText',
+      component : TitleTextField,
+      componentType : 'TitleTextField',
       inputProps: { min: 0, step: 1},
       name: 'notes',
       title: 'Notes',

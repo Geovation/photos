@@ -1,9 +1,11 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
+import BackIcon from '@material-ui/icons/ArrowBack';
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../utils';
 import config from '../custom/config';
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
@@ -27,10 +29,11 @@ const styles = theme => ({
     overflowY: 'auto',
     '-webkit-overflow-scrolling': 'touch'
   },
-  closeIcon: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end'
+  iconButton: {
+    marginRight: 20,
+  },
+  grow: {
+    flexGrow: 1,
   },
   notchTop: {
     paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
@@ -49,6 +52,14 @@ class PageWrapper extends React.Component {
 
   handleClose = () => {
     this.props.handleClose();
+  }
+
+  handleNext = () => {
+    this.props.handleNext();
+  }
+
+  handlePrev = () => {
+    this.props.handlePrev();
   }
 
   changeStatusBarColorToDefault = () => {
@@ -74,17 +85,35 @@ class PageWrapper extends React.Component {
   }
 
   render() {
-    const { classes, children, label, hasLogo } = this.props;
+    const {
+      classes, children, label,
+      hasLogo, error,
+      nextClicked, photoPage
+    } = this.props;
     return (
         <div className={classes.container}>
           <AppBar position='static' className={classes.notchTop}>
             <Toolbar>
-              <Typography variant='h6' color='inherit'>
+              {photoPage && nextClicked
+                ?
+                  <BackIcon className={classes.iconButton} onClick={this.handlePrev} />
+                :
+                  <CloseIcon className={classes.iconButton} onClick={this.handleClose} />
+              }
+              <Typography className={classes.grow} variant='h6' color='inherit'>
                 {label}
               </Typography>
-              <div className={classes.closeIcon}>
-                <CloseIcon onClick={this.handleClose} />
-              </div>
+              {photoPage && !nextClicked &&
+                <Button disabled={!this.props.imgSrc} color='secondary' onClick={this.handleNext}>
+                  Next
+                </Button>
+              }
+              {photoPage && nextClicked &&
+                <Button disabled={error}
+                  color="secondary" onClick={this.props.sendFile}>
+                  Upload
+                </Button>
+              }
             </Toolbar>
           </AppBar>
           {hasLogo && <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>}

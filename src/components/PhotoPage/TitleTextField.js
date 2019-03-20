@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
-class PhotoPageFieldText extends Component {
+class TitleTextField extends Component {
   render() {
     const {
       type,title,placeholder,inputProps,elementId,
@@ -33,4 +33,4 @@ class PhotoPageFieldText extends Component {
   }
 }
 
-export default PhotoPageFieldText;
+export default TitleTextField;
