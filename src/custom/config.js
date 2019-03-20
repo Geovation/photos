@@ -1,6 +1,8 @@
 import styles from './config.scss';
 import enums from '../types/enums';
 import TitleTextField from '../components/PhotoPage/TitleTextField';
+import SelectControl from '../components/PhotoPage/SelectControl';
+import { data } from './categories';
 
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
@@ -119,6 +121,13 @@ export default {
       type: enums.TYPES.number,
       placeholder: 'eg. 1',
       regexValidation: '^[0-9]+'
+    },
+    categories: {
+      component : SelectControl,
+      componentType : 'SelectControl',
+      name: 'categories',
+      placeholder: 'Search multiple photo categories',
+      data: data
     },
   },
   // PHOTO_FIELD: {

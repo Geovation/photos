@@ -42,7 +42,8 @@ const emptyState = {
   errors: errors,
   enabledUploadButton :true,
   textfieldsEmpty: true,
-  next: false
+  next: false,
+  photoCategories: null,
 };
 
 const styles = theme => ({
@@ -230,6 +231,9 @@ class PhotoPage extends Component {
       }
     });
 
+    const categories = this.state.photoCategories.map(category => Number(category.key));
+    data[config.PHOTO_FIELDS.categories.name] =  categories;
+
     this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
     this.uploadTask = null;
     this.cancelClickUpload = false;
@@ -390,6 +394,7 @@ class PhotoPage extends Component {
               imgSrc={this.state.imgSrc}
               errors={this.state.errors}
               fields={this.state.fields}
+              getPhotoTypes={this.getPhotoTypes}
               />
             :
             <div style={{display:'flex',flexDirection:'column',flex:1}}>

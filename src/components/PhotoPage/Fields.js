@@ -1,15 +1,6 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import config from '../../custom/config';
 import './style.scss';
-
-const styles = theme => ({
-  cssUnderline: {
-    '&:after': {
-      borderBottomColor: theme.palette.secondary.main,
-    },
-  },
-});
 
 class Fields extends Component {
   render() {
@@ -34,7 +25,7 @@ class Fields extends Component {
               elementId={index}
               key={index}
               handleChange={this.props.handleChange}
-              classes={classes}
+              getPhotoTypes={this.props.getPhotoTypes}
               field={this.props.fields[index]}
               error={this.props.errors[index]}
 
@@ -42,7 +33,7 @@ class Fields extends Component {
               title={field.title}
               placeholder={field.placeholder}
               inputProps={field.inputProps}
-
+              data={field.data}
             />
           )
         })}
@@ -51,4 +42,4 @@ class Fields extends Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Fields);
+export default Fields;
