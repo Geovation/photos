@@ -209,7 +209,7 @@ class SelectControl extends React.Component {
       const findvaluePath = this.findOptions(this.props.data,values[values.length - 1].key);
 
       this.setState({ [name] : findvaluePath });
-      this.props.getPhotoTypes(findvaluePath,this.props.selectId);
+      // this.props.getValuesSelected(findvaluePath,this.props.selectId);
 
       Object.values(findvaluePath).forEach(value => {
         current_data = current_data[value.key].children;
@@ -223,7 +223,7 @@ class SelectControl extends React.Component {
       this.controlMenuVisibility(current_data,new_values);
     }
     else {
-      this.props.getPhotoTypes([],this.props.selectId);
+      // this.props.getValuesSelected([],this.props.selectId);
       this.setState({ [name]: [] });
       this.initializeOptions(this.props.data)
       this.controlMenuVisibility(this.props.data,[]);

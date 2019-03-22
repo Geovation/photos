@@ -3,6 +3,14 @@ import config from '../../custom/config';
 import './style.scss';
 
 class Fields extends Component {
+
+  // getValuesSelected = (photoCategory,id) => {
+  //   const photoCategories = this.state.photoCategories.map((category,index) =>
+  //     id === index ? photoCategory : category
+  //   );
+  //   this.setState({ photoCategories });
+  // }
+
   render() {
     let titleTextId = -1;
     let selectId = -1;
@@ -33,7 +41,10 @@ class Fields extends Component {
 
               placeholder={field.placeholder}
 
-              titleTextId={titleTextId}
+
+
+
+
               handleChange={this.props.handleChange}
               field={this.props.fields[titleTextId]}
               error={this.props.errors[titleTextId]}
@@ -42,10 +53,34 @@ class Fields extends Component {
               inputProps={field.inputProps}
 
               selectId={selectId}
-              getPhotoTypes={this.props.getPhotoTypes}
               data={field.data}
               noOptionsMessage={field.noOptionsMessage}
             />
+
+
+
+
+          //   <field.component
+          // key={index}
+          //
+          // placeholder={field.placeholder}
+          //
+          //
+          //
+          //
+          //
+          // titleTextId={titleTextId}
+          // handleChange={this.props.handleChange}
+          // field={this.props.fields[titleTextId]}
+          // error={this.props.errors[titleTextId]}
+          // title={field.title}
+          // type={field.type}
+          // inputProps={field.inputProps}
+          //
+          // selectId={selectId}
+          // data={field.data}
+          // noOptionsMessage={field.noOptionsMessage}
+          // />
           )
         })}
       </div>

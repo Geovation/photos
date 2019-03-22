@@ -12,6 +12,7 @@ const styles = theme => ({
 });
 class TitleTextField extends Component {
   render() {
+    // TODO: proptypes
     const {
       type,title,placeholder,inputProps,titleTextId,
       classes,field,error,handleChange,
@@ -29,7 +30,7 @@ class TitleTextField extends Component {
           placeholder={placeholder}
           className='text-field'
           value={field}
-          onChange={(e)=>handleChange(e,titleTextId)}
+          onChange={(e)=>handleChange(e.target.value)}
           error= {error}
           InputProps={Object.assign({
             className: classes.cssUnderline
@@ -41,3 +42,4 @@ class TitleTextField extends Component {
 }
 
 export default withStyles(styles, { withTheme: true })(TitleTextField);
+
