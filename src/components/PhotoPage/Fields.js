@@ -1,19 +1,11 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import config from '../../custom/config';
 import './style.scss';
 
-const styles = theme => ({
-  cssUnderline: {
-    '&:after': {
-      borderBottomColor: theme.palette.secondary.main,
-    },
-  },
-});
-
 class Fields extends Component {
   render() {
-    const { classes } = this.props;
+    let titleTextId = -1;
+    let selectId = -1;
     return (
       <div style={{display:'flex',flexDirection:'column',flex:1,height:'100%'}}>
         <div style={{
@@ -29,20 +21,30 @@ class Fields extends Component {
           </div>
         </div>
         {Object.values(config.PHOTO_FIELDS).map((field,index) => {
+          if (field.componentType === 'TitleTextField'){
+            titleTextId = titleTextId + 1;
+          }
+          else if (field.componentType === 'SelectControl') {
+            selectId = selectId + 1;
+          }
           return(
             <field.component
-              elementId={index}
               key={index}
-              handleChange={this.props.handleChange}
-              classes={classes}
-              field={this.props.fields[index]}
-              error={this.props.errors[index]}
 
-              type={field.type}
-              title={field.title}
               placeholder={field.placeholder}
+
+              titleTextId={titleTextId}
+              handleChange={this.props.handleChange}
+              field={this.props.fields[titleTextId]}
+              error={this.props.errors[titleTextId]}
+              title={field.title}
+              type={field.type}
               inputProps={field.inputProps}
 
+              selectId={selectId}
+              getPhotoTypes={this.props.getPhotoTypes}
+              data={field.data}
+              noOptionsMessage={field.noOptionsMessage}
             />
           )
         })}
@@ -51,4 +53,4 @@ class Fields extends Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Fields);
+export default Fields;

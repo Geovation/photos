@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
-
+import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
+const styles = theme => ({
+  cssUnderline: {
+    '&:after': {
+      borderBottomColor: theme.palette.secondary.main,
+    },
+  },
+});
 class TitleTextField extends Component {
   render() {
     const {
-      type,title,placeholder,inputProps,elementId,
+      type,title,placeholder,inputProps,titleTextId,
       classes,field,error,handleChange,
     } = this.props;
     return (
@@ -22,7 +29,7 @@ class TitleTextField extends Component {
           placeholder={placeholder}
           className='text-field'
           value={field}
-          onChange={(e)=>handleChange(e,elementId)}
+          onChange={(e)=>handleChange(e,titleTextId)}
           error= {error}
           InputProps={Object.assign({
             className: classes.cssUnderline
@@ -33,4 +40,4 @@ class TitleTextField extends Component {
   }
 }
 
-export default TitleTextField;
+export default withStyles(styles, { withTheme: true })(TitleTextField);
