@@ -205,8 +205,8 @@ class SelectControl extends React.Component {
 
   handleChange = name => values => {
     if (values.length !== 0) {
-      let current_data = {...this.props.data};
-      const findvaluePath = this.findOptions(this.props.data,values[values.length - 1].key);
+      let current_data = {...this.props.field.data};
+      const findvaluePath = this.findOptions(this.props.field.data,values[values.length - 1].key);
 
       this.setState({ [name] : findvaluePath });
       // this.props.getValuesSelected(findvaluePath,this.props.selectId);
@@ -225,8 +225,8 @@ class SelectControl extends React.Component {
     else {
       // this.props.getValuesSelected([],this.props.selectId);
       this.setState({ [name]: [] });
-      this.initializeOptions(this.props.data)
-      this.controlMenuVisibility(this.props.data,[]);
+      this.initializeOptions(this.props.field.data)
+      this.controlMenuVisibility(this.props.field.data,[]);
     }
   };
 
@@ -303,12 +303,16 @@ class SelectControl extends React.Component {
   }
 
   componentDidMount(){
-    this.items = this.getItems(this.props.data);
-    this.initializeOptions(this.props.data);
+    this.items = this.getItems(this.props.field.data);
+    this.initializeOptions(this.props.field.data);
   }
 
   render() {
-    const { classes, theme, noOptionsMessage} = this.props;
+    const { classes, theme, field} = this.props;
+
+
+    debugger
+
 
     const selectStyles = {
       input: base => ({
@@ -329,11 +333,11 @@ class SelectControl extends React.Component {
             value={this.state.multi}
             onChange={this.handleChange('multi')}
             menuPosition='fixed'
-            placeholder={this.props.placeholder}
+            placeholder={field.placeholder}
             options={this.state.options}
             isMulti
             getOptionValue={(option) => (option['label'])}
-            noOptionsMessage={() => noOptionsMessage}
+            noOptionsMessage={() => field.noOptionsMessage}
             onInputChange={(e) => this.handleInputChange(e)}
             menuIsOpen={this.state.menuIsOpen}
             onFocus={() => this.setState({ menuIsOpen: true })}

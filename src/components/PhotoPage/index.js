@@ -95,31 +95,7 @@ class PhotoPage extends Component {
     this.setState(emptyState);
   }
 
-  // update the field and the error state of a selected field
-  handleChangeFields = (value) => {
 
-    debugger
-    // const fields = this.state.fields.map((field,index) =>
-    //    id === index ? event.target.value : field
-    // );
-    //
-    // const errors = [...this.state.errors];
-    // Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
-    //   if (id === index) {
-    //     errors[id] = !event.target.value.match(field.regexValidation)
-    //   }
-    // });
-    //
-    // // block the user from uploading if he didn't filled the text fields
-    // let textfieldsEmpty = false;
-    // fields.forEach(field => {
-    //   if (field === '') {
-    //     textfieldsEmpty = true;
-    //   }
-    // });
-    //
-    // this.setState({ fields, errors, textfieldsEmpty });
-  }
 
   openDialog = (message, fn) => {
     this.setState({

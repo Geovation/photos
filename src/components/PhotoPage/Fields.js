@@ -4,16 +4,16 @@ import './style.scss';
 
 class Fields extends Component {
 
-  // getValuesSelected = (photoCategory,id) => {
-  //   const photoCategories = this.state.photoCategories.map((category,index) =>
-  //     id === index ? photoCategory : category
-  //   );
-  //   this.setState({ photoCategories });
-  // }
+
+
+  // update the field and the error state of a selected field
+  handleChangeFields = field => (value) => {
+    field.error = !value.match(field.regexValidation);
+    field.value = value;
+  }
+
 
   render() {
-    let titleTextId = -1;
-    let selectId = -1;
     return (
       <div style={{display:'flex',flexDirection:'column',flex:1,height:'100%'}}>
         <div style={{
@@ -28,33 +28,14 @@ class Fields extends Component {
           <div style={{display: 'flex',flexDirection:'column'}}>
           </div>
         </div>
-        {Object.values(config.PHOTO_FIELDS).map((field,index) => {
-          if (field.componentType === 'TitleTextField'){
-            titleTextId = titleTextId + 1;
-          }
-          else if (field.componentType === 'SelectControl') {
-            selectId = selectId + 1;
-          }
+        {Object.values(config.PHOTO_FIELDS).map((field, index) => {
+
           return(
             <field.component
               key={index}
+              field={field}
 
-              placeholder={field.placeholder}
-
-
-
-
-
-              handleChange={this.props.handleChange}
-              field={this.props.fields[titleTextId]}
-              error={this.props.errors[titleTextId]}
-              title={field.title}
-              type={field.type}
-              inputProps={field.inputProps}
-
-              selectId={selectId}
-              data={field.data}
-              noOptionsMessage={field.noOptionsMessage}
+              handleChange={this.handleChangeFields(field)}
             />
 
 
