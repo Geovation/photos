@@ -1,5 +1,3 @@
-// Profile page to display user details.
-
 import React from 'react';
 // import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -18,27 +16,27 @@ class SelectControlNumbered extends React.Component {
 
   state = {
     TextFieldValue:'',
+    selectValue:null
   }
 
-  combinedValue = {}
-
-  // TODO: manager ERROR
+  combinedValue = {};
 
   textFieldHandleChange = (e) => {
-    this.setState({TextFieldValue:e.target.value})
-
+    const value = e.target.value;
+    const error = this.state.selectValue ? !value.match('^[0-9]+') : false;
     const formatedValue = Number(e.target.value);
-    const error = !e.target.value.match(this.props.field.regexValidation);
+
+    this.setState({ TextFieldValue : value });
 
     this.combinedValue.number = formatedValue;
     this.props.handleChange(this.combinedValue,error);
   }
 
-  selectControlHandleChange = (formatedValue) => {
+  selectControlHandleChange = (value) => {
+    this.setState({ selectValue : value });
+    const error = value ? !this.state.TextFieldValue.match('^[0-9]+') : false;
 
-    const error = !this.state.TextFieldValue.match(this.props.field.regexValidation);
-
-    this.combinedValue.leafKey = formatedValue;
+    this.combinedValue.leafKey = value;
     this.props.handleChange(this.combinedValue,error);
   }
 
@@ -56,7 +54,7 @@ class SelectControlNumbered extends React.Component {
 
             onChange={this.textFieldHandleChange}
             value={this.state.TextFieldValue}
-            error= {!this.state.TextFieldValue.match(field.regexValidation)}
+            error= {this.state.selectValue ? !this.state.TextFieldValue.match('^[0-9]+') : false}
             required={true}
             className='text-field'
             InputProps={Object.assign({
