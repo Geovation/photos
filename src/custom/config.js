@@ -133,10 +133,14 @@ export default {
     categories2: {
       component: SelectControlNumbered,
       name: 'categories2',
+
+      regexValidation: '^[0-9]+',
+      inputProps: { min: 0, step: 1},
+      type: enums.TYPES.number,
+      
       placeholder: 'Search multiple photo categories',
       data: data,
       noOptionsMessage: 'No more categories',
-      regexValidation: '.*'
     },
   },
   // PHOTO_FIELD: {

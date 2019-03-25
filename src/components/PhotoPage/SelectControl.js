@@ -19,7 +19,8 @@ import { emphasize } from '@material-ui/core/styles/colorManipulator';
 const styles = theme => ({
   root: {
     // flexGrow: 1,
-    margin: 15,
+    // margin: 15,
+    width:'calc(100% - 30px)',
     textAlign: 'center',
   },
   input: {
@@ -33,7 +34,7 @@ const styles = theme => ({
     alignItems: 'center',
     // overflow: 'hidden',  // default
     //
-    overflow:'auto'
+    overflowX:'auto'
   },
   chip: {
     margin: `${theme.spacing.unit / 2}px ${theme.spacing.unit / 4}px`,
@@ -204,7 +205,8 @@ class SelectControl extends React.Component {
   }
 
   handleChange = name => values => {
-    this.props.handleChange(values.length ? values[values.length - 1].key : '');
+    const valueFormated = values.length ? values[values.length - 1].key : '';
+    this.props.handleChange(valueFormated);
 
     if (values.length !== 0) {
       let current_data = {...this.props.field.data};
@@ -352,6 +354,7 @@ class SelectControl extends React.Component {
   }
 }
 
+// TODO: describe the props.
 SelectControl.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,

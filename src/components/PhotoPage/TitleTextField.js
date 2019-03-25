@@ -18,9 +18,16 @@ class TitleTextField extends Component {
     return this.props.field.type === enums.TYPES.number ? Number(value) : String(value);
   }
 
+  onChangeHandler = (e) => {
+    const valueFormated = this.dataFormater(e.target.value);
+    const error = !e.target.value.match(this.props.field.regexValidation);
+
+    this.props.handleChange(valueFormated,error);
+  }
+
   render() {
     // TODO: proptypes
-    const { field, fieldValue, handleChange, classes } = this.props;
+    const { field, fieldValue, classes } = this.props;
     return (
       <div className='text-field-wrapper'>
         <Typography className='typography1'>
@@ -34,7 +41,7 @@ class TitleTextField extends Component {
           placeholder={field.placeholder}
           className='text-field'
           value={fieldValue.value}
-          onChange={(e)=>handleChange(this.dataFormater(e.target.value))}
+          onChange={this.onChangeHandler}
           error= {fieldValue.error}
           InputProps={Object.assign({
             className: classes.cssUnderline
@@ -46,4 +53,3 @@ class TitleTextField extends Component {
 }
 
 export default withStyles(styles, { withTheme: true })(TitleTextField);
-
