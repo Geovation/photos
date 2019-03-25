@@ -1,15 +1,30 @@
 import React, { Component } from 'react';
-import config from '../../custom/config';
+import _ from "lodash";
+
 import './style.scss';
 
 class Fields extends Component {
 
 
+  constructor(props) {
+    super(props);
+
+    this.fieldsValues = this.props.fields.reduce((a, v) => { a[v.name] = { value: v.initValue,  error: !v.initValue.match(v.regexValidation)}; return a; },{});
+
+    debugger
+
+    // TODO: do we need it ?
+    this.state = {};
+  }
+
 
   // update the field and the error state of a selected field
-  handleChangeFields = field => (value) => {
-    field.error = !value.match(field.regexValidation);
-    field.value = value;
+  handleChangeComponent = field => (value) => {
+    this.fieldsValues[field.name].error = !value.match(field.regexValidation);
+    this.fieldsValues[field.name].value = value;
+
+    const errors = _.reduce(this.fieldsValues, (a, v) => a || v.error, false);
+    this.props.handleChange(errors, this.fieldsValues);
   }
 
 
@@ -28,40 +43,15 @@ class Fields extends Component {
           <div style={{display: 'flex',flexDirection:'column'}}>
           </div>
         </div>
-        {Object.values(config.PHOTO_FIELDS).map((field, index) => {
+        {this.props.fields.map((field, index) => {
 
           return(
             <field.component
               key={index}
               field={field}
-
-              handleChange={this.handleChangeFields(field)}
+              handleChange={this.handleChangeComponent(field)}
+              fieldValue={this.fieldsValues[field.name]}
             />
-
-
-
-
-          //   <field.component
-          // key={index}
-          //
-          // placeholder={field.placeholder}
-          //
-          //
-          //
-          //
-          //
-          // titleTextId={titleTextId}
-          // handleChange={this.props.handleChange}
-          // field={this.props.fields[titleTextId]}
-          // error={this.props.errors[titleTextId]}
-          // title={field.title}
-          // type={field.type}
-          // inputProps={field.inputProps}
-          //
-          // selectId={selectId}
-          // data={field.data}
-          // noOptionsMessage={field.noOptionsMessage}
-          // />
           )
         })}
       </div>

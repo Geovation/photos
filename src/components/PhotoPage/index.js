@@ -24,14 +24,6 @@ import Link from '@material-ui/core/Link';
 import _ from 'lodash';
 import enums from '../../types/enums';
 
-let fields = [];
-let errors = [];
-
-_.forEach(config.PHOTO_FIELDS, field => {
-    errors.push(!''.match(field.regexValidation));
-    fields.push('');
-});
-
 const emptyState = {
   imgSrc: null,
   imgExif: null,
@@ -39,13 +31,12 @@ const emptyState = {
   imgFromCamera: null,
   open: false,
   message: '',
-  fields: fields,
   sending: false,
   sendingProgress: 0,
-  errors: errors,
+  anyError: true,
   enabledUploadButton :true,
-  textfieldsEmpty: true,
   next: false,
+  fieldsValues: {}
 };
 
 const styles = theme => ({
@@ -169,11 +160,6 @@ class PhotoPage extends Component {
       return;
     }
 
-    if (this.state.textfieldsEmpty) {
-      this.openDialog("Please enter some text");
-      return;
-    }
-
     if (!this.props.online) {
       this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
       return;
@@ -205,11 +191,11 @@ class PhotoPage extends Component {
 
     const data = { ...location};
 
+    // TODO: do we need this ?
     // Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
     _.forEach(config.PHOTO_FIELDS, (field, index) => {
       debugger
       data[field.name] = field.dbConverter(field.type, this.state.fields[index]);
-
     });
 
 
@@ -310,11 +296,6 @@ class PhotoPage extends Component {
     this.props.handleClose(); // go to the map
   };
 
-  handleCloseButton = () => {
-    gtagEvent('Postpone upload', 'Photo');
-    this.handleClosePhotoPage();
-  };
-
   handleCancel = () => {
     this.setState({ sending:false });
 
@@ -345,30 +326,35 @@ class PhotoPage extends Component {
     }
   }
 
+  // TODO;: update error and data
+  handleChangeFields = (anyError, fieldsValues) => {
+    debugger
+    this.setState({anyError, fieldsValues});
+  }
+
   render() {
-    const { classes, label } = this.props;
+    const { classes, label, fields } = this.props;
     return (
       <div className='geovation-photos'>
         <PageWrapper
           handlePrev={this.handlePrev}
           handleNext={this.handleNext}
           nextClicked={this.state.next}
-          error={this.state.textfieldsEmpty || !this.state.enabledUploadButton}
+          error={this.state.anyError || !this.state.enabledUploadButton}
           sendFile={this.sendFile}
           photoPage={true}
           label={label}
           imgSrc={this.state.imgSrc}
           handleClose={this.props.handleClose}>
 
-          {this.state.next
+          {!this.state.next
             ?
             <Fields
               handleChange={this.handleChangeFields}
               sendFile={this.sendFile}
               enabledUploadButton={this.state.enabledUploadButton}
               imgSrc={this.state.imgSrc}
-              errors={this.state.errors}
-              fields={this.state.fields}
+              fields={fields}
               />
             :
             <div style={{display:'flex',flexDirection:'column',flex:1}}>

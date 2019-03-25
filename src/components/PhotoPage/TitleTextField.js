@@ -13,7 +13,7 @@ const styles = theme => ({
 class TitleTextField extends Component {
   render() {
     // TODO: proptypes
-    const { field, handleChange, classes } = this.props;
+    const { field, fieldValue, handleChange, classes } = this.props;
     return (
       <div className='text-field-wrapper'>
         <Typography className='typography1'>
@@ -26,9 +26,9 @@ class TitleTextField extends Component {
           required={true}
           placeholder={field.placeholder}
           className='text-field'
-          value={field.value}
+          value={fieldValue.value}
           onChange={(e)=>handleChange(e.target.value)}
-          error= {field.error}
+          error= {fieldValue.error}
           InputProps={Object.assign({
             className: classes.cssUnderline
           }, field.inputProps)}

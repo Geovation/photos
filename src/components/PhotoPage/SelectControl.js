@@ -308,11 +308,7 @@ class SelectControl extends React.Component {
   }
 
   render() {
-    const { classes, theme, field} = this.props;
-
-
-    debugger
-
+    const { classes, theme, field, fieldValue} = this.props;
 
     const selectStyles = {
       input: base => ({
