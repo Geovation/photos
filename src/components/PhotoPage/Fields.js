@@ -1,11 +1,24 @@
 import React, { Component } from 'react';
-import config from '../../custom/config';
+import _ from "lodash";
+
 import './style.scss';
 
 class Fields extends Component {
+
+  fieldsValues = this.props.fields.reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{});
+
+
+  // update the field and the error state of a selected field
+  handleChangeComponent = field => (value) => {
+    this.fieldsValues[field.name].error = !String(value).match(field.regexValidation);
+    this.fieldsValues[field.name].value = value;
+
+    const errors = _.reduce(this.fieldsValues, (a, v) => a || v.error, false);
+    this.props.handleChange(errors, this.fieldsValues);
+  }
+
+
   render() {
-    let titleTextId = -1;
-    let selectId = -1;
     return (
       <div style={{display:'flex',flexDirection:'column',flex:1,height:'100%'}}>
         <div style={{
@@ -20,31 +33,14 @@ class Fields extends Component {
           <div style={{display: 'flex',flexDirection:'column'}}>
           </div>
         </div>
-        {Object.values(config.PHOTO_FIELDS).map((field,index) => {
-          if (field.componentType === 'TitleTextField'){
-            titleTextId = titleTextId + 1;
-          }
-          else if (field.componentType === 'SelectControl') {
-            selectId = selectId + 1;
-          }
+        {this.props.fields.map((field, index) => {
+
           return(
             <field.component
               key={index}
-
-              placeholder={field.placeholder}
-
-              titleTextId={titleTextId}
-              handleChange={this.props.handleChange}
-              field={this.props.fields[titleTextId]}
-              error={this.props.errors[titleTextId]}
-              title={field.title}
-              type={field.type}
-              inputProps={field.inputProps}
-
-              selectId={selectId}
-              getPhotoTypes={this.props.getPhotoTypes}
-              data={field.data}
-              noOptionsMessage={field.noOptionsMessage}
+              field={field}
+              handleChange={this.handleChangeComponent(field)}
+              fieldValue={this.fieldsValues[field.name]}
             />
           )
         })}

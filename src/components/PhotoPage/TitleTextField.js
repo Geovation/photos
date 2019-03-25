@@ -3,6 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
+import enums from '../../types/enums';
+
 const styles = theme => ({
   cssUnderline: {
     '&:after': {
@@ -11,33 +13,37 @@ const styles = theme => ({
   },
 });
 class TitleTextField extends Component {
+
+  dataFormater = value =>{
+    return this.props.field.type == enums.TYPES.number ? Number(value) : String(value);
+  }
+
   render() {
-    const {
-      type,title,placeholder,inputProps,titleTextId,
-      classes,field,error,handleChange,
-    } = this.props;
+    // TODO: proptypes
+    const { field, fieldValue, handleChange, classes } = this.props;
     return (
       <div className='text-field-wrapper'>
         <Typography className='typography1'>
-          {title}
+          {field.title}
         </Typography>
 
         <TextField
-          id={'textfield' + title}
-          type={type}
+          // id={'textfield' + title}
+          type={field.type}
           required={true}
-          placeholder={placeholder}
+          placeholder={field.placeholder}
           className='text-field'
-          value={field}
-          onChange={(e)=>handleChange(e,titleTextId)}
-          error= {error}
+          value={fieldValue.value}
+          onChange={(e)=>handleChange(this.dataFormater(e.target.value))}
+          error= {fieldValue.error}
           InputProps={Object.assign({
             className: classes.cssUnderline
-          }, inputProps)}
-        />
+          }, field.inputProps)}
+      />
       </div>
     )
   }
 }
 
 export default withStyles(styles, { withTheme: true })(TitleTextField);
+

@@ -225,7 +225,7 @@ class App extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, fields } = this.props;
     return (
       <div className='geovation-app'>
         <main className='content'>
@@ -260,6 +260,7 @@ class App extends Component {
                            label={PAGES.photos.label}
                            srcType={this.state.srcType}
                            cordovaMetadata={this.state.cordovaMetadata}
+                           fields={fields}
                 />}
               />
 

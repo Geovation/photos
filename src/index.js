@@ -38,7 +38,7 @@ const startApp = () => {
     <Provider store={store}>
       <Router>
         <MuiThemeProvider theme={theme}>
-          <App />
+          <App fields={Object.values(config.PHOTO_FIELDS)}/>
         </MuiThemeProvider>
       </Router>
     </Provider>

@@ -22,21 +22,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Fields from './Fields';
 import Link from '@material-ui/core/Link';
 import _ from 'lodash';
-import enums from '../../types/enums';
-
-let fields = [];
-let errors = [];
-let photoCategories = [];
-
-_.forEach(config.PHOTO_FIELDS, field => {
-  if (field.componentType === 'TitleTextField') {
-    errors.push(!''.match(field.regexValidation));
-    fields.push('');
-  }
-  else if (field.componentType === 'SelectControl') {
-    photoCategories.push([]);
-  }
-});
 
 const emptyState = {
   imgSrc: null,
@@ -45,14 +30,12 @@ const emptyState = {
   imgFromCamera: null,
   open: false,
   message: '',
-  fields: fields,
   sending: false,
   sendingProgress: 0,
-  errors: errors,
+  anyError: true,
   enabledUploadButton :true,
-  textfieldsEmpty: true,
   next: false,
-  photoCategories: photoCategories,
+  fieldsValues: {}
 };
 
 const styles = theme => ({
@@ -102,29 +85,7 @@ class PhotoPage extends Component {
     this.setState(emptyState);
   }
 
-  // update the field and the error state of a selected field
-  handleChange = (event,id) => {
-    const fields = this.state.fields.map((field,index) =>
-       id === index ? event.target.value : field
-    );
 
-    const errors = [...this.state.errors];
-    Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
-      if (id === index) {
-        errors[id] = !event.target.value.match(field.regexValidation)
-      }
-    });
-
-    // block the user from uploading if he didn't filled the text fields
-    let textfieldsEmpty = false;
-    fields.forEach(field => {
-      if (field === '') {
-        textfieldsEmpty = true;
-      }
-    });
-
-    this.setState({ fields, errors, textfieldsEmpty });
-  }
 
   openDialog = (message, fn) => {
     this.setState({
@@ -198,11 +159,6 @@ class PhotoPage extends Component {
       return;
     }
 
-    if (this.state.textfieldsEmpty) {
-      this.openDialog("Please enter some text");
-      return;
-    }
-
     if (!this.props.online) {
       this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
       return;
@@ -232,16 +188,12 @@ class PhotoPage extends Component {
       }
     }
 
-    const data = { ...location};
+    const fieldsJustValues = _.reduce(this.state.fieldsValues, (a, v, k) => {
+      a[k] = v.value;
+      return a;
+    }, {});
 
-    Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
-      if (field.componentType === 'TitleTextField') {
-        data[field.name] = field.type === enums.TYPES.number ? Number(this.state.fields[index]) : this.state.fields[index];
-      }
-    });
-
-    const categories = this.state.photoCategories.map(category => Number(category.key));
-    data[config.PHOTO_FIELDS.categories.name] =  categories;
+    const data = { ...location, ...fieldsJustValues};
 
     this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
     this.uploadTask = null;
@@ -340,11 +292,6 @@ class PhotoPage extends Component {
     this.props.handleClose(); // go to the map
   };
 
-  handleCloseButton = () => {
-    gtagEvent('Postpone upload', 'Photo');
-    this.handleClosePhotoPage();
-  };
-
   handleCancel = () => {
     this.setState({ sending:false });
 
@@ -365,13 +312,6 @@ class PhotoPage extends Component {
     this.setState({ next:false });
   }
 
-  getPhotoTypes = (photoCategory,id) => {
-    const photoCategories = this.state.photoCategories.map((category,index) =>
-       id === index ? photoCategory : category
-    );
-    this.setState({ photoCategories });
-  }
-
   componentDidMount() {
     this.loadImage();
   }
@@ -382,15 +322,19 @@ class PhotoPage extends Component {
     }
   }
 
+  handleChangeFields = (anyError, fieldsValues) => {
+    this.setState({anyError, fieldsValues});
+  }
+
   render() {
-    const { classes, label } = this.props;
+    const { classes, label, fields } = this.props;
     return (
       <div className='geovation-photos'>
         <PageWrapper
           handlePrev={this.handlePrev}
           handleNext={this.handleNext}
           nextClicked={this.state.next}
-          error={this.state.textfieldsEmpty || !this.state.enabledUploadButton}
+          error={this.state.anyError || !this.state.enabledUploadButton}
           sendFile={this.sendFile}
           photoPage={true}
           label={label}
@@ -400,13 +344,11 @@ class PhotoPage extends Component {
           {this.state.next
             ?
             <Fields
-              handleChange={this.handleChange}
+              handleChange={this.handleChangeFields}
               sendFile={this.sendFile}
               enabledUploadButton={this.state.enabledUploadButton}
               imgSrc={this.state.imgSrc}
-              errors={this.state.errors}
-              fields={this.state.fields}
-              getPhotoTypes={this.getPhotoTypes}
+              fields={fields}
               />
             :
             <div style={{display:'flex',flexDirection:'column',flex:1}}>

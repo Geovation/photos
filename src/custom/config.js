@@ -123,12 +123,13 @@ export default {
       regexValidation: '^[0-9]+'
     },
     categories: {
-      component : SelectControl,
-      componentType : 'SelectControl',
+      component: SelectControl,
+      componentType: 'SelectControl',
       name: 'categories',
       placeholder: 'Search multiple photo categories',
       data: data,
-      noOptionsMessage: 'No more categories'
+      noOptionsMessage: 'No more categories',
+      regexValidation: '.*'
     },
   },
   // PHOTO_FIELD: {
