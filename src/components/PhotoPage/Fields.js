@@ -5,22 +5,12 @@ import './style.scss';
 
 class Fields extends Component {
 
-
-  constructor(props) {
-    super(props);
-
-    this.fieldsValues = this.props.fields.reduce((a, v) => { a[v.name] = { value: v.initValue,  error: !v.initValue.match(v.regexValidation)}; return a; },{});
-
-    debugger
-
-    // TODO: do we need it ?
-    this.state = {};
-  }
+  fieldsValues = this.props.fields.reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{});
 
 
   // update the field and the error state of a selected field
   handleChangeComponent = field => (value) => {
-    this.fieldsValues[field.name].error = !value.match(field.regexValidation);
+    this.fieldsValues[field.name].error = !String(value).match(field.regexValidation);
     this.fieldsValues[field.name].value = value;
 
     const errors = _.reduce(this.fieldsValues, (a, v) => a || v.error, false);

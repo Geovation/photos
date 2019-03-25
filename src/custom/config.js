@@ -110,9 +110,7 @@ export default {
       title: 'Description',
       type: enums.TYPES.string,
       placeholder: 'eg. whatever',
-      regexValidation: '^\\w+( \\w+)*$',
-      initValue: '',
-      dbConverter: (type, value) => type === enums.TYPES.number ? Number(value) : value
+      regexValidation: '^\\w+( \\w+)*$'
     },
     notes: {
       component : TitleTextField,
@@ -122,9 +120,7 @@ export default {
       title: 'Notes',
       type: enums.TYPES.number,
       placeholder: 'eg. 1',
-      regexValidation: '^[0-9]+',
-      initValue: '',
-      dbConverter: (type, value) => type === enums.TYPES.number ? Number(value) : value
+      regexValidation: '^[0-9]+'
     },
     categories: {
       component: SelectControl,
@@ -133,9 +129,7 @@ export default {
       placeholder: 'Search multiple photo categories',
       data: data,
       noOptionsMessage: 'No more categories',
-      regexValidation: '.*',
-      initValue: '',
-      dbConverter: (type, value) => value
+      regexValidation: '.*'
     },
   },
   // PHOTO_FIELD: {

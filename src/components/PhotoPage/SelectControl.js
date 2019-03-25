@@ -204,6 +204,8 @@ class SelectControl extends React.Component {
   }
 
   handleChange = name => values => {
+    this.props.handleChange(values.length ? values[values.length - 1].key : '');
+
     if (values.length !== 0) {
       let current_data = {...this.props.field.data};
       const findvaluePath = this.findOptions(this.props.field.data,values[values.length - 1].key);
@@ -308,7 +310,8 @@ class SelectControl extends React.Component {
   }
 
   render() {
-    const { classes, theme, field, fieldValue} = this.props;
+    // TODO add propTypes
+    const { classes, theme, field} = this.props;
 
     const selectStyles = {
       input: base => ({

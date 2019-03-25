@@ -3,6 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
+import enums from '../../types/enums';
+
 const styles = theme => ({
   cssUnderline: {
     '&:after': {
@@ -11,6 +13,11 @@ const styles = theme => ({
   },
 });
 class TitleTextField extends Component {
+
+  dataFormater = value =>{
+    return this.props.field.type == enums.TYPES.number ? Number(value) : String(value);
+  }
+
   render() {
     // TODO: proptypes
     const { field, fieldValue, handleChange, classes } = this.props;
@@ -27,7 +34,7 @@ class TitleTextField extends Component {
           placeholder={field.placeholder}
           className='text-field'
           value={fieldValue.value}
-          onChange={(e)=>handleChange(e.target.value)}
+          onChange={(e)=>handleChange(this.dataFormater(e.target.value))}
           error= {fieldValue.error}
           InputProps={Object.assign({
             className: classes.cssUnderline

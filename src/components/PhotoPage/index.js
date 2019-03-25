@@ -22,7 +22,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Fields from './Fields';
 import Link from '@material-ui/core/Link';
 import _ from 'lodash';
-import enums from '../../types/enums';
 
 const emptyState = {
   imgSrc: null,
@@ -189,15 +188,12 @@ class PhotoPage extends Component {
       }
     }
 
-    const data = { ...location};
+    const fieldsJustValues = _.reduce(this.state.fieldsValues, (a, v, k) => {
+      a[k] = v.value;
+      return a;
+    }, {});
 
-    // TODO: do we need this ?
-    // Object.values(config.PHOTO_FIELDS).forEach((field,index) => {
-    _.forEach(config.PHOTO_FIELDS, (field, index) => {
-      debugger
-      data[field.name] = field.dbConverter(field.type, this.state.fields[index]);
-    });
-
+    const data = { ...location, ...fieldsJustValues};
 
     this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
     this.uploadTask = null;
@@ -326,9 +322,7 @@ class PhotoPage extends Component {
     }
   }
 
-  // TODO;: update error and data
   handleChangeFields = (anyError, fieldsValues) => {
-    debugger
     this.setState({anyError, fieldsValues});
   }
 
@@ -347,7 +341,7 @@ class PhotoPage extends Component {
           imgSrc={this.state.imgSrc}
           handleClose={this.props.handleClose}>
 
-          {!this.state.next
+          {this.state.next
             ?
             <Fields
               handleChange={this.handleChangeFields}
