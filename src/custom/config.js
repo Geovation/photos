@@ -2,6 +2,8 @@ import styles from './config.scss';
 import enums from '../types/enums';
 import TitleTextField from '../components/PhotoPage/TitleTextField';
 import SelectControl from '../components/PhotoPage/SelectControl';
+import SelectControlNumbered from '../components/PhotoPage/SelectControlNumbered';
+
 import { data } from './categories';
 
 const primaryColor = styles.primary;
@@ -105,7 +107,6 @@ export default {
   PHOTO_FIELDS : {
     description: {
       component : TitleTextField,
-      componentType: 'TitleTextField',
       name: 'description',
       title: 'Description',
       type: enums.TYPES.string,
@@ -114,7 +115,6 @@ export default {
     },
     notes: {
       component : TitleTextField,
-      componentType : 'TitleTextField',
       inputProps: { min: 0, step: 1},
       name: 'notes',
       title: 'Notes',
@@ -124,8 +124,15 @@ export default {
     },
     categories: {
       component: SelectControl,
-      componentType: 'SelectControl',
       name: 'categories',
+      placeholder: 'Search multiple photo categories',
+      data: data,
+      noOptionsMessage: 'No more categories',
+      regexValidation: '.*'
+    },
+    categories2: {
+      component: SelectControlNumbered,
+      name: 'categories2',
       placeholder: 'Search multiple photo categories',
       data: data,
       noOptionsMessage: 'No more categories',

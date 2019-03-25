@@ -15,7 +15,7 @@ const styles = theme => ({
 class TitleTextField extends Component {
 
   dataFormater = value =>{
-    return this.props.field.type == enums.TYPES.number ? Number(value) : String(value);
+    return this.props.field.type === enums.TYPES.number ? Number(value) : String(value);
   }
 
   render() {
