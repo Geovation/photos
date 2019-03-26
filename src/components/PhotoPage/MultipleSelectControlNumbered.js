@@ -8,8 +8,7 @@ class MultipleSelectControlNumbered extends React.Component {
 
   state = {
     components: [],
-    disabled: false,
-    errors:[]
+    values: [],
   }
   index = 0;
   combinedValue = {};
@@ -17,30 +16,44 @@ class MultipleSelectControlNumbered extends React.Component {
   handleClickAdd = (e) => {
     const components = [...this.state.components];
     components.push(this.index);
+
+    const values = [...this.state.values];
+    values.push(null);
+
     this.setState({
       components,
-      // disabled:true
+      values
     });
 
     this.index = this.index + 1;
+
+    console.log(components);
   }
 
   handleClickRemove = (e) => {
     this.index = this.index > 0 ? this.index - 1 : 0;
+
     const components = [...this.state.components];
-    components.pop(this.index);
-    this.setState({components});
+    components.pop();
+
+    const values = [...this.state.values];
+    values.pop();
+
+    this.setState({
+      components,
+      values
+    });
   }
 
   handleChange = index => (value,error,b) => {
-    console.log(value,error,index);
+    const values = [...this.state.values];
+    values[index] = value;
+
     this.setState({
-      // disabled:error
-    })
-    // const combinedValue = [...combinedValue];
-    // if
+      values
+    });
 
-
+    this.props.handleChange(values,false);
   }
 
   render() {
