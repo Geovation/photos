@@ -31,7 +31,7 @@
   "devDependencies": {
     "cordova": "^8.1.2",
     "coveralls": "^3.0.3",
-    "firebase-admin": "^7.0.0",
+    "firebase-admin": "^7.1.1",
     "http-server": "^0.11.1",
     "jimp": "^0.6.0",
     "ncp": "^2.0.0",
@@ -46,7 +46,7 @@
     "@material-ui/icons": "^3.0.2",
     "blueimp-load-image": "^2.20.1",
     "dms2dec": "^1.1.0",
-    "firebase": "^5.9.1",
+    "firebase": "^5.8.5",
     "lodash": "^4.17.11",
     "mapbox-gl": "^0.53.1",
     "md5": "^2.2.1",
