@@ -19,7 +19,7 @@ class Fields extends Component {
 
   render() {
     return (
-      <div style={{display:'flex',flexDirection:'column',flex:1,height:'100%'}}>
+      <div style={{marginBottom:300}}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
