@@ -53,7 +53,8 @@ class MultipleSelectControlNumbered extends React.Component {
       values
     });
 
-    this.props.handleChange(values,false);
+    let notEmptyValues = values.filter(value => value !== null);
+    this.props.handleChange(notEmptyValues,false);
   }
 
   render() {
