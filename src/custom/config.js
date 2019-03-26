@@ -4,6 +4,7 @@ import TitleTextField from '../components/PhotoPage/TitleTextField';
 import SelectControlWrapper from '../components/PhotoPage/SelectControlWrapper';
 import SelectControlNumbered from '../components/PhotoPage/SelectControlNumbered';
 import MultipleSelectControlNumbered from '../components/PhotoPage/MultipleSelectControlNumbered';
+import MultipleSelectControlTextFields from '../components/PhotoPage/MultipleSelectControlTextFields';
 
 import { data } from './categories';
 
@@ -145,6 +146,17 @@ export default {
     categories3: {
       component: MultipleSelectControlNumbered,
       name: 'categories3',
+
+      inputProps: { min: 0, step: 1},
+      type: enums.TYPES.number,
+
+      placeholder: 'Search multiple photo categories',
+      data: data,
+      noOptionsMessage: 'No more categories',
+    },
+    categories4: {
+      component: MultipleSelectControlTextFields,
+      name: 'categories4',
 
       inputProps: { min: 0, step: 1},
       type: enums.TYPES.number,
