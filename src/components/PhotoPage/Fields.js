@@ -7,10 +7,9 @@ class Fields extends Component {
 
   fieldsValues = this.props.fields.reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{});
 
-
   // update the field and the error state of a selected field
-  handleChangeComponent = field => (value) => {
-    this.fieldsValues[field.name].error = !String(value).match(field.regexValidation);
+  handleChangeComponent = field => (value,error) => {
+    this.fieldsValues[field.name].error = error
     this.fieldsValues[field.name].value = value;
 
     const errors = _.reduce(this.fieldsValues, (a, v) => a || v.error, false);
