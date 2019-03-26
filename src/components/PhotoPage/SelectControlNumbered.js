@@ -48,7 +48,7 @@ class SelectControlNumbered extends React.Component {
     return (
       <div style={{display:'flex',margin: 15,width:'calc(100% - 30px)'}}>
         <SelectControl {...props}/>
-        <div style={{display:'flex',alignItems:'flex-end',width:30,marginLeft:5}}>
+        <div style={{display:'flex',alignItems:'flex-end',width:40,marginLeft:5}}>
           <TextField
             type={field.type}
 

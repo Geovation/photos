@@ -1,6 +1,7 @@
 import styles from './config.scss';
 import enums from '../types/enums';
 import TitleTextField from '../components/PhotoPage/TitleTextField';
+import SelectControlWrapper from '../components/PhotoPage/SelectControlWrapper';
 import SelectControlNumbered from '../components/PhotoPage/SelectControlNumbered';
 
 import { data } from './categories';
@@ -122,8 +123,16 @@ export default {
       regexValidation: '^[0-9]+'
     },
     categories: {
-      component: SelectControlNumbered,
+      component: SelectControlWrapper,
       name: 'categories',
+      placeholder: 'Search multiple photo categories',
+      data: data,
+      noOptionsMessage: 'No more categories',
+      regexValidation: '.*'
+    },
+    categories2: {
+      component: SelectControlNumbered,
+      name: 'categories2',
 
       inputProps: { min: 0, step: 1},
       type: enums.TYPES.number,

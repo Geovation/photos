@@ -18,9 +18,9 @@ import { emphasize } from '@material-ui/core/styles/colorManipulator';
 
 const styles = theme => ({
   root: {
-    // flexGrow: 1,
-    // margin: 15,
-    width:'calc(100% - 30px)',
+    flexGrow: 1,
+    width:'100%',
+    // margin:15,
     textAlign: 'center',
   },
   input: {
@@ -29,12 +29,10 @@ const styles = theme => ({
   },
   valueContainer: {
     display: 'flex',
-    // flexWrap: 'wrap', //default
+    flexWrap: 'wrap', //default
     flex: 1,
     alignItems: 'center',
     // overflow: 'hidden',  // default
-    //
-    overflowX:'auto'
   },
   chip: {
     margin: `${theme.spacing.unit / 2}px ${theme.spacing.unit / 4}px`,
