@@ -23,7 +23,8 @@ class SelectControlNumbered extends React.Component {
 
   textFieldHandleChange = (e) => {
     const value = e.target.value;
-    const error = this.state.selectValue ? !value.match('^[0-9]+') : false;
+    const error = this.calcError(this.state.selectValue,value);
+
     const formatedValue = Number(e.target.value);
 
     this.setState({ TextFieldValue : value });
@@ -34,11 +35,15 @@ class SelectControlNumbered extends React.Component {
 
   selectControlHandleChange = (value) => {
     this.setState({ selectValue : value });
-    const error = value ? !this.state.TextFieldValue.match('^[0-9]+') : false;
+
+    const error = this.calcError(value,this.state.TextFieldValue);
 
     this.combinedValue.leafKey = value;
     this.props.handleChange(this.combinedValue,error);
   }
+
+  calcError = (condition,value) => condition ? !value.match('^[0-9]+') : false;
+
 
   render() {
     const { field, classes } = this.props;
@@ -54,7 +59,7 @@ class SelectControlNumbered extends React.Component {
 
             onChange={this.textFieldHandleChange}
             value={this.state.TextFieldValue}
-            error= {this.state.selectValue ? !this.state.TextFieldValue.match('^[0-9]+') : false}
+            error= {this.calcError(this.state.selectValue,this.state.TextFieldValue)}
             required={true}
             className='text-field'
             InputProps={Object.assign({
