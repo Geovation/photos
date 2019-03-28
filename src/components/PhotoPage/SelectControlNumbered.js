@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import SelectControl from './SelectControl';
+import SelectControlMultipleValue from './SelectControlMultipleValue';
 import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
@@ -52,7 +52,7 @@ class SelectControlNumbered extends React.Component {
 
     return (
       <div style={{display:'flex',margin: 15,width:'calc(100% - 30px)'}}>
-        <SelectControl {...props}/>
+        <SelectControlMultipleValue {...props}/>
         <div style={{display:'flex',alignItems:'flex-end',width:40,marginLeft:5}}>
           <TextField
             type={field.type}
