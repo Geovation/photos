@@ -22,13 +22,9 @@ import WelcomePage from './components/WelcomePage';
 import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 
-import config from './custom/config';
 import './App.scss';
 import { withStyles } from '@material-ui/core/styles';
 import { isIphoneWithNotchAndCordova } from './utils';
-
-
-const PAGES = config.PAGES;
 
 const styles = theme => ({
   burger: {
@@ -72,7 +68,7 @@ class App extends Component {
       file
     });
 
-    this.goToPage(PAGES.photos);
+    this.goToPage(this.props.config.PAGES.photos);
   };
 
   setLocationWatcher() {
@@ -110,7 +106,7 @@ class App extends Component {
     gtagPageView(this.props.location.pathname);
 
     const geojson = await dbFirebase.fetchPhotos();
-    config.getStats(geojson).then(stats => {
+    this.props.config.getStats(geojson).then(stats => {
       this.setState({ geojson, stats });
     }).catch(err => {
       console.error('Get Stats: ', err.message);
@@ -125,7 +121,7 @@ class App extends Component {
       if (this.state.user && !user) {
         gtagEvent('Signed out','User')
 
-        this.goToPage(PAGES.map);
+        this.goToPage(this.props.config.PAGES.map);
         window.location.reload();
       }
       this.setState({ user });
@@ -149,7 +145,7 @@ class App extends Component {
   }
 
   goToMap = () => {
-    this.goToPage(config.PAGES.map)
+    this.goToPage(this.props.config.PAGES.map)
   }
 
   componentDidUpdate(prevProps) {
@@ -231,33 +227,33 @@ class App extends Component {
         <main className='content'>
           { this.state.welcomeShown &&
             <Switch>
-              {config.CUSTOM_PAGES.map( (CustomPage,index) => (
+              {this.props.config.CUSTOM_PAGES.map( (CustomPage,index) => (
                 !!CustomPage.page &&
                   <Route key={index} path={CustomPage.path}
                     render={(props) => <CustomPage.page {...props} handleClose={this.goToMap} label={CustomPage.label}/>}
                   />
               ))}
-              <Route path={PAGES.about.path} render={(props) =>
-                <AboutPage label={PAGES.about.label} {...props} handleClose={this.goToMap} />}
+              <Route path={this.props.config.PAGES.about.path} render={(props) =>
+                <AboutPage label={this.props.config.PAGES.about.label} {...props} handleClose={this.goToMap} />}
               />
-              <Route path={PAGES.tutorial.path} render={(props) =>
-                <TutorialPage label={PAGES.tutorial.label} {...props} handleClose={this.goToMap} />}
+              <Route path={this.props.config.PAGES.tutorial.path} render={(props) =>
+                <TutorialPage label={this.props.config.PAGES.tutorial.label} {...props} handleClose={this.goToMap} />}
               />
 
               { this.state.user && this.state.user.isModerator &&
-                <Route path={PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage label={PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
+                <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
+                  <ModeratorPage label={this.props.config.PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
                 />
               }
 
-              <Route path={PAGES.photos.path} render={(props) =>
+              <Route path={this.props.config.PAGES.photos.path} render={(props) =>
                 <PhotoPage {...props}
                            file={this.state.file}
                            gpsLocation={this.state.location}
                            online={this.state.online}
                            handlePhotoClick={this.handlePhotoClick}
                            handleClose={this.goToMap}
-                           label={PAGES.photos.label}
+                           label={this.props.config.PAGES.photos.label}
                            srcType={this.state.srcType}
                            cordovaMetadata={this.state.cordovaMetadata}
                            fields={fields}
@@ -265,42 +261,43 @@ class App extends Component {
               />
 
               { this.state.user &&
-                <Route path={PAGES.account.path} render={(props) =>
+                <Route path={this.props.config.PAGES.account.path} render={(props) =>
                   <ProfilePage {...props}
                                user={this.state.user}
                                handleClose={this.goToMap}
-                               label={PAGES.about.label}
+                               label={this.props.config.PAGES.about.label}
                   />}
                 />
               }
 
-              <Route path={PAGES.writeFeedback.path} render={(props) =>
+              <Route path={this.props.config.PAGES.writeFeedback.path} render={(props) =>
                  <WriteFeedbackPage {...props}
                                     user={this.state.user}
                                     location={this.state.location}
                                     online={this.state.online}
                                     handleClose={this.goToMap}
-                                    label={PAGES.writeFeedback.label}
+                                    label={this.props.config.PAGES.writeFeedback.label}
                  />}
                />
 
             </Switch>
           }
 
-          { !this.state.welcomeShown && this.props.history.location.pathname !== PAGES.embeddable.path &&
+          { !this.state.welcomeShown && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
             <WelcomePage handleClose={this.handleWelcomePageClose}/>
           }
 
           <Map location={this.state.location}
-              visible={[PAGES.map.path, PAGES.embeddable.path].includes(this.props.history.location.pathname)}
-              welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === PAGES.embeddable.path}
-              geojson={this.state.geojson}
-              user={this.state.user}
+               visible={[this.props.config.PAGES.map.path, this.props.config.PAGES.embeddable.path].includes(this.props.history.location.pathname)}
+               welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
+               geojson={this.state.geojson}
+               user={this.state.user}
+               config={this.props.config}
           />
 
           <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}
             style={{
-              display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
+              display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
               ? 'block'
               : 'none'
             }}
@@ -308,7 +305,7 @@ class App extends Component {
 
           <Fab className={classes.camera} color="secondary" onClick={this.handlePhotoClick}
             style={{
-              display: this.state.welcomeShown && this.props.history.location.pathname === PAGES.map.path
+              display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
               ? 'flex'
               : 'none'
             }}

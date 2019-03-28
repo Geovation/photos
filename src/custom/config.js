@@ -106,6 +106,8 @@ export default {
     "description": s => s,
     "notes": s => s
   },
+  ZOOM: 5,
+  CENTER: [-2, 55],
   PHOTO_FIELDS : {
     description: {
       component : TitleTextField,
