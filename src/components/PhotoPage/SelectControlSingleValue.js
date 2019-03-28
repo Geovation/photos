@@ -160,6 +160,18 @@ function Menu(props) {
   );
 }
 
+function DropdownIndicator(props) {
+  return (
+    null
+  );
+};
+
+function IndicatorSeparator(props) {
+  return (
+    null
+  );
+};
+
 const components = {
   Control,
   Menu,
@@ -169,6 +181,8 @@ const components = {
   Placeholder,
   SingleValue,
   ValueContainer,
+  DropdownIndicator,
+  IndicatorSeparator
 };
 
 class SelectControlSingleValue extends React.Component {
@@ -181,7 +195,7 @@ class SelectControlSingleValue extends React.Component {
     this.setState({
       [name]: value,
     });
-    
+
   };
 
   render() {
