@@ -27,7 +27,7 @@
   "dependencies": {
     "cordova-android": "^7.1.4",
     "cordova-browser": "^5.0.4",
-    "cordova-ios": "^4.5.5",
+    "cordova-ios": "^5.0.0",
     "cordova-plugin-camera-with-exif": "^1.2.5",
     "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-google-analytics": "^1.8.6",
