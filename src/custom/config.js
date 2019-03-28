@@ -2,6 +2,7 @@ import styles from './config.scss';
 import enums from '../types/enums';
 import TitleTextField from '../components/PhotoPage/TitleTextField';
 import SelectControlWrapper from '../components/PhotoPage/SelectControlWrapper';
+import MultiFields from '../components/PhotoPage/MultiFields';
 // import SelectControlNumbered from '../components/PhotoPage/SelectControlNumbered';
 // import MultipleSelectControlNumbered from '../components/PhotoPage/MultipleSelectControlNumbered';
 // import MultipleSelectControlTextFields from '../components/PhotoPage/MultipleSelectControlTextFields';
@@ -132,10 +133,21 @@ export default {
     categories: {
       component: SelectControlWrapper,
       name: 'categories',
-      placeholder: 'Search multiple photo categories',
+      placeholder: 'Search photo categories',
       data: data2,
       noOptionsMessage: 'No more categories',
       regexValidation: '.*'
+    },
+    multicategories: {
+      component: MultiFields,
+      name: 'multicategories',
+
+      inputProps: { min: 0, step: 1},
+      type: enums.TYPES.number,
+
+      placeholder: 'Search photo categories',
+      data: data2,
+      noOptionsMessage: 'No more categories',
     },
     // categories2: {
     //   component: SelectControlNumbered,
