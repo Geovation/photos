@@ -26,14 +26,10 @@ import CardComponent from './CardComponent';
 import dbFirebase from '../dbFirebase';
 
 import './Map.scss';
-import config from "../custom/config";
 import { isIphoneWithNotchAndCordova } from '../utils';
 import { withStyles } from '@material-ui/core/styles';
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
-
-const CENTER = [-0.07, 51.58];
-const ZOOM = 10;
 
 const styles = theme => ({
   location: {
@@ -69,7 +65,7 @@ class Map extends Component {
       confirmDialogHandleOk: null,
       geojson: null,
     }
-    this.prevZoom = ZOOM;
+    this.prevZoom = this.props.config.ZOOM;
     this.prevZoomTime = new Date().getTime();
     this.map = {};
     this.renderedThumbnails = {};
@@ -78,18 +74,18 @@ class Map extends Component {
   async componentDidMount(){
     const location = this.props.location;
 
-    mapboxgl.accessToken = config.MAPBOX_TOKEN;
+    mapboxgl.accessToken = this.props.config.MAPBOX_TOKEN;
     this.map = new mapboxgl.Map({
       container: 'map', // container id
-      style: config.MAP_SOURCE,
-      center: location.updated ? [location.longitude, location.latitude] : CENTER, // starting position [lng, lat]
-      zoom: ZOOM, // starting zoom
+      style: this.props.config.MAP_SOURCE,
+      center: location.updated ? [location.longitude, location.latitude] : this.props.config.CENTER, // starting position [lng, lat]
+      zoom: this.props.config.ZOOM, // starting zoom
       attributionControl: false,
     });
 
     this.map.addControl(new mapboxgl.AttributionControl({
       compact: true,
-      customAttribution: config.MAP_ATTRIBUTION
+      customAttribution: this.props.config.MAP_ATTRIBUTION
     }), "bottom-left");
 
     this.map.on('load', async () => {
@@ -271,7 +267,7 @@ class Map extends Component {
   }
 
   formatField(value, fieldName) {
-    const formater = config.PHOTO_ZOOMED_FIELDS[fieldName];
+    const formater = this.props.config.PHOTO_ZOOMED_FIELDS[fieldName];
     if (value) {
       return formater(value);
     }
@@ -362,7 +358,7 @@ class Map extends Component {
                 <CardActionArea>
                   <CardContent>
 
-                    {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
+                    {Object.keys(this.props.config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
                       <Typography gutterBottom key={fieldName}>
                         {fieldName} : {this.formatField(feature.properties[fieldName], fieldName)}
                       </Typography>
