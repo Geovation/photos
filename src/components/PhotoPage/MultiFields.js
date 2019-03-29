@@ -36,17 +36,21 @@ class MultiFields extends React.Component {
     this.index = this.index + 1;
   }
 
-  handleClickRemove = (e) => {
+  handleClickRemove = index => (e) => {
     this.index = this.index > 0 ? this.index - 1 : 0;
 
-    const components = [...this.state.components];
-    components.pop();
+    let components = [...this.state.components];
+    components.splice(index, 1)
+
+    for (let i=0 ; i< components.length ; i++) {
+      components[i] = i;
+    }
 
     const selectValues = [...this.state.selectValues];
-    selectValues.pop();
+    selectValues.splice(index, 1)
 
     const textFieldsValues = [...this.state.textFieldsValues];
-    textFieldsValues.pop();
+    textFieldsValues.splice(index, 1)
 
     this.setState({
       components,
@@ -148,7 +152,7 @@ class MultiFields extends React.Component {
               <div style={{display:'flex'}}>
                 <SelectControlSingleValue {...props}/>
                 <div style={{margin:5,marginBottom:0}}>
-                  <Button size={'small'} variant="outlined" onClick={this.handleClickRemove}>
+                  <Button size={'small'} variant="outlined" onClick={this.handleClickRemove(index)}>
                     <RemoveIcon/>
                   </Button>
                 </div>
