@@ -69,7 +69,7 @@ class MultiFields extends React.Component {
       values.push({});
       Object.entries(obj).forEach(([key,value])=> {
         values[index][key] = value.value;
-        if(value.error){
+        if(value.error && this.state.selectValues[index].value){
           textFieldErrors=true;
         }
       });
