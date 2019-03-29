@@ -3,34 +3,33 @@ import SelectControlSingleValue from './SelectControlSingleValue';
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import Button from '@material-ui/core/Button';
-import TitleTextField from './TitleTextField';
-import _ from "lodash";
 
 class MultiFields extends React.Component {
 
-  textFieldsValue = Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{});
 
   state = {
     components: [],
-    values: [],
+    selectValues: [],
     textFieldsValues:[]
   }
+
   index = 0;
   combinedValue = {};
+  valueError = Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{});
 
   handleClickAdd = (e) => {
     const components = [...this.state.components];
     components.push(this.index);
 
-    const values = [...this.state.values];
-    values.push(null);
+    const selectValues = [...this.state.selectValues];
+    selectValues.push(null);
 
     const textFieldsValues = [...this.state.textFieldsValues];
-    textFieldsValues.push(JSON.parse(JSON.stringify(this.textFieldsValue)));
+    textFieldsValues.push(JSON.parse(JSON.stringify(this.valueError)));
 
     this.setState({
       components,
-      values,
+      selectValues,
       textFieldsValues
     });
 
@@ -43,28 +42,29 @@ class MultiFields extends React.Component {
     const components = [...this.state.components];
     components.pop();
 
-    const values = [...this.state.values];
-    values.pop();
+    const selectValues = [...this.state.selectValues];
+    selectValues.pop();
 
     const textFieldsValues = [...this.state.textFieldsValues];
     textFieldsValues.pop();
 
     this.setState({
       components,
-      values,
+      selectValues,
       textFieldsValues
     });
   }
 
   handleChangeSelect = index => (value,error) => {
-    const values = [...this.state.values];
-    values[index] = value;
+    const selectValues = [...this.state.selectValues];
+    selectValues[index] = value;
 
      this.setState({
-      values
+      selectValues
     });
 
-    let notEmptyValues = values.filter(value => value !== null);
+    let notEmptyValues = selectValues.filter(value => value !== null);
+    
     this.props.handleChange(notEmptyValues,false);
   }
 
