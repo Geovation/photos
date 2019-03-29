@@ -135,17 +135,24 @@ class MultiFields extends React.Component {
     const props = {...this.props};
     return (
       <div>
-        <Button onClick={this.handleClickAdd} disabled={this.state.disabled}>
-          <AddIcon/>
-        </Button>
-        <Button onClick={this.handleClickRemove}>
-          <RemoveIcon/>
-        </Button>
+        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',margin:15}}>
+          <Button size={'small'} variant="outlined" onClick={this.handleClickAdd}>
+            Add Categories
+            <AddIcon/>
+          </Button>
+        </div>
         {this.state.components.map(index =>{
           props.handleChangeSelect = this.handleChangeSelect(index);
           return(
             <div key={index} style={{display:'flex',flexDirection:'column',margin:15,width:'calc(100% - 30px)'}}>
-              <SelectControlSingleValue {...props}/>
+              <div style={{display:'flex'}}>
+                <SelectControlSingleValue {...props}/>
+                <div style={{margin:5,marginBottom:0}}>
+                  <Button size={'small'} variant="outlined" onClick={this.handleClickRemove}>
+                    <RemoveIcon/>
+                  </Button>
+                </div>
+              </div>
               {props.field.subfields && Object.values(props.field.subfields).map((subfield,index_subfield) =>{
                 return(
                   this.state.selectValues[index].value

@@ -1,8 +1,8 @@
 import styles from './config.scss';
 import enums from '../types/enums';
 import TitleTextField from '../components/PhotoPage/TitleTextField';
-// import SelectControlWrapper from '../components/PhotoPage/SelectControlWrapper';
 import MultiFields from '../components/PhotoPage/MultiFields';
+// import SelectControlWrapper from '../components/PhotoPage/SelectControlWrapper';
 // import SelectControlNumbered from '../components/PhotoPage/SelectControlNumbered';
 // import MultipleSelectControlNumbered from '../components/PhotoPage/MultipleSelectControlNumbered';
 // import MultipleSelectControlTextFields from '../components/PhotoPage/MultipleSelectControlTextFields';
@@ -131,9 +131,9 @@ export default {
     //   component: SelectControlWrapper,
     //   name: 'categories',
     //   placeholder: 'Search photo categories',
-    //   data: data2,
+    //   data: data,
     //   noOptionsMessage: 'No more categories',
-    //   regexValidation: '.*'
+    //   // regexValidation: '.*'
     // },
     multicategories: {
       component: MultiFields,
@@ -158,8 +158,8 @@ export default {
         },
         brands: {
           component : TitleTextField,
-          name: 'brands',
-          title: 'Brands',
+          name: 'brand',
+          title: 'Brand',
           type: enums.TYPES.string,
           placeholder: 'eg. whatever',
           regexValidation: '^\\w+( \\w+)*$'
