@@ -7,10 +7,7 @@ import MultiFields from '../components/PhotoPage/MultiFields';
 // import MultipleSelectControlNumbered from '../components/PhotoPage/MultipleSelectControlNumbered';
 // import MultipleSelectControlTextFields from '../components/PhotoPage/MultipleSelectControlTextFields';
 
-import {
-  // data,
-  data2
-} from './categories';
+import { data } from './categories';
 
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
@@ -146,7 +143,7 @@ export default {
       type: enums.TYPES.number,
 
       placeholder: 'Search photo categories',
-      data: data2,
+      data: data,
       noOptionsMessage: 'No more categories',
 
       subfields: {

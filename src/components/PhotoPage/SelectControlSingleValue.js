@@ -188,23 +188,57 @@ const components = {
 class SelectControlSingleValue extends React.Component {
   state = {
     single: null,
-    options: this.props.field.data
+    options: []
   };
 
   handleChange = name => value => {
+
     this.setState({
       [name]: value,
     });
 
     let selectedValue;
     if (value) {
-      selectedValue = value.label;
+      selectedValue = value.key;
     }
     else {
       selectedValue = null;
     }
+
     this.props.handleChangeSelect(selectedValue)
   };
+
+
+  getItems = (tree) => {
+  let items = [];
+
+  function getNodesInLowestHierarchy(tree){
+    Object.entries(tree).forEach( ([key,value]) => {
+        if (!value.children) {
+          items.push({ label: value.label, key: key });
+        }
+        else {
+          getNodesInLowestHierarchy(value.children);
+        }
+      });
+    }
+
+    getNodesInLowestHierarchy(tree);
+    return items;
+  }
+
+  initializeOptions = (data) => {
+    const options = Object
+                  .entries(data)
+                  .map(([key,value]) => ({label: value.label, key: key }));
+    this.options = options;
+    this.setState({ options });
+  }
+
+  componentDidMount(){
+    this.items = this.getItems(this.props.field.data);
+    this.initializeOptions(this.items);
+  }
 
   render() {
     // TODO add propTypes
