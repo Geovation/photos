@@ -96,7 +96,7 @@ class MultiFields extends React.Component {
        values[index][key] = value.value;
      });
    });
-   
+
    const res = [];
    for (let i=0; i < textFieldsValues.length; i++) {
      res.push({...values[i],...this.state.selectValues[i]})
@@ -124,12 +124,14 @@ class MultiFields extends React.Component {
               <SelectControlSingleValue {...props}/>
               {props.field.subfields && Object.values(props.field.subfields).map((subfield,index_subfield) =>{
                 return(
-                  <subfield.component
-                    key={'subcomponent_'+index_subfield}
-                    field={subfield}
-                    handleChange={this.handleChangeTitleTextField(index,subfield)}
-                    fieldValue={this.state.textFieldsValues[index][subfield.name]}
-                  />
+                  this.state.selectValues[index].value
+                  ? <subfield.component
+                      key={'subcomponent_'+index_subfield}
+                      field={subfield}
+                      handleChange={this.handleChangeTitleTextField(index,subfield)}
+                      fieldValue={this.state.textFieldsValues[index][subfield.name]}
+                    />
+                  :null
                 )
               })}
             </div>
