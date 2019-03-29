@@ -56,7 +56,6 @@ class MultiFields extends React.Component {
   }
 
   handleChangeSelect = index => (value,error) => {
-    const res = [];
     const selectValues = [...this.state.selectValues];
     selectValues[index].value = value;
 
@@ -64,17 +63,23 @@ class MultiFields extends React.Component {
       selectValues
     });
 
-    const values = [...this.state.textFieldsValues];
+    let values=[];
+    Object.values(this.state.textFieldsValues).forEach((obj,index) => {
+      values.push({});
+      Object.entries(obj).forEach(([key,value])=> {
+        values[index][key] = value.value;
+      });
+    });
+
+    const res = [];
     for (let i=0;i<selectValues.length;i++){
       res.push({...values[i],...selectValues[i]});
     }
 
-    console.log(res);
     this.props.handleChange(res,false);
   }
 
   handleChangeTitleTextField = (index,field) => (value,error) => {
-    const res = [];
     const textFieldsValues = [...this.state.textFieldsValues];
 
     textFieldsValues[index][field.name].error = error;
@@ -84,7 +89,15 @@ class MultiFields extends React.Component {
      textFieldsValues
    });
 
-   const values = [...textFieldsValues];
+   let values=[];
+   Object.values(textFieldsValues).forEach((obj,index) => {
+     values.push({});
+     Object.entries(obj).forEach(([key,value])=> {
+       values[index][key] = value.value;
+     });
+   });
+   
+   const res = [];
    for (let i=0; i < textFieldsValues.length; i++) {
      res.push({...values[i],...this.state.selectValues[i]})
    }

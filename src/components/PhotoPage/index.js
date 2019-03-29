@@ -341,7 +341,7 @@ class PhotoPage extends Component {
           imgSrc={this.state.imgSrc}
           handleClose={this.props.handleClose}>
 
-          {!this.state.next
+          {this.state.next
             ?
             <Fields
               handleChange={this.handleChangeFields}
