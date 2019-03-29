@@ -196,6 +196,14 @@ class SelectControlSingleValue extends React.Component {
       [name]: value,
     });
 
+    let selectedValue;
+    if (value) {
+      selectedValue = value.label;
+    }
+    else {
+      selectedValue = null;
+    }
+    this.props.handleChangeSelect(selectedValue)
   };
 
   render() {

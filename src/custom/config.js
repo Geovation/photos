@@ -1,7 +1,7 @@
 import styles from './config.scss';
 import enums from '../types/enums';
 import TitleTextField from '../components/PhotoPage/TitleTextField';
-import SelectControlWrapper from '../components/PhotoPage/SelectControlWrapper';
+// import SelectControlWrapper from '../components/PhotoPage/SelectControlWrapper';
 import MultiFields from '../components/PhotoPage/MultiFields';
 // import SelectControlNumbered from '../components/PhotoPage/SelectControlNumbered';
 // import MultipleSelectControlNumbered from '../components/PhotoPage/MultipleSelectControlNumbered';
@@ -130,14 +130,14 @@ export default {
       placeholder: 'eg. 1',
       regexValidation: '^[0-9]+'
     },
-    categories: {
-      component: SelectControlWrapper,
-      name: 'categories',
-      placeholder: 'Search photo categories',
-      data: data2,
-      noOptionsMessage: 'No more categories',
-      regexValidation: '.*'
-    },
+    // categories: {
+    //   component: SelectControlWrapper,
+    //   name: 'categories',
+    //   placeholder: 'Search photo categories',
+    //   data: data2,
+    //   noOptionsMessage: 'No more categories',
+    //   regexValidation: '.*'
+    // },
     multicategories: {
       component: MultiFields,
       name: 'multicategories',
@@ -148,6 +148,26 @@ export default {
       placeholder: 'Search photo categories',
       data: data2,
       noOptionsMessage: 'No more categories',
+
+      subcomponents: {
+        pieces: {
+          component : TitleTextField,
+          inputProps: { min: 0, step: 1},
+          name: 'pieces',
+          title: 'Pieces',
+          type: enums.TYPES.number,
+          placeholder: 'eg. 1',
+          regexValidation: '^[0-9]+'
+        },
+        brands: {
+          component : TitleTextField,
+          name: 'brands',
+          title: 'Brands',
+          type: enums.TYPES.string,
+          placeholder: 'eg. whatever',
+          regexValidation: '^\\w+( \\w+)*$'
+        },
+      }
     },
     // categories2: {
     //   component: SelectControlNumbered,
