@@ -26,7 +26,7 @@ class MultiFields extends React.Component {
     values.push(null);
 
     const textFieldsValues = [...this.state.textFieldsValues];
-    textFieldsValues.push(this.textFieldsValue);
+    textFieldsValues.push(JSON.parse(JSON.stringify(this.textFieldsValue)));
 
     this.setState({
       components,
@@ -72,16 +72,13 @@ class MultiFields extends React.Component {
 
     const textFieldsValues = [...this.state.textFieldsValues];
 
-    const values = JSON.parse(JSON.stringify(this.state.textFieldsValues[index]));
-    values[field.name].error = error;
-    values[field.name].value = value;
-
-    textFieldsValues[index] = values;
+    textFieldsValues[index][field.name].error = error;
+    textFieldsValues[index][field.name].value = value;
 
     this.setState({
      textFieldsValues
    });
-
+   console.log(textFieldsValues);
   }
 
   render() {
