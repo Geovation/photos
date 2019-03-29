@@ -149,7 +149,7 @@ export default {
       data: data2,
       noOptionsMessage: 'No more categories',
 
-      subcomponents: {
+      subfields: {
         pieces: {
           component : TitleTextField,
           inputProps: { min: 0, step: 1},

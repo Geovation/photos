@@ -8,7 +8,7 @@ import _ from "lodash";
 
 class MultiFields extends React.Component {
 
-  textFieldsValue = Object.values(this.props.field.subcomponents).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{});
+  textFieldsValue = Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{});
 
   state = {
     components: [],
@@ -78,7 +78,7 @@ class MultiFields extends React.Component {
     this.setState({
      textFieldsValues
    });
-   console.log(textFieldsValues);
+
   }
 
   render() {
@@ -96,13 +96,13 @@ class MultiFields extends React.Component {
           return(
             <div key={index} style={{display:'flex',flexDirection:'column',margin:15,width:'calc(100% - 30px)'}}>
               <SelectControlSingleValue {...props}/>
-              {Object.values(props.field.subcomponents).map((subfield,index_subfield) =>{
+              {Object.values(props.field.subfields).map((subfield,index_subfield) =>{
                 return(
                   <subfield.component
                     key={'subcomponent_'+index_subfield}
                     field={subfield}
                     handleChange={this.handleChangeTitleTextField(index,subfield)}
-                    fieldValue={this.state.textFieldsValues[index]}
+                    fieldValue={this.state.textFieldsValues[index][subfield.name]}
                   />
                 )
               })}
