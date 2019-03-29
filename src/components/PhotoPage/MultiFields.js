@@ -63,27 +63,32 @@ class MultiFields extends React.Component {
       selectValues
     });
 
+    // get from textFieldsValues only the value without the error
+    // plus calculate the error
     let values=[];
     let textFieldErrors=false;
     Object.values(this.state.textFieldsValues).forEach((obj,index) => {
       values.push({});
       Object.entries(obj).forEach(([key,value])=> {
         values[index][key] = value.value;
-        if(value.error && this.state.selectValues[index].value){
+        if(value.error && selectValues[index].value){
           textFieldErrors=true;
         }
       });
     });
+
+    // aggregate select and text values and
+    // if select values are not empty
     const res = [];
-    for (let i=0;i<selectValues.length;i++){
-      res.push({...values[i],...selectValues[i]});
+    for (let i=0; i < selectValues.length; i++){
+      if (selectValues[i].value) {
+        res.push({...values[i],...selectValues[i]});
+      }
     }
 
-    // errors
-    console.log(textFieldErrors);
+    // console.log(textFieldErrors);
     // console.log(res);
     this.props.handleChange(res,textFieldErrors);
-
 
   }
 
@@ -97,24 +102,30 @@ class MultiFields extends React.Component {
      textFieldsValues
    });
 
+   // get from textFieldsValues only the value without the error
+   // plus calculate the error
    let values=[];
    let textFieldErrors=false;
    Object.values(textFieldsValues).forEach((obj,index) => {
      values.push({});
      Object.entries(obj).forEach(([key,value])=> {
        values[index][key] = value.value;
-       if(value.error){
-         textFieldErrors=true
+       if(value.error && this.state.selectValues[index].value){
+         textFieldErrors=true;
        }
      });
    });
+
+   // aggregate select and text values and
+   // if select values are not empty
    const res = [];
    for (let i=0; i < textFieldsValues.length; i++) {
-     res.push({...values[i],...this.state.selectValues[i]})
+     if (this.state.selectValues[i].value) {
+      res.push({...values[i], ...this.state.selectValues[i]});
+     }
    }
 
-   // errors
-   console.log(textFieldErrors);
+   // console.log(textFieldErrors);
    // console.log(res);
    this.props.handleChange(res,textFieldErrors);
 
