@@ -15,14 +15,14 @@ class MultiFields extends React.Component {
 
   index = 0;
   combinedValue = {};
-  valueError = Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{});
+  valueError = this.props.field.subfields ? Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{}): false
 
   handleClickAdd = (e) => {
     const components = [...this.state.components];
     components.push(this.index);
 
     const selectValues = [...this.state.selectValues];
-    selectValues.push(null);
+    selectValues.push({});
 
     const textFieldsValues = [...this.state.textFieldsValues];
     textFieldsValues.push(JSON.parse(JSON.stringify(this.valueError)));
@@ -56,20 +56,25 @@ class MultiFields extends React.Component {
   }
 
   handleChangeSelect = index => (value,error) => {
+    const res = [];
     const selectValues = [...this.state.selectValues];
-    selectValues[index] = value;
+    selectValues[index].value = value;
 
      this.setState({
       selectValues
     });
 
-    let notEmptyValues = selectValues.filter(value => value !== null);
-    
-    this.props.handleChange(notEmptyValues,false);
+    const values = [...this.state.textFieldsValues];
+    for (let i=0;i<selectValues.length;i++){
+      res.push({...values[i],...selectValues[i]});
+    }
+
+    console.log(res);
+    this.props.handleChange(res,false);
   }
 
   handleChangeTitleTextField = (index,field) => (value,error) => {
-
+    const res = [];
     const textFieldsValues = [...this.state.textFieldsValues];
 
     textFieldsValues[index][field.name].error = error;
@@ -78,6 +83,14 @@ class MultiFields extends React.Component {
     this.setState({
      textFieldsValues
    });
+
+   const values = [...textFieldsValues];
+   for (let i=0; i < textFieldsValues.length; i++) {
+     res.push({...values[i],...this.state.selectValues[i]})
+   }
+
+   console.log(res);
+   this.props.handleChange(res,false);
 
   }
 
@@ -96,7 +109,7 @@ class MultiFields extends React.Component {
           return(
             <div key={index} style={{display:'flex',flexDirection:'column',margin:15,width:'calc(100% - 30px)'}}>
               <SelectControlSingleValue {...props}/>
-              {Object.values(props.field.subfields).map((subfield,index_subfield) =>{
+              {props.field.subfields && Object.values(props.field.subfields).map((subfield,index_subfield) =>{
                 return(
                   <subfield.component
                     key={'subcomponent_'+index_subfield}
