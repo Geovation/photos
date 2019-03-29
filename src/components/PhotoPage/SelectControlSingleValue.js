@@ -230,7 +230,7 @@ class SelectControlSingleValue extends React.Component {
   initializeOptions = (data) => {
     const options = Object
                   .entries(data)
-                  .map(([key,value]) => ({label: value.label, key: key }));
+                  .map(([key,value]) => ({label: value.label, key: value.key }));
     this.options = options;
     this.setState({ options });
   }
