@@ -90,8 +90,6 @@ class MultiFields extends React.Component {
       }
     }
 
-    // console.log(textFieldErrors);
-    // console.log(res);
     this.props.handleChange(res,textFieldErrors);
 
   }
@@ -129,8 +127,6 @@ class MultiFields extends React.Component {
      }
    }
 
-   // console.log(textFieldErrors);
-   // console.log(res);
    this.props.handleChange(res,textFieldErrors);
 
   }
