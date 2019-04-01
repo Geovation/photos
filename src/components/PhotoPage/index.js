@@ -193,7 +193,14 @@ class PhotoPage extends Component {
       return a;
     }, {});
 
-    const data = { ...location, ...fieldsJustValues};
+    let filteredFields = {};
+    Object.entries(fieldsJustValues).forEach(([key,value]) =>{
+       if(value){
+         filteredFields[key] = value;
+       }
+     });
+
+    const data = { ...location, ...filteredFields};
 
     this.setState({ sending: true, sendingProgress: 0, enabledUploadButton :false });
     this.uploadTask = null;

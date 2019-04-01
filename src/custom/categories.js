@@ -18,7 +18,7 @@ export const data = {
 
           },
           1002: {
-            label:'Other',
+            label:'Other (Bags)',
 
           },
         }
@@ -170,7 +170,7 @@ export const data = {
 
       },
       130: {
-        label:'Other (Specify)',
+        label:'Other (Non-specific plastic)',
 
       },
       131: {
@@ -218,7 +218,7 @@ export const data = {
 
           },
           1019: {
-            label:'Other (specify)',
+            label:'Other (Specific plastic)',
 
           },
         }
@@ -254,7 +254,7 @@ export const data = {
 
               },
               10002: {
-                label:'Other',
+                label:'Other (Tyres (no wheel))',
 
               },
             }
@@ -271,13 +271,13 @@ export const data = {
 
               },
               10005: {
-                label:'Other',
+                label:'Other Tyres (with wheel)',
 
               },
             }
           },
           1026: {
-            label:'Other (specify)',
+            label:'Other (Rubber)',
 
           },
         }
@@ -298,7 +298,7 @@ export const data = {
 
           },
           1030: {
-            label:'Other (specify)',
+            label:'Other (Medical)',
 
           },
         }
@@ -335,7 +335,7 @@ export const data = {
 
           },
           1038: {
-            label:'Other (specify)',
+            label:'Other (Sanitary)',
 
           },
         }
@@ -378,7 +378,7 @@ export const data = {
 
           },
           1045: {
-            label:'Other (specify)',
+            label:'Other (Cloth / clothing)',
 
           },
         }
@@ -435,7 +435,7 @@ export const data = {
 
           },
           1058: {
-            label:'Other (specify)',
+            label:'Other (Metal)',
 
           },
         }
@@ -464,7 +464,7 @@ export const data = {
 
           },
           1064: {
-            label:'Other (specify)',
+            label:'Other (Wood)',
 
           },
         }
