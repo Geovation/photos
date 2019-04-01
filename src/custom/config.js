@@ -138,25 +138,25 @@ export default {
     multicategories: {
       component: MultiFields,
       name: 'multicategories',
-
       inputProps: { min: 0, step: 1},
       type: enums.TYPES.number,
 
       placeholder: 'Search photo categories',
       data: data,
       noOptionsMessage: 'No more categories',
+      leafKey: 'leafKey',
 
       subfields: {
         pieces: {
           component : TitleTextField,
           inputProps: { min: 0, step: 1},
-          name: 'pieces',
-          title: 'Pieces',
+          name: 'number',
+          title: 'Number',
           type: enums.TYPES.number,
           placeholder: 'eg. 1',
           regexValidation: '^[0-9]+'
         },
-        brands: {
+        brand: {
           component : TitleTextField,
           name: 'brand',
           title: 'Brand',

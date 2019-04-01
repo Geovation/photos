@@ -16,7 +16,7 @@ class MultiFields extends React.Component {
   index = 0;
   combinedValue = {};
   valueError = this.props.field.subfields ? Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{}): false
-
+  selectFieldName = this.props.field.leafKey
   handleClickAdd = (e) => {
     const components = [...this.state.components];
     components.push(this.index);
@@ -61,7 +61,7 @@ class MultiFields extends React.Component {
 
   handleChangeSelect = index => (value,error) => {
     const selectValues = [...this.state.selectValues];
-    selectValues[index].value = value;
+    selectValues[index][this.selectFieldName] = value;
 
      this.setState({
       selectValues
@@ -75,7 +75,7 @@ class MultiFields extends React.Component {
       values.push({});
       Object.entries(obj).forEach(([key,value])=> {
         values[index][key] = value.value;
-        if(value.error && selectValues[index].value){
+        if(value.error && selectValues[index][this.selectFieldName]){
           textFieldErrors=true;
         }
       });
@@ -85,7 +85,7 @@ class MultiFields extends React.Component {
     // if select values are not empty
     const res = [];
     for (let i=0; i < selectValues.length; i++){
-      if (selectValues[i].value) {
+      if (selectValues[i][this.selectFieldName]) {
         res.push({...values[i],...selectValues[i]});
       }
     }
@@ -112,7 +112,7 @@ class MultiFields extends React.Component {
      values.push({});
      Object.entries(obj).forEach(([key,value])=> {
        values[index][key] = value.value;
-       if(value.error && this.state.selectValues[index].value){
+       if(value.error && this.state.selectValues[index][this.selectFieldName]){
          textFieldErrors=true;
        }
      });
@@ -122,7 +122,7 @@ class MultiFields extends React.Component {
    // if select values are not empty
    const res = [];
    for (let i=0; i < textFieldsValues.length; i++) {
-     if (this.state.selectValues[i].value) {
+     if (this.state.selectValues[i][this.selectFieldName]) {
       res.push({...values[i], ...this.state.selectValues[i]});
      }
    }
@@ -155,7 +155,7 @@ class MultiFields extends React.Component {
               </div>
               {props.field.subfields && Object.values(props.field.subfields).map((subfield,index_subfield) =>{
                 return(
-                  this.state.selectValues[index].value
+                  this.state.selectValues[index][this.selectFieldName]
                   ? <subfield.component
                       key={'subcomponent_'+index_subfield}
                       field={subfield}
