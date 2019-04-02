@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 
 import enums from '../../types/enums';
 
@@ -29,12 +28,12 @@ class TitleTextField extends Component {
     // TODO: proptypes
     const { field, fieldValue, classes } = this.props;
     return (
-      <div className='text-field-wrapper'>
-        <Typography className='typography1'>
-          {field.title}
-        </Typography>
-
         <TextField
+          InputLabelProps= {{
+            shrink: true,
+          }}
+          label={field.title}
+          fullWidth
           id={'textfield' + field.title}
           type={field.type}
           required={true}
@@ -46,8 +45,7 @@ class TitleTextField extends Component {
           InputProps={Object.assign({
             className: classes.cssUnderline
           }, field.inputProps)}
-      />
-      </div>
+        />
     )
   }
 }

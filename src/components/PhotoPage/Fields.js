@@ -1,7 +1,16 @@
 import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+
 import _ from "lodash";
 
 import './style.scss';
+
+const styles = theme => ({
+  pictureThumbnail: {
+    maxWidth: 100,
+    maxHeight: 100,
+  }
+});
 
 class Fields extends Component {
 
@@ -17,34 +26,47 @@ class Fields extends Component {
 
 
   render() {
+    const { classes } = this.props;
+    const FirstField = this.props.fields[0];
     return (
       <div style={{marginBottom:300}}>
         <div style={{
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          margin: '15px'
+          alignItems: 'center'
         }}>
-          <div className='pictureThumnail'>
-           <img src={this.props.imgSrc} alt={""}/>
-          </div>
-          <div style={{display: 'flex',flexDirection:'column'}}>
+          <img src={this.props.imgSrc} alt={""} className={classes.pictureThumbnail}/>
+          <div style={{
+            width: '100%', marginLeft: this.props.theme.spacing.unit * 1.5
+          }}>
+            <FirstField.component
+              key={0}
+              field={FirstField}
+              handleChange={this.handleChangeComponent(FirstField)}
+              fieldValue={this.fieldsValues[FirstField.name]}
+            />
           </div>
         </div>
         {this.props.fields.map((field, index) => {
 
-          return(
-            <field.component
-              key={index}
-              field={field}
-              handleChange={this.handleChangeComponent(field)}
-              fieldValue={this.fieldsValues[field.name]}
-            />
-          )
+          // skip the first field as it is displayed beside the picture
+          if (index > 0) {
+            return (
+              <div key={index}
+                   style={{ marginTop: this.props.theme.spacing.unit * 1}}>
+                <field.component
+                  field={field}
+                  handleChange={this.handleChangeComponent(field)}
+                  fieldValue={this.fieldsValues[field.name]}
+                />
+              </div>
+            )
+          } else {
+            return null;
+          }
         })}
       </div>
     );
   }
 }
 
-export default Fields;
+export default withStyles(styles, { withTheme: true })(Fields);

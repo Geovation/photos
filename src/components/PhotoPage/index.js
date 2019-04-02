@@ -50,8 +50,7 @@ const styles = theme => ({
   button: {
     display: 'flex',
     justifyContent:'center',
-    alignItems: 'center',
-    margin: theme.spacing.unit * 1.5,
+    alignItems: 'center'
   },
   dialogContentProgress: {
     display: 'flex',
@@ -70,6 +69,14 @@ const styles = theme => ({
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
+  },
+  fields: {
+    margin: theme.spacing.unit * 1.5
+  },
+  photo: {
+    marginRight: theme.spacing.unit * 1.5,
+    marginLeft: theme.spacing.unit * 1.5,
+    marginBottom: theme.spacing.unit * .5
   }
 });
 
@@ -350,6 +357,7 @@ class PhotoPage extends Component {
 
           {this.state.next
             ?
+            <div className={classes.fields}>
             <Fields
               handleChange={this.handleChangeFields}
               sendFile={this.sendFile}
@@ -357,8 +365,9 @@ class PhotoPage extends Component {
               imgSrc={this.state.imgSrc}
               fields={fields}
               />
+            </div>
             :
-            <div style={{display:'flex',flexDirection:'column',flex:1}}>
+            <div style={{display:'flex',flexDirection:'column',flex:1}} className={classes.photo}>
               <div className='picture'>
                <img src={this.state.imgSrc} alt={""}/>
               </div>
@@ -370,6 +379,7 @@ class PhotoPage extends Component {
               </div>
             </div>
           }
+
           <Dialog
             open={this.state.open}
             onClose={this.closeDialog}
