@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/core/styles';
 import _ from "lodash";
 
 import './style.scss';
-import {isIphoneWithNotchAndCordova} from "../../utils";
 
 const styles = theme => ({
   pictureThumbnail: {
