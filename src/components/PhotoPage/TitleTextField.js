@@ -31,6 +31,7 @@ class TitleTextField extends Component {
         <TextField
           InputLabelProps= {{
             shrink: true,
+            style: { color: '#000' },
           }}
           label={field.title}
           fullWidth

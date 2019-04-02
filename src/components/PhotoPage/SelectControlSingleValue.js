@@ -64,6 +64,11 @@ const styles = theme => ({
   divider: {
     height: theme.spacing.unit * 2,
   },
+  cssUnderline: {
+    '&:after': {
+      borderBottomColor: theme.palette.secondary.main,
+    },
+  },
 });
 
 function NoOptionsMessage(props) {
@@ -87,6 +92,7 @@ function Control(props) {
     <TextField
       fullWidth
       InputProps={{
+        className: props.selectProps.classes.cssUnderline,
         inputComponent,
         inputProps: {
           className: props.selectProps.classes.input,
@@ -174,6 +180,13 @@ function IndicatorSeparator(props) {
   );
 };
 
+
+function ClearIndicator(props) {
+  return (
+    null
+  );
+};
+
 const components = {
   Control,
   Menu,
@@ -184,7 +197,8 @@ const components = {
   SingleValue,
   ValueContainer,
   DropdownIndicator,
-  IndicatorSeparator
+  IndicatorSeparator,
+  ClearIndicator
 };
 
 class SelectControlSingleValue extends React.Component {
@@ -269,9 +283,10 @@ class SelectControlSingleValue extends React.Component {
             noOptionsMessage={() => field.noOptionsMessage}
             options={this.state.options}
             textFieldProps={{
-              label: 'Label',
+              label: 'Category',
               InputLabelProps: {
                 shrink: true,
+                style: {color: '#000'}
               }
             }}
             isClearable
