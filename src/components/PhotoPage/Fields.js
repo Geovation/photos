@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+
 import _ from "lodash";
 
 import './style.scss';
+import {isIphoneWithNotchAndCordova} from "../../utils";
+
+const styles = theme => ({
+  pictureThumbnail: {
+    maxWidth: 100,
+    maxHeight: 100,
+  }
+});
 
 class Fields extends Component {
 
@@ -17,19 +27,15 @@ class Fields extends Component {
 
 
   render() {
+    const { classes } = this.props;
     return (
       <div style={{marginBottom:300}}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-start',
-          margin: '15px'
+          justifyContent: 'flex-start'
         }}>
-          <div className='pictureThumnail'>
-           <img src={this.props.imgSrc} alt={""}/>
-          </div>
-          <div style={{display: 'flex',flexDirection:'column'}}>
-          </div>
+            <img src={this.props.imgSrc} alt={""} className={classes.pictureThumbnail}/>
         </div>
         {this.props.fields.map((field, index) => {
 
@@ -47,4 +53,4 @@ class Fields extends Component {
   }
 }
 
-export default Fields;
+export default withStyles(styles, { withTheme: true })(Fields);

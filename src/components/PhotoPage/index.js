@@ -70,6 +70,9 @@ const styles = theme => ({
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
+  },
+  fields: {
+    margin: theme.spacing.unit * 1.5
   }
 });
 
@@ -348,15 +351,17 @@ class PhotoPage extends Component {
           imgSrc={this.state.imgSrc}
           handleClose={this.props.handleClose}>
 
-          {this.state.next
+          {!this.state.next
             ?
-            <Fields
-              handleChange={this.handleChangeFields}
-              sendFile={this.sendFile}
-              enabledUploadButton={this.state.enabledUploadButton}
-              imgSrc={this.state.imgSrc}
-              fields={fields}
-              />
+            <div className={classes.fields}>
+              <Fields
+                handleChange={this.handleChangeFields}
+                sendFile={this.sendFile}
+                enabledUploadButton={this.state.enabledUploadButton}
+                imgSrc={this.state.imgSrc}
+                fields={fields}
+                />
+            </div>
             :
             <div style={{display:'flex',flexDirection:'column',flex:1}}>
               <div className='picture'>
