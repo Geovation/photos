@@ -29,6 +29,9 @@ class TitleTextField extends Component {
     const { field, fieldValue, classes } = this.props;
     return (
         <TextField
+          InputLabelProps= {{
+            shrink: true,
+          }}
           label={field.title}
           fullWidth
           id={'textfield' + field.title}

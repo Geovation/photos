@@ -50,15 +50,18 @@ class Fields extends Component {
 
           // skip the first field as it is displayed beside the picture
           if (index > 0) {
-
             return (
-              <field.component
-                key={index}
-                field={field}
-                handleChange={this.handleChangeComponent(field)}
-                fieldValue={this.fieldsValues[field.name]}
-              />
+              <div key={index}
+                   style={{ marginTop: this.props.theme.spacing.unit * 1}}>
+                <field.component
+                  field={field}
+                  handleChange={this.handleChangeComponent(field)}
+                  fieldValue={this.fieldsValues[field.name]}
+                />
+              </div>
             )
+          } else {
+            return null;
           }
         })}
       </div>

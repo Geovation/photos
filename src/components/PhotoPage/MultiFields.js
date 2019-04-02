@@ -2,6 +2,11 @@ import React from 'react';
 import SelectControlSingleValue from './SelectControlSingleValue';
 import RemoveIcon from '@material-ui/icons/Remove';
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+
+});
 
 class MultiFields extends React.Component {
 
@@ -12,7 +17,6 @@ class MultiFields extends React.Component {
   }
 
   index = 0;
-  combinedValue = {};
   valueError = this.props.field.subfields ? Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{}): false
   selectFieldName = this.props.field.leafKey;
 
@@ -133,26 +137,38 @@ class MultiFields extends React.Component {
         {this.state.components.map(index =>{
           props.handleChangeSelect = this.handleChangeSelect(index);
           return(
-            <div key={index} style={{display:'flex',flexDirection:'column',margin:15,width:'calc(100% - 30px)'}}>
+            <div key={index} style={{}}>
+              <br/>
               <div style={{display:'flex'}}>
                 <SelectControlSingleValue {...props}/>
-                <div style={{margin:5,marginBottom:0,visibility:index !== 0 ? 'visible' :'hidden'}}>
+                {/*<div style={{margin:5,marginBottom:0,visibility:index !== 0 ? 'visible' :'hidden'}}>*/}
+                {/*  <Button size={'small'} variant="outlined" onClick={this.handleClickRemove(index)}>*/}
+                {/*    <RemoveIcon/>*/}
+                {/*  </Button>*/}
+                {/*</div>*/}
+
+
+                <div style={{marginBottom:0,visibility:index !== 0 ? 'visible' :'hidden'}}>
                   <Button size={'small'} variant="outlined" onClick={this.handleClickRemove(index)}>
                     <RemoveIcon/>
                   </Button>
                 </div>
+
+
               </div>
               {props.field.subfields &&
                 <div>
                   {Object.values(props.field.subfields).map((subfield,index_subfield) =>{
                     return(
                       this.state.selectValues[index] && this.state.selectValues[index][this.selectFieldName]
-                      ? <subfield.component
-                          key={'subcomponent_'+index_subfield}
-                          field={subfield}
-                          handleChange={this.handleChangeTitleTextField(index,subfield)}
-                          fieldValue={this.state.textFieldsValues[index][subfield.name]}
-                        />
+                      ? <div  key={'subcomponent_'+index_subfield}
+                              style={{ marginTop: this.props.theme.spacing.unit * 1}}>
+                          <subfield.component
+                            field={subfield}
+                            handleChange={this.handleChangeTitleTextField(index,subfield)}
+                            fieldValue={this.state.textFieldsValues[index][subfield.name]}
+                          />
+                      </div>
                       :null
                     )
                   })}
@@ -173,4 +189,4 @@ class MultiFields extends React.Component {
   }
 }
 
-export default MultiFields;
+export default withStyles(styles, { withTheme: true })(MultiFields);

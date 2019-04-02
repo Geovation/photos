@@ -268,7 +268,12 @@ class SelectControlSingleValue extends React.Component {
             placeholder={field.placeholder}
             noOptionsMessage={() => field.noOptionsMessage}
             options={this.state.options}
-
+            textFieldProps={{
+              label: 'Label',
+              InputLabelProps: {
+                shrink: true,
+              }
+            }}
             isClearable
           />
         </NoSsr>
