@@ -141,17 +141,9 @@ class MultiFields extends React.Component {
               <br/>
               <div style={{display:'flex'}}>
                 <SelectControlSingleValue {...props}/>
-                {/*<div style={{margin:5,marginBottom:0,visibility:index !== 0 ? 'visible' :'hidden'}}>*/}
-                {/*  <Button size={'small'} variant="outlined" onClick={this.handleClickRemove(index)}>*/}
-                {/*    <RemoveIcon/>*/}
-                {/*  </Button>*/}
-                {/*</div>*/}
 
-
-                <div style={{marginBottom:0,visibility:index !== 0 ? 'visible' :'hidden'}}>
-                  <Button size={'small'} variant="outlined" onClick={this.handleClickRemove(index)}>
-                    <RemoveIcon/>
-                  </Button>
+                <div style={{marginBottom: this.props.theme.spacing.unit * 0.5,display:index !== 0 ? 'flex' :'none', alignItems: 'flex-end'}}>
+                    <RemoveIcon onClick={this.handleClickRemove(index)} />
                 </div>
 
 
@@ -174,8 +166,8 @@ class MultiFields extends React.Component {
                   })}
                   {this.state.selectValues[index] && this.state.selectValues[index][this.selectFieldName] &&
                     index === this.index - 1 &&
-                    <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',margin:15}}>
-                      <Button size={'small'} variant="outlined" onClick={this.handleClickAdd}>
+                    <div style={{marginTop: this.props.theme.spacing.unit * 1.5}}>
+                      <Button fullWidth variant="outlined" onClick={this.handleClickAdd}>
                         add another category
                       </Button>
                     </div>
