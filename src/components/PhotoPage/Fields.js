@@ -27,25 +27,39 @@ class Fields extends Component {
 
   render() {
     const { classes } = this.props;
+    const FirstField = this.props.fields[0];
     return (
       <div style={{marginBottom:300}}>
         <div style={{
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-start'
+          alignItems: 'center'
         }}>
-            <img src={this.props.imgSrc} alt={""} className={classes.pictureThumbnail}/>
+          <img src={this.props.imgSrc} alt={""} className={classes.pictureThumbnail}/>
+          <div style={{
+            width: '100%', marginLeft: this.props.theme.spacing.unit * 1.5
+          }}>
+            <FirstField.component
+              key={0}
+              field={FirstField}
+              handleChange={this.handleChangeComponent(FirstField)}
+              fieldValue={this.fieldsValues[FirstField.name]}
+            />
+          </div>
         </div>
         {this.props.fields.map((field, index) => {
 
-          return(
-            <field.component
-              key={index}
-              field={field}
-              handleChange={this.handleChangeComponent(field)}
-              fieldValue={this.fieldsValues[field.name]}
-            />
-          )
+          // skip the first field as it is displayed beside the picture
+          if (index > 0) {
+
+            return (
+              <field.component
+                key={index}
+                field={field}
+                handleChange={this.handleChangeComponent(field)}
+                fieldValue={this.fieldsValues[field.name]}
+              />
+            )
+          }
         })}
       </div>
     );
