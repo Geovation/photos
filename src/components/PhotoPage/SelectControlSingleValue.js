@@ -16,6 +16,25 @@ import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
 
+
+function getValueFromTree(tree,value){
+  let foundedNode;
+
+  function searchTree(tree,key_to_find) {
+    Object.entries(tree).forEach(([key,value]) => {
+      if (key_to_find === key){
+        foundedNode = value.label
+      }
+      if(value.children){
+        searchTree(value.children,key_to_find);
+      }
+    })
+  }
+
+  searchTree(tree,value);
+  return foundedNode;
+}
+
 const styles = theme => ({
   root: {
     display:'flex',
@@ -208,7 +227,6 @@ class SelectControlSingleValue extends React.Component {
   };
 
   handleChange = name => value => {
-
     this.setState({
       [name]: value,
     });
@@ -254,6 +272,16 @@ class SelectControlSingleValue extends React.Component {
   componentDidMount(){
     this.items = this.getItems(this.props.field.data);
     this.initializeOptions(this.items);
+  }
+
+  componentDidUpdate(prevProps){
+
+    if(prevProps.single!==this.props.single){
+      const label = getValueFromTree(this.props.field.data,this.props.single);
+      this.setState({
+        single: {label: label, key:this.props.single}
+      });
+    }
   }
 
   render() {
