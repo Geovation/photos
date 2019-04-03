@@ -137,35 +137,30 @@ class MultiFields extends React.Component {
         {this.state.components.map(index =>{
           props.handleChangeSelect = this.handleChangeSelect(index);
           return(
-            <div key={index} style={{}}>
+            <div key={index}>
+              <br/>
               <br/>
               <div style={{display:'flex'}}>
                 <SelectControlSingleValue {...props}/>
-
                 <div style={{marginBottom: this.props.theme.spacing.unit * 0.5,display:index !== 0 ? 'flex' :'none', alignItems: 'flex-end'}}>
                     <RemoveIcon onClick={this.handleClickRemove(index)} />
                 </div>
-
-
               </div>
-              {props.field.subfields &&
+              {props.field.subfields && this.state.selectValues[index] && this.state.selectValues[index][this.selectFieldName] &&
                 <div>
                   {Object.values(props.field.subfields).map((subfield,index_subfield) =>{
                     return(
-                      this.state.selectValues[index] && this.state.selectValues[index][this.selectFieldName]
-                      ? <div  key={'subcomponent_'+index_subfield}
-                              style={{ marginTop: this.props.theme.spacing.unit * 1}}>
+                       <div  key={'subcomponent_'+index_subfield}
+                          style={{ marginTop: this.props.theme.spacing.unit * 1}}>
                           <subfield.component
                             field={subfield}
                             handleChange={this.handleChangeTitleTextField(index,subfield)}
                             fieldValue={this.state.textFieldsValues[index][subfield.name]}
                           />
                       </div>
-                      :null
                     )
                   })}
-                  {this.state.selectValues[index] && this.state.selectValues[index][this.selectFieldName] &&
-                    index === this.index - 1 &&
+                  {index === this.index - 1 &&
                     <div style={{marginTop: this.props.theme.spacing.unit * 1.5}}>
                       <Button fullWidth variant="outlined" onClick={this.handleClickAdd}>
                         add another category

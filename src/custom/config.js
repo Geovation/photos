@@ -141,7 +141,7 @@ export default {
       inputProps: { min: 0, step: 1},
       type: enums.TYPES.number,
 
-      placeholder: 'Search photo categories',
+      placeholder: 'Add photo categories',
       data: data,
       noOptionsMessage: 'No more categories',
       leafKey: 'leafKey',
