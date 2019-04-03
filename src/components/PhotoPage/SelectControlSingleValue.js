@@ -279,7 +279,7 @@ class SelectControlSingleValue extends React.Component {
     if(prevProps.single!==this.props.single){
       const label = getValueFromTree(this.props.field.data,this.props.single);
       this.setState({
-        single: {label: label, key:this.props.single}
+        single: label ? {label: label, key:this.props.single} : null
       });
     }
   }
