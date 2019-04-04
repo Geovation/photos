@@ -293,6 +293,7 @@ class App extends Component {
                geojson={this.state.geojson}
                user={this.state.user}
                config={this.props.config}
+               embeddable={this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
           />
 
           <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}

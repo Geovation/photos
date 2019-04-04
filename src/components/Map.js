@@ -83,6 +83,11 @@ class Map extends Component {
       attributionControl: false,
     });
 
+    if (this.props.embeddable){
+      this.map.addControl(new mapboxgl.NavigationControl({
+        showCompass:false
+      }),'top-left');
+    }
     this.map.addControl(new mapboxgl.AttributionControl({
       compact: true,
       customAttribution: this.props.config.MAP_ATTRIBUTION
