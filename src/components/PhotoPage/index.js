@@ -364,6 +364,7 @@ class PhotoPage extends Component {
               enabledUploadButton={this.state.enabledUploadButton}
               imgSrc={this.state.imgSrc}
               fields={fields}
+              error={this.state.anyError}
               />
             </div>
             :

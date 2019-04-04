@@ -2,10 +2,6 @@ import styles from './config.scss';
 import enums from '../types/enums';
 import TitleTextField from '../components/PhotoPage/TitleTextField';
 import MultiFields from '../components/PhotoPage/MultiFields';
-// import SelectControlWrapper from '../components/PhotoPage/SelectControlWrapper';
-// import SelectControlNumbered from '../components/PhotoPage/SelectControlNumbered';
-// import MultipleSelectControlNumbered from '../components/PhotoPage/MultipleSelectControlNumbered';
-// import MultipleSelectControlTextFields from '../components/PhotoPage/MultipleSelectControlTextFields';
 
 import { data } from './categories';
 
@@ -127,24 +123,13 @@ export default {
       placeholder: 'eg. 1',
       regexValidation: '^[0-9]+'
     },
-    // categories: {
-    //   component: SelectControlWrapper,
-    //   name: 'categories',
-    //   placeholder: 'Search photo categories',
-    //   data: data,
-    //   noOptionsMessage: 'No more categories',
-    //   // regexValidation: '.*'
-    // },
     multicategories: {
       component: MultiFields,
       name: 'multicategories',
-      inputProps: { min: 0, step: 1},
-      type: enums.TYPES.number,
 
-      placeholder: 'Search photo categories',
+      placeholder: 'Add photo categories',
       data: data,
       noOptionsMessage: 'No more categories',
-      leafKey: 'leafKey',
 
       subfields: {
         pieces: {
@@ -166,48 +151,7 @@ export default {
         },
       }
     },
-    // categories2: {
-    //   component: SelectControlNumbered,
-    //   name: 'categories2',
-    //
-    //   inputProps: { min: 0, step: 1},
-    //   type: enums.TYPES.number,
-    //
-    //   placeholder: 'Search multiple photo categories',
-    //   data: data,
-    //   noOptionsMessage: 'No more categories',
-    // },
-    // categories3: {
-    //   component: MultipleSelectControlNumbered,
-    //   name: 'categories3',
-    //
-    //   inputProps: { min: 0, step: 1},
-    //   type: enums.TYPES.number,
-    //
-    //   placeholder: 'Search multiple photo categories',
-    //   data: data,
-    //   noOptionsMessage: 'No more categories',
-    // },
-    // categories4: {
-    //   component: MultipleSelectControlTextFields,
-    //   name: 'categories4',
-    //
-    //   inputProps: { min: 0, step: 1},
-    //   type: enums.TYPES.number,
-    //
-    //   placeholder: 'Search multiple photo categories',
-    //   data: data,
-    //   noOptionsMessage: 'No more categories',
-    // },
   },
-  // PHOTO_FIELD: {
-  //   name: 'pieces',
-  //   title: 'Number of pieces collected',
-  //   type: enums.TYPES.number,
-  //   placeholder: 'eg. 123',
-  //   inputProps: { min: 0, step: 1},
-  //   regexValidation: '^[0-9]+'
-  // },
   PAGES,
   CUSTOM_PAGES:[],
   customiseString,
