@@ -43,6 +43,7 @@ class Fields extends Component {
               field={FirstField}
               handleChange={this.handleChangeComponent(FirstField)}
               fieldValue={this.fieldsValues[FirstField.name]}
+              error={this.props.error}
             />
           </div>
         </div>
@@ -57,6 +58,7 @@ class Fields extends Component {
                   field={field}
                   handleChange={this.handleChangeComponent(field)}
                   fieldValue={this.fieldsValues[field.name]}
+                  error={this.props.error}
                 />
               </div>
             )

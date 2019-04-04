@@ -121,7 +121,7 @@ class MultiFields extends React.Component {
                   })}
                   {index === this.state.fieldValues.length - 1 &&
                     <div style={{marginTop: this.props.theme.spacing.unit * 1.5}}>
-                      <Button fullWidth variant="outlined" onClick={this.handleClickAdd}>
+                      <Button disabled={this.props.error} fullWidth variant="outlined" onClick={this.handleClickAdd}>
                         add another category
                       </Button>
                     </div>
