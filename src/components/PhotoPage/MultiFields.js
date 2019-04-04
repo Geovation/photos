@@ -33,6 +33,7 @@ class MultiFields extends React.Component {
       this.setState({
         fieldValues : [JSON.parse(JSON.stringify(this.valueError))]
       });
+      this.props.handleChange(null,false);
     }
     else{
       const fieldValues = this.state.fieldValues.filter((fieldValue,loop_index) => loop_index!== index);
