@@ -144,7 +144,6 @@ export default {
       placeholder: 'Add photo categories',
       data: data,
       noOptionsMessage: 'No more categories',
-      leafKey: 'leafKey',
 
       subfields: {
         pieces: {

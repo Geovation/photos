@@ -14,18 +14,18 @@ class MultiFields extends React.Component {
     fieldValues: [],
   }
 
-  valueError = this.props.field.subfields ? Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{}): false
-  selectFieldName = this.props.field.leafKey;
+  textFieldValueError = this.props.field.subfields ? Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{}): false
+
   selectValue = {
-    [this.selectFieldName] : {
+    leafkey : {
       value : ''
     }
   }
-  
+
   handleClickAdd = (e) => {
 
     const fieldValues = [...this.state.fieldValues];
-    fieldValues.push({...JSON.parse(JSON.stringify(this.valueError)),...JSON.parse(JSON.stringify(this.selectValue))});
+    fieldValues.push({...JSON.parse(JSON.stringify(this.textFieldValueError)),...JSON.parse(JSON.stringify(this.selectValue))});
 
     this.setState({
       fieldValues
@@ -36,7 +36,7 @@ class MultiFields extends React.Component {
     const length = this.state.fieldValues.length;
     if(index === 0 && length === 1){
       this.setState({
-        fieldValues : [{...JSON.parse(JSON.stringify(this.valueError)),...JSON.parse(JSON.stringify(this.selectValue))}]
+        fieldValues : [{...JSON.parse(JSON.stringify(this.textFieldValueError)),...JSON.parse(JSON.stringify(this.selectValue))}]
       });
       this.props.handleChange(null,false);
     }
@@ -56,7 +56,7 @@ class MultiFields extends React.Component {
       res.push({});
       Object.entries(obj).forEach(([key,value])=> {
         res[index][key] = value.value;
-        if(value.error && values[index][this.selectFieldName].value){
+        if(value.error && values[index].leafkey.value){
           textFieldErrors=true;
         }
       });
@@ -66,7 +66,7 @@ class MultiFields extends React.Component {
 
   handleChangeSelect = index => (value,error) => {
     const fieldValues = [...this.state.fieldValues];
-    fieldValues[index][this.selectFieldName].value = value;
+    fieldValues[index].leafkey.value = value;
 
     this.setState({
        fieldValues
@@ -100,12 +100,12 @@ class MultiFields extends React.Component {
               <br/>
               <br/>
               <div style={{display:'flex'}}>
-                <SelectControlSingleValue single={fieldValue[this.selectFieldName].value} handleChangeSelect={this.handleChangeSelect(index)} {...this.props}/>
+                <SelectControlSingleValue single={fieldValue.leafkey.value} handleChangeSelect={this.handleChangeSelect(index)} {...this.props}/>
                 <div style={{marginBottom: this.props.theme.spacing.unit * 0.5, display:'flex', alignItems: 'flex-end'}}>
                     <RemoveIcon onClick={this.handleClickRemove(index)} />
                 </div>
               </div>
-              {this.props.field.subfields && fieldValue && fieldValue[this.selectFieldName].value &&
+              {this.props.field.subfields && fieldValue && fieldValue.leafkey.value &&
                 <div>
                   {Object.values(this.props.field.subfields).map((subfield,index_subfield) =>{
                     return(
