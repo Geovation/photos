@@ -21,6 +21,7 @@ class MultiFields extends React.Component {
       value : ''
     }
   }
+  
   handleClickAdd = (e) => {
 
     const fieldValues = [...this.state.fieldValues];
@@ -35,7 +36,6 @@ class MultiFields extends React.Component {
     const length = this.state.fieldValues.length;
     if(index === 0 && length === 1){
       this.setState({
-        // fieldValues : [JSON.parse(JSON.stringify(this.valueError))]
         fieldValues : [{...JSON.parse(JSON.stringify(this.valueError)),...JSON.parse(JSON.stringify(this.selectValue))}]
       });
       this.props.handleChange(null,false);
@@ -45,20 +45,23 @@ class MultiFields extends React.Component {
       this.setState({
         fieldValues
       });
-
-      let values=[];
-      let textFieldErrors=false;
-      Object.values(fieldValues).forEach((obj,index) => {
-        values.push({});
-        Object.entries(obj).forEach(([key,value])=> {
-          values[index][key] = value.value;
-          if(value.error && fieldValues[index][this.selectFieldName].value){
-            textFieldErrors=true;
-          }
-        });
-      });
-      this.props.handleChange(values,textFieldErrors);
+      this.checkErrorAndPropagateResToParent(fieldValues)
     }
+  }
+
+  checkErrorAndPropagateResToParent = (values) => {
+    let res=[];
+    let textFieldErrors=false;
+    Object.values(values).forEach((obj,index) => {
+      res.push({});
+      Object.entries(obj).forEach(([key,value])=> {
+        res[index][key] = value.value;
+        if(value.error && values[index][this.selectFieldName].value){
+          textFieldErrors=true;
+        }
+      });
+    });
+    this.props.handleChange(res,textFieldErrors);
   }
 
   handleChangeSelect = index => (value,error) => {
@@ -68,20 +71,7 @@ class MultiFields extends React.Component {
     this.setState({
        fieldValues
     });
-
-    let values=[];
-    let textFieldErrors=false;
-    Object.values(this.state.fieldValues).forEach((obj,index) => {
-      values.push({});
-      Object.entries(obj).forEach(([key,value])=> {
-        values[index][key] = value.value;
-        if(value.error && fieldValues[index][this.selectFieldName].value){
-          textFieldErrors=true;
-        }
-      });
-    });
-
-    this.props.handleChange(values,textFieldErrors);
+    this.checkErrorAndPropagateResToParent(fieldValues)
   }
 
   handleChangeTitleTextField = (index,field) => (value,error) => {
@@ -93,19 +83,7 @@ class MultiFields extends React.Component {
       fieldValues
     });
 
-   let values=[];
-   let textFieldErrors=false;
-   Object.values(fieldValues).forEach((obj,index) => {
-     values.push({});
-     Object.entries(obj).forEach(([key,value])=> {
-       values[index][key] = value.value;
-       if(value.error && this.state.fieldValues[index][this.selectFieldName].value){
-         textFieldErrors=true;
-       }
-     });
-   });
-
-   this.props.handleChange(values,textFieldErrors);
+    this.checkErrorAndPropagateResToParent(fieldValues)
 
   }
 
