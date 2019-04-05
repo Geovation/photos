@@ -69,6 +69,7 @@ class Map extends Component {
     this.prevZoomTime = new Date().getTime();
     this.map = {};
     this.renderedThumbnails = {};
+    this.navControl = null;
   }
 
   async componentDidMount(){
@@ -83,11 +84,14 @@ class Map extends Component {
       attributionControl: false,
     });
 
+    this.navControl = new mapboxgl.NavigationControl({
+      showCompass:false
+    })
+
     if (this.props.embeddable){
-      this.map.addControl(new mapboxgl.NavigationControl({
-        showCompass:false
-      }),'top-left');
+      this.map.addControl(this.navControl,'top-left');
     }
+
     this.map.addControl(new mapboxgl.AttributionControl({
       compact: true,
       customAttribution: this.props.config.MAP_ATTRIBUTION
@@ -105,6 +109,14 @@ class Map extends Component {
         && this.props.geojson !== prevProps.geojson) {
 
         this.addFeaturesToMap(this.props.geojson);
+    }
+    if(this.props.embeddable!==prevProps.embeddable){
+      if (this.props.embeddable){
+        this.map.addControl(this.navControl,'top-left');
+      }
+      else{
+        this.map.removeControl(this.navControl);
+      }
     }
   }
 
