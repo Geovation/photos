@@ -393,7 +393,6 @@ class Map extends Component {
                         </ExpansionPanelSummary>
                         <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
                           <CardComponent
-                            fields={this.props.fields}
                             photoSelected={feature.properties}
                             handleRejectClick={this.handleRejectClick}
                           />

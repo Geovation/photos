@@ -8,6 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import { withStyles } from '@material-ui/core/styles';
+import config from '.././custom/config';
 
 const styles = theme => ({
   card : {
@@ -17,14 +18,32 @@ const styles = theme => ({
 
 class CardComponent extends React.Component {
 
-  presentField(key,value) {
-    let rtn = "-";
-    const formater = this.props.fields[key];
-    if (formater && value){
-      rtn = formater(value);
+
+  presentField = (fieldName, fieldValue) => {
+    let rtn;
+    const field = config['PHOTO_FIELDS'][fieldName];
+    if(field && field.formatPrint) {
+      rtn = field.formatPrint.toString(fieldValue,field.data)
     }
-    else if(value){
-       rtn = value;
+    else {
+      switch (fieldName) {
+        case 'location':
+          const link = `https://www.google.com/maps/@${fieldValue.latitude},${fieldValue.longitude},18z`;
+          rtn = (<a href={link} target="_">See Google Map</a>);
+          break;
+        case 'moderated':
+          rtn = new Date(fieldValue).toDateString();
+          break;
+        case 'updated':
+          rtn = new Date(fieldValue).toDateString();
+          break;
+        case 'thumbnail':
+        case 'main':
+          rtn = (<a href={fieldValue} target="_">See photo</a>);
+          break;
+        default:
+          rtn = `${fieldValue}`;
+      }
     }
     return rtn;
   }
@@ -35,9 +54,9 @@ class CardComponent extends React.Component {
       <Card className={classes.card}>
         <CardActionArea>
           <CardContent>
-            {Object.entries(photoSelected).map(([key,value]) => (
+            {Object.keys(photoSelected).map(key => (
               <div key={key}>
-                {key}: <strong>{this.presentField(key,value)}</strong>
+                {key}: <strong>{this.presentField(key,photoSelected[key])}</strong>
               </div>
             ))}
           </CardContent>
@@ -58,5 +77,4 @@ class CardComponent extends React.Component {
     );
   }
 }
-
 export default withStyles(styles)(CardComponent);

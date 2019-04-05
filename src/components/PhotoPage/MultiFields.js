@@ -3,6 +3,7 @@ import SelectControlSingleValue from './SelectControlSingleValue';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import { getValueFromTree } from '../../utils';
 
 const styles = theme => ({
 
@@ -87,6 +88,32 @@ class MultiFields extends React.Component {
 
   }
 
+  static toString = (s,data) => {
+    console.log(s,data);
+    const categories = typeof(s) === 'string' ? JSON.parse(s) : s;
+    return categories.map((category,index) => (
+      <div key={index}>
+        {index === 0 && <br/>}
+        <div>Category {index}</div>
+          {Object.entries(category).map(([key,value]) => {
+            let formattedValue = value;
+            let formattedKey = key
+            if(key === 'leafKey' ){
+              formattedValue = getValueFromTree(data,value);
+              formattedKey = 'category'
+            }
+            return(
+              <div style={{display:'flex'}} key={key}>
+                <div style={{fontWeight:100}}>{formattedKey}</div> : <div>{formattedValue}</div>
+              </div>
+            )}
+          )}
+          <br/>
+        </div>
+      )
+    )
+  }
+
   componentDidMount(){
     this.handleClickAdd();
   }
@@ -135,4 +162,7 @@ class MultiFields extends React.Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(MultiFields);
+export default {
+  MultiFieldsWithStyles :withStyles(styles, { withTheme: true })(MultiFields),
+  MultiFieldsOriginal: MultiFields
+}

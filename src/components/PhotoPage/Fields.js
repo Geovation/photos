@@ -24,7 +24,6 @@ class Fields extends Component {
     this.props.handleChange(errors, this.fieldsValues);
   }
 
-
   render() {
     const { classes } = this.props;
     const FirstField = this.props.fields[0];
