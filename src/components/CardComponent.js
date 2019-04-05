@@ -23,7 +23,7 @@ class CardComponent extends React.Component {
     let rtn;
     const field = config['PHOTO_FIELDS'][fieldName];
     if(field && field.formatPrint) {
-      rtn = field.formatPrint.toString(fieldValue,field.data)
+      rtn = field.formatPrint.toString(fieldValue,field.data);
     }
     else {
       switch (fieldName) {
@@ -42,7 +42,7 @@ class CardComponent extends React.Component {
           rtn = (<a href={fieldValue} target="_">See photo</a>);
           break;
         default:
-          rtn = `${fieldValue}`;
+          rtn = fieldValue;
       }
     }
     return rtn;

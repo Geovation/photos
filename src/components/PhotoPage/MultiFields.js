@@ -3,7 +3,7 @@ import SelectControlSingleValue from './SelectControlSingleValue';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import { getValueFromTree } from '../../utils';
+import { getValueAndAncestorsFromTree } from '../../utils';
 
 const styles = theme => ({
 
@@ -15,7 +15,7 @@ class MultiFields extends React.Component {
     fieldValues: [],
   }
 
-  textFieldValueError = this.props.field.subfields ? Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{}): false
+  textFieldValueError = this.props.field.subfields ? Object.values(this.props.field.subfields).reduce((a, v) => { a[v.name] = { value: '',  error: !''.match(v.regexValidation)}; return a; },{}): false;
 
   selectValue = {
     leafkey : {
@@ -46,7 +46,7 @@ class MultiFields extends React.Component {
       this.setState({
         fieldValues
       });
-      this.checkErrorAndPropagateResToParent(fieldValues)
+      this.checkErrorAndPropagateResToParent(fieldValues);
     }
   }
 
@@ -72,7 +72,7 @@ class MultiFields extends React.Component {
     this.setState({
        fieldValues
     });
-    this.checkErrorAndPropagateResToParent(fieldValues)
+    this.checkErrorAndPropagateResToParent(fieldValues);
   }
 
   handleChangeTitleTextField = (index,field) => (value,error) => {
@@ -83,24 +83,21 @@ class MultiFields extends React.Component {
     this.setState({
       fieldValues
     });
-
-    this.checkErrorAndPropagateResToParent(fieldValues)
-
+    this.checkErrorAndPropagateResToParent(fieldValues);
   }
 
   static toString = (s,data) => {
-    console.log(s,data);
     const categories = typeof(s) === 'string' ? JSON.parse(s) : s;
-    return categories.map((category,index) => (
+    return categories && categories.map((category,index) => (
       <div key={index}>
         {index === 0 && <br/>}
         <div>Category {index}</div>
           {Object.entries(category).map(([key,value]) => {
             let formattedValue = value;
-            let formattedKey = key
-            if(key === 'leafKey' ){
-              formattedValue = getValueFromTree(data,value);
-              formattedKey = 'category'
+            let formattedKey = key;
+            if(key === 'leafkey'){
+              formattedValue = getValueAndAncestorsFromTree(data,value).toString();
+              formattedKey = 'category';
             }
             return(
               <div style={{display:'flex'}} key={key}>
