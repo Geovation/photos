@@ -70,3 +70,21 @@ export const isIphoneWithNotchAndCordova = () => {
   }
   return false;
 }
+
+export function getValueFromTree(tree,value){
+  let foundedNode;
+
+  function searchTree(tree,key_to_find) {
+    Object.entries(tree).forEach(([key,value]) => {
+      if (key_to_find === key){
+        foundedNode = value.label
+      }
+      if(value.children){
+        searchTree(value.children,key_to_find);
+      }
+    })
+  }
+
+  searchTree(tree,value);
+  return foundedNode;
+}

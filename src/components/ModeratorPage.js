@@ -136,6 +136,7 @@ class ModeratorPage extends Component {
               <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={this.state.photoSelected.id} src={this.state.photoSelected.main}/>
             </div>
             <CardComponent
+              fields={this.props.fields}
               photoSelected={this.state.photoSelected}
               handleRejectClick={this.handleRejectClick}
               handleApproveClick={this.handleApproveClick}

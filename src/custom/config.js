@@ -1,8 +1,9 @@
 import styles from './config.scss';
 import enums from '../types/enums';
+import React from 'react';
 import TitleTextField from '../components/PhotoPage/TitleTextField';
 import MultiFields from '../components/PhotoPage/MultiFields';
-
+import { getValueFromTree } from '../utils';
 import { data } from './categories';
 
 const primaryColor = styles.primary;
@@ -102,6 +103,40 @@ export default {
     "updated": s => new Date(s).toDateString(),
     "description": s => s,
     "notes": s => s
+  },
+  PHOTO_MODERATOR_FIELDS: {
+    'moderated':s => new Date(s).toDateString(),
+    'updated':s => new Date(s).toDateString(),
+    'location': s => {
+      const link = `https://www.google.com/maps/@${s.latitude},${s.longitude},18z`;
+      return <a href={link} target="_">See Google Map</a>;
+    },
+    'main': s => <a href={s} target="_">See photo</a>,
+    'thumbnail': s => <a href={s} target="_">See photo</a>,
+    "multicategories": (s) => {
+      const categories = typeof(s) === 'string' ? JSON.parse(s) : s;
+      return categories.map((category,index) => (
+        <div key={index}>
+          {index === 0 && <br/>}
+          <div>Category {index}</div>
+            {Object.entries(category).map(([key,value]) => {
+              let formattedValue = value;
+              let formattedKey = key
+              if(key === 'leafKey' ){
+                formattedValue = getValueFromTree(data,value);
+                formattedKey = 'category'
+              }
+              return(
+                <div style={{display:'flex'}} key={key}>
+                  <div style={{fontWeight:100}}>{formattedKey}</div> : <div>{formattedValue}</div>
+                </div>
+              )}
+            )}
+            <br/>
+          </div>
+        )
+      )
+    }
   },
   ZOOM: 5,
   CENTER: [-2, 55],

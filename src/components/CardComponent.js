@@ -17,25 +17,14 @@ const styles = theme => ({
 
 class CardComponent extends React.Component {
 
-  presentField = (fieldName, fieldValue) => {
-    let rtn;
-    switch (fieldName) {
-      case 'location':
-        const link = `https://www.google.com/maps/@${fieldValue.latitude},${fieldValue.longitude},18z`;
-        rtn = (<a href={link} target="_">See Google Map</a>);
-        break;
-      case 'moderated':
-        rtn = new Date(fieldValue).toDateString();
-        break;
-      case 'updated':
-        rtn = new Date(fieldValue).toDateString();
-        break;
-      case 'thumbnail':
-      case 'main':
-        rtn = (<a href={fieldValue} target="_">See photo</a>);
-        break;
-      default:
-        rtn = `${fieldValue}`;
+  presentField(key,value) {
+    let rtn = "-";
+    const formater = this.props.fields[key];
+    if (formater && value){
+      rtn = formater(value);
+    }
+    else if(value){
+       rtn = value;
     }
     return rtn;
   }
@@ -46,9 +35,9 @@ class CardComponent extends React.Component {
       <Card className={classes.card}>
         <CardActionArea>
           <CardContent>
-            {Object.keys(photoSelected).map(key => (
+            {Object.entries(photoSelected).map(([key,value]) => (
               <div key={key}>
-                {key}: <strong>{this.presentField(key,photoSelected[key])}</strong>
+                {key}: <strong>{this.presentField(key,value)}</strong>
               </div>
             ))}
           </CardContent>

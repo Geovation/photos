@@ -242,7 +242,7 @@ class App extends Component {
 
               { this.state.user && this.state.user.isModerator &&
                 <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage label={this.props.config.PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
+                  <ModeratorPage fields={this.props.config.PHOTO_MODERATOR_FIELDS} label={this.props.config.PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
                 />
               }
 
@@ -294,6 +294,7 @@ class App extends Component {
                user={this.state.user}
                config={this.props.config}
                embeddable={this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
+               fields={this.props.config.PHOTO_MODERATOR_FIELDS}
           />
 
           <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}
