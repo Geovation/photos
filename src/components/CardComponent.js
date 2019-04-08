@@ -8,6 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import { withStyles } from '@material-ui/core/styles';
+import config from '.././custom/config';
 
 const styles = theme => ({
   card : {
@@ -17,25 +18,32 @@ const styles = theme => ({
 
 class CardComponent extends React.Component {
 
+
   presentField = (fieldName, fieldValue) => {
     let rtn;
-    switch (fieldName) {
-      case 'location':
-        const link = `https://www.google.com/maps/@${fieldValue.latitude},${fieldValue.longitude},18z`;
-        rtn = (<a href={link} target="_">See Google Map</a>);
-        break;
-      case 'moderated':
-        rtn = new Date(fieldValue).toDateString();
-        break;
-      case 'updated':
-        rtn = new Date(fieldValue).toDateString();
-        break;
-      case 'thumbnail':
-      case 'main':
-        rtn = (<a href={fieldValue} target="_">See photo</a>);
-        break;
-      default:
-        rtn = `${fieldValue}`;
+    const field = config['PHOTO_FIELDS'][fieldName];
+    if(field && field.nakedComponent) {
+      rtn = field.nakedComponent.toFormattedString(fieldValue,field.data);
+    }
+    else {
+      switch (fieldName) {
+        case 'location':
+          const link = `https://www.google.com/maps/@${fieldValue.latitude},${fieldValue.longitude},18z`;
+          rtn = (<a href={link} target="_">See Google Map</a>);
+          break;
+        case 'moderated':
+          rtn = new Date(fieldValue).toDateString();
+          break;
+        case 'updated':
+          rtn = new Date(fieldValue).toDateString();
+          break;
+        case 'thumbnail':
+        case 'main':
+          rtn = (<a href={fieldValue} target="_">See photo</a>);
+          break;
+        default:
+          rtn = fieldValue;
+      }
     }
     return rtn;
   }
@@ -69,5 +77,4 @@ class CardComponent extends React.Component {
     );
   }
 }
-
 export default withStyles(styles)(CardComponent);

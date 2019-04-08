@@ -15,25 +15,8 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
+import { getValueFromTree } from '../../utils';
 
-
-function getValueFromTree(tree,value){
-  let foundedNode;
-
-  function searchTree(tree,key_to_find) {
-    Object.entries(tree).forEach(([key,value]) => {
-      if (key_to_find === key){
-        foundedNode = value.label
-      }
-      if(value.children){
-        searchTree(value.children,key_to_find);
-      }
-    })
-  }
-
-  searchTree(tree,value);
-  return foundedNode;
-}
 
 const styles = theme => ({
   root: {

@@ -124,9 +124,9 @@ export default {
       regexValidation: '^[0-9]+'
     },
     multicategories: {
-      component: MultiFields,
+      component: MultiFields.MultiFieldsWithStyles,
+      nakedComponent: MultiFields.MultiFieldsOriginal,
       name: 'multicategories',
-
       placeholder: 'Add photo categories',
       data: data,
       noOptionsMessage: 'No more categories',

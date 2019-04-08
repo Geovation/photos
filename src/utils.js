@@ -70,3 +70,42 @@ export const isIphoneWithNotchAndCordova = () => {
   }
   return false;
 }
+
+export function getValueFromTree(tree,value){
+  let foundedNode;
+
+  function searchTree(tree,key_to_find) {
+    Object.entries(tree).forEach(([key,value]) => {
+      if (key_to_find === key){
+        foundedNode = value.label;
+      }
+      if(value.children){
+        searchTree(value.children,key_to_find);
+      }
+    })
+  }
+
+  searchTree(tree,value);
+  return foundedNode;
+}
+
+export function getValueAndAncestorsFromTree(tree,key_to_find){
+  const stack = [];
+  let listWithNodes = [];
+
+  function findPathOfFoundedNode(tree,key_to_find) {
+    Object.entries(tree).forEach(([key,value]) => {
+      if (key_to_find === key){
+        const foundedNode = value.label
+        listWithNodes = [...stack,foundedNode];
+      }
+      if(value.children){
+        stack.push(value.label);
+        findPathOfFoundedNode(value.children,key_to_find);
+        stack.pop();
+      }
+    });
+  }
+  findPathOfFoundedNode(tree,key_to_find);
+  return listWithNodes;
+}

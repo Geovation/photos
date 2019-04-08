@@ -38,7 +38,7 @@ class SelectControlNumbered extends React.Component {
 
     const error = this.calcError(value,this.state.TextFieldValue);
 
-    this.combinedValue.leafKey = value;
+    this.combinedValue.leafkey = value;
     this.props.handleChange(this.combinedValue,error);
   }
 
