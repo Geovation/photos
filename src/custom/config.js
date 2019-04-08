@@ -13,7 +13,7 @@ const CUSTOM_STRING = {
     "photos published so far!": "photos published so far!"
   },
   tutorial: {
-    "Walk around the city and take photos": "Walk around the city and take photos",
+    "Walk around the city and take photos": "Walk raround the city and take photos",
     "Write info about the photos and upload it to the cloud": "Write info about the photos and upload it to the cloud",
     "View your images in our interactive map": "View your images in our interactive map"
   },
@@ -26,6 +26,13 @@ const CUSTOM_STRING = {
   },
   writeFeedback: {
     "admin@geovation.uk": "it@geovation.uk"
+  },
+  termsAndConditions: {
+    "T&C and Privacy": "Terms & Conditions and Privacy Policy",
+    "Terms and Conditions": "Please read and agree to Terms and Conditions ",
+    "T&C link": " https://geovation.uk/terms-conditions/",
+    "Privacy Policy": " and Privacy Policy ",
+    "Privacy Policy Link": "https://geovation.uk/privacy-policy/"
   }
 };
 
