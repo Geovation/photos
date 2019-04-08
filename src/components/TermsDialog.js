@@ -38,9 +38,9 @@ class TermsDialog extends React.Component {
           <DialogContent>
             <DialogContentText>
               {message.termsText}
-              <a href={message.termsLink}>{message.termsLink}</a>
+              <a href={message.termsLink} style={{wordBreak: "break-word", fontSize: '14px'}}>{message.termsLink}</a>
               {message.privacyText}
-              <a href={message.privacyLink}>{message.privacyLink}</a>
+              <a href={message.privacyLink} style={{wordBreak: "break-word", fontSize: '14px'}}>{message.privacyLink}</a>
             </DialogContentText>
           </DialogContent>
           <DialogActions>
