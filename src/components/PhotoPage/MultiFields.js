@@ -88,6 +88,7 @@ class MultiFields extends React.Component {
 
   static toFormattedString = (s,data) => {
     const categories = typeof(s) === 'string' ? JSON.parse(s) : s;
+    let categoryId;
     return categories && categories.map((category,index) => (
       <div key={index}>
         {index === 0 && <br/>}
@@ -97,6 +98,7 @@ class MultiFields extends React.Component {
             let formattedKey = key;
             if(key === 'leafkey'){
               formattedValue = getValueAndAncestorsFromTree(data,value).toString();
+              categoryId = value;
               formattedKey = 'category';
             }
             return(
@@ -105,6 +107,9 @@ class MultiFields extends React.Component {
               </div>
             )}
           )}
+          <div style={{display:'flex'}}>
+            <div style={{fontWeight:100}}>categoryId</div> : <div>{categoryId}</div>
+          </div>
           <br/>
         </div>
       )
