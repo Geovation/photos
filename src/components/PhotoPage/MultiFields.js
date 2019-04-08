@@ -86,7 +86,7 @@ class MultiFields extends React.Component {
     this.checkErrorAndPropagateResToParent(fieldValues);
   }
 
-  static toString = (s,data) => {
+  static toFormattedString = (s,data) => {
     const categories = typeof(s) === 'string' ? JSON.parse(s) : s;
     return categories && categories.map((category,index) => (
       <div key={index}>

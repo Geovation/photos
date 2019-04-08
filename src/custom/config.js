@@ -125,7 +125,7 @@ export default {
     },
     multicategories: {
       component: MultiFields.MultiFieldsWithStyles,
-      formatPrint: MultiFields.MultiFieldsOriginal,
+      nakedComponent: MultiFields.MultiFieldsOriginal,
       name: 'multicategories',
       placeholder: 'Add photo categories',
       data: data,

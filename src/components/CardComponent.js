@@ -22,8 +22,8 @@ class CardComponent extends React.Component {
   presentField = (fieldName, fieldValue) => {
     let rtn;
     const field = config['PHOTO_FIELDS'][fieldName];
-    if(field && field.formatPrint) {
-      rtn = field.formatPrint.toString(fieldValue,field.data);
+    if(field && field.nakedComponent) {
+      rtn = field.nakedComponent.toFormattedString(fieldValue,field.data);
     }
     else {
       switch (fieldName) {
