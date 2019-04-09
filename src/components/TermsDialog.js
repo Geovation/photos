@@ -12,9 +12,11 @@ import config from '../custom/config';
 
 const message = {
   title: config.customiseString('termsAndConditions', 'T&C and Privacy'),
+  startText: config.customiseString('termsAndConditions', 'Please read and agree to '),
   termsText: config.customiseString('termsAndConditions', 'Terms and Conditions'),
-  termsLink: config.customiseString('termsAndConditions', 'T&C link'),
+  midText: config.customiseString('termsAndConditions', ' and '),
   privacyText: config.customiseString('termsAndConditions', 'Privacy Policy'),
+  termsLink: config.customiseString('termsAndConditions', 'T&C link'),
   privacyLink: config.customiseString('termsAndConditions', 'Privacy Policy Link')
 }
 
@@ -37,10 +39,10 @@ class TermsDialog extends React.Component {
           <DialogTitle id="responsive-dialog-title">{message.title}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              {message.termsText}
-              <a href={message.termsLink} style={{wordBreak: "break-word", fontSize: '14px'}}>{message.termsLink}</a>
-              {message.privacyText}
-              <a href={message.privacyLink} style={{wordBreak: "break-word", fontSize: '14px'}}>{message.privacyLink}</a>
+              {message.startText}
+              <a href={message.termsLink}>{message.termsText}</a>
+              {message.midText}
+              <a href={message.privacyLink}>{message.privacyText}</a>
             </DialogContentText>
           </DialogContent>
           <DialogActions>

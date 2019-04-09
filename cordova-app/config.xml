@@ -81,6 +81,6 @@
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Geovation needs photo library access to get the picture" />
     </plugin>
     <engine name="browser" spec="^5.0.4" />
-    <engine name="ios" spec="^4.5.5" />
+    <engine name="ios" spec="^5.0.0" />
     <engine name="android" spec="^7.1.4" />
 </widget>
