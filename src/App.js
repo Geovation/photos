@@ -55,7 +55,7 @@ class App extends Component {
       openPhotoDialog: false,
       leftDrawerOpen: false,
       welcomeShown: !!localStorage.getItem("welcomeShown"),
-      termsAccepted: !!localStorage.getItem("TermsAccepted"),
+      termsAccepted: !!localStorage.getItem("termsAccepted"),
       geojson: {},
       srcType: null,
       cordovaMetadata : {}
@@ -219,7 +219,7 @@ class App extends Component {
 
   handleTermsPageClose = (e) => {
     if (e.target.innerHTML === 'Agree') {
-      localStorage.setItem("TermsAccepted", "Yes");
+      localStorage.setItem("termsAccepted", "Yes");
       this.setState({ termsAccepted: "Yes" });
     }
   };
@@ -234,7 +234,7 @@ class App extends Component {
 
     return (
       <div className='geovation-app'>
-        { !this.state.termsAccepted ?
+        { !this.state.termsAccepted && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path ?
           <TermsDialog handleClose={this.handleTermsPageClose}/>
         :
           <main className='content'>
