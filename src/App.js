@@ -234,9 +234,10 @@ class App extends Component {
 
     return (
       <div className='geovation-app'>
-        { !this.state.termsAccepted && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path ?
+        { !this.state.termsAccepted && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
           <TermsDialog handleClose={this.handleTermsPageClose}/>
-        :
+        }
+
           <main className='content'>
 
             { this.state.welcomeShown &&
@@ -298,6 +299,7 @@ class App extends Component {
             }
 
             { !this.state.welcomeShown && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
+              this.state.termsAccepted &&
               <WelcomePage handleClose={this.handleWelcomePageClose}/>
             }
 
@@ -328,7 +330,6 @@ class App extends Component {
               <AddAPhotoIcon />
             </Fab>
           </main>
-        }
 
         <Snackbar open={this.state.welcomeShown && !this.state.online} message='Network not available' />
 

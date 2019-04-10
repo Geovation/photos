@@ -7,6 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
+import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
 
@@ -20,19 +21,25 @@ const message = {
   privacyLink: config.customiseString('termsAndConditions', 'Privacy Policy Link')
 }
 
+const styles = theme => ({
+  root: {
+    background:'rgba(255,225,225,0.5)'
+  }
+});
+
 class TermsDialog extends React.Component {
   state = {
     open: !localStorage.getItem("TermsAccepted"),
   };
 
   render() {
-    const { handleClose } = this.props;
-     // const { fullScreen, handleClose } = this.props;
+    const { fullScreen, handleClose, classes } = this.props;
 
     return (
       <div>
         <Dialog
           // fullScreen={fullScreen}
+          classes={{container: classes.root}}
           open={this.state.open}
           aria-labelledby="responsive-dialog-title"
         >
@@ -65,4 +72,4 @@ TermsDialog.propTypes = {
   fullScreen: PropTypes.bool.isRequired,
 };
 
-export default withMobileDialog()(TermsDialog);
+export default withMobileDialog()(withStyles(styles)(TermsDialog));
