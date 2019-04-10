@@ -104,7 +104,7 @@ class PageWrapper extends React.Component {
                 {label}
               </Typography>
               {photoPage && !nextClicked &&
-                <Button disabled={!this.props.imgSrc} color='secondary' onClick={this.handleNext}>
+                <Button disabled={!this.props.enableNext} color='secondary' onClick={this.handleNext}>
                   Next
                 </Button>
               }
