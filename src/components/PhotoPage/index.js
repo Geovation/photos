@@ -27,13 +27,14 @@ const emptyState = {
   imgSrc: null,
   imgExif: null,
   imgIptc: null,
+  imgLocation: null,
   imgFromCamera: null,
   open: false,
   message: '',
   sending: false,
   sendingProgress: 0,
   anyError: true,
-  enabledUploadButton :true,
+  enabledUploadButton:true,
   next: false,
   fieldsValues: {}
 };
@@ -112,13 +113,11 @@ class PhotoPage extends Component {
   /**
    * Given an exif object, return the coordinates {latitude, longitude} or undefined if an error occurs
    */
-  getLocationFromExifMetadata = exif => {
-
+  getLocationFromExifMetadata = imgExif => {
     let location, latitude, longitude;
     try {
       if (!window.cordova) {
         // https://www.npmjs.com/package/dms2dec
-        const imgExif = this.state.imgExif;
         const lat = imgExif.GPSLatitude.split(",").map(Number);
         const latRef = imgExif.GPSLatitudeRef;
         const lon = imgExif.GPSLongitude.split(",").map(Number);
@@ -178,21 +177,7 @@ class PhotoPage extends Component {
         return;
       }
     } else {
-      location = this.getLocationFromExifMetadata(this.state.imgExif);
-      if (!location) {
-        this.openDialog(
-          <span style={{fontWeight:500}}>
-            Your photo isn't geo-tagged so it can't be uploaded.
-            To fix this manually, you can geo-tag it online with a tool like&nbsp;
-            <Link href={'https://tool.geoimgr.com/'} className={this.props.classes.link}>
-              Geoimgr
-            </Link>.
-            In future, make sure GPS is enabled and your
-            camera has access to it.
-          </span>
-        );
-        return;
-      }
+      location = this.state.imgLocation;
     }
 
     const fieldsJustValues = _.reduce(this.state.fieldsValues, (a, v, k) => {
@@ -255,6 +240,7 @@ class PhotoPage extends Component {
   loadImage = () => {
     let imgExif = null;
     let imgIptc = null;
+    let imgLocation = null;
 
     // https://github.com/blueimp/JavaScript-Load-Image#meta-data-parsing
     if (!window.cordova) {
@@ -285,7 +271,25 @@ class PhotoPage extends Component {
           const ageInMinutes = (new Date().getTime() - fileDate)/1000/60;
           imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 0.5;
         }
-        this.setState({ imgSrc, imgExif, imgIptc, imgFromCamera });
+
+        imgLocation = this.getLocationFromExifMetadata(imgExif);
+        this.setState({ imgSrc, imgExif, imgIptc, imgLocation, imgFromCamera });
+
+        if (!imgLocation) {
+          this.openDialog(
+            <span style={{fontWeight:500}}>
+            Your photo isn't geo-tagged so it can't be uploaded.
+            To fix this manually, you can geo-tag it online with a tool like&nbsp;
+              <Link href={'https://tool.geoimgr.com/'} className={this.props.classes.link}>
+              Geoimgr
+            </Link>.
+            In future, make sure GPS is enabled and your
+            camera has access to it.
+          </span>
+          );
+
+          this.setState({ next: false, anyError: true });
+        }
       },
       {
         orientation: true,
@@ -347,6 +351,7 @@ class PhotoPage extends Component {
         <PageWrapper
           handlePrev={this.handlePrev}
           handleNext={this.handleNext}
+          enableNext={!!this.state.imgLocation}
           nextClicked={this.state.next}
           error={this.state.anyError || !this.state.enabledUploadButton}
           sendFile={this.sendFile}
