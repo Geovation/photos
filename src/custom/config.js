@@ -26,6 +26,15 @@ const CUSTOM_STRING = {
   },
   writeFeedback: {
     "admin@geovation.uk": "it@geovation.uk"
+  },
+  termsAndConditions: {
+    "T&C and Privacy": "Terms & Conditions and Privacy Policy",
+    "Please read and agree to ": "Please read and agree to ",
+    "Terms and Conditions": "Terms and Conditions ",
+    " and ": " and ",
+    "Privacy Policy": "Privacy Policy ",
+    "T&C link": " https://geovation.uk/terms-conditions/",
+    "Privacy Policy Link": "https://geovation.uk/privacy-policy/"
   }
 };
 
