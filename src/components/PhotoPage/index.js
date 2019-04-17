@@ -28,7 +28,6 @@ const emptyState = {
   imgExif: null,
   imgIptc: null,
   imgLocation: null,
-  imgFromCamera: null,
   open: false,
   message: '',
   sending: false,
@@ -156,7 +155,7 @@ class PhotoPage extends Component {
   }
 
   sendFile = async () => {
-    let location;
+    let location = this.state.imgLocation;
 
     gtagEvent('Upload', 'Photo');
 
@@ -168,16 +167,6 @@ class PhotoPage extends Component {
     if (!this.props.online) {
       this.openDialog("Can't Connect to our servers. You won't be able to upload an image.");
       return;
-    }
-
-    if (this.state.imgFromCamera) {
-      location = this.props.gpsLocation;
-      if (!this.props.gpsLocation.online) {
-        this.openDialog("We couldn't find your location so you won't be able to upload an image right now. Enable GPS on your phone and retake the photo to upload it.");
-        return;
-      }
-    } else {
-      location = this.state.imgLocation;
     }
 
     const fieldsJustValues = _.reduce(this.state.fieldsValues, (a, v, k) => {
@@ -272,8 +261,17 @@ class PhotoPage extends Component {
           imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 0.5;
         }
 
-        imgLocation = this.getLocationFromExifMetadata(imgExif);
-        this.setState({ imgSrc, imgExif, imgIptc, imgLocation, imgFromCamera });
+        if (imgFromCamera) {
+          imgLocation = this.props.gpsLocation;
+          if (!this.props.gpsLocation.online) {
+            this.openDialog("We couldn't find your location so you won't be able to upload an image right now. Enable GPS on your phone and retake the photo to upload it.");
+            return;
+          }
+        } else {
+          imgLocation = this.getLocationFromExifMetadata(imgExif);
+        }
+
+        this.setState({ imgSrc, imgExif, imgIptc, imgLocation });
 
         if (!imgLocation) {
           this.openDialog(
