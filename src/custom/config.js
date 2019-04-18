@@ -26,6 +26,15 @@ const CUSTOM_STRING = {
   },
   writeFeedback: {
     "admin@geovation.uk": "it@geovation.uk"
+  },
+  termsAndConditions: {
+    "Welcome to App": "Welcome to PHOTOS",
+    "Please read our ": "Please read our ",
+    "Terms and Conditions": "Terms and Conditions ",
+    " and ": " and ",
+    "Privacy Policy": "Privacy Policy ",
+    "T&C link": " https://geovation.uk/terms-conditions/",
+    "Privacy Policy Link": "https://geovation.uk/privacy-policy/"
   }
 };
 

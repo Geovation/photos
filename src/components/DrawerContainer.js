@@ -32,13 +32,24 @@ const styles = theme => ({
   },
   stats: {
     position: 'absolute',
-    bottom: theme.spacing.unit * 3,
+    bottom: theme.spacing.unit * 5,
     alignSelf: 'center',
     paddingBottom: theme.spacing.unit * 2
+  },
+  links: {
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: theme.spacing.unit * 1,
+    fontSize: '12px'
   }
 });
 
 const PAGES = config.PAGES;
+const links = {
+  terms: config.customiseString('termsAndConditions', 'T&C link'),
+  privacy: config.customiseString('termsAndConditions', 'Privacy Policy Link')
+}
+
 
 class DrawerContainer extends Component {
 
@@ -126,6 +137,11 @@ class DrawerContainer extends Component {
           </Typography>
           <img src={placeholderImage} className='built-by-img' alt={''} />
         </div>
+        <Typography className={classes.links}>
+          <a href={links.terms}>Terms and Conditions</a>
+          {" / "}
+          <a href={links.privacy}>Privacy Policy</a>
+        </Typography>
       </Drawer>
     );
   }

@@ -21,6 +21,7 @@ import TutorialPage from './components/TutorialPage';
 import WelcomePage from './components/WelcomePage';
 import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
+import TermsDialog from './components/TermsDialog';
 
 import './App.scss';
 import { withStyles } from '@material-ui/core/styles';
@@ -54,6 +55,7 @@ class App extends Component {
       openPhotoDialog: false,
       leftDrawerOpen: false,
       welcomeShown: !!localStorage.getItem("welcomeShown"),
+      termsAccepted: !!localStorage.getItem("termsAccepted"),
       geojson: {},
       srcType: null,
       cordovaMetadata : {}
@@ -215,6 +217,13 @@ class App extends Component {
     this.goToMap();
   };
 
+  handleTermsPageClose = (e) => {
+    if (e.target.innerHTML === 'Agree') {
+      localStorage.setItem("termsAccepted", "Yes");
+      this.setState({ termsAccepted: "Yes" });
+    }
+  };
+
   toggleLeftDrawer = (isItOpen) => () => {
     gtagEvent(isItOpen ? 'Opened' : 'Closed','Menu');
     this.setState({leftDrawerOpen: isItOpen})
@@ -224,96 +233,101 @@ class App extends Component {
     const { classes, fields } = this.props;
     return (
       <div className='geovation-app'>
-        <main className='content'>
-          { this.state.welcomeShown &&
-            <Switch>
-              {this.props.config.CUSTOM_PAGES.map( (CustomPage,index) => (
-                !!CustomPage.page &&
-                  <Route key={index} path={CustomPage.path}
-                    render={(props) => <CustomPage.page {...props} handleClose={this.goToMap} label={CustomPage.label}/>}
-                  />
-              ))}
-              <Route path={this.props.config.PAGES.about.path} render={(props) =>
-                <AboutPage label={this.props.config.PAGES.about.label} {...props} handleClose={this.goToMap} />}
-              />
-              <Route path={this.props.config.PAGES.tutorial.path} render={(props) =>
-                <TutorialPage label={this.props.config.PAGES.tutorial.label} {...props} handleClose={this.goToMap} />}
-              />
+        { !this.state.termsAccepted && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
+          <TermsDialog handleClose={this.handleTermsPageClose}/>
+        }
 
-              { this.state.user && this.state.user.isModerator &&
-                <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
-                  <ModeratorPage label={this.props.config.PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
+          <main className='content'>
+            { this.state.welcomeShown &&
+              <Switch>
+                {this.props.config.CUSTOM_PAGES.map( (CustomPage,index) => (
+                  !!CustomPage.page &&
+                    <Route key={index} path={CustomPage.path}
+                      render={(props) => <CustomPage.page {...props} handleClose={this.goToMap} label={CustomPage.label}/>}
+                    />
+                ))}
+                <Route path={this.props.config.PAGES.about.path} render={(props) =>
+                  <AboutPage label={this.props.config.PAGES.about.label} {...props} handleClose={this.goToMap} />}
                 />
-              }
+                <Route path={this.props.config.PAGES.tutorial.path} render={(props) =>
+                  <TutorialPage label={this.props.config.PAGES.tutorial.label} {...props} handleClose={this.goToMap} />}
+                />
 
-              <Route path={this.props.config.PAGES.photos.path} render={(props) =>
-                <PhotoPage {...props}
-                           file={this.state.file}
-                           gpsLocation={this.state.location}
-                           online={this.state.online}
-                           handlePhotoClick={this.handlePhotoClick}
-                           handleClose={this.goToMap}
-                           label={this.props.config.PAGES.photos.label}
-                           srcType={this.state.srcType}
-                           cordovaMetadata={this.state.cordovaMetadata}
-                           fields={fields}
-                />}
-              />
+                { this.state.user && this.state.user.isModerator &&
+                  <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
+                    <ModeratorPage label={this.props.config.PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
+                  />
+                }
 
-              { this.state.user &&
-                <Route path={this.props.config.PAGES.account.path} render={(props) =>
-                  <ProfilePage {...props}
-                               user={this.state.user}
-                               handleClose={this.goToMap}
-                               label={this.props.config.PAGES.about.label}
+                <Route path={this.props.config.PAGES.photos.path} render={(props) =>
+                  <PhotoPage {...props}
+                             file={this.state.file}
+                             gpsLocation={this.state.location}
+                             online={this.state.online}
+                             handlePhotoClick={this.handlePhotoClick}
+                             handleClose={this.goToMap}
+                             label={this.props.config.PAGES.photos.label}
+                             srcType={this.state.srcType}
+                             cordovaMetadata={this.state.cordovaMetadata}
+                             fields={fields}
                   />}
                 />
-              }
 
-              <Route path={this.props.config.PAGES.writeFeedback.path} render={(props) =>
-                 <WriteFeedbackPage {...props}
-                                    user={this.state.user}
-                                    location={this.state.location}
-                                    online={this.state.online}
-                                    handleClose={this.goToMap}
-                                    label={this.props.config.PAGES.writeFeedback.label}
-                 />}
-               />
+                { this.state.user &&
+                  <Route path={this.props.config.PAGES.account.path} render={(props) =>
+                    <ProfilePage {...props}
+                                 user={this.state.user}
+                                 handleClose={this.goToMap}
+                                 label={this.props.config.PAGES.about.label}
+                    />}
+                  />
+                }
 
-            </Switch>
-          }
+                <Route path={this.props.config.PAGES.writeFeedback.path} render={(props) =>
+                   <WriteFeedbackPage {...props}
+                                      user={this.state.user}
+                                      location={this.state.location}
+                                      online={this.state.online}
+                                      handleClose={this.goToMap}
+                                      label={this.props.config.PAGES.writeFeedback.label}
+                   />}
+                 />
 
-          { !this.state.welcomeShown && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
-            <WelcomePage handleClose={this.handleWelcomePageClose}/>
-          }
+              </Switch>
+            }
 
-          <Map location={this.state.location}
-               visible={[this.props.config.PAGES.map.path, this.props.config.PAGES.embeddable.path].includes(this.props.history.location.pathname)}
-               welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
-               geojson={this.state.geojson}
-               user={this.state.user}
-               config={this.props.config}
-               embeddable={this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
-          />
+            { !this.state.welcomeShown && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
+              this.state.termsAccepted &&
+              <WelcomePage handleClose={this.handleWelcomePageClose}/>
+            }
 
-          <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}
-            style={{
-              display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
-              ? 'block'
-              : 'none'
-            }}
-          />
+            <Map location={this.state.location}
+                 visible={[this.props.config.PAGES.map.path, this.props.config.PAGES.embeddable.path].includes(this.props.history.location.pathname)}
+                 welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
+                 geojson={this.state.geojson}
+                 user={this.state.user}
+                 config={this.props.config}
+                 embeddable={this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
+            />
 
-          <Fab className={classes.camera} color="secondary" onClick={this.handlePhotoClick}
-            style={{
-              display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
-              ? 'flex'
-              : 'none'
-            }}
-          >
-            <AddAPhotoIcon />
-          </Fab>
-        </main>
+            <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}
+              style={{
+                display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
+                ? 'block'
+                : 'none'
+              }}
+            />
+
+            <Fab className={classes.camera} color="secondary" onClick={this.handlePhotoClick}
+              style={{
+                display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
+                ? 'flex'
+                : 'none'
+              }}
+            >
+              <AddAPhotoIcon />
+            </Fab>
+          </main>
 
         <Snackbar open={this.state.welcomeShown && !this.state.online} message='Network not available' />
 
