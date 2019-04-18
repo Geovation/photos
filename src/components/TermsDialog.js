@@ -6,14 +6,15 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Checkbox from '@material-ui/core/Checkbox';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { withStyles } from '@material-ui/core/styles';
 
 import config from '../custom/config';
 
 const message = {
-  title: config.customiseString('termsAndConditions', 'T&C and Privacy'),
-  startText: config.customiseString('termsAndConditions', 'Please read and agree to '),
+  title: config.customiseString('termsAndConditions', 'Welcome to App'),
+  startText: config.customiseString('termsAndConditions', 'Please read our '),
   termsText: config.customiseString('termsAndConditions', 'Terms and Conditions'),
   midText: config.customiseString('termsAndConditions', ' and '),
   privacyText: config.customiseString('termsAndConditions', 'Privacy Policy'),
@@ -30,6 +31,11 @@ const styles = theme => ({
 class TermsDialog extends React.Component {
   state = {
     open: !localStorage.getItem("TermsAccepted"),
+    isChecked: false
+  };
+
+  handleChange = () => event => {
+    this.setState({ isChecked: event.target.checked })
   };
 
   render() {
@@ -51,12 +57,17 @@ class TermsDialog extends React.Component {
               {message.midText}
               <a href={message.privacyLink}>{message.privacyText}</a>
             </DialogContentText>
+            <Checkbox
+              onChange={this.handleChange('checkbox')}
+              checked={this.state.isChecked}
+            /> {'I have read and agree to the Terms and Conditions, and Privacy Policy.'}
           </DialogContent>
           <DialogActions>
             <Button
               fullWidth
               variant='contained'
               color='secondary'
+              disabled={!this.state.isChecked}
               onClick={handleClose}
             >
               Agree

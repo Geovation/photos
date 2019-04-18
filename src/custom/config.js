@@ -28,8 +28,8 @@ const CUSTOM_STRING = {
     "admin@geovation.uk": "it@geovation.uk"
   },
   termsAndConditions: {
-    "T&C and Privacy": "Terms & Conditions and Privacy Policy",
-    "Please read and agree to ": "Please read and agree to ",
+    "Welcome to App": "Welcome to PHOTOS",
+    "Please read our ": "Please read our ",
     "Terms and Conditions": "Terms and Conditions ",
     " and ": " and ",
     "Privacy Policy": "Privacy Policy ",
