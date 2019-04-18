@@ -9,6 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Checkbox from '@material-ui/core/Checkbox';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { withStyles } from '@material-ui/core/styles';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import config from '../custom/config';
 
@@ -42,26 +43,34 @@ class TermsDialog extends React.Component {
     // const { fullScreen, handleClose, classes } = this.props; //to use uncomment "line fullSreen={fullScreen}"
     const { handleClose, classes } = this.props; //comment this and uncomment above line to use fullScreen T&C page
     return (
-      <div>
         <Dialog
           // fullScreen={fullScreen}
           classes={{container: classes.root}}
           open={this.state.open}
           aria-labelledby="responsive-dialog-title"
         >
-          <DialogTitle id="responsive-dialog-title">{message.title}</DialogTitle>
+          <DialogTitle id="responsive-dialog-title"  style={{ textAlign: "center"}}>{message.title}</DialogTitle>
           <DialogContent>
             <DialogContentText>
               {message.startText}
               <a href={message.termsLink}>{message.termsText}</a>
               {message.midText}
               <a href={message.privacyLink}>{message.privacyText}</a>
+
+              <br/> <br/>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    onChange={this.handleChange('checkbox')}
+                    checked={this.state.isChecked}
+                  />
+                }
+                label="I have read and agree to the Terms and Conditions, and Privacy Policy."
+              />
             </DialogContentText>
-            <Checkbox
-              onChange={this.handleChange('checkbox')}
-              checked={this.state.isChecked}
-            /> {'I have read and agree to the Terms and Conditions, and Privacy Policy.'}
+
           </DialogContent>
+
           <DialogActions>
             <Button
               fullWidth
@@ -74,7 +83,6 @@ class TermsDialog extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-      </div>
     );
   }
 }
