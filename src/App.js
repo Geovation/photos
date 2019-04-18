@@ -218,10 +218,8 @@ class App extends Component {
   };
 
   handleTermsPageClose = (e) => {
-    if (e.target.innerHTML === 'Agree') {
-      localStorage.setItem("termsAccepted", "Yes");
-      this.setState({ termsAccepted: "Yes" });
-    }
+    localStorage.setItem("termsAccepted", "Yes");
+    this.setState({ termsAccepted: "Yes" });
   };
 
   toggleLeftDrawer = (isItOpen) => () => {
