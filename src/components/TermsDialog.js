@@ -70,7 +70,7 @@ class TermsDialog extends React.Component {
               disabled={!this.state.isChecked}
               onClick={handleClose}
             >
-              Agree
+              Next
             </Button>
           </DialogActions>
         </Dialog>
