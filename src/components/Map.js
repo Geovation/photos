@@ -135,7 +135,7 @@ class Map extends Component {
         data: geojson,
         cluster: true,
         clusterMaxZoom: 14, // Max zoom to cluster points on
-        clusterRadius: 40 // Radius of each cluster when clustering points (defaults to 50)
+        clusterRadius: 48 // Radius of each cluster when clustering points (defaults to 50)
     });
 
     this.map.addLayer({
@@ -145,27 +145,36 @@ class Map extends Component {
         filter: ["has", "point_count"],
         paint: {
             // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-            // with three steps to implement three types of circles:
-            //   * Blue, 20px circles when point count is less than 100
-            //   * Yellow, 30px circles when point count is between 100 and 750
-            //   * Pink, 40px circles when point count is greater than or equal to 750
+            // with six steps to implement six types of circles:
             "circle-color": [
                 "step",
                 ["get", "point_count"],
-                "#51bbd6",
+                "#89b685",
+                50,
+                "#E8DB52",
                 100,
-                "#f1f075",
-                750,
-                "#f28cb1"
+                "#FEB460",
+                300,
+                "#FF928B",
+                1000,
+                "#E084B4",
+                5000,
+                "#8097BF"
             ],
             "circle-radius": [
                 "step",
                 ["get", "point_count"],
-                20,
+                17,
+                50,
+                18,
                 100,
-                30,
-                750,
-                40
+                19,
+                300,
+                20,
+                1000,
+                21,
+                5000,
+                22
             ]
         }
     });
@@ -177,8 +186,8 @@ class Map extends Component {
         filter: ["has", "point_count"],
         layout: {
             "text-field": "{point_count_abbreviated}",
-            "text-font": ["Source Sans Pro Regular"],
-            "text-size": 12
+            "text-font": ["Source Sans Pro Bold"],
+            "text-size": 15
         }
     });
 
