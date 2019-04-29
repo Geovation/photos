@@ -22,7 +22,7 @@ const styles = {
 class Profile extends React.Component {
   render() {
     const { user, classes,label } = this.props;
-    console.log(user);
+
     return (
       <PageWrapper label={label} handleClose={this.props.handleClose} header={false}>
         <div className={'profile-info'}>

@@ -5,7 +5,6 @@ import User from "./types/User";
 import dbFirebase from "./dbFirebase";
 import md5 from 'md5';
 
-let currentUser;
 
 /**
  * When the user login call fn
@@ -13,7 +12,8 @@ let currentUser;
  */
 const onAuthStateChanged = (fn) => {
   const firebaseStatusChange = async (user) => {
-    currentUser = user;
+    let currentUser = user;
+
     if (currentUser) {
       gtagSetId(user.uid)
       gtagEvent('Logged in','User',user.uid)
@@ -27,9 +27,7 @@ const onAuthStateChanged = (fn) => {
 
       // this has to be global to be found by the jsonp
       window.userFromGravatar = (profile) => {
-
           const info = profile.entry[0];
-          console.log(info);
           currentUser.description = info.aboutMe;
           currentUser.location = info.currentLocation;
           currentUser.profileURL = info.profileUrl;
