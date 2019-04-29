@@ -164,5 +164,6 @@ export default {
   PAGES,
   CUSTOM_PAGES:[],
   customiseString,
-  getStats
+  getStats,
+  ENABLE_GRAVATAR_PROFILES: true  //To updtae user-profile from Gravata, value: ture or false.
 }

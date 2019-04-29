@@ -276,7 +276,7 @@ class App extends Component {
                     <ProfilePage {...props}
                                  user={this.state.user}
                                  handleClose={this.goToMap}
-                                 label={this.props.config.PAGES.about.label}
+                                 label={this.props.config.PAGES.account.label}
                     />}
                   />
                 }
