@@ -165,5 +165,8 @@ export default {
   CUSTOM_PAGES:[],
   customiseString,
   getStats,
-  ENABLE_GRAVATAR_PROFILES: true  //To updtae user-profile from Gravata, value: ture or false.
+  ENABLE_GRAVATAR_PROFILES: true,  //To update user-profile from Gravatar, value: ture or false.
+  SECURITY: {
+    UPLOAD_REQUIRES_LOGIN: true
+  }
 }
