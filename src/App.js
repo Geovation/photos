@@ -4,9 +4,16 @@ import { gtagPageView, gtagEvent } from './gtag.js';
 
 import RootRef from '@material-ui/core/RootRef';
 import Fab from '@material-ui/core/Fab';
+import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import Dehaze from '@material-ui/icons/Dehaze';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
 import Map from './components/Map';
@@ -58,7 +65,8 @@ class App extends Component {
       termsAccepted: !!localStorage.getItem("termsAccepted"),
       geojson: {},
       srcType: null,
-      cordovaMetadata : {}
+      cordovaMetadata : {},
+      dialogOpen: false
     };
 
     this.geoid = null;
@@ -103,6 +111,10 @@ class App extends Component {
     }
   }
 
+
+  handleDialogClose = () => {
+    this.setState({ dialogOpen : false})
+  }
 
   async componentDidMount(){
     gtagPageView(this.props.location.pathname);
@@ -171,13 +183,25 @@ class App extends Component {
     this.setState({ loginLogoutDialogOpen:false});
   };
 
-  handlePhotoClick = () => {
-    if (window.cordova) {
-      console.log('Opening cordova dialog');
-      this.setState({ openPhotoDialog: true });
+    handlePhotoClick = () => {
+
+    if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
+          // TODO: show popup with message saying that the user needs an account for this feature
+          // alert("Please log in")
+
+          this.setState({ 
+            dialogOpen: true,
+            dialogTitle: "attention",
+            dialogContentText: "Before adding photos, you must be logged into your account."
+          });
     } else {
-      console.log('Clicking on photo');
-      this.domRefInput.current.click();
+      if (window.cordova) {
+        console.log('Opening cordova dialog');
+        this.setState({ openPhotoDialog: true });
+      } else {
+        console.log('Clicking on photo');
+        this.domRefInput.current.click();
+      }
     }
   };
 
@@ -226,6 +250,17 @@ class App extends Component {
     gtagEvent(isItOpen ? 'Opened' : 'Closed','Menu');
     this.setState({leftDrawerOpen: isItOpen})
   };
+
+  handleLoginPhotoAdd = (e) => {
+    this.setState({
+      loginLogoutDialogOpen: true, 
+      dialogOpen: false
+    })
+  };
+
+  handleRejectLoginPhotoAdd = () => {
+    this.setState({ dialogOpen: false });
+  }
 
   render() {
     const { classes, fields } = this.props;
@@ -350,6 +385,29 @@ class App extends Component {
           leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
           stats={this.state.stats}
         />
+
+        <Dialog open={this.state.dialogOpen} onClose={this.handleDialogClose}>
+          <DialogTitle>{this.state.dialogTitle}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {this.state.dialogContentText}
+            </DialogContentText>
+          </DialogContent>
+          
+          <DialogActions>
+            <Button onClick={this.handleRejectLoginPhotoAdd} color='secondary'>
+              No thanks!
+            </Button>
+
+{/* clicking ok should either open a login box or there should be a text field in the box to enter your email address */}
+            <Button onClick={this.handleLoginPhotoAdd} color='secondary'>
+              Login
+            </Button>
+
+
+          </DialogActions> 
+
+        </Dialog>
 
       </div>
     );
