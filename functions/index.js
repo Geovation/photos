@@ -23,6 +23,7 @@ const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
 
 admin.initializeApp();
 const firestore = admin.firestore();
+const auth = admin.auth();
 const settings = { timestampsInSnapshots: true };
 firestore.settings(settings);
 
@@ -166,6 +167,35 @@ app.get('/api/stats', async (req, res) => {
     console.info(e);
     return res.status(503).send('stats not ready yet');
   }
+});
+
+app.get('/api/users', async (req, res) => {
+  if (req.method !== 'GET') {
+    return res.status(403).send('Forbidden!');
+  }
+
+  res.set('Cache-Control', `public, max-age=${WEB_CACHE_AGE_S}, s-maxage=${WEB_CACHE_AGE_S * 2}`);
+
+  // get all the users
+  let users = [];
+  let pageToken = undefined;
+  do {
+    const listUsersResult = await auth.listUsers(1000, pageToken);
+    pageToken = listUsersResult.pageToken;
+    if (listUsersResult.users) {
+      users = users.concat(listUsersResult.users);
+    }
+  }
+  while (pageToken);
+
+  res.json(users.map(user => {
+    return {
+      uid: user.uid,
+      displayName: user.displayName,
+      metadata: user.metadata
+    }
+  }));
+
 });
 
 /**
