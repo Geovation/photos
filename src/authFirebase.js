@@ -1,9 +1,9 @@
 import firebase from "firebase/app";
-import { gtagEvent,gtagSetId } from './gtag.js';
+import md5 from 'md5';
 
 import User from "./types/User";
 import dbFirebase from "./dbFirebase";
-import md5 from 'md5';
+import { gtagEvent,gtagSetId } from './gtag.js';
 import config from './custom/config'
 
 /**
@@ -47,4 +47,19 @@ const signOut = () => {
   firebase.auth().signOut();
 };
 
-export default { onAuthStateChanged, signOut }
+const sendEmailVerification = () => {
+  firebase.auth().currentUser.sendEmailVerification()
+    .then( () => {
+      console.log('email sent');
+    })
+    .catch( error => {
+      console.log(console.error());
+    });
+};
+
+const reloadUser = async () => {
+  await firebase.auth().currentUser.reload();
+  return firebase.auth().currentUser;
+};
+
+export default { onAuthStateChanged, signOut, sendEmailVerification, reloadUser }

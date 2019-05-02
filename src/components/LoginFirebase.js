@@ -1,16 +1,15 @@
 import React from 'react';
-
 import FirebaseAuth from 'react-firebaseui/FirebaseAuth';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import withMobileDialog from '@material-ui/core/withMobileDialog'
+import withMobileDialog from '@material-ui/core/withMobileDialog';
+
 import * as firebaseui from 'firebaseui';
-
 import firebase from 'firebase/app';
-
 import 'firebase/auth';
 
+import authFirebase from '../authFirebase';
 // TODO: change theme: https://github.com/firebase/firebaseui-web-react/tree/master/dist
 
 class LoginFirebase extends React.Component {
@@ -38,7 +37,12 @@ class LoginFirebase extends React.Component {
       ],
       callbacks: {
         // Avoid redirects after sign-in.
-        signInSuccessWithAuthResult: () => false
+        signInSuccessWithAuthResult: authResult => {
+          if (authResult.additionalUserInfo.isNewUser) {
+            authFirebase.sendEmailVerification();
+          }
+          return false;
+        }
       }
     };
   }
