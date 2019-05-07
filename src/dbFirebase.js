@@ -80,6 +80,11 @@ async function fetchPhotos() {
   return geojson;
 }
 
+async function fetchUsers() {
+  return fetch(config.API.URL + "/users", {mode: "cors"})
+    .then(response => response.json());
+}
+
 function saveMetadata(data) {
   data.location = new firebase.firestore.GeoPoint(data.latitude, data.longitude);
   delete data.latitude;
@@ -170,6 +175,7 @@ async function writeFeedback(data) {
 export default {
   onConnectionStateChanged,
   fetchPhotos,
+  fetchUsers,
   getUser,
   savePhoto,
   saveMetadata,
