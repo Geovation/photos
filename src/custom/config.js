@@ -168,5 +168,9 @@ export default {
   ENABLE_GRAVATAR_PROFILES: true,  //To update user-profile from Gravatar, value: ture or false.
   SECURITY: {
     UPLOAD_REQUIRES_LOGIN: true
+  },
+  API: {
+    URL: "https://us-central1-photos-demo-d4b14.cloudfunctions.net/api",
+    // URL: "http://localhost:5000/photos-demo-d4b14/us-central1/api"
   }
 }

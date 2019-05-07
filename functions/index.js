@@ -142,7 +142,7 @@ const generateThumbnail = functions.storage.object().onFinalize(async (object) =
   return console.info(`Photos are public now`);
 });
 
-app.get('/api/stats', async (req, res) => {
+app.get('/stats', async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(403).send('Forbidden!');
   }
@@ -169,7 +169,7 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
-app.get('/api/users', async (req, res) => {
+app.get('/users', async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(403).send('Forbidden!');
   }
