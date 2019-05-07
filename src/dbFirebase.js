@@ -81,8 +81,8 @@ async function fetchPhotos() {
 }
 
 async function fetchUsers() {
-  const response = await fetch(config.API.URL + "/users");
-  return response.json();
+  return fetch(config.API.URL + "/users", {mode: "cors"})
+    .then(response => response.json());
 }
 
 function saveMetadata(data) {

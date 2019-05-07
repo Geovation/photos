@@ -176,26 +176,34 @@ app.get('/users', async (req, res) => {
 
   res.set('Cache-Control', `public, max-age=${WEB_CACHE_AGE_S}, s-maxage=${WEB_CACHE_AGE_S * 2}`);
 
-  // get all the users
-  let users = [];
-  let pageToken = undefined;
-  do {
-    const listUsersResult = await auth.listUsers(1000, pageToken);
-    pageToken = listUsersResult.pageToken;
-    if (listUsersResult.users) {
-      users = users.concat(listUsersResult.users);
+  try {
+    // get all the users
+    let users = [];
+    let pageToken = undefined;
+    do {
+      const listUsersResult = await auth.listUsers(1000, pageToken);
+      pageToken = listUsersResult.pageToken;
+      if (listUsersResult.users) {
+        users = users.concat(listUsersResult.users);
+      }
     }
+    while (pageToken);
+
+    const data = users.map(user => {
+      return {
+        uid: user.uid,
+        displayName: user.displayName,
+        metadata: user.metadata
+      }
+    });
+    res.json(data);
+
+    console.debug(data);
+    return true;
+  } catch (e) {
+    console.error(e);
+    return res.status(500).send('Server error.');
   }
-  while (pageToken);
-
-  res.json(users.map(user => {
-    return {
-      uid: user.uid,
-      displayName: user.displayName,
-      metadata: user.metadata
-    }
-  }));
-
 });
 
 /**
