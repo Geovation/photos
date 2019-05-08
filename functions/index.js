@@ -181,6 +181,7 @@ app.get('/users', async (req, res) => {
     let users = [];
     let pageToken = undefined;
     do {
+      /* eslint-disable no-await-in-loop */
       const listUsersResult = await auth.listUsers(1000, pageToken);
       pageToken = listUsersResult.pageToken;
       if (listUsersResult.users) {
