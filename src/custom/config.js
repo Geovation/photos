@@ -170,7 +170,7 @@ export default {
     UPLOAD_REQUIRES_LOGIN: true
   },
   API: {
-    // URL: "https://us-central1-photos-demo-d4b14.cloudfunctions.net/api",
-    URL: "http://localhost:5000/photos-demo-d4b14/us-central1/api"
+    URL: "https://us-central1-photos-demo-d4b14.cloudfunctions.net/api",
+    // URL: "http://localhost:5000/photos-demo-d4b14/us-central1/api"
   }
 }
