@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter} from 'react-router-dom';
-import { gtagPageView, gtagEvent } from './gtag.js';
 
 import RootRef from '@material-ui/core/RootRef';
 import Fab from '@material-ui/core/Fab';
@@ -13,6 +12,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import { withStyles } from '@material-ui/core/styles';
 
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
@@ -20,8 +20,6 @@ import Map from './components/Map';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
 import ModeratorPage from './components/ModeratorPage';
 import LoginFirebase from './components/LoginFirebase';
-import authFirebase from './authFirebase';
-import dbFirebase from './dbFirebase';
 import Login from './components/Login';
 import AboutPage from './components/AboutPage';
 import TutorialPage from './components/TutorialPage';
@@ -29,10 +27,12 @@ import WelcomePage from './components/WelcomePage';
 import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 import TermsDialog from './components/TermsDialog';
-
-import './App.scss';
-import { withStyles } from '@material-ui/core/styles';
+import EmailVerifiedDialog from './components/EmailVerifiedDialog';
+import authFirebase from './authFirebase';
+import dbFirebase from './dbFirebase';
+import { gtagPageView, gtagEvent } from './gtag.js';
 import { isIphoneWithNotchAndCordova } from './utils';
+import './App.scss';
 
 const styles = theme => ({
   burger: {
@@ -189,7 +189,7 @@ class App extends Component {
           // TODO: show popup with message saying that the user needs an account for this feature
           // alert("Please log in")
 
-          this.setState({ 
+          this.setState({
             dialogOpen: true,
             dialogTitle: "attention",
             dialogContentText: "Before adding photos, you must be logged into your account."
@@ -253,13 +253,18 @@ class App extends Component {
 
   handleLoginPhotoAdd = (e) => {
     this.setState({
-      loginLogoutDialogOpen: true, 
+      loginLogoutDialogOpen: true,
       dialogOpen: false
     })
   };
 
   handleRejectLoginPhotoAdd = () => {
     this.setState({ dialogOpen: false });
+  }
+  
+  handleNextClick = async () => {
+    const user = await authFirebase.reloadUser();
+    this.setState({user: {...this.state.user, emailVerified: user.emailVerified}});
   }
 
   render() {
@@ -269,6 +274,12 @@ class App extends Component {
         { !this.state.termsAccepted && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
           <TermsDialog handleClose={this.handleTermsPageClose}/>
         }
+
+        <EmailVerifiedDialog
+          user={this.state.user}
+          open={!!(this.state.user && !this.state.user.emailVerified)}
+          handleNextClick={this.handleNextClick}
+        />
 
           <main className='content'>
             { this.state.welcomeShown &&
@@ -393,7 +404,7 @@ class App extends Component {
               {this.state.dialogContentText}
             </DialogContentText>
           </DialogContent>
-          
+
           <DialogActions>
             <Button onClick={this.handleRejectLoginPhotoAdd} color='secondary'>
               No thanks!
@@ -405,7 +416,7 @@ class App extends Component {
             </Button>
 
 
-          </DialogActions> 
+          </DialogActions>
 
         </Dialog>
 
