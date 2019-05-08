@@ -27,6 +27,11 @@ if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
     console.error =
     console.debug = _ => {};
 }
+// it must set to fals (not enough to be absent)
+const devDissableDebugLog = localStorage.getItem("debug") === false;
+if (devDissableDebugLog) {
+  console.debug = _ => {}
+}
 
 const theme = createMuiTheme(config.THEME);
 
