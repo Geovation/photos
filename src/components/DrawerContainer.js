@@ -53,6 +53,7 @@ class DrawerContainer extends Component {
     const ListItemsTop = [
       PAGES.account,
       PAGES.moderator,
+      PAGES.listFeedbacks,
       PAGES.tutorial,
       PAGES.leaderboard,
     ];

@@ -6,6 +6,7 @@ import SchoolIcon from '@material-ui/icons/School';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import HelpIcon from '@material-ui/icons/Help';
 import FeedbackIcon from '@material-ui/icons/Feedback';
+import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
 import styles from './config.scss';
 import enums from '../types/enums';
@@ -96,6 +97,12 @@ const PAGES = {
     label: "Leaderboard",
     visible: (user, online) => true,
     icon: <DashboardIcon/>,
+  },
+  listFeedbacks: {
+    path: "/list-feedbacks",
+    label: "List Feedbacks",
+    icon: <LibraryBooksIcon/>,
+    visible: (user, online) => user && user.isModerator
   }
 };
 

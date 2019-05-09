@@ -40,12 +40,12 @@ class ModeratorPage extends Component {
 
   componentDidMount() {
     console.debug(this.props);
-    this.props.startFetchingPhotosToModerate();
+    this.props.startFetchingToModerate();
   }
 
   componentWillUnmount() {
     console.debug(this.props);
-    this.props.stopFetchingPhotosToModerate();
+    this.props.stopFetchingToModerate();
   }
 
   handleRejectClick = (photo) => {
@@ -153,8 +153,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  startFetchingPhotosToModerate: actions.startFetchingPhotosToModerate(dispatch),
-  stopFetchingPhotosToModerate: actions.stopFetchingPhotosToModerate
+  startFetchingToModerate: actions.startFetchingToModerate('photos', dispatch),
+  stopFetchingToModerate: actions.stopFetchingToModerate
 })
 
 export default connect(

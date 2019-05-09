@@ -1,23 +1,31 @@
-import {FETCH_PHOTOS_TO_MODERATE} from "./actionTypes";
+import {FETCH_PHOTOS_TO_MODERATE, FETCH_FEEDBACKS_TO_MODERATE} from "./actionTypes";
 import dbFirebase from "../dbFirebase";
 
-let unregisterPhotosToModerateObserver = undefined;
+let unregisterToModerateObserver = undefined;
 
-export const startFetchingPhotosToModerate = (dispatch) => async () => {
-  if (!unregisterPhotosToModerateObserver) {
+export const stopFetchingToModerate = () => {
+  if (unregisterToModerateObserver) {
+    unregisterToModerateObserver();
+  }
+  unregisterToModerateObserver = undefined;
+}
 
-    unregisterPhotosToModerateObserver = dbFirebase.onPhotosToModerate(photosToModerate => {
+export const startFetchingToModerate = (collection, dispatch) => async () => {
+  let query, type;
+  if (collection === 'photos') {
+    query = {field: "moderated", value: null};
+    type = FETCH_PHOTOS_TO_MODERATE;
+  } else {
+    query = {field: "buildNumber", value: "0"};
+    type = FETCH_FEEDBACKS_TO_MODERATE;
+  }
+
+  if (!unregisterToModerateObserver) {
+    unregisterToModerateObserver = dbFirebase.onCollectionToModerate(collection, query, value => {
       dispatch({
-        type: FETCH_PHOTOS_TO_MODERATE,
-        payload: photosToModerate
+        type: type,
+        payload: value
       });
     });
   }
 };
-
-export const stopFetchingPhotosToModerate = () => {
-  if (unregisterPhotosToModerateObserver) {
-    unregisterPhotosToModerateObserver();
-  }
-  unregisterPhotosToModerateObserver = undefined;
-}

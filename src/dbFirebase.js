@@ -124,9 +124,12 @@ async function getUser(id) {
   return fbUser.exists ? fbUser.data() : null;
 }
 
-function onPhotosToModerate(fn) {
-  return firestore.collection('photos').where("moderated", "==", null ).onSnapshot((sn) => {
-    const docs = sn.docs.map(extractPhoto);
+function onCollectionToModerate(collection, query, fn) {
+  return firestore.collection(collection).where(query.field, "==", query.value).onSnapshot((sn) => {
+    const docs = (collection === 'photos') ?
+      sn.docs.map(extractPhoto)
+    :
+      sn.docs.map(doc => ({...doc.data(), id: doc.id}));
     fn(docs);
   });
 }
@@ -178,6 +181,13 @@ async function writeFeedback(data) {
   return await firestore.collection('feedbacks').add(data);
 }
 
+async function toggleUnreadFeedback(feedback, userId) {
+  return await firestore.collection('feedbacks').doc(feedback.id).update({
+    solved: !feedback.solved,
+    moderator_id: userId
+  });
+}
+
 export default {
   onConnectionStateChanged,
   fetchPhotos,
@@ -186,9 +196,10 @@ export default {
   getUser,
   savePhoto,
   saveMetadata,
-  onPhotosToModerate,
+  onCollectionToModerate,
   rejectPhoto,
   approvePhoto,
   disconnect,
   writeFeedback,
+  toggleUnreadFeedback
 };

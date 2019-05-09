@@ -29,6 +29,7 @@ import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 import TermsDialog from './components/TermsDialog';
 import EmailVerifiedDialog from './components/EmailVerifiedDialog';
+import ListFeedbacksPage from './components/ListFeedbacksPage';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
@@ -325,6 +326,12 @@ class App extends Component {
                 { this.state.user && this.state.user.isModerator &&
                   <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
                     <ModeratorPage label={this.props.config.PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
+                  />
+                }
+
+                { this.state.user && this.state.user.isModerator &&
+                  <Route path={this.props.config.PAGES.listFeedbacks.path} render={(props) =>
+                    <ListFeedbacksPage label={this.props.config.PAGES.listFeedbacks.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
                   />
                 }
 
