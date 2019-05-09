@@ -68,7 +68,7 @@ async function pubIfNecessary(doc) {
     try {
       await pubsub.createTopic(TOPIC);
     } catch(e) {
-      console.debug("topic already created");
+      console.info("topic already created");
     }
 
     const messageId = await pubsub.topic(TOPIC).publish(Buffer.from("Recreate the stats"));
@@ -161,7 +161,7 @@ app.get('/stats', async (req, res) => {
       data.serverTime = new Date();
       res.json(data);
       pubIfNecessary(doc);
-      console.debug(data);
+      console.info(data);
       return true;
     } else {
       throw new Error("/sys/stats doesn't exist");
@@ -210,8 +210,8 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
   const users = (await fetchUsers()).map(user => {
     return {
       uid: user.uid,
-      displayName: user.displayName,
-      metadata: user.metadata,
+      displayName: user.displayName || "",
+      // metadata: user.metadata,
       pieces: 0,
       uploaded: 0
     }
@@ -238,8 +238,9 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
 
             if (pieces > 0 ) user.pieces += pieces;
             user.uploaded++;
+            user.displayName = user.displayName || "";
 
-            console.debug(user);
+            console.info(user);
           }
         });
 
@@ -250,17 +251,9 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
 
   });
 
-  stats.users = users.reduce( (acc, user) => {
-    acc[user.uid] = {
-      displayName: user.displayName || "",
-      pieces: user.pieces || 0,
-      uploaded: user.uploaded || 0
-    };
-    return acc;
-  }, {} );
+  stats.users = users;
 
-
-  console.debug(stats);
+  console.info(stats);
 
   return await firestore.collection('sys').doc('stats').set(stats);
 });
