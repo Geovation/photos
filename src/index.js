@@ -19,7 +19,7 @@ if (isIphoneAndCordova) {
   window.StatusBar.styleDefault();
 }
 
-if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
+if (process.env.NODE_ENV !== 'development' && localStorage.getItem("debug") !== "true") {
     console.log =
     console.info =
     console.trace =
@@ -28,7 +28,7 @@ if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
     console.debug = _ => {};
 }
 // it must set to fals (not enough to be absent)
-const devDissableDebugLog = localStorage.getItem("debug") === false;
+const devDissableDebugLog = localStorage.getItem("debug") === "false";
 if (devDissableDebugLog) {
   console.debug = _ => {}
 }
