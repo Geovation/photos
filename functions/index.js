@@ -239,6 +239,7 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
             if (pieces > 0 ) user.pieces += pieces;
             user.uploaded++;
             user.displayName = user.displayName || "";
+            delete user.uid;
 
             console.info(user);
           }
