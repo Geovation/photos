@@ -19,13 +19,18 @@ if (isIphoneAndCordova) {
   window.StatusBar.styleDefault();
 }
 
-if (process.env.NODE_ENV !== 'development' && !localStorage.getItem("debug")) {
+if (process.env.NODE_ENV !== 'development' && localStorage.getItem("debug") !== "true") {
     console.log =
     console.info =
     console.trace =
     console.warn =
     console.error =
     console.debug = _ => {};
+}
+// it must set to fals (not enough to be absent)
+const devDissableDebugLog = localStorage.getItem("debug") === "false";
+if (devDissableDebugLog) {
+  console.debug = _ => {}
 }
 
 const theme = createMuiTheme(config.THEME);
