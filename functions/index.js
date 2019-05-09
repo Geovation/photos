@@ -18,11 +18,11 @@ const MAIN_MAX_SIZE = 1014;
 const MAIN_NAME = '1024.jpg';
 
 const TOPIC = "update-stats";
-// const DB_CACHE_AGE_MS = 1000 * 60 * 60 * 24 * 1; // 1 day
-// const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
+const DB_CACHE_AGE_MS = 1000 * 60 * 60 * 24 * 1; // 1 day
+const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
 
-const DB_CACHE_AGE_MS = 0; // 1 day
-const WEB_CACHE_AGE_S =    0; // 1day
+// const DB_CACHE_AGE_MS = 0; // 1 day
+// const WEB_CACHE_AGE_S =    0; // 1day
 
 
 admin.initializeApp();
@@ -203,8 +203,7 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
     rejected: 0,
     pieces: 0,
     updated: admin.firestore.FieldValue.serverTimestamp(),
-    users: [],
-    test: "ciao 2"
+    users: []
   };
 
   const querySnapshot = await firestore.collection("photos").get();
@@ -230,8 +229,6 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
       if (data.published) {
         stats.published++;
 
-        stats.seb = "ciao";
-
         const pieces = Number(data.pieces);
         if (pieces > 0 ) stats.pieces += pieces;
 
@@ -239,13 +236,10 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
         users.forEach( user => {
           if (user.uid === data.owner_id) {
 
-
-
             if (pieces > 0 ) user.pieces += pieces;
             user.uploaded++;
 
-            console.log(user);
-
+            console.debug(user);
           }
         });
 
@@ -256,9 +250,17 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
 
   });
 
-  stats.users = users;
+  stats.users = users.reduce( (acc, user) => {
+    acc[user.uid] = {
+      displayName: user.displayName || "",
+      pieces: user.pieces || 0,
+      uploaded: user.uploaded || 0
+    };
+    return acc;
+  }, {} );
 
-  console.log(stats);
+
+  console.debug(stats);
 
   return await firestore.collection('sys').doc('stats').set(stats);
 });
