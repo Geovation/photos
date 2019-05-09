@@ -21,6 +21,10 @@ const TOPIC = "update-stats";
 const DB_CACHE_AGE_MS = 1000 * 60 * 60 * 24 * 1; // 1 day
 const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
 
+// const DB_CACHE_AGE_MS = 0; // 1 day
+// const WEB_CACHE_AGE_S =    0; // 1day
+
+
 admin.initializeApp();
 const firestore = admin.firestore();
 const auth = admin.auth();
@@ -169,43 +173,22 @@ app.get('/stats', async (req, res) => {
   }
 });
 
-app.get('/users', async (req, res) => {
-  if (req.method !== 'GET') {
-    return res.status(403).send('Forbidden!');
-  }
-
-  res.set('Cache-Control', `public, max-age=${WEB_CACHE_AGE_S}, s-maxage=${WEB_CACHE_AGE_S * 2}`);
-
-  try {
-    // get all the users
-    let users = [];
-    let pageToken = undefined;
-    do {
-      /* eslint-disable no-await-in-loop */
-      const listUsersResult = await auth.listUsers(1000, pageToken);
-      pageToken = listUsersResult.pageToken;
-      if (listUsersResult.users) {
-        users = users.concat(listUsersResult.users);
-      }
+async function fetchUsers() {
+  // get all the users
+  let users = [];
+  let pageToken = undefined;
+  do {
+    /* eslint-disable no-await-in-loop */
+    const listUsersResult = await auth.listUsers(1000, pageToken);
+    pageToken = listUsersResult.pageToken;
+    if (listUsersResult.users) {
+      users = users.concat(listUsersResult.users);
     }
-    while (pageToken);
-
-    const data = users.map(user => {
-      return {
-        uid: user.uid,
-        displayName: user.displayName,
-        metadata: user.metadata
-      }
-    });
-    res.json(data);
-
-    console.debug(data);
-    return true;
-  } catch (e) {
-    console.error(e);
-    return res.status(500).send('Server error.');
   }
-});
+  while (pageToken);
+
+  return users;
+}
 
 /**
  * recalculate the stats and save them in the DB
@@ -219,10 +202,20 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
     published: 0,
     rejected: 0,
     pieces: 0,
-    updated: admin.firestore.FieldValue.serverTimestamp()
+    updated: admin.firestore.FieldValue.serverTimestamp(),
+    users: []
   };
 
   const querySnapshot = await firestore.collection("photos").get();
+  const users = (await fetchUsers()).map(user => {
+    return {
+      uid: user.uid,
+      displayName: user.displayName,
+      metadata: user.metadata,
+      pieces: 0,
+      uploaded: 0
+    }
+  });
 
   querySnapshot.forEach( doc => {
     const data = doc.data();
@@ -237,13 +230,37 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
         stats.published++;
 
         const pieces = Number(data.pieces);
-        if (!isNaN(pieces) && pieces > 0 ) stats.pieces += pieces;
+        if (pieces > 0 ) stats.pieces += pieces;
+
+        // update user stats
+        users.forEach( user => {
+          if (user.uid === data.owner_id) {
+
+            if (pieces > 0 ) user.pieces += pieces;
+            user.uploaded++;
+
+            console.debug(user);
+          }
+        });
+
       } else {
         stats.rejected++;
       }
     }
 
   });
+
+  stats.users = users.reduce( (acc, user) => {
+    acc[user.uid] = {
+      displayName: user.displayName || "",
+      pieces: user.pieces || 0,
+      uploaded: user.uploaded || 0
+    };
+    return acc;
+  }, {} );
+
+
+  console.debug(stats);
 
   return await firestore.collection('sys').doc('stats').set(stats);
 });

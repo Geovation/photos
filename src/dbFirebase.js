@@ -80,8 +80,8 @@ async function fetchPhotos() {
   return geojson;
 }
 
-async function fetchUsers() {
-  return fetch(config.API.URL + "/users", {mode: "cors"})
+async function fetchStats() {
+  return fetch(config.API.URL + "/stats", {mode: "cors"})
     .then(response => response.json());
 }
 
@@ -175,7 +175,7 @@ async function writeFeedback(data) {
 export default {
   onConnectionStateChanged,
   fetchPhotos,
-  fetchUsers,
+  fetchStats,
   getUser,
   savePhoto,
   saveMetadata,
