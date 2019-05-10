@@ -75,9 +75,8 @@ const PAGES = {
 
 const customiseString = (page, key) => (CUSTOM_STRING[page][key] || key);
 
-const getStats = async (photos) => {
-  const photoObj = await photos;
-  return Object.keys(photoObj.features).length;
+const getStats = (geojson, dbStats) => {
+  return dbStats.published || 0;
 }
 
 export default {
