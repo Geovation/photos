@@ -96,12 +96,6 @@ class Map extends Component {
       compact: true,
       customAttribution: this.props.config.MAP_ATTRIBUTION
     }), "bottom-left");
-
-    this.map.on('load', async () => {
-      const geojson = this.props.geojson;
-      this.setState({ geojson });
-      this.addFeaturesToMap(geojson);
-    });
   }
 
   componentDidUpdate(prevProps) {
@@ -350,6 +344,14 @@ class Map extends Component {
   }
 
   render() {
+    if (this.props.geojson) {
+      this.map.on('load', async () => {
+        const geojson = this.props.geojson;
+        this.setState({ geojson });
+        this.addFeaturesToMap(geojson);
+      });
+    }
+    
     const { location, welcomeShown, classes } = this.props;
     const feature = this.state.feature;
     const gpsOffline = !location.online;

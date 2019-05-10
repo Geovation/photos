@@ -63,7 +63,8 @@ class App extends Component {
       leftDrawerOpen: false,
       welcomeShown: !!localStorage.getItem("welcomeShown"),
       termsAccepted: !!localStorage.getItem("termsAccepted"),
-      geojson: {},
+      geojson: null,
+      stats: null,
       srcType: null,
       cordovaMetadata : {},
       dialogOpen: false
@@ -119,12 +120,18 @@ class App extends Component {
   async componentDidMount(){
     gtagPageView(this.props.location.pathname);
 
-    const geojson = await dbFirebase.fetchPhotos();
-    this.props.config.getStats(geojson).then(stats => {
-      this.setState({ geojson, stats });
-    }).catch(err => {
-      console.error('Get Stats: ', err.message);
-      this.setState({ geojson, stats: 0 });
+    await Promise.all([dbFirebase.fetchStats(),dbFirebase.fetchPhotos()]).then(values => {
+      const dbStats = values[0] || {};
+      const geojson = values[1] || {};
+      let stats = 0;
+
+      try {
+        stats = this.props.config.getStats(geojson, dbStats);
+      } catch (err) {
+        console.error('Get Stats: ', err.message);
+      }
+
+      this.setState({ dbStats, stats, geojson });
     });
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
@@ -261,7 +268,7 @@ class App extends Component {
   handleRejectLoginPhotoAdd = () => {
     this.setState({ dialogOpen: false });
   }
-  
+
   handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
     this.setState({user: {...this.state.user, emailVerified: user.emailVerified}});
