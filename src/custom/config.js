@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './config.scss';
 import enums from '../types/enums';
-import Leaderboard from './components/Leaderboard';
+import Leaderboard from '../components/Leaderboard/Leaderboard.js';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import TitleTextField from '../components/PhotoPage/TitleTextField';
