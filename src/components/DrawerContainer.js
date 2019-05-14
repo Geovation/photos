@@ -104,9 +104,11 @@ class DrawerContainer extends Component {
             )}
           </List>
         </div>
-        <Typography className={classes.stats} color={'secondary'}>
-          {`${stats | 0} ${utils.customiseString('drawer', 'photos published so far!')}`}
-        </Typography>
+        { config.STATS_TEXT.position === 'DRAWER' &&
+          <Typography className={classes.stats} color={'secondary'}>
+            {`${stats | 0} ${utils.customiseString('drawer', 'photos published so far!')}`}
+          </Typography>
+        }
         <div className='built-by-geovation'>
           <Typography className='built-by-text'>
             Built by

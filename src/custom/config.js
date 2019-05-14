@@ -222,4 +222,7 @@ export default {
       field: "uploaded",
       displayedUsers: 20,
     },
+    STATS_TEXT: {
+      position: 'MAP' //values case sensitive and should be "MAP" or "DRAWER"
+    }
 }

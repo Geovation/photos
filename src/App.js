@@ -11,6 +11,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
@@ -33,7 +35,21 @@ import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
 import './App.scss';
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
+import utils from './utils';
+
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
+
+const styles = theme => ({
+   stats: {
+     position: 'absolute',
+     width: '100%',
+     top: theme.spacing.unit * 0,
+     textAlign: 'center',
+     fontWeight: 'bold',
+     color: 'white',
+     backgroundColor: 'rgba(0, 0, 0, 0.7)'
+   }
+ });
 
 class App extends Component {
   constructor(props){
@@ -354,7 +370,7 @@ class App extends Component {
   }
 
   render() {
-    const { fields, config } = this.props;
+    const { fields, config, classes } = this.props;
 
     return (
       <div className='geovation-app'>
@@ -489,6 +505,19 @@ class App extends Component {
                  handlePhotoClick={this.handlePhotoClick}
                  toggleLeftDrawer={this.toggleLeftDrawer}
             />
+
+            { this.props.config.STATS_TEXT.position === 'MAP' &&
+              <Typography className={classes.stats}
+                style={{
+                  display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
+                  ? 'block'
+                  : 'none'
+                }}
+              >
+                {`${this.state.stats | 0} ${utils.customiseString('drawer', 'photos published so far!')}`}
+              </Typography>
+            }
+
           </main>
 
         <Snackbar open={!this.state.geojson} message='Loading photos...' />
@@ -553,4 +582,4 @@ class App extends Component {
   }
 }
 
-export default withRouter(App);
+export default withRouter(withStyles(styles)(App));
