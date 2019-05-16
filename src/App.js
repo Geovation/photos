@@ -23,6 +23,7 @@ import LoginFirebase from './components/LoginFirebase';
 import Login from './components/Login';
 import AboutPage from './components/AboutPage';
 import TutorialPage from './components/TutorialPage';
+import LeaderboardPage from './components/Leaderboard';
 import WelcomePage from './components/WelcomePage';
 import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
@@ -66,7 +67,8 @@ class App extends Component {
       geojson: {},
       srcType: null,
       cordovaMetadata : {},
-      dialogOpen: false
+      dialogOpen: false,
+      usersLeaderboard: []
     };
 
     this.geoid = null;
@@ -117,6 +119,12 @@ class App extends Component {
   }
 
   async componentDidMount(){
+    dbFirebase.fetchStats()
+      .then(stats => {
+        console.log(stats);
+        this.setState({ usersLeaderboard: stats.users})
+      });
+
     gtagPageView(this.props.location.pathname);
 
     const geojson = await dbFirebase.fetchPhotos();
@@ -261,7 +269,7 @@ class App extends Component {
   handleRejectLoginPhotoAdd = () => {
     this.setState({ dialogOpen: false });
   }
-  
+
   handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
     this.setState({user: {...this.state.user, emailVerified: user.emailVerified}});
@@ -295,6 +303,16 @@ class App extends Component {
                 />
                 <Route path={this.props.config.PAGES.tutorial.path} render={(props) =>
                   <TutorialPage label={this.props.config.PAGES.tutorial.label} {...props} handleClose={this.goToMap} />}
+                />
+
+                <Route path={this.props.config.PAGES.leaderboard.path} render={(props) =>
+                  <LeaderboardPage {...props}
+                    usersLeaderboard={this.state.usersLeaderboard}
+                    user={this.state.user}
+                    online={this.state.online}
+                    handleClose={this.goToMap}
+                    label={this.props.config.PAGES.leaderboard.label}
+                  />}
                 />
 
                 { this.state.user && this.state.user.isModerator &&

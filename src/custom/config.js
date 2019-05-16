@@ -1,8 +1,5 @@
-import React from 'react';
 import styles from './config.scss';
 import enums from '../types/enums';
-import Leaderboard from '../components/Leaderboard/Leaderboard.js';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 
 import TitleTextField from '../components/PhotoPage/TitleTextField';
 import MultiFields from '../components/PhotoPage/MultiFields';
@@ -74,7 +71,7 @@ const PAGES = {
   writeFeedback: {
     path: "/write-feedback",
     label: "Feedback"
-  }, 
+  },
   leaderboard: {
     path: "/leaderboard",
     label: "Leaderboard"
@@ -171,13 +168,6 @@ export default {
   },
   PAGES,
   CUSTOM_PAGES:[
-        {
-      visible: true,
-      path: PAGES.leaderboard.path,
-      icon: <DashboardIcon/>,
-      label: PAGES.leaderboard.label,
-      page: Leaderboard
-    }
   ],
   customiseString,
   getStats,
