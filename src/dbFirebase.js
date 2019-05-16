@@ -91,6 +91,11 @@ async function fetchUsers() {
     // .then(userstats => console.log('users from Firebase:', userstats.users));
 }
 
+function fetchFeedbacks() {
+  return firestore.collection('feedbacks').get()
+    .then(sn => sn.docs.map(doc => ({...doc.data(), id: doc.id})));
+}
+
 function saveMetadata(data) {
   data.location = new firebase.firestore.GeoPoint(data.latitude, data.longitude);
   delete data.latitude;
@@ -124,14 +129,9 @@ async function getUser(id) {
   return fbUser.exists ? fbUser.data() : null;
 }
 
-function onCollectionToModerate(collection, query, fn) {
-  return firestore.collection(collection).where(query.field, "==", query.value).onSnapshot((sn) => {
-    const docs = (collection === 'photos') ?
-      sn.docs.map(extractPhoto)
-    :
-      sn.docs.map(doc => ({...doc.data(), id: doc.id}));
-    fn(docs);
-  });
+function photosToModerate() {
+  return firestore.collection('photos').where('moderated', "==", null).get()
+  .then(sn => sn.docs.map(extractPhoto));
 }
 
 async function rejectPhoto(photoId,userId) {
@@ -181,9 +181,9 @@ async function writeFeedback(data) {
   return await firestore.collection('feedbacks').add(data);
 }
 
-async function toggleUnreadFeedback(feedback, userId) {
-  return await firestore.collection('feedbacks').doc(feedback.id).update({
-    solved: !feedback.solved,
+async function toggleUnreadFeedback(id, solved, userId) {
+  return await firestore.collection('feedbacks').doc(id).update({
+    solved: !solved,
     moderator_id: userId
   });
 }
@@ -193,10 +193,11 @@ export default {
   fetchPhotos,
   fetchStats,
   fetchUsers,
+  fetchFeedbacks,
   getUser,
   savePhoto,
   saveMetadata,
-  onCollectionToModerate,
+  photosToModerate,
   rejectPhoto,
   approvePhoto,
   disconnect,

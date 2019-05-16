@@ -58,7 +58,6 @@ class App extends Component {
       file: null,
       location: {},
       user: null,
-      photosToModerate: [],
       online: false,
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
@@ -307,10 +306,16 @@ class App extends Component {
                     />
                 ))}
                 <Route path={this.props.config.PAGES.about.path} render={(props) =>
-                  <AboutPage label={this.props.config.PAGES.about.label} {...props} handleClose={this.goToMap} />}
+                  <AboutPage {...props}
+                    label={this.props.config.PAGES.about.label}
+                    handleClose={this.goToMap}
+                  />}
                 />
                 <Route path={this.props.config.PAGES.tutorial.path} render={(props) =>
-                  <TutorialPage label={this.props.config.PAGES.tutorial.label} {...props} handleClose={this.goToMap} />}
+                  <TutorialPage {...props}
+                    label={this.props.config.PAGES.tutorial.label}
+                    handleClose={this.goToMap}
+                  />}
                 />
 
                 <Route path={this.props.config.PAGES.leaderboard.path} render={(props) =>
@@ -325,49 +330,57 @@ class App extends Component {
 
                 { this.state.user && this.state.user.isModerator &&
                   <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
-                    <ModeratorPage label={this.props.config.PAGES.moderator.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
+                    <ModeratorPage  {...props}
+                      label={this.props.config.PAGES.moderator.label}
+                      user={this.state.user}
+                      handleClose={this.goToMap}
+                    />}
                   />
                 }
 
                 { this.state.user && this.state.user.isModerator &&
                   <Route path={this.props.config.PAGES.listFeedbacks.path} render={(props) =>
-                    <ListFeedbacksPage label={this.props.config.PAGES.listFeedbacks.label} {...props} handleClose={this.goToMap} user={this.state.user} />}
+                    <ListFeedbacksPage {...props}
+                      label={this.props.config.PAGES.listFeedbacks.label}
+                      user={this.state.user}
+                      handleClose={this.goToMap}
+                    />}
                   />
                 }
 
                 <Route path={this.props.config.PAGES.photos.path} render={(props) =>
                   <PhotoPage {...props}
-                             file={this.state.file}
-                             gpsLocation={this.state.location}
-                             online={this.state.online}
-                             handlePhotoClick={this.handlePhotoClick}
-                             handleClose={this.goToMap}
-                             label={this.props.config.PAGES.photos.label}
-                             srcType={this.state.srcType}
-                             cordovaMetadata={this.state.cordovaMetadata}
-                             fields={fields}
+                    label={this.props.config.PAGES.photos.label}
+                    file={this.state.file}
+                    gpsLocation={this.state.location}
+                    online={this.state.online}
+                    srcType={this.state.srcType}
+                    cordovaMetadata={this.state.cordovaMetadata}
+                    fields={fields}
+                    handleClose={this.goToMap}
+                    handlePhotoClick={this.handlePhotoClick}
                   />}
                 />
 
                 { this.state.user &&
                   <Route path={this.props.config.PAGES.account.path} render={(props) =>
                     <ProfilePage {...props}
-                                 user={this.state.user}
-                                 handleClose={this.goToMap}
-                                 label={this.props.config.PAGES.account.label}
+                      label={this.props.config.PAGES.account.label}
+                      user={this.state.user}
+                      handleClose={this.goToMap}
                     />}
                   />
                 }
 
                 <Route path={this.props.config.PAGES.writeFeedback.path} render={(props) =>
-                   <WriteFeedbackPage {...props}
-                                      user={this.state.user}
-                                      location={this.state.location}
-                                      online={this.state.online}
-                                      handleClose={this.goToMap}
-                                      label={this.props.config.PAGES.writeFeedback.label}
-                   />}
-                 />
+                  <WriteFeedbackPage {...props}
+                    label={this.props.config.PAGES.writeFeedback.label}
+                    user={this.state.user}
+                    location={this.state.location}
+                    online={this.state.online}
+                    handleClose={this.goToMap}
+                  />}
+                />
 
               </Switch>
             }

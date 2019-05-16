@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import IconButton from '@material-ui/core/IconButton';
 import MarkUnreadIcon from '@material-ui/icons/Markunread';
@@ -23,12 +22,9 @@ import { withStyles } from '@material-ui/core/styles';
 import PageWrapper from './PageWrapper';
 import dbFirebase from '../dbFirebase';
 import './ModeratorPage.scss';
-import * as actions from '../actions';
 
 const styles = theme => ({
-  root: {
-    background:'rgba(255,225,225,0.5)'
-  }
+  root: { background:'rgba(255,225,225,0.5)' }
 });
 
 class ListFeedbacksPage extends Component {
@@ -37,76 +33,66 @@ class ListFeedbacksPage extends Component {
     super(props);
     this.state = {
       showAll: false,
+      feedbacks: null,
       feedback: null,
       open: false
     };
   }
 
-  componentDidMount() {
-    console.debug(this.props);
-    this.props.startFetchingToModerate();
+  async componentDidMount() {
+    this.setState({ feedbacks: await dbFirebase.fetchFeedbacks() })
   }
-
-  componentWillUnmount() {
-    console.debug(this.props);
-    this.props.stopFetchingToModerate();
-  }
-
-  handleHideClick = (feedback) => {
-    dbFirebase.toggleUnreadFeedback(feedback, this.props.user.id)
-  };
 
   handleItemClick = (feedback) => {
     this.setState({
-      feedback: feedback,
+      feedback,
       open: true
     });
   };
 
   handleCloseClick = () => {
-    this.setState({
-      open: false,
-    });
+    this.setState({ open: false });
   };
 
-  shortenSentence = (sentence) => {
-    const returnWords = 7;
+  handleReadClick = async (id, solved, userId) => {
+    dbFirebase.toggleUnreadFeedback(id, solved, this.props.user.id);
+    this.setState({ feedbacks: await dbFirebase.fetchFeedbacks() });
+  };
+
+  shortenSentence = (sentence, returnWords = 7) => {
     const words = sentence.split(' ');
-    if (words.length <= returnWords) {
-      return sentence;
-    }
-    return words.slice(0, returnWords).join(' ') + ' ...';
+    return words.length <= returnWords ? sentence : words.slice(0, returnWords).join(' ') + ' ...';
   };
 
   render() {
-    const { label, feedbacks, handleClose, classes } = this.props;
-
+    const { label, handleClose, classes } = this.props;
     return (
       <PageWrapper label={label} handleClose={handleClose}>
-
-        <List dense={false}>
-          {feedbacks.filter(feedback =>  !feedback.solved || this.state.showAll).map(feedback => (
-            <div key={feedback.id}>
-              <ListItem key={feedback.id} button  onClick={() => this.handleItemClick(feedback)}>
-                <ListItemText disableTypography
-                  primary={
-                    <Typography
-                      style={feedback.solved ? {fontWeight: 'normal'} : {fontWeight: 'bold'}}
-                    >
-                      {this.shortenSentence(feedback.feedback)}
-                    </Typography>
-                  }
-                />
-                <ListItemSecondaryAction>
-                  <IconButton aria-label='Solved' onClick={() => this.handleHideClick(feedback)}>
-                    {feedback.solved ? <MarkReadIcon /> : <MarkUnreadIcon />}
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-              <Divider />
-            </div>
-          ))}
-        </List>
+        { this.state.feedbacks &&
+          <List dense={false}>
+            {this.state.feedbacks.filter(feedback => !feedback.solved || this.state.showAll).map(feedback => (
+              <div key={feedback.id}>
+                <ListItem key={feedback.id} button  onClick={() => this.handleItemClick(feedback)}>
+                  <ListItemText disableTypography
+                    primary={
+                      <Typography
+                        style={feedback.solved ? {fontWeight: 'normal'} : {fontWeight: 'bold'}}
+                      >
+                        {this.shortenSentence(feedback.feedback)}
+                      </Typography>
+                    }
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton aria-label='Solved' onClick={() => this.handleReadClick(feedback.id, feedback.solved)}>
+                      {feedback.solved ? <MarkReadIcon /> : <MarkUnreadIcon />}
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+                <Divider />
+              </div>
+            ))}
+          </List>
+        }
 
         <FormControlLabel
           control={<Checkbox onChange={(e) => {this.setState({showAll: e.target.checked})}}/>}
@@ -152,16 +138,4 @@ class ListFeedbacksPage extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  feedbacks: state.feedbacks
-})
-
-const mapDispatchToProps = dispatch => ({
-  startFetchingToModerate: actions.startFetchingToModerate('feedbacks', dispatch),
-  stopFetchingToModerate: actions.stopFetchingToModerate
-})
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withMobileDialog()(withStyles(styles)(ListFeedbacksPage)));
+export default withMobileDialog()(withStyles(styles)(ListFeedbacksPage));
