@@ -6,13 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
-import HelpIcon from '@material-ui/icons/Help';
-import SchoolIcon from '@material-ui/icons/School';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import FeedbackIcon from '@material-ui/icons/Feedback';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
@@ -57,47 +51,17 @@ class DrawerContainer extends Component {
   render() {
     const { classes, user, online, leftDrawerOpen, stats } = this.props;
     const ListItemsTop = [
-      {
-        visible: user,
-        path: PAGES.account.path,
-        icon: <AccountCircleIcon/>,
-        label: PAGES.account.label
-      },
-      {
-        visible: user && user.isModerator,
-        path: PAGES.moderator.path,
-        icon: <CheckCircleIcon/>,
-        label: PAGES.moderator.label
-      },
-      {
-        visible: true,
-        path: PAGES.tutorial.path,
-        icon: <SchoolIcon/>,
-        label: PAGES.tutorial.label
-      },
-      {
-        visible: true,
-        path: PAGES.leaderboard.path,
-        icon: <DashboardIcon/>,
-        label: PAGES.leaderboard.label
-      },
+      PAGES.account,
+      PAGES.moderator,
+      PAGES.tutorial,
+      PAGES.leaderboard,
     ];
     const ListItemsConfigurable = config.CUSTOM_PAGES;
     const ListItemsBottom = [
+      PAGES.about,
+      PAGES.writeFeedback,
       {
-        visible: true,
-        path: PAGES.about.path,
-        icon: <HelpIcon/>,
-        label: PAGES.about.label
-      },
-      {
-         visible: true,
-         path: PAGES.writeFeedback.path,
-         icon: <FeedbackIcon/>,
-         label: PAGES.writeFeedback.label
-      },
-      {
-        visible: online,
+        visible: (user, online) => online,
         icon: <ExitToAppIcon/>,
         label: user ? 'Logout' : 'Login',
         click: this.props.handleClickLoginLogout
@@ -127,7 +91,7 @@ class DrawerContainer extends Component {
             </div>
           }
           <List>
-            {ListItems.map( (item,index) => item.visible &&
+            {ListItems.map( (item,index) => item.visible(user, online) &&
               <ListItem key={index} button component={item.path && Link} to={item.path} onClick={item.click}>
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.label} />

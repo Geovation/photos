@@ -1,7 +1,4 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
-import PageWrapper from '../../components/PageWrapper';
-// import config from '../../custom/config';
 
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
@@ -12,7 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-// import dbFirebase from '../../dbFirebase';
+import PageWrapper from '../../components/PageWrapper';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -48,91 +45,16 @@ const styles = theme => ({
   },
 });
 
-// const data = [
-//     {
-//       "updated": "2019-05-09T14:30:27.657Z",
-//       "totalUploaded": 16979,
-//       "published": 8445,
-//       "users": [
-//
-//         {"displayName":"Joy Kuo",
-//         "uploaded": 8219,
-//         "pieces": 123,
-//         "uid": "7BTJcJgpkc68462FQVn60H03HWy2"},
-//
-//         {"displayName":"Seb Geo",
-//         "uploaded": 465,
-//         "pieces": 465,
-//         "uid": "7BTJcApm9Jgpkc6FQVn60H2bX2y2"},
-//
-//         {"displayName": "Me again !",
-//         "uploaded": 0,
-//         "pieces": 2,
-//         "uid": "7t9moySOd2PPSDYcW004j2141423"},
-//
-//         {"displayName": "global avocado",
-//         "uploaded": 0,
-//         "pieces": 20,
-//         "uid": "ARrGwkwr8xcg8QkQCvhxSs6F95B3"},
-//
-//         {"displayName":"Y",
-//         "uploaded": 0,
-//         "pieces": 230,
-//         "uid": "AdHP8OLjimVbfYZDg9EUw6f0krj2"},
-//
-//         {"displayName": "asdf",
-//         "uploaded": 0,
-//         "pieces": 134,
-//         "uid": "CmI0vPc9p0cyL0SYsntNO4aQp1Q2"},
-//
-//         {"displayName": "&lt;h1&gt;asdfg",
-//         "uploaded": 0,
-//         "pieces": 6,
-//         "uid": "Oyz3R39zeDbYYIUs616fk1JsZ4m1"},
-//
-//         {"displayName": "Konstantinos Dalkafoukis",
-//         "uploaded": 8444,
-//         "pieces": 67,
-//         "uid": "DUMGwkwr8xcbekkQCvhxSs6395B3"},
-//
-//         {"displayName": "some person",
-//         "uploaded": 0,
-//         "pieces": 23,
-//         "uid": "gGrlYb4q6hWCy24xoTuTFSwLNGK2"},
-//
-//         {"displayName": "geolicious",
-//         "uploaded": 0,
-//         "pieces": 784,
-//         "uid": "pGv9dn5xZTSoPHvntjvvdWkchxe2"}
-//
-//         ],
-//
-//       "rejected": 0,
-//       "pieces": 123,
-//       "moderated": 8445,
-//       "serverTime": "2019-05-09T14:30:49.048Z"
-//     }
-// ]
-//
-// // const userarray = data[0].users;
-// console.log('user array from local json:', userarray);
-
 
 class Leaderboard extends React.Component {
 
- render() {
+  render() {
 
     const { classes, label, usersLeaderboard } = this.props;
 
-    // const stats = await dbFirebase.fetchStats();
-    // console.log(stats);
-    // debugger
-
-    // const userarray = stats.users
-
-   usersLeaderboard.sort(function(a,b){
-     return b.uploaded - a.uploaded;
-   });
+    usersLeaderboard.sort(function(a,b){
+      return b.uploaded - a.uploaded;
+    });
 
     return (
       <PageWrapper label={label} handleClose={this.props.handleClose} hasLogo={false}>

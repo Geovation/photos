@@ -1,3 +1,12 @@
+import React from 'react';
+
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import SchoolIcon from '@material-ui/icons/School';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import HelpIcon from '@material-ui/icons/Help';
+import FeedbackIcon from '@material-ui/icons/Feedback';
+
 import styles from './config.scss';
 import enums from '../types/enums';
 
@@ -54,27 +63,39 @@ const PAGES = {
   },
   moderator: {
     path: "/moderator",
-    label: "Photo Approval"
+    label: "Photo Approval",
+    icon: <CheckCircleIcon/>,
+    visible: (user, online) => user && user.isModerator
   },
   account: {
     path: "/account",
-    label: "Account"
+    label: "Account",
+    icon: <AccountCircleIcon/>,
+    visible: (user, online) => user
   },
   about: {
     path: "/about",
-    label: "About"
+    label: "About",
+    visible: (user, online) => true,
+    icon: <HelpIcon/>,
   },
   tutorial: {
     path: "/tutorial",
-    label: "Tutorial"
+    label: "Tutorial",
+    visible: (user, online) => true,
+    icon: <SchoolIcon/>,
   },
   writeFeedback: {
     path: "/write-feedback",
-    label: "Feedback"
+    label: "Feedback",
+    visible: (user, online) => true,
+    icon: <FeedbackIcon/>,
   },
   leaderboard: {
     path: "/leaderboard",
-    label: "Leaderboard"
+    label: "Leaderboard",
+    visible: (user, online) => true,
+    icon: <DashboardIcon/>,
   }
 };
 
