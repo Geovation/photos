@@ -181,9 +181,9 @@ async function writeFeedback(data) {
   return await firestore.collection('feedbacks').add(data);
 }
 
-async function toggleUnreadFeedback(id, solved, userId) {
+async function toggleUnreadFeedback(id, resolved, userId) {
   return await firestore.collection('feedbacks').doc(id).update({
-    solved: !solved,
+    resolved: !resolved,
     moderator_id: userId
   });
 }

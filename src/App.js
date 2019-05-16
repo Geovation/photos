@@ -29,7 +29,7 @@ import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 import TermsDialog from './components/TermsDialog';
 import EmailVerifiedDialog from './components/EmailVerifiedDialog';
-import ListFeedbacksPage from './components/ListFeedbacksPage';
+import FeedbackReportsPage from './components/FeedbackReportsPage';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
@@ -339,9 +339,9 @@ class App extends Component {
                 }
 
                 { this.state.user && this.state.user.isModerator &&
-                  <Route path={this.props.config.PAGES.listFeedbacks.path} render={(props) =>
-                    <ListFeedbacksPage {...props}
-                      label={this.props.config.PAGES.listFeedbacks.label}
+                  <Route path={this.props.config.PAGES.feedbackReports.path} render={(props) =>
+                    <FeedbackReportsPage {...props}
+                      label={this.props.config.PAGES.feedbackReports.label}
                       user={this.state.user}
                       handleClose={this.goToMap}
                     />}

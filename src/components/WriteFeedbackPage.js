@@ -93,7 +93,7 @@ class WriteFeedbackPage extends React.Component {
 
     let data = {};
     data.feedback = this.state.feedback;
-    data.solved = false;
+    data.resolved = false;
     data.appVersion = process.env.REACT_APP_VERSION;
     data.buildNumber = process.env.REACT_APP_BUILD_NUMBER;
     data.email = this.state.email ? this.state.email : 'anonymous';

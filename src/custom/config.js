@@ -98,9 +98,9 @@ const PAGES = {
     visible: (user, online) => true,
     icon: <DashboardIcon/>,
   },
-  listFeedbacks: {
-    path: "/list-feedbacks",
-    label: "List Feedbacks",
+  feedbackReports: {
+    path: "/feedback-reports",
+    label: "Feedback Reports",
     icon: <LibraryBooksIcon/>,
     visible: (user, online) => user && user.isModerator
   }
