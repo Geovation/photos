@@ -12,6 +12,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import FeedbackIcon from '@material-ui/icons/Feedback';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 
@@ -73,6 +74,12 @@ class DrawerContainer extends Component {
         path: PAGES.tutorial.path,
         icon: <SchoolIcon/>,
         label: PAGES.tutorial.label
+      },
+      {
+        visible: true,
+        path: PAGES.leaderboard.path,
+        icon: <DashboardIcon/>,
+        label: PAGES.leaderboard.label
       },
     ];
     const ListItemsConfigurable = config.CUSTOM_PAGES;
