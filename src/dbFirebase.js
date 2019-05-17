@@ -91,9 +91,13 @@ async function fetchUsers() {
     // .then(userstats => console.log('users from Firebase:', userstats.users));
 }
 
-function fetchFeedbacks() {
-  return firestore.collection('feedbacks').get()
-    .then(sn => sn.docs.map(doc => ({...doc.data(), id: doc.id})));
+function fetchFeedbacks(isShowAll) {
+  let query = firestore.collection('feedbacks');
+  query = !isShowAll ? query.where('resolved', '==', false) : query;
+  return query.get()
+    .then(sn => sn.docs.map(doc => {
+      return ({...doc.data(), id: doc.id});
+    }));
 }
 
 function saveMetadata(data) {
@@ -184,7 +188,8 @@ async function writeFeedback(data) {
 async function toggleUnreadFeedback(id, resolved, userId) {
   return await firestore.collection('feedbacks').doc(id).update({
     resolved: !resolved,
-    moderator_id: userId
+    customerSupport_id: userId,
+    updated: firebase.firestore.FieldValue.serverTimestamp()
   });
 }
 

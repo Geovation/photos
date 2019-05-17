@@ -52,7 +52,8 @@ class FeedbackReportsPage extends Component {
   }
 
   async componentDidMount() {
-    this.setState({ feedbacks: await dbFirebase.fetchFeedbacks(this.state.isShowAll) })
+    const feedbacks = await dbFirebase.fetchFeedbacks(this.state.isShowAll);
+    this.setState({ feedbacks });
   }
 
   handleItemClick = (feedback) => {
@@ -66,10 +67,20 @@ class FeedbackReportsPage extends Component {
     this.setState({ isDialogOpen: false });
   };
 
-  handleResolvedClick = async (feedback, userId) => {
-    dbFirebase.toggleUnreadFeedback(feedback.id, feedback.resolved, this.props.user.id);
-    this.setState({ feedbacks: await dbFirebase.fetchFeedbacks(this.state.isShowAll) });
+  handleResolvedClick = async (feedback) => {
+    await dbFirebase.toggleUnreadFeedback(feedback.id, feedback.resolved, this.props.user.id);
+    const feedbacks = await dbFirebase.fetchFeedbacks(this.state.isShowAll);
+    this.setState({ feedbacks });
   };
+
+  handleCheckboxChange = async (e) => {
+    const checked = e.target.checked;
+    const feedbacks = await dbFirebase.fetchFeedbacks(checked);
+    this.setState({
+      isShowAll: checked,
+      feedbacks
+    });
+  }
 
   shortenSentence = (sentence, returnWords = 7) => {
     const words = sentence.split(' ');
@@ -78,82 +89,87 @@ class FeedbackReportsPage extends Component {
 
   render() {
     const { label, handleClose, fullScreen, classes } = this.props;
+
     return (
       <PageWrapper label={label} handleClose={handleClose}>
 
         <FormControlLabel
-          control={<Checkbox onChange={(e) => {this.setState({isShowAll: e.target.checked})}}/>}
+          control={<Checkbox onChange={this.handleCheckboxChange}/>}
           label="Show All"
           style={{margin: '0'}}
         />
 
-        { this.state.feedbacks &&
+        {this.state.feedbacks &&
           <List dense={false}>
-            {this.state.feedbacks.filter(feedback => !feedback.resolved || this.state.isShowAll).map(feedback => (
-              <div key={feedback.id}>
-                <Divider />
-                <ListItem key={feedback.id} button  onClick={() => this.handleItemClick(feedback)}>
-                  <ListItemText disableTypography
-                    primary={
-                      <Typography
-                        style={feedback.resolved ? {fontWeight: 'normal'} : {fontWeight: 'bold'}}
-                      >
-                        {this.shortenSentence(feedback.feedback)}
-                      </Typography>
-                    }
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton aria-label='Solved' onClick={() => this.handleResolvedClick(feedback)}>
-                      {feedback.resolved ? <DoneOutlineIcon /> : <DoneIcon />}
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              </div>
-            ))}
+            {this.state.feedbacks.filter(feedback => !feedback.resolved || this.state.isShowAll)
+              .sort( (a,b) => a.updated.toDate()-b.updated.toDate())
+              .reverse()
+              .map(feedback => (
+                <div key={feedback.id}>
+                  <Divider />
+                  <ListItem key={feedback.id} button onClick={() => this.handleItemClick(feedback)}>
+                    <ListItemText disableTypography
+                      primary={
+                        <Typography
+                          style={feedback.resolved ? {fontWeight: 'normal'} : {fontWeight: 'bold'}}
+                        >
+                          {this.shortenSentence(feedback.feedback)}
+                        </Typography>
+                      }
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton aria-label='Resolved' onClick={() => this.handleResolvedClick(feedback)}>
+                        {feedback.resolved ? <DoneOutlineIcon /> : <DoneIcon />}
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                </div>
+              ))
+            }
             <Divider />
           </List>
         }
 
-        <Dialog
-          fullScreen={fullScreen}
-          open={this.state.isDialogOpen}
-          aria-labelledby="responsive-dialog-title"
-        >
-          <AppBar position='static' className={classes.notchTop}>
-            <Toolbar>
-              <BackIcon className={classes.iconButton} onClick={this.handleDialogClose} />
-              <Typography variant='h6' color='inherit'>Feedback Details</Typography>
-            </Toolbar>
-          </AppBar>
+        {this.state.feedback &&
+          <Dialog
+            fullScreen={fullScreen}
+            open={this.state.isDialogOpen}
+            aria-labelledby="responsive-dialog-title"
+          >
+            <AppBar position='static' className={classes.notchTop}>
+              <Toolbar>
+                <BackIcon className={classes.iconButton} onClick={this.handleDialogClose} />
+                <Typography variant='h6' color='inherit'>Feedback Details</Typography>
+              </Toolbar>
+            </AppBar>
 
-          { this.state.feedback !== null &&
             <DialogContent style={{padding: '5px'}}>
               {
                 Object.keys(this.state.feedback).map(key => (
                   <div key={key} style={{padding: '5px'}}>
                     <b>{key + ': ' }</b>
-                    {this.state.feedback[key].toString()}
+                    { "" + (this.state.feedback[key].toDate ? this.state.feedback[key].toDate() : this.state.feedback[key])}
                   </div>
                 ))
               }
             </DialogContent>
-          }
-          <DialogActions>
-            <Button
-              className={classes.button}
-              fullWidth
-              variant='contained'
-              color='secondary'
-              onClick={() => {
-                this.handleResolvedClick(this.state.feedback);
-                this.handleDialogClose();
-              }}
-            >
-              Resolved
-            </Button>
-          </DialogActions>
 
+            <DialogActions>
+              <Button
+                className={classes.button}
+                fullWidth
+                variant='contained'
+                color='secondary'
+                onClick={() => {
+                  this.handleResolvedClick(this.state.feedback);
+                  this.handleDialogClose();
+                }}
+              >
+                {this.state.feedback.resolved ? 'Unsolved' : 'Resolved'}
+              </Button>
+            </DialogActions>
           </Dialog>
+        }
       </PageWrapper>
     );
   }
