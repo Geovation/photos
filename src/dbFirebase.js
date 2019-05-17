@@ -138,21 +138,18 @@ function photosToModerate() {
   .then(sn => sn.docs.map(extractPhoto));
 }
 
-async function rejectPhoto(photoId,userId) {
+
+async function writeModeration(photoId,userId, published) {
+  if (typeof published !== "boolean") {
+    throw new Error("Only boolean pls")
+  }
   return await firestore.collection('photos').doc(photoId).update({
     moderated: firebase.firestore.FieldValue.serverTimestamp(),
-    published: false,
+    published: published,
     moderator_id: userId
   });
 }
 
-async function approvePhoto(photoId,userId) {
-  return await firestore.collection('photos').doc(photoId).update({
-    moderated: firebase.firestore.FieldValue.serverTimestamp(),
-    published: true,
-    moderator_id: userId
-  });
-}
 
 async function disconnect() {
   return firebaseApp.delete();
@@ -203,8 +200,8 @@ export default {
   savePhoto,
   saveMetadata,
   photosToModerate,
-  rejectPhoto,
-  approvePhoto,
+  rejectPhoto: (photoId, userId) => writeModeration(photoId, userId, false),
+  approvePhoto: (photoId, userId) => writeModeration(photoId, userId, true),
   disconnect,
   writeFeedback,
   toggleUnreadFeedback
