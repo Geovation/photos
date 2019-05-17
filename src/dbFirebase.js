@@ -91,6 +91,15 @@ async function fetchUsers() {
     // .then(userstats => console.log('users from Firebase:', userstats.users));
 }
 
+function fetchFeedbacks(isShowAll) {
+  let query = firestore.collection('feedbacks');
+  query = !isShowAll ? query.where('resolved', '==', false) : query;
+  return query.get()
+    .then(sn => sn.docs.map(doc => {
+      return ({...doc.data(), id: doc.id});
+    }));
+}
+
 function saveMetadata(data) {
   data.location = new firebase.firestore.GeoPoint(data.latitude, data.longitude);
   delete data.latitude;
@@ -124,28 +133,23 @@ async function getUser(id) {
   return fbUser.exists ? fbUser.data() : null;
 }
 
-function onPhotosToModerate(fn) {
-  return firestore.collection('photos').where("moderated", "==", null ).onSnapshot((sn) => {
-    const docs = sn.docs.map(extractPhoto);
-    fn(docs);
-  });
+function photosToModerate() {
+  return firestore.collection('photos').where('moderated', "==", null).get()
+  .then(sn => sn.docs.map(extractPhoto));
 }
 
-async function rejectPhoto(photoId,userId) {
+
+async function writeModeration(photoId,userId, published) {
+  if (typeof published !== "boolean") {
+    throw new Error("Only boolean pls")
+  }
   return await firestore.collection('photos').doc(photoId).update({
     moderated: firebase.firestore.FieldValue.serverTimestamp(),
-    published: false,
+    published: published,
     moderator_id: userId
   });
 }
 
-async function approvePhoto(photoId,userId) {
-  return await firestore.collection('photos').doc(photoId).update({
-    moderated: firebase.firestore.FieldValue.serverTimestamp(),
-    published: true,
-    moderator_id: userId
-  });
-}
 
 async function disconnect() {
   return firebaseApp.delete();
@@ -178,17 +182,27 @@ async function writeFeedback(data) {
   return await firestore.collection('feedbacks').add(data);
 }
 
+async function toggleUnreadFeedback(id, resolved, userId) {
+  return await firestore.collection('feedbacks').doc(id).update({
+    resolved: !resolved,
+    customerSupport_id: userId,
+    updated: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
 export default {
   onConnectionStateChanged,
   fetchPhotos,
   fetchStats,
   fetchUsers,
+  fetchFeedbacks,
   getUser,
   savePhoto,
   saveMetadata,
-  onPhotosToModerate,
-  rejectPhoto,
-  approvePhoto,
+  photosToModerate,
+  rejectPhoto: (photoId, userId) => writeModeration(photoId, userId, false),
+  approvePhoto: (photoId, userId) => writeModeration(photoId, userId, true),
   disconnect,
   writeFeedback,
+  toggleUnreadFeedback
 };

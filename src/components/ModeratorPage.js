@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import IconButton from '@material-ui/core/IconButton';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -18,8 +17,6 @@ import PageWrapper from './PageWrapper';
 import CardComponent from './CardComponent';
 
 import './ModeratorPage.scss';
-import * as actions from '../actions';
-
 import dbFirebase from '../dbFirebase';
 import config from '../custom/config';
 
@@ -34,43 +31,38 @@ class ModeratorPage extends Component {
       confirmDialogHandleOk: null,
       confirmDialogOpen: false,
       zoomDialogOpen: false,
-      photoSelected: {}
+      photoSelected: {},
+      photos: null
     };
   }
 
-  componentDidMount() {
-    console.debug(this.props);
-    this.props.startFetchingPhotosToModerate();
-  }
-
-  componentWillUnmount() {
-    console.debug(this.props);
-    this.props.stopFetchingPhotosToModerate();
+  async componentDidMount() {
+    this.setState({ photos: await dbFirebase.photosToModerate() });
   }
 
   handleRejectClick = (photo) => {
-      console.log(photo);
-      this.setState({
-        confirmDialogTitle: `Are you sure you want to reject the photo ?`,
-        confirmDialogHandleOk: () => this.handleRejectDialogOk(photo.id),
-        confirmDialogOpen: true
-      });
-    };
+    console.log(photo);
+    this.setState({
+      confirmDialogTitle: `Are you sure you want to reject the photo ?`,
+      confirmDialogHandleOk: () => this.handleRejectDialogOk(photo.id),
+      confirmDialogOpen: true
+    });
+  };
 
   handlePhotoClick = (photoSelected) => {
-      this.setState({zoomDialogOpen:true, photoSelected});
-    };
+    this.setState({ zoomDialogOpen: true, photoSelected });
+  };
 
   handleZoomDialogClose = () => {
-    this.setState({zoomDialogOpen:false});
+    this.setState({ zoomDialogOpen: false });
   }
 
   handleApproveClick = (photo) => {
-      console.log(photo);
-      this.setState({
-        confirmDialogTitle: `Are you sure you want to approve the photo  ?`,
-        confirmDialogHandleOk: this.handleApproveDialogOk(photo.id),
-        confirmDialogOpen: true
+    console.log(photo);
+    this.setState({
+      confirmDialogTitle: `Are you sure you want to approve the photo  ?`,
+      confirmDialogHandleOk: () => this.handleApproveDialogOk(photo.id),
+      confirmDialogOpen: true
     });
   };
 
@@ -78,45 +70,49 @@ class ModeratorPage extends Component {
     this.setState({confirmDialogOpen: false})
   };
 
-  handleRejectDialogOk = (id) => {
+  handleRejectDialogOk = async (id) => {
     dbFirebase.rejectPhoto(id,this.props.user.id);
-    this.setState({confirmDialogOpen: false});
-    this.handleZoomDialogClose();
+    this.setState({
+      confirmDialogOpen: false,
+      zoomDialogOpen: false,
+      photos: await dbFirebase.photosToModerate()
+    });
   };
 
-  handleApproveDialogOk = (id) => () => {
+  handleApproveDialogOk = async (id) => {
     dbFirebase.approvePhoto(id,this.props.user.id);
-    this.setState({confirmDialogOpen: false});
-    this.handleZoomDialogClose();
-  };
-
-  handleClickButton = () => {
-    this.props.goToPage(config.PAGES.map); // go to the map
+    this.setState({
+      confirmDialogOpen: false,
+      zoomDialogOpen: false,
+      photos: await dbFirebase.photosToModerate()
+    });
   };
 
   render() {
-    const { label, photos, handleClose } = this.props;
+    const { label, handleClose } = this.props;
 
     return (
       <PageWrapper label={label} handleClose={handleClose} hasHeader={false}>
-        <List dense={false}>
-          {photos.map(photo => (
-            <ListItem key={photo.id} button onClick={() => this.handlePhotoClick(photo)}>
-              <Avatar
-               imgProps={{ onError: (e) => { e.target.src=placeholderImage} }}
-               src={photo.thumbnail} />
-              <ListItemText primary={config.PHOTO_ZOOMED_FIELDS.updated(photo.updated)}/>
-              <ListItemSecondaryAction>
-                <IconButton aria-label='Reject' onClick={() => this.handleRejectClick(photo)}>
-                  <ThumbDownIcon />
-                </IconButton>
-                <IconButton aria-label='Approve' onClick={() => this.handleApproveClick(photo)}>
-                  <ThumbUpIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
+        { this.state.photos !== null &&
+          <List dense={false}>
+            {this.state.photos.map(photo => (
+              <ListItem key={photo.id} button onClick={() => this.handlePhotoClick(photo)}>
+                <Avatar
+                 imgProps={{ onError: (e) => { e.target.src=placeholderImage} }}
+                 src={photo.thumbnail} />
+                <ListItemText primary={config.PHOTO_ZOOMED_FIELDS.updated(photo.updated)}/>
+                <ListItemSecondaryAction>
+                  <IconButton aria-label='Reject' onClick={() => this.handleRejectClick(photo)}>
+                    <ThumbDownIcon />
+                  </IconButton>
+                  <IconButton aria-label='Approve' onClick={() => this.handleApproveClick(photo)}>
+                    <ThumbUpIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        }
 
         <Dialog open={this.state.confirmDialogOpen}>
           <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
@@ -133,7 +129,11 @@ class ModeratorPage extends Component {
         <Dialog open={this.state.zoomDialogOpen} onClose={this.handleZoomDialogClose}>
           <DialogContent>
             <div style={{ textAlign: 'center' }}>
-              <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={this.state.photoSelected.id} src={this.state.photoSelected.main}/>
+              <img className={'main-image'}
+                onError={(e) => { e.target.src=placeholderImage}}
+                alt={this.state.photoSelected.id}
+                src={this.state.photoSelected.main}
+              />
             </div>
             <CardComponent
               photoSelected={this.state.photoSelected}
@@ -148,16 +148,4 @@ class ModeratorPage extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  photos: state.photos
-})
-
-const mapDispatchToProps = dispatch => ({
-  startFetchingPhotosToModerate: actions.startFetchingPhotosToModerate(dispatch),
-  stopFetchingPhotosToModerate: actions.stopFetchingPhotosToModerate
-})
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ModeratorPage);
+export default ModeratorPage;

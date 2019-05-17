@@ -1,6 +1,8 @@
 // let the user write a feedback.
 
 import React from 'react';
+import firebase from 'firebase/app';
+
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -13,7 +15,6 @@ import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
 import dbFirebase from '../dbFirebase';
 import { device } from '../utils';
-
 import PageWrapper from './PageWrapper';
 
 const styles = theme => ({
@@ -93,11 +94,14 @@ class WriteFeedbackPage extends React.Component {
 
     let data = {};
     data.feedback = this.state.feedback;
+    data.resolved = false;
     data.appVersion = process.env.REACT_APP_VERSION;
     data.buildNumber = process.env.REACT_APP_BUILD_NUMBER;
     data.email = this.state.email ? this.state.email : 'anonymous';
     data.device = device();
     data.userAgent = navigator.userAgent;
+    data.created = firebase.firestore.FieldValue.serverTimestamp();
+    data.updated = data.created;
     if (location) {
       data.latitude = location.latitude;
       data.longitude = location.longitude;
