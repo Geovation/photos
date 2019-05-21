@@ -1,7 +1,7 @@
 import React from 'react';
 import PageWrapper from './PageWrapper';
 import Typography from '@material-ui/core/Typography';
-import config from '../custom/config';
+import utils from '../utils';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -17,7 +17,7 @@ class AboutPage extends React.Component {
     return (
       <PageWrapper label={label} handleClose={this.props.handleClose} hasLogo={true}>
         <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
-          {config.customiseString('about', 'We are Geovation and we Geovate')}
+          {utils.customiseString('about', 'We are Geovation and we Geovate')}
           <br /><br /><br />
             Version {process.env.REACT_APP_VERSION}, build {process.env.REACT_APP_BUILD_NUMBER}
         </Typography>

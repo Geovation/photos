@@ -11,20 +11,20 @@ import Divider from '@material-ui/core/Divider';
 import './TutorialPage.scss';
 import PageWrapper from './PageWrapper';
 
-import config from '../custom/config';
+import utils from "../utils";
 
 const tutorialSteps = {
   'camera': {
     photo: <CameraAlt />,
-    text: config.customiseString('tutorial', 'Walk around the city and take photos')
+    text: utils.customiseString('tutorial', 'Walk around the city and take photos')
   },
   'upload': {
     photo: <CloudUpload />,
-    text: config.customiseString('tutorial', 'Write info about the photos and upload it to the cloud')
+    text: utils.customiseString('tutorial', 'Write info about the photos and upload it to the cloud')
   },
   'location': {
     photo: <LocationOn />,
-    text: config.customiseString('tutorial', 'View your images in our interactive map')
+    text: utils.customiseString('tutorial', 'View your images in our interactive map')
   }
 };
 

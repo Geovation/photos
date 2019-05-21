@@ -12,9 +12,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 
-import config from '../custom/config';
 import dbFirebase from '../dbFirebase';
-import { device } from '../utils';
+import utils, { device } from '../utils';
 import PageWrapper from './PageWrapper';
 
 const styles = theme => ({
@@ -112,7 +111,7 @@ class WriteFeedbackPage extends React.Component {
       this.openDialog('Feedback sent, our team will reply as soon as possible!');
     }).catch(err => {
       console.log(err.toString());
-      this.openDialog('Something went wrong. Try again later or please email us to ' + config.customiseString('writeFeedback', 'admin@geovation.uk'), true);
+      this.openDialog('Something went wrong. Try again later or please email us to ' + utils.customiseString('writeFeedback', 'admin@geovation.uk'), true);
     });
   }
 

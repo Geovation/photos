@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import config from '../custom/config';
+import utils from '../utils';
 import './DrawerContainer.scss';
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../utils';
 
@@ -41,8 +42,8 @@ const styles = theme => ({
 
 const PAGES = config.PAGES;
 const links = {
-  terms: config.customiseString('termsAndConditions', 'T&C link'),
-  privacy: config.customiseString('termsAndConditions', 'Privacy Policy Link')
+  terms: utils.customiseString('termsAndConditions', 'T&C link'),
+  privacy: utils.customiseString('termsAndConditions', 'Privacy Policy Link')
 }
 
 
@@ -101,7 +102,7 @@ class DrawerContainer extends Component {
           </List>
         </div>
         <Typography className={classes.stats} color={'secondary'}>
-          {`${stats | 0} ${config.customiseString('drawer', 'photos published so far!')}`}
+          {`${stats | 0} ${utils.customiseString('drawer', 'photos published so far!')}`}
         </Typography>
         <div className='built-by-geovation'>
           <Typography className='built-by-text'>

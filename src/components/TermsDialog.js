@@ -11,16 +11,16 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { withStyles } from '@material-ui/core/styles';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 
-import config from '../custom/config';
+import utils from "../utils";
 
 const message = {
-  title: config.customiseString('termsAndConditions', 'Welcome to App'),
-  startText: config.customiseString('termsAndConditions', 'Please read our '),
-  termsText: config.customiseString('termsAndConditions', 'Terms and Conditions'),
-  midText: config.customiseString('termsAndConditions', ' and '),
-  privacyText: config.customiseString('termsAndConditions', 'Privacy Policy'),
-  termsLink: config.customiseString('termsAndConditions', 'T&C link'),
-  privacyLink: config.customiseString('termsAndConditions', 'Privacy Policy Link')
+  title: utils.customiseString('termsAndConditions', 'Welcome to App'),
+  startText: utils.customiseString('termsAndConditions', 'Please read our '),
+  termsText: utils.customiseString('termsAndConditions', 'Terms and Conditions'),
+  midText: utils.customiseString('termsAndConditions', ' and '),
+  privacyText: utils.customiseString('termsAndConditions', 'Privacy Policy'),
+  termsLink: utils.customiseString('termsAndConditions', 'T&C link'),
+  privacyLink: utils.customiseString('termsAndConditions', 'Privacy Policy Link')
 }
 
 const styles = theme => ({
