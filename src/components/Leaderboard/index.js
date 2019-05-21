@@ -1,91 +1,75 @@
-import React from 'react';
+import React, {Component} from 'react';
 
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import StarsIcon from '@material-ui/icons/Stars';
 
 import PageWrapper from '../../components/PageWrapper';
-
-const CustomTableCell = withStyles(theme => ({
-  head: {
-    // color scheme for plastic patrol
-    // backgroundColor: '#006a6b',
-    // color scheme for photos - leaderboard header
-    backgroundColor: '#bf7800',
-
-    color: theme.palette.common.black,
-    padding: 6,
-    },
-  body: {
-    fontSize: 13,
-    padding: 6,
-  },
-}))(TableCell);
+import config from '../../custom/config';
 
 const styles = theme => ({
-  typography : {
-    ...theme.mixins.gutters(),
-    whiteSpace: 'pre-wrap',
+  th: {
+    fontWeight: 'bold',
+    color: theme.palette.common.white,
+    backgroundColor: 'rgba(0, 0, 0, 0.54)',
   },
-  root: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
-    overflowX: 'auto',
-    padding: 0,
+  firstRow: {
+    fontWeight: 'bold',
+    color: config.THEME.palette.secondary.main,
   },
-  row: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.background.default,
-    },
+  cell: {
+    position: 'relative',
+    padding: theme.spacing.unit,
+    fontSize: 'inherit',
+  },
+  truncate: {
+    position: 'absolute',
+    top: theme.spacing.unit * 1.5,
+    maxWidth: '90%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 });
 
 
-class Leaderboard extends React.Component {
+class Leaderboard extends Component {
 
   render() {
-
-    const { classes, label, usersLeaderboard } = this.props;
-
-    usersLeaderboard.sort(function(a,b){
-      return b.uploaded - a.uploaded;
-    });
+    const { classes, label, usersLeaderboard, handleClose } = this.props;
+    usersLeaderboard.sort((a,b) => b.uploaded - a.uploaded);
 
     return (
-      <PageWrapper label={label} handleClose={this.props.handleClose} hasLogo={false}>
-        <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
-         <Paper className={classes.root}>
-            <Table className={classes.table}>
+      <PageWrapper label={label} handleClose={handleClose} hasLogo={false}>
+          <Table>
 
             <TableHead>
               <TableRow>
-                <CustomTableCell>rank</CustomTableCell>
-                <CustomTableCell>user</CustomTableCell>
-                <CustomTableCell>uploaded</CustomTableCell>
+                <TableCell className={`${classes.th} ${classes.cell}`} style={{width:'10%', textAlign:'center'}}>Rank</TableCell>
+                <TableCell className={`${classes.th} ${classes.cell}`} style={{width:'60%'}}>User</TableCell>
+                <TableCell className={`${classes.th} ${classes.cell}`} style={{width:'10%'}}>Uploaded</TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
               { usersLeaderboard.map((user, index) => (
-              <TableRow key={user.uid}>
-               <CustomTableCell component="th" scope="row">
-                  {index + 1}
-                </CustomTableCell>
-                {/*<CustomTableCell align="right" padding={'dense'}>{index + 1}</CustomTableCell>*/}
-                <CustomTableCell padding={'dense'}>{user.displayName}</CustomTableCell>
-                <CustomTableCell padding={'dense'}>{user.uploaded}</CustomTableCell>
-              </TableRow>
-                ))}
+                <TableRow key={index}>
+                  <TableCell className={classes.cell} style={{textAlign: 'center'}}>
+                    {index === 0 ? <StarsIcon color='secondary'/> : index + 1}
+                  </TableCell>
+                  <TableCell className={`${!index && classes.firstRow} ${classes.cell}`}>
+                    <div className={classes.truncate}>{user.displayName}</div>
+                  </TableCell>
+                  <TableCell className={`${!index && classes.firstRow} ${classes.cell}`}>{user.uploaded}</TableCell>
+                </TableRow>
+              ))}
             </TableBody>
 
-            </Table>
-          </Paper>
-        </Typography>
+          </Table>
       </PageWrapper>
     );
   }

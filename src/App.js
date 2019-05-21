@@ -284,6 +284,7 @@ class App extends Component {
 
   render() {
     const { classes, fields } = this.props;
+
     return (
       <div className='geovation-app'>
         { !this.state.termsAccepted && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
@@ -320,11 +321,9 @@ class App extends Component {
 
                 <Route path={this.props.config.PAGES.leaderboard.path} render={(props) =>
                   <LeaderboardPage {...props}
-                    usersLeaderboard={this.state.usersLeaderboard}
-                    user={this.state.user}
-                    online={this.state.online}
-                    handleClose={this.goToMap}
                     label={this.props.config.PAGES.leaderboard.label}
+                    usersLeaderboard={this.state.usersLeaderboard}
+                    handleClose={this.goToMap}
                   />}
                 />
 
