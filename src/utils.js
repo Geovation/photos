@@ -1,3 +1,5 @@
+import config from './custom/config';
+
 export const device = () => {
   const agent = navigator.userAgent;
   if (agent.match(/Android/i)){
@@ -108,4 +110,12 @@ export function getValueAndAncestorsFromTree(tree,key_to_find){
   }
   findPathOfFoundedNode(tree,key_to_find);
   return listWithNodes;
+}
+
+export function customiseString(page, key) {
+  return (config.CUSTOM_STRING[page][key] || key);
+}
+
+export default {
+  customiseString
 }

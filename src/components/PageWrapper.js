@@ -6,8 +6,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import BackIcon from '@material-ui/icons/ArrowBack';
-import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../utils';
-import config from '../custom/config';
+import utils, { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../utils';
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
 const styles = theme => ({
@@ -116,7 +115,7 @@ class PageWrapper extends React.Component {
               }
             </Toolbar>
           </AppBar>
-          {hasLogo && <img className={classes.logo} src={placeholderImage} alt={config.customiseString('about', 'Geovation')}/>}
+          {hasLogo && <img className={classes.logo} src={placeholderImage} alt={utils.customiseString('about', 'Geovation')}/>}
           <div className={classes.main}>
             {children}
           </div>

@@ -106,13 +106,12 @@ const PAGES = {
   }
 };
 
-const customiseString = (page, key) => (CUSTOM_STRING[page][key] || key);
-
 const getStats = (geojson, dbStats) => {
   return dbStats.published || 0;
 }
 
 export default {
+  CUSTOM_STRING,
   MAX_IMAGE_SIZE: 2048,
   THEME: {
     typography: {
@@ -196,7 +195,6 @@ export default {
   PAGES,
   CUSTOM_PAGES:[
   ],
-  customiseString,
   getStats,
   ENABLE_GRAVATAR_PROFILES: true,  //To update user-profile from Gravatar, value: ture or false.
   SECURITY: {
