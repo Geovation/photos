@@ -119,6 +119,7 @@ class App extends Component {
 
   handleDialogClose = () => {
     this.setState({ dialogOpen : false})
+    document.removeEventListener( "backbutton", function(){}, false );
   }
 
   async componentDidMount(){
@@ -176,6 +177,7 @@ class App extends Component {
   }
 
   goToMap = () => {
+    this.props.history.go(-1);
     this.goToPage(this.props.config.PAGES.map)
   }
 
@@ -200,17 +202,25 @@ class App extends Component {
     this.setState({ loginLogoutDialogOpen:false});
   };
 
-    handlePhotoClick = () => {
-
+  handlePhotoClick = () => {
     if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
-          // TODO: show popup with message saying that the user needs an account for this feature
-          // alert("Please log in")
-
-          this.setState({
-            dialogOpen: true,
-            dialogTitle: "attention",
-            dialogContentText: "Before adding photos, you must be logged into your account."
-          });
+        // TODO: show popup with message saying that the user needs an account for this feature
+        // alert("Please log in")
+        this.setState({
+          dialogOpen: true,
+          dialogTitle: "attention",
+          dialogContentText: "Before adding photos, you must be logged into your account."
+        });
+        console.log(this.state.dialogOpen);
+        document.addEventListener("backbutton", () => {
+          console.log(this.state.dialogOpen);
+          if (this.state.dialogOpen) {
+            this.setState({dialogOpen: false});
+            console.log('cool');
+            document.removeEventListener( "backbutton", () => {}, false );
+          }
+        }
+        , false);
     } else {
       if (window.cordova) {
         console.log('Opening cordova dialog');
@@ -273,10 +283,12 @@ class App extends Component {
       loginLogoutDialogOpen: true,
       dialogOpen: false
     })
+    document.removeEventListener( "backbutton", function(){}, false );
   };
 
   handleRejectLoginPhotoAdd = () => {
     this.setState({ dialogOpen: false });
+    document.removeEventListener( "backbutton", function(){}, false );
   }
 
   handleNextClick = async () => {
