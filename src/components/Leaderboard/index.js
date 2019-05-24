@@ -40,8 +40,8 @@ const styles = theme => ({
 class Leaderboard extends Component {
 
   render() {
-    const { classes, label, usersLeaderboard, handleClose } = this.props;
-    usersLeaderboard.sort((a,b) => b.uploaded - a.uploaded);
+    const { classes, label, usersLeaderboard, handleClose, config } = this.props;
+    usersLeaderboard.sort((a,b) => b[config.LEADERBOARD_FIELD.field] - a[config.LEADERBOARD_FIELD.field]);
 
     return (
       <PageWrapper label={label} handleClose={handleClose} hasLogo={false}>
@@ -51,7 +51,7 @@ class Leaderboard extends Component {
               <TableRow>
                 <TableCell className={`${classes.th} ${classes.cell}`} style={{width:'10%', textAlign:'center'}}>Rank</TableCell>
                 <TableCell className={`${classes.th} ${classes.cell}`} style={{width:'60%'}}>User</TableCell>
-                <TableCell className={`${classes.th} ${classes.cell}`} style={{width:'10%'}}>Uploaded</TableCell>
+                <TableCell className={`${classes.th} ${classes.cell}`} style={{width:'10%'}}>{[config.LEADERBOARD_FIELD.label]}</TableCell>
               </TableRow>
             </TableHead>
 
@@ -64,7 +64,7 @@ class Leaderboard extends Component {
                   <TableCell className={`${!index && classes.firstRow} ${classes.cell}`}>
                     <div className={classes.truncate}>{user.displayName}</div>
                   </TableCell>
-                  <TableCell className={`${!index && classes.firstRow} ${classes.cell}`}>{user.uploaded}</TableCell>
+                  <TableCell className={`${!index && classes.firstRow} ${classes.cell}`}>{user[config.LEADERBOARD_FIELD.field]}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

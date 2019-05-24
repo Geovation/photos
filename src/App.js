@@ -321,6 +321,7 @@ class App extends Component {
 
                 <Route path={this.props.config.PAGES.leaderboard.path} render={(props) =>
                   <LeaderboardPage {...props}
+                    config={this.props.config}
                     label={this.props.config.PAGES.leaderboard.label}
                     usersLeaderboard={this.state.usersLeaderboard}
                     handleClose={this.goToMap}
