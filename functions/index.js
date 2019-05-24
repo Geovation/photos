@@ -219,6 +219,7 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
 
   querySnapshot.forEach( doc => {
     const data = doc.data();
+    data.owner_id = data.owner_id || "";
     stats.totalUploaded++;
 
     // has the upload been reviewed by a moderator ?
@@ -232,18 +233,19 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
         const pieces = Number(data.pieces);
         if (pieces > 0 ) stats.pieces += pieces;
 
-        // update user stats
-        users.forEach( user => {
-          if (user.uid === data.owner_id) {
+        if (data.owner_id !== "") {
+          let owner = users.find( user => user.uid === data.owner_id);
+          if (owner) {
+            if (pieces > 0 ) owner.pieces += pieces;
+            owner.uploaded++;
+            owner.displayName = owner.displayName || "";
+            delete owner.uid;
 
-            if (pieces > 0 ) user.pieces += pieces;
-            user.uploaded++;
-            user.displayName = user.displayName || "";
-            delete user.uid;
-
-            console.info(user);
+            console.debug(owner);
           }
-        });
+        } else {
+          console.debug(`No user with id = '${data.owner_id}'`);
+        }
 
       } else {
         stats.rejected++;
