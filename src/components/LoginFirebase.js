@@ -18,13 +18,6 @@ class LoginFirebase extends React.Component {
    *
    * @param props are {open, handleClose  }
    */
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      open: false
-    };
-  }
 
   componentDidMount() {
     this.uiConfig = {
@@ -41,16 +34,12 @@ class LoginFirebase extends React.Component {
           if (authResult.additionalUserInfo.isNewUser) {
             authFirebase.sendEmailVerification();
           }
+          this.props.handleClose();
           return false;
         }
       }
     };
   }
-
-  handleClose = () => {
-    this.props.handleClose();
-    return true;
-  };
 
   render() {
     return (
@@ -59,7 +48,7 @@ class LoginFirebase extends React.Component {
         // fullScreen={false}
         // fullWidth={true}
         open={this.props.open}
-        onClose={this.handleClose}
+        onClose={this.props.handleClose}
         // aria-labelledby="responsive-dialog-title"
       >
         <DialogContent>

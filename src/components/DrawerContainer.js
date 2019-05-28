@@ -93,7 +93,12 @@ class DrawerContainer extends Component {
         <div
           tabIndex={0}
           role='button'
-          onClick={this.props.toggleLeftDrawer(false)}
+          onClick={ (e) => {
+            this.props.toggleLeftDrawer(false)();
+            if (e.target.innerHTML === 'Login') {
+              document.addEventListener("backbutton", this.props.backButtonPress, false);
+            }
+          }}
           onKeyDown={this.props.toggleLeftDrawer(false)}
         >
           <List>

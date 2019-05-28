@@ -76,10 +76,12 @@ class FeedbackReportsPage extends Component {
       feedback,
       isDialogOpen: true
     });
+    document.addEventListener("backbutton", this.handleDialogClose, false);
   };
 
   handleDialogClose = () => {
     this.setState({ isDialogOpen: false });
+    document.removeEventListener("backbutton", this.handleDialogClose, false);
   };
 
   handleResolvedClick = async (feedback) => {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route, Switch, withRouter} from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 
 import RootRef from '@material-ui/core/RootRef';
 import Fab from '@material-ui/core/Fab';
@@ -53,7 +53,7 @@ const styles = theme => ({
 });
 
 class App extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -116,10 +116,9 @@ class App extends Component {
     }
   }
 
-
   handleDialogClose = () => {
     this.setState({ dialogOpen : false})
-    document.removeEventListener( "backbutton", function(){}, false );
+    document.removeEventListener( "backbutton", this.backButtonPress, false );
   }
 
   async componentDidMount(){
@@ -199,28 +198,34 @@ class App extends Component {
   };
 
   handleLoginClose = () => {
-    this.setState({ loginLogoutDialogOpen:false});
+    this.setState({ loginLogoutDialogOpen: false });
+    document.removeEventListener( "backbutton", this.backButtonPress, false );
   };
+
+  backButtonPress = () => {
+    this.setState({
+      dialogOpen: false,
+      loginLogoutDialogOpen:false,
+      leftDrawerOpen: false,
+      openPhotoDialog: false
+    });
+    console.log('kk');
+    document.removeEventListener( "backbutton", this.backButtonPress, false);
+  }
 
   handlePhotoClick = () => {
     if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
-        // TODO: show popup with message saying that the user needs an account for this feature
-        // alert("Please log in")
-        this.setState({
-          dialogOpen: true,
-          dialogTitle: "attention",
-          dialogContentText: "Before adding photos, you must be logged into your account."
-        });
-        console.log(this.state.dialogOpen);
-        document.addEventListener("backbutton", () => {
-          console.log(this.state.dialogOpen);
-          if (this.state.dialogOpen) {
-            this.setState({dialogOpen: false});
-            console.log('cool');
-            document.removeEventListener( "backbutton", () => {}, false );
-          }
-        }
-        , false);
+      // TODO: show popup with message saying that the user needs an account for this feature
+      // alert("Please log in")
+
+      // let state = { path: 'dialog' };
+      // this.props.history.push('/#/', state);
+
+      this.setState({
+        dialogOpen: true,
+        dialogTitle: "attention",
+        dialogContentText: "Before adding photos, you must be logged into your account."
+      });
     } else {
       if (window.cordova) {
         console.log('Opening cordova dialog');
@@ -230,6 +235,8 @@ class App extends Component {
         this.domRefInput.current.click();
       }
     }
+    console.log('click');
+    document.addEventListener("backbutton", this.backButtonPress, false);
   };
 
   openFile = (e) => {
@@ -260,6 +267,7 @@ class App extends Component {
           correctOrientation: true
         });
     }
+    document.removeEventListener( "backbutton", this.backButtonPress, false);
   };
 
   handleWelcomePageClose = () => {
@@ -275,7 +283,11 @@ class App extends Component {
 
   toggleLeftDrawer = (isItOpen) => () => {
     gtagEvent(isItOpen ? 'Opened' : 'Closed','Menu');
-    this.setState({leftDrawerOpen: isItOpen})
+    this.setState({ leftDrawerOpen: isItOpen });
+    isItOpen ?
+      document.addEventListener("backbutton", this.backButtonPress, false)
+    :
+      document.removeEventListener( "backbutton", this.backButtonPress, false);
   };
 
   handleLoginPhotoAdd = (e) => {
@@ -283,12 +295,11 @@ class App extends Component {
       loginLogoutDialogOpen: true,
       dialogOpen: false
     })
-    document.removeEventListener( "backbutton", function(){}, false );
   };
 
   handleRejectLoginPhotoAdd = () => {
     this.setState({ dialogOpen: false });
-    document.removeEventListener( "backbutton", function(){}, false );
+    document.removeEventListener( "backbutton", this.backButtonPress, false );
   }
 
   handleNextClick = async () => {
@@ -466,10 +477,10 @@ class App extends Component {
         <DrawerContainer user={this.state.user} online={this.state.online}
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
-          stats={this.state.stats}
+          stats={this.state.stats} backButtonPress={this.backButtonPress}
         />
 
-        <Dialog open={this.state.dialogOpen} onClose={this.handleDialogClose}>
+        <Dialog path='/' open={this.state.dialogOpen} onClose={this.handleDialogClose} onBackdropClick={()=>this.handleDialogClose}>
           <DialogTitle>{this.state.dialogTitle}</DialogTitle>
           <DialogContent>
             <DialogContentText>
@@ -486,8 +497,6 @@ class App extends Component {
             <Button onClick={this.handleLoginPhotoAdd} color='secondary'>
               Login
             </Button>
-
-
           </DialogActions>
 
         </Dialog>
