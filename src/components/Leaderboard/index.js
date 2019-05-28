@@ -56,7 +56,8 @@ class Leaderboard extends Component {
             </TableHead>
 
             <TableBody>
-              { usersLeaderboard.map((user, index) => (
+              { usersLeaderboard.slice(0,config.LEADERBOARD_FIELD.displayedUsers)
+                .map((user, index) => (
                 <TableRow key={index}>
                   <TableCell className={classes.cell} style={{textAlign: 'center'}}>
                     {index === 0 ? <StarsIcon color='secondary'/> : index + 1}

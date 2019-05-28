@@ -206,6 +206,7 @@ export default {
   },
     LEADERBOARD_FIELD: {
       label: "Uploads",
-      field: "uploaded"
-    }
+      field: "uploaded",
+      displayedUsers: 20,
+    },
 }
