@@ -47,13 +47,13 @@ const signOut = () => {
   firebase.auth().signOut();
 };
 
-const sendEmailVerification = (email) => {
-  firebase.auth().currentUser.sendEmailVerification()
-    .then( () => {
-      alert('A verification link has been sent to: ' + email);
+const sendEmailVerification = () => {
+  return firebase.auth().currentUser.sendEmailVerification()
+    .then(() => {
+      return 'A verification link has been sent to email account: ' + firebase.auth().currentUser.email;
     })
     .catch( error => {
-      alert(error);
+      return error.message;
     });
 };
 
