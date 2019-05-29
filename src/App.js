@@ -281,7 +281,11 @@ class App extends Component {
 
   handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
-    this.setState({user: {...this.state.user, emailVerified: user.emailVerified}});
+    if (user.emailVerified) {
+      this.setState({user: {...this.state.user, emailVerified: user.emailVerified}});
+    } else {
+      alert('Warning! Email has not been verified.');
+    }
   }
 
   render() {
