@@ -52,7 +52,6 @@ const styles = theme => ({
   }
 });
 
-// console.log('localforage is:', localforage);
 
 class App extends Component {
   constructor(props){
