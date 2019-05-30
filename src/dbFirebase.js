@@ -3,6 +3,7 @@ import * as _ from 'lodash'
 
 import firebaseApp from './firebaseInit.js';
 import config from "./custom/config";
+import * as localforage from "localforage";
 
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
@@ -61,7 +62,7 @@ async function fetchPhotos() {
         geojson.features.push(feature);
       });
 
-      localStorage.setItem("cachedGeoJson", JSON.stringify(geojson));
+      localforage.setItem("cachedGeoJson", geojson);
 
       return geojson;
     });
@@ -69,7 +70,7 @@ async function fetchPhotos() {
   // get features from local storage
   let geojson;
   try {
-    geojson = JSON.parse(localStorage.getItem("cachedGeoJson"));
+    geojson = await localforage.getItem("cachedGeoJson");
   } catch (e) {
     console.log(e);
   }
