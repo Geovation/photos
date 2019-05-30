@@ -32,7 +32,6 @@ import EmailVerifiedDialog from './components/EmailVerifiedDialog';
 import FeedbackReportsPage from './components/FeedbackReportsPage';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
-// import * as localforage from "localforage";
 import { gtagPageView, gtagEvent } from './gtag.js';
 import { isIphoneWithNotchAndCordova } from './utils';
 import './App.scss';
