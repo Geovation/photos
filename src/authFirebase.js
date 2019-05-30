@@ -50,10 +50,18 @@ const signOut = () => {
 const sendEmailVerification = () => {
   return firebase.auth().currentUser.sendEmailVerification()
     .then(() => {
-      return 'A verification link has been sent to email account: ' + firebase.auth().currentUser.email;
+      const message = {
+        title: 'Notification',
+        body: 'A verification link has been sent to email account: ' + firebase.auth().currentUser.email
+      };
+      return message;
     })
     .catch( error => {
-      return error.message;
+      const message = {
+        title: 'Warning',
+        body: error.message
+      };
+      return message;
     });
 };
 

@@ -4,11 +4,13 @@ import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CloseIcon from '@material-ui/icons/Close';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -19,9 +21,14 @@ const styles = theme => ({
   typography : {
     ...theme.mixins.gutters(),
     whiteSpace: 'pre-wrap',
-    paddingTop: theme.spacing.unit * 3,
     paddingRight: 0,
-    paddingLeft: 0,
+    paddingLeft: 0
+  },
+  body: {
+    marginTop: theme.spacing.unit * 3
+  },
+  iconButton: {
+    marginRight: theme.spacing.unit * 2
   },
   link: {
     cursor: 'pointer',
@@ -33,7 +40,6 @@ const styles = theme => ({
   notchTop: {
     paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
       isIphoneAndCordova ? theme.spacing.unit * 1.5 : null,
-    textAlign: "center",
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
@@ -46,6 +52,8 @@ class EmailVerifiedDialog extends React.Component {
     this.state = {
       openProgressCircle: false,
       openConformationDialog: false,
+      conformationTitle: '',
+      conformationMessage: ''
     };
   }
 
@@ -59,23 +67,23 @@ class EmailVerifiedDialog extends React.Component {
     this.setState({
       openProgressCircle: false,
       openConformationDialog: true,
-      conformationMessage: message
+      conformationTitle: message.title,
+      conformationMessage: message.body
     });
   };
 
   handleResendEmail = async () => {
     this.setState({ openProgressCircle: true });
-    const value = authFirebase.sendEmailVerification(this.props.user.email)
-    value.then(() => {
-      this.setState({
-        openProgressCircle: false,
-        openConformationDialog: true,
-        conformationMessage: value.i
-      });
+    const message = await authFirebase.sendEmailVerification(this.props.user.email)
+    this.setState({
+      openProgressCircle: false,
+      openConformationDialog: true,
+      conformationTitle: message.title,
+      conformationMessage: message.body
     });
   };
 
-  handleConfirmationDialog = () => {
+  handleCloseConfirmationDialog = () => {
     this.setState({ openConformationDialog: false});
   };
 
@@ -87,11 +95,12 @@ class EmailVerifiedDialog extends React.Component {
         <Dialog fullScreen={fullScreen} open={open}>
           <AppBar position='static' className={classes.notchTop}>
             <Toolbar>
+              <CloseIcon className={classes.iconButton} onClick={this.handleNextClick} />
               <Typography variant='h6' color='inherit'>Email Verification</Typography>
             </Toolbar>
           </AppBar>
           <DialogContent style={{fontFamily: 'Arial'}}>
-            <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
+            <Typography align={'justify'} variant={'subtitle1'} className={`${classes.body} ${classes.typography}`}>
               A verification email has been sent to <b>{user && user.email}</b>.
               Please click on the link in the email to activate your account. <br/><br/>
 
@@ -119,21 +128,26 @@ class EmailVerifiedDialog extends React.Component {
           <div className={classes.notchBottom}/>
         </Dialog>
 
-        <Dialog open={this.state.openProgressCircle}>
-            <CircularProgress />
+        <Dialog open={this.state.openProgressCircle} PaperProps={{style: {backgroundColor: 'transparent', boxShadow: 'none'}}}>
+            <CircularProgress color='secondary'/>
         </Dialog>
 
         <Dialog open={this.state.openConformationDialog}>
+          <DialogTitle id="responsive-dialog-title"  style={{ textAlign: "center"}}>
+            {this.state.conformationTitle}
+          </DialogTitle>
           <DialogContent style={{fontFamily: 'Arial'}}>
             <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
-            {this.state.conformationMessage}
+              {this.state.conformationMessage}
             </Typography>
           </DialogContent>
           <DialogActions color='secondary'>
             <Button
+              className={classes.button}
+              fullWidth
               color='secondary'
               variant='contained'
-              onClick={this.handleConfirmationDialog}
+              onClick={this.handleCloseConfirmationDialog}
             >
               Close
             </Button>

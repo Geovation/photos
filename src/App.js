@@ -283,9 +283,17 @@ class App extends Component {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
       this.setState({user: {...this.state.user, emailVerified: user.emailVerified}});
-      return 'Thank you for verifying your email.'
+      let message = {
+        title: 'Conformation',
+        body: 'Thank you for verifying your email.'
+      };
+      return message;
     } else {
-      return 'Warning! Email not verified yet. Please click the link in the email we sent you.';
+      let message = {
+        title: 'Warning',
+        body: 'Email not verified yet. Please click the link in the email we sent you.'
+      };
+      return message;
     }
   }
 
