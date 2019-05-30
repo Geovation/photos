@@ -21,6 +21,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import * as localforage from "localforage";
 import CardComponent from './CardComponent';
 
 import dbFirebase from '../dbFirebase';
@@ -320,7 +321,7 @@ class Map extends Component {
         "features": updatedFeatures
       };
       // update localStorage
-      localStorage.setItem("cachedGeoJson", JSON.stringify(geojson));
+      localforage.setItem("cachedGeoJson", geojson);
 
       // remove thumbnail from the map
       this.setState({ geojson }); //update state for next updatedFeatures
