@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "photos-demo-d4b14"
+  },
+  "targets": {
+    "photos-demo-d4b14": {
+      "hosting": {
+        "app": [
+          "photos-demo-d4b14"
+        ],
+        "api": [
+          "photos-demo-d4b14-api"
+        ]
+      }
+    }
   }
 }
