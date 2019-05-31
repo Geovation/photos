@@ -48,12 +48,20 @@ const signOut = () => {
 };
 
 const sendEmailVerification = () => {
-  firebase.auth().currentUser.sendEmailVerification()
-    .then( () => {
-      console.log('email sent');
+  return firebase.auth().currentUser.sendEmailVerification()
+    .then(() => {
+      const message = {
+        title: 'Notification',
+        body: 'A verification link has been sent to email account: ' + firebase.auth().currentUser.email
+      };
+      return message;
     })
     .catch( error => {
-      console.log(console.error());
+      const message = {
+        title: 'Warning',
+        body: error.message
+      };
+      return message;
     });
 };
 

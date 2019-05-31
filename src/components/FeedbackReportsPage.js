@@ -35,7 +35,7 @@ const styles = theme => ({
     margin: theme.spacing.unit * 1.5,
   },
   iconButton: {
-    marginRight: 20,
+    marginRight: theme.spacing.unit * 2,
   },
 });
 
