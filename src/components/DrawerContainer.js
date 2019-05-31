@@ -73,25 +73,29 @@ class DrawerContainer extends Component {
     return (
       <Drawer className='geovation-drawercontainer' open={leftDrawerOpen} onClose={this.props.toggleLeftDrawer(false)}
         classes={{ paper: classes.drawerPaper }}>
+        <div style={{ paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
+            isIphoneAndCordova ? this.props.theme.spacing.unit * 1.5 : null
+          }}
+        />
+        { user &&
+          <div>
+            <div className='drawer-user'>
+              <Avatar alt='profile-image' src={user.photoURL} className='avatar'
+                component={Link} to={PAGES.account.path}
+                onClick={this.props.toggleLeftDrawer(false)} />
+              <Typography className={'drawer-typography'}>{user.displayName}</Typography>
+              {user.isModerator && <Typography>Admin</Typography>}
+            </div>
+            <Divider/>
+          </div>
+        }
+
         <div
           tabIndex={0}
           role='button'
           onClick={this.props.toggleLeftDrawer(false)}
           onKeyDown={this.props.toggleLeftDrawer(false)}
-          style={{ paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
-            isIphoneAndCordova ? this.props.theme.spacing.unit * 1.5 : null
-          }}
         >
-          { user &&
-            <div>
-              <div className='drawer-user'>
-                <Avatar alt='profile-image' src={user.photoURL} className='avatar' />
-                <Typography className={'drawer-typography'}>{user.displayName}</Typography>
-                {user.isModerator && <Typography>Admin</Typography>}
-              </div>
-              <Divider/>
-            </div>
-          }
           <List>
             {ListItems.map( (item,index) => item.visible(user, online) &&
               <ListItem key={index} button component={item.path && Link} to={item.path} onClick={item.click}>
