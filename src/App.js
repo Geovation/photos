@@ -284,7 +284,7 @@ class App extends Component {
     if (user.emailVerified) {
       this.setState({user: {...this.state.user, emailVerified: user.emailVerified}});
       let message = {
-        title: 'Conformation',
+        title: 'Confirmation',
         body: 'Thank you for verifying your email.'
       };
       return message;
