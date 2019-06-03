@@ -93,12 +93,14 @@ async function fetchUsers() {
 }
 
 function fetchFeedbacks(isShowAll) {
-  let query = firestore.collection('feedbacks');
-  query = !isShowAll ? query.where('resolved', '==', false) : query;
+  let query = firestore.collection('feedbacks')
+    .orderBy("updated",  "desc")
+    .limit( (config.FEEDBACKS && config.FEEDBACKS.MAX) || 50);
   return query.get()
     .then(sn => sn.docs.map(doc => {
       return ({...doc.data(), id: doc.id});
-    }));
+    }))
+    .then( feedbacks => feedbacks.filter(feedback => !feedback.resolved || isShowAll));
 }
 
 function saveMetadata(data) {
