@@ -249,7 +249,14 @@ class Map extends Component {
   }
 
   handleDialogClose = () => {
-    this.setState({ openDialog: false });
+    if (this.state.confirmDialogOpen) {
+      this.setState({ confirmDialogOpen: false });
+      console.log('1');
+    } else {
+      this.setState({ openDialog: false });
+      document.removeEventListener("backbutton", this.handleDialogClose, false);
+      console.log('2');
+    }
   }
 
   updateRenderedThumbails = (visibleFeatures) =>{
@@ -272,6 +279,7 @@ class Map extends Component {
         el.addEventListener('click', () => {
           gtagEvent('Photo Opened', 'Map', feature.properties.id);
           this.setState({ openDialog: true, feature });
+          document.addEventListener("backbutton", this.handleDialogClose, false);
         });
         //create marker
         const marker = new mapboxgl.Marker(el)
@@ -352,7 +360,7 @@ class Map extends Component {
         this.addFeaturesToMap(geojson);
       });
     }
-    
+
     const { location, welcomeShown, classes } = this.props;
     const feature = this.state.feature;
     const gpsOffline = !location.online;

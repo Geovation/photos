@@ -209,9 +209,8 @@ class App extends Component {
       leftDrawerOpen: false,
       openPhotoDialog: false
     });
-    console.log('kk');
     document.removeEventListener( "backbutton", this.backButtonPress, false);
-  }
+  };
 
   handlePhotoClick = () => {
     if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
@@ -235,7 +234,6 @@ class App extends Component {
         this.domRefInput.current.click();
       }
     }
-    console.log('click');
     document.addEventListener("backbutton", this.backButtonPress, false);
   };
 
@@ -480,7 +478,7 @@ class App extends Component {
           stats={this.state.stats} backButtonPress={this.backButtonPress}
         />
 
-        <Dialog path='/' open={this.state.dialogOpen} onClose={this.handleDialogClose} onBackdropClick={()=>this.handleDialogClose}>
+        <Dialog open={this.state.dialogOpen} onClose={this.handleDialogClose}>
           <DialogTitle>{this.state.dialogTitle}</DialogTitle>
           <DialogContent>
             <DialogContentText>

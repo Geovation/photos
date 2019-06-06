@@ -70,6 +70,7 @@ class EmailVerifiedDialog extends React.Component {
       conformationTitle: message.title,
       conformationMessage: message.body
     });
+    document.addEventListener("backbutton", this.backButtonPress, false);
   };
 
   handleResendEmail = async () => {
@@ -81,10 +82,19 @@ class EmailVerifiedDialog extends React.Component {
       conformationTitle: message.title,
       conformationMessage: message.body
     });
+    document.addEventListener("backbutton", this.backButtonPress, false);
   };
 
-  handleCloseConfirmationDialog = () => {
+  handleCloseClick = () => {
     this.setState({ openConformationDialog: false});
+    document.removeEventListener( "backbutton", this.backButtonPress, false);
+  };
+
+  backButtonPress = () => {
+    this.setState({
+      openConformationDialog: false,
+    });
+    document.removeEventListener( "backbutton", this.backButtonPress, false);
   };
 
   render() {
@@ -147,7 +157,7 @@ class EmailVerifiedDialog extends React.Component {
               fullWidth
               color='secondary'
               variant='contained'
-              onClick={this.handleCloseConfirmationDialog}
+              onClick={this.handleCloseClick}
             >
               Close
             </Button>
