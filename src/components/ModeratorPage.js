@@ -47,14 +47,17 @@ class ModeratorPage extends Component {
       confirmDialogHandleOk: () => this.handleRejectDialogOk(photo.id),
       confirmDialogOpen: true
     });
+    document.addEventListener("backbutton", this.handleCancelDialog, false);
   };
 
   handlePhotoClick = (photoSelected) => {
     this.setState({ zoomDialogOpen: true, photoSelected });
+    document.addEventListener("backbutton", this.handleZoomDialogClose, false);
   };
 
   handleZoomDialogClose = () => {
     this.setState({ zoomDialogOpen: false });
+    document.removeEventListener("backbutton", this.handleZoomDialogClose, false);
   }
 
   handleApproveClick = (photo) => {
@@ -64,10 +67,12 @@ class ModeratorPage extends Component {
       confirmDialogHandleOk: () => this.handleApproveDialogOk(photo.id),
       confirmDialogOpen: true
     });
+    document.addEventListener("backbutton", this.handleCancelDialog, false);
   };
 
   handleCancelDialog = () => {
-    this.setState({confirmDialogOpen: false})
+    this.setState({confirmDialogOpen: false});
+    document.removeEventListener("backbutton", this.handleCancelDialog, false);
   };
 
   handleRejectDialogOk = async (id) => {
@@ -77,6 +82,8 @@ class ModeratorPage extends Component {
       zoomDialogOpen: false,
       photos: await dbFirebase.photosToModerate()
     });
+    document.removeEventListener("backbutton", this.handleCancelDialog, false);
+    document.removeEventListener("backbutton", this.handleZoomDialogClose, false);
   };
 
   handleApproveDialogOk = async (id) => {
@@ -86,6 +93,8 @@ class ModeratorPage extends Component {
       zoomDialogOpen: false,
       photos: await dbFirebase.photosToModerate()
     });
+    document.removeEventListener("backbutton", this.handleCancelDialog, false);
+    document.removeEventListener("backbutton", this.handleZoomDialogClose, false);
   };
 
   render() {
