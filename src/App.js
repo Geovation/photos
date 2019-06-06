@@ -433,7 +433,7 @@ class App extends Component {
             </Fab>
           </main>
 
-        <Snackbar open={this.state.welcomeShown && !this.state.online} message='Network not available' />
+        <Snackbar open={this.state.welcomeShown && !this.state.online} message='Connecting to our servers...' />
 
         { window.cordova ?
           <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
