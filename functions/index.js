@@ -186,7 +186,6 @@ async function fetchUsers() {
     }
   }
   while (pageToken);
-
   return users;
 }
 
@@ -206,21 +205,30 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
     users: []
   };
 
+  const rawUsers = await fetchUsers();
+  // console.info(rawUsers)
   const querySnapshot = await firestore.collection("photos").get();
-  const users = (await fetchUsers()).map(user => {
-    return {
+  const users = rawUsers.map(user => {
+
+    const userShort = {
       uid: user.uid,
       displayName: user.displayName || "",
       // metadata: user.metadata,
       pieces: 0,
       uploaded: 0
-    }
+    };
+    return userShort;
   });
 
-  console.info(users);
+  // console.info(users);
+  // console.info(users.find(user => !user.uid));
 
   querySnapshot.forEach( doc => {
+    // console.info(users.find(user => !user.uid));
+
     const data = doc.data();
+    // console.info(data);
+
     stats.totalUploaded++;
 
     // has the upload been reviewed by a moderator ?
@@ -233,17 +241,21 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
 
         const pieces = Number(data.pieces);
         if (pieces > 0 ) stats.pieces += pieces;
+        // console.info(data.owner_id);
+        // console.info(users.find(user => !user.uid));
 
         let owner = users.find( user => user.uid === data.owner_id);
+        // console.info(owner);
+
         if (owner) {
+          // console.info("found: ", owner);
           if (pieces > 0 ) owner.pieces += pieces;
           owner.uploaded++;
           owner.displayName = owner.displayName || "";
-          delete owner.uid;
 
-          console.info(owner);
+          // console.info(owner);
         } else {
-          console.info(`No user with id = '${data.owner_id}'`);
+          // console.info(`No user with id = '${data.owner_id}'`);
         }
 
       } else {
@@ -253,10 +265,12 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
 
   });
 
-  stats.users = users;
+  stats.users = users.map(user => {
+    // delete user.uid;
+    return user;
+  });
 
-  console.info(stats);
-
+  // console.info(stats);
   return await firestore.collection('sys').doc('stats').set(stats);
 });
 
