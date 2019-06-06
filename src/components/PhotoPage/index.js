@@ -306,6 +306,7 @@ class PhotoPage extends Component {
   handleClosePhotoPage = () => {
     this.resetState();
     this.props.handleClose(); // go to the map
+    document.removeEventListener("backbutton", this.handlePrev, false);
   };
 
   handleCancel = () => {
@@ -322,10 +323,12 @@ class PhotoPage extends Component {
 
   handleNext = () => {
     this.setState({ next:true });
+    document.addEventListener("backbutton", this.handlePrev, false);
   }
 
   handlePrev = () => {
     this.setState({ next:false });
+    document.removeEventListener("backbutton", this.handlePrev, false);
   }
 
   componentDidMount() {
