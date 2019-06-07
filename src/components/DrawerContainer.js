@@ -94,7 +94,6 @@ class DrawerContainer extends Component {
           tabIndex={0}
           role='button'
           onClick={this.props.toggleLeftDrawer(false)}
-          onKeyDown={this.props.toggleLeftDrawer(false)}
         >
           <List>
             {ListItems.map( (item,index) => item.visible(user, online) &&
