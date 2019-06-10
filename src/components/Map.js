@@ -7,6 +7,8 @@ import { gtagEvent } from '../gtag.js';
 import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
 import GpsOff from '@material-ui/icons/GpsOff';
+import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
+import Dehaze from '@material-ui/icons/Dehaze';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Card from '@material-ui/core/Card';
@@ -36,16 +38,26 @@ const styles = theme => ({
   location: {
     position: 'absolute',
     top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing(0.1)}px)` : theme.spacing(2),
-    right: theme.spacing(2),
-    zIndex: theme.zIndex.appBar, //app bar material-ui value
+    right: theme.spacing(2)
   },
   expansionDetails: {
     padding:0,
     'overflow-wrap': 'break-word',
     'word-wrap': 'break-word'
+  },
+  camera: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2)
+  },
+  burger: {
+    position: 'absolute',
+    top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing(1)}px)` : theme.spacing(3),
+    left: theme.spacing(2),
+    margin: -theme.spacing(2),
+    padding: theme.spacing(2),
   }
 });
-
 
 class Map extends Component {
 
@@ -353,7 +365,7 @@ class Map extends Component {
       });
     }
 
-    const { location, welcomeShown, classes } = this.props;
+    const { location, classes } = this.props;
     const feature = this.state.feature;
     const gpsOffline = !location.online;
     const gpsDisabled = !location.updated;
@@ -361,10 +373,18 @@ class Map extends Component {
     return (
       <div className={"geovation-map"} style={{ visibility: this.props.visible ? "visible" : "hidden" }}>
           <div id='map' className="map"></div>
-          { welcomeShown &&
-            <Fab className={classes.location} size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
-              {gpsOffline ? <GpsOff/> : <GpsFixed/>}
-            </Fab>
+
+          <Fab className={classes.location} size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+            {gpsOffline ? <GpsOff/> : <GpsFixed/>}
+          </Fab>
+
+          {!this.props.embeddable &&
+            <div>
+              <Fab className={classes.camera} color="secondary" onClick={this.props.handlePhotoClick}>
+                <AddAPhotoIcon />
+              </Fab>
+              <Dehaze className={classes.burger} onClick={this.props.toggleLeftDrawer(true)} />
+            </div>
           }
 
           <Dialog open={this.state.confirmDialogOpen} onClose={this.handleConfirmDialogClose}>
