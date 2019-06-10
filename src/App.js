@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
-import { Route, Switch, withRouter} from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 
 import RootRef from '@material-ui/core/RootRef';
-import Fab from '@material-ui/core/Fab';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
-import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
-import Dehaze from '@material-ui/icons/Dehaze';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import { withStyles } from '@material-ui/core/styles';
 
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
@@ -33,24 +29,7 @@ import FeedbackReportsPage from './components/FeedbackReportsPage';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
-import { isIphoneWithNotchAndCordova } from './utils';
 import './App.scss';
-
-const styles = theme => ({
-  burger: {
-    position: 'absolute',
-    top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing(1)}px)` : theme.spacing(3),
-    left: theme.spacing(2),
-    margin: -theme.spacing(2),
-    padding: theme.spacing(2),
-    zIndex: theme.zIndex.appBar, //app bar material-ui value
-  },
-  camera: {
-    position: 'absolute',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2)
-  }
-});
 
 class App extends Component {
   constructor(props){
@@ -298,7 +277,7 @@ class App extends Component {
   }
 
   render() {
-    const { classes, fields } = this.props;
+    const { fields } = this.props;
 
     return (
       <div className='geovation-app'>
@@ -407,30 +386,20 @@ class App extends Component {
 
             <Map location={this.state.location}
                  visible={[this.props.config.PAGES.map.path, this.props.config.PAGES.embeddable.path].includes(this.props.history.location.pathname)}
-                 welcomeShown={this.state.welcomeShown || this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
                  geojson={this.state.geojson}
                  user={this.state.user}
                  config={this.props.config}
                  embeddable={this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
+                 handlePhotoClick={this.handlePhotoClick}
+                 toggleLeftDrawer={this.toggleLeftDrawer}
             />
 
-            <Dehaze className={classes.burger} onClick={this.toggleLeftDrawer(true)}
-              style={{
-                display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
-                ? 'block'
-                : 'none'
-              }}
+            <DrawerContainer user={this.state.user} online={this.state.online}
+              handleClickLoginLogout={this.handleClickLoginLogout}
+              leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
+              stats={this.state.stats}
             />
 
-            <Fab className={classes.camera} color="secondary" onClick={this.handlePhotoClick}
-              style={{
-                display: this.state.welcomeShown && this.props.history.location.pathname === this.props.config.PAGES.map.path
-                ? 'flex'
-                : 'none'
-              }}
-            >
-              <AddAPhotoIcon />
-            </Fab>
           </main>
 
         <Snackbar open={this.state.welcomeShown && !this.state.online} message='Connecting to our servers...' />
@@ -451,11 +420,7 @@ class App extends Component {
           loginComponent={LoginFirebase}
         />
 
-        <DrawerContainer user={this.state.user} online={this.state.online}
-          handleClickLoginLogout={this.handleClickLoginLogout}
-          leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
-          stats={this.state.stats}
-        />
+
 
         <Dialog open={this.state.dialogOpen} onClose={this.handleDialogClose}>
           <DialogTitle>{this.state.dialogTitle}</DialogTitle>
@@ -485,4 +450,4 @@ class App extends Component {
   }
 }
 
-export default withRouter(withStyles(styles)(App));
+export default withRouter(App);
