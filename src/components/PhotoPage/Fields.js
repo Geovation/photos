@@ -35,7 +35,7 @@ class Fields extends Component {
         }}>
           <img src={this.props.imgSrc} alt={""} className={classes.pictureThumbnail}/>
           <div style={{
-            width: '100%', marginLeft: this.props.theme.spacing.unit * 1.5
+            width: '100%', marginLeft: this.props.theme.spacing(1.5)
           }}>
             <FirstField.component
               key={0}
@@ -52,7 +52,7 @@ class Fields extends Component {
           if (index > 0) {
             return (
               <div key={index}
-                   style={{ marginTop: this.props.theme.spacing.unit * 1}}>
+                   style={{ marginTop: this.props.theme.spacing(1)}}>
                 <field.component
                   field={field}
                   handleChange={this.handleChangeComponent(field)}

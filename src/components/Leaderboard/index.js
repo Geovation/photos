@@ -23,12 +23,12 @@ const styles = theme => ({
   },
   cell: {
     position: 'relative',
-    padding: theme.spacing.unit,
+    padding: theme.spacing(1),
     fontSize: 'inherit',
   },
   truncate: {
     position: 'absolute',
-    top: theme.spacing.unit * 1.5,
+    top: theme.spacing(1.5),
     maxWidth: '90%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',

@@ -13,9 +13,10 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+
 import PageWrapper from './PageWrapper';
 import CardComponent from './CardComponent';
-
 import './ModeratorPage.scss';
 import dbFirebase from '../dbFirebase';
 import config from '../custom/config';
@@ -97,15 +98,17 @@ class ModeratorPage extends Component {
           <List dense={false}>
             {this.state.photos.map(photo => (
               <ListItem key={photo.id} button onClick={() => this.handlePhotoClick(photo)}>
-                <Avatar
-                 imgProps={{ onError: (e) => { e.target.src=placeholderImage} }}
-                 src={photo.thumbnail} />
+                <ListItemAvatar>
+                  <Avatar
+                  imgProps={{ onError: (e) => { e.target.src=placeholderImage} }}
+                  src={photo.thumbnail} />
+                </ListItemAvatar>
                 <ListItemText primary={config.PHOTO_ZOOMED_FIELDS.updated(photo.updated)}/>
                 <ListItemSecondaryAction>
-                  <IconButton aria-label='Reject' onClick={() => this.handleRejectClick(photo)}>
+                  <IconButton aria-label='Reject' edge={false} onClick={() => this.handleRejectClick(photo)}>
                     <ThumbDownIcon />
                   </IconButton>
-                  <IconButton aria-label='Approve' onClick={() => this.handleApproveClick(photo)}>
+                  <IconButton aria-label='Approve' edge={false} onClick={() => this.handleApproveClick(photo)}>
                     <ThumbUpIcon />
                   </IconButton>
                 </ListItemSecondaryAction>

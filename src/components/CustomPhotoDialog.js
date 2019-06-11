@@ -28,19 +28,19 @@ class CustomPhotoDialog extends React.Component {
       <Dialog onClose={this.handleClose} open={open}>
         <List>
           <ListItem button onClick={() => this.handleListItemClick('CAMERA')}>
-            <IconButton color='primary'>
+            <IconButton color='primary' edge={false}>
               <CameraIcon />
             </IconButton>
             <ListItemText primary={'Camera'} />
           </ListItem>
           <ListItem button onClick={() => this.handleListItemClick('PHOTOLIBRARY')}>
-            <IconButton color='primary'>
+            <IconButton color='primary' edge={false}>
                 <PhotoLibraryIcon />
             </IconButton>
             <ListItemText primary={'Photo Library'} />
           </ListItem>
           <ListItem button onClick={this.handleClose}>
-            <IconButton>
+            <IconButton edge={false}>
               <CancelIcon />
             </IconButton>
             <ListItemText primary='Cancel' />

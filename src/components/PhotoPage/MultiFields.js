@@ -130,7 +130,7 @@ class MultiFields extends React.Component {
               <br/>
               <div style={{display:'flex'}}>
                 <SelectControlSingleValue single={fieldValue.leafkey.value} handleChangeSelect={this.handleChangeSelect(index)} {...this.props}/>
-                <div style={{marginBottom: this.props.theme.spacing.unit * 0.5, display:'flex', alignItems: 'flex-end'}}>
+                <div style={{marginBottom: this.props.theme.spacing(0.5), display:'flex', alignItems: 'flex-end'}}>
                     <RemoveIcon onClick={this.handleClickRemove(index)} />
                 </div>
               </div>
@@ -139,7 +139,7 @@ class MultiFields extends React.Component {
                   {Object.values(this.props.field.subfields).map((subfield,index_subfield) =>{
                     return(
                        <div  key={'subcomponent_'+index_subfield}
-                          style={{ marginTop: this.props.theme.spacing.unit * 1}}>
+                          style={{ marginTop: this.props.theme.spacing(1)}}>
                           <subfield.component
                             field={subfield}
                             handleChange={this.handleChangeTitleTextField(index,subfield)}
@@ -149,7 +149,7 @@ class MultiFields extends React.Component {
                     )
                   })}
                   {index === this.state.fieldValues.length - 1 &&
-                    <div style={{marginTop: this.props.theme.spacing.unit * 1.5}}>
+                    <div style={{marginTop: this.props.theme.spacing(1.5)}}>
                       <Button disabled={this.props.error} fullWidth variant="outlined" onClick={this.handleClickAdd}>
                         add another category
                       </Button>
