@@ -45,7 +45,7 @@ const styles = theme => ({
     },
   },
   progress: {
-    margin: theme.spacing.unit * 2
+    margin: theme.spacing(2)
   },
   button: {
     display: 'flex',
@@ -71,12 +71,12 @@ const styles = theme => ({
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
   },
   fields: {
-    margin: theme.spacing.unit * 1.5
+    margin: theme.spacing(1.5)
   },
   photo: {
-    marginRight: theme.spacing.unit * 1.5,
-    marginLeft: theme.spacing.unit * 1.5,
-    marginBottom: theme.spacing.unit * .5
+    marginRight: theme.spacing(1.5),
+    marginLeft: theme.spacing(1.5),
+    marginBottom: theme.spacing(0.5)
   }
 });
 

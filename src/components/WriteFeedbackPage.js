@@ -21,16 +21,16 @@ const styles = theme => ({
     height: '100%',
     overflow:'auto',
     '-webkit-overflow-scrolling': 'touch',
-    marginTop: theme.spacing.unit * 0.5,
-    marginBottom: theme.spacing.unit * 0.5,
-    marginLeft: theme.spacing.unit * 1.5,
-    marginRight: theme.spacing.unit * 1.5
+    marginTop: theme.spacing(0.5),
+    marginBottom: theme.spacing(0.5),
+    marginLeft: theme.spacing(1.5),
+    marginRight: theme.spacing(1.5)
   },
   button: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: theme.spacing.unit * 1.5,
+    margin: theme.spacing(1.5),
   }
 });
 

@@ -25,21 +25,21 @@ const styles = theme => ({
     paddingLeft: 0
   },
   body: {
-    marginTop: theme.spacing.unit * 3
+    marginTop: theme.spacing(3)
   },
   iconButton: {
-    marginRight: theme.spacing.unit * 2
+    marginRight: theme.spacing(2)
   },
   link: {
     cursor: 'pointer',
     color: 'blue'
   },
   button: {
-    margin: theme.spacing.unit * 1.5,
+    margin: theme.spacing(1.5),
   },
   notchTop: {
     paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
-      isIphoneAndCordova ? theme.spacing.unit * 1.5 : null,
+      isIphoneAndCordova ? theme.spacing(1.5) : null,
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0

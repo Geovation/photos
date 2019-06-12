@@ -29,7 +29,7 @@ const styles = theme => ({
     zIndex: theme.zIndex.appBar
   },
   main:{
-    marginBottom: theme.spacing.unit,
+    marginBottom: theme.spacing(1),
     display: 'flex',
     flexDirection:'column',
     flex: 1,
@@ -38,10 +38,10 @@ const styles = theme => ({
   },
   logo: {
     height: '80px',
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
   },
   button: {
-    margin: theme.spacing.unit * 1.5,
+    margin: theme.spacing(1.5),
   },
   notchTop: {
     paddingTop: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' : 0
@@ -70,7 +70,7 @@ class WelcomePage extends React.Component {
   render() {
     const { classes, handleClose } = this.props;
     return (
-      <Paper className={classes.root}>
+      <Paper elevation={2} className={classes.root}>
         <div className={classes.notchTop}/>
         <img className={classes.logo} src={placeholderImage} alt={utils.customiseString('about', 'Geovation')}/>
         <div className={classes.main}>

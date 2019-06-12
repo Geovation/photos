@@ -21,7 +21,7 @@ const styles = theme => ({
     bottom:0,
   },
   main:{
-    marginBottom: theme.spacing.unit,
+    marginBottom: theme.spacing(1),
     display: 'flex',
     flexDirection:'column',
     flex: 1,
@@ -36,14 +36,14 @@ const styles = theme => ({
   },
   notchTop: {
     paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
-      isIphoneAndCordova ? theme.spacing.unit * 1.5 : null
+      isIphoneAndCordova ? theme.spacing(1.5) : null
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
   },
   logo: {
     height: '80px',
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
   },
 });
 

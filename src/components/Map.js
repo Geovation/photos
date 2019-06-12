@@ -35,8 +35,8 @@ const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 const styles = theme => ({
   location: {
     position: 'absolute',
-    top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing.unit * 0.1}px)` : theme.spacing.unit * 2,
-    right: theme.spacing.unit * 2,
+    top: isIphoneWithNotchAndCordova() ? `calc(env(safe-area-inset-top) + ${theme.spacing(0.1)}px)` : theme.spacing(2),
+    right: theme.spacing(2),
     zIndex: theme.zIndex.appBar, //app bar material-ui value
   },
   expansionDetails: {
@@ -352,7 +352,7 @@ class Map extends Component {
         this.addFeaturesToMap(geojson);
       });
     }
-    
+
     const { location, welcomeShown, classes } = this.props;
     const feature = this.state.feature;
     const gpsOffline = !location.online;

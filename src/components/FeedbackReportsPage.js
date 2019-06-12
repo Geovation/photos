@@ -28,7 +28,7 @@ import './ModeratorPage.scss';
 
 const styles = theme => ({
   checkbox: {
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     marginLeft: 0,
   },
   truncate: {
@@ -39,16 +39,16 @@ const styles = theme => ({
   },
   notchTop: {
     paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
-    isIphoneAndCordova ? theme.spacing.unit * 1.5 : null
+    isIphoneAndCordova ? theme.spacing(1.5) : null
   },
   iconButton: {
-    marginRight: theme.spacing.unit * 2,
+    marginRight: theme.spacing(2),
   },
   main: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2),
   },
   button: {
-    margin: theme.spacing.unit * 1.5,
+    margin: theme.spacing(1.5),
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
@@ -127,7 +127,7 @@ class FeedbackReportsPage extends Component {
                         }
                       />
                       <ListItemSecondaryAction>
-                        <IconButton aria-label='Resolved' onClick={() => this.handleResolvedClick(feedback)}>
+                        <IconButton aria-label='Resolved' edge={false} onClick={() => this.handleResolvedClick(feedback)}>
                           {feedback.resolved ? <DoneOutlineIcon /> : <DoneIcon />}
                         </IconButton>
                       </ListItemSecondaryAction>
