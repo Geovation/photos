@@ -5,25 +5,21 @@
   "homepage": "./",
   "cordova": {
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ],
     "plugins": {
-      "cordova-plugin-geolocation": {},
       "cordova-plugin-whitelist": {},
-      "cordova-plugin-google-analytics": {
-        "GMS_VERSION": "11.0.1"
-      },
+      "cordova-plugin-camera-with-exif": {},
+      "cordova-plugin-geolocation": {},
+      "cordova-plugin-google-analytics": {},
       "cordova-plugin-splashscreen": {},
-      "cordova-plugin-statusbar": {},
-      "cordova-plugin-camera-with-exif": {
-        "ANDROID_SUPPORT_V4_VERSION": "27.+"
-      }
+      "cordova-plugin-statusbar": {}
     }
   },
   "dependencies": {
     "cordova-android": "^8.0.0",
-    "cordova-ios": "^4.5.5",
+    "cordova-ios": "^5.0.1",
     "cordova-plugin-camera-with-exif": "^1.2.7",
     "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-google-analytics": "^1.8.6",
