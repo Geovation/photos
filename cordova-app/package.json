@@ -5,30 +5,26 @@
   "homepage": "./",
   "cordova": {
     "platforms": [
-      "browser",
-      "ios",
-      "android"
+      "android",
+      "ios"
     ],
     "plugins": {
+      "cordova-plugin-geolocation": {},
       "cordova-plugin-whitelist": {},
-      "cordova-plugin-geolocation": {
-        "GEOLOCATION_USAGE_DESCRIPTION": "Geovation needs to know where you are so it can place your photo in the map"
+      "cordova-plugin-google-analytics": {
+        "GMS_VERSION": "11.0.1"
       },
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-statusbar": {},
-      "cordova-plugin-google-analytics": {},
       "cordova-plugin-camera-with-exif": {
-        "ANDROID_SUPPORT_V4_VERSION": "27.+",
-        "CAMERA_USAGE_DESCRIPTION": "Geovation needs camera access to take pictures.",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": "Geovation needs photo library access to get the picture"
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
       }
     }
   },
   "dependencies": {
-    "cordova-android": "^7.1.4",
-    "cordova-browser": "^5.0.4",
-    "cordova-ios": "^5.0.0",
-    "cordova-plugin-camera-with-exif": "^1.2.5",
+    "cordova-android": "^8.0.0",
+    "cordova-ios": "^4.5.5",
+    "cordova-plugin-camera-with-exif": "^1.2.7",
     "cordova-plugin-geolocation": "^4.0.1",
     "cordova-plugin-google-analytics": "^1.8.6",
     "cordova-plugin-splashscreen": "^5.0.2",
