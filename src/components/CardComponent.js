@@ -56,7 +56,7 @@ class CardComponent extends React.Component {
           <CardContent>
             {Object.keys(photoSelected).map(key => (
               <div key={key}>
-                {key}: <strong>{this.presentField(key,photoSelected[key])}</strong>
+                {key}: <strong> {this.presentField(key,photoSelected[key])}</strong>
               </div>
             ))}
           </CardContent>

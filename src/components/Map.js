@@ -308,6 +308,10 @@ class Map extends Component {
     return "-";
   }
 
+  capitalize(fieldName) {
+    return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+  }
+
   handleRejectClick = () => {
     this.setState({
       confirmDialogOpen: true ,
@@ -406,13 +410,12 @@ class Map extends Component {
               <Card>
                 <CardActionArea>
                   <CardContent>
-
                     {Object.keys(this.props.config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
                       <Typography gutterBottom key={fieldName}>
-                        {fieldName} : {this.formatField(feature.properties[fieldName], fieldName)}
+                        <b>{this.capitalize(fieldName)} : </b>
+                        {this.formatField(feature.properties[fieldName], fieldName)}
                       </Typography>
                     ))}
-
                   </CardContent>
                 </CardActionArea>
                 {this.props.user && this.props.user.isModerator &&
