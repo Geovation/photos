@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import IconButton from '@material-ui/core/IconButton';
 import DoneIcon from '@material-ui/icons/Done';
 import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
-import BackIcon from '@material-ui/icons/ArrowBack';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -12,19 +12,12 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { withStyles } from '@material-ui/core/styles';
 
-import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../utils';
-import PageWrapper from './PageWrapper';
-import dbFirebase from '../dbFirebase';
-import './ModeratorPage.scss';
+import PageWrapper from '../PageWrapper';
+import dbFirebase from '../../dbFirebase';
+import config from '../../custom/config';
+import '../ModeratorPage.scss';
 
 const styles = theme => ({
   checkbox: {
@@ -36,23 +29,7 @@ const styles = theme => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-  },
-  notchTop: {
-    paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
-    isIphoneAndCordova ? theme.spacing(1.5) : null
-  },
-  iconButton: {
-    marginRight: theme.spacing(2),
-  },
-  main: {
-    marginTop: theme.spacing(2),
-  },
-  button: {
-    margin: theme.spacing(1.5),
-  },
-  notchBottom: {
-    paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
-  },
+  }
 });
 
 class FeedbackReportsPage extends Component {
@@ -61,8 +38,6 @@ class FeedbackReportsPage extends Component {
     this.state = {
       isShowAll: false,
       feedbacks: null,
-      feedback: null,
-      isDialogOpen: false
     };
   }
 
@@ -70,17 +45,6 @@ class FeedbackReportsPage extends Component {
     const feedbacks = await dbFirebase.fetchFeedbacks(this.state.isShowAll);
     this.setState({ feedbacks });
   }
-
-  handleItemClick = (feedback) => {
-    this.setState({
-      feedback,
-      isDialogOpen: true
-    });
-  };
-
-  handleDialogClose = () => {
-    this.setState({ isDialogOpen: false });
-  };
 
   handleResolvedClick = async (feedback) => {
     await dbFirebase.toggleUnreadFeedback(feedback.id, feedback.resolved, this.props.user.id);
@@ -98,7 +62,7 @@ class FeedbackReportsPage extends Component {
   }
 
   render() {
-    const { label, handleClose, fullScreen, classes } = this.props;
+    const { user, label, handleClose, classes } = this.props;
 
     return (
       <PageWrapper label={label} handleClose={handleClose}>
@@ -116,7 +80,15 @@ class FeedbackReportsPage extends Component {
                 .map(feedback => (
                   <div key={feedback.id}>
                     <Divider />
-                    <ListItem key={feedback.id} button onClick={() => this.handleItemClick(feedback)}>
+                    <ListItem key={feedback.id} button component={Link}
+                      to={{
+                        pathname: config.PAGES.feedbackDetails.path,
+                        state: {
+                          feedback: feedback,
+                          user: user
+                        }
+                      }}
+                    >
                       <ListItemText disableTypography
                         primary={
                           <Typography className={classes.truncate}
@@ -139,51 +111,9 @@ class FeedbackReportsPage extends Component {
             </List>
           }
         </div>
-
-        {this.state.feedback &&
-          <Dialog
-            fullScreen={fullScreen}
-            open={this.state.isDialogOpen}
-            aria-labelledby="responsive-dialog-title"
-          >
-            <AppBar position='static' className={classes.notchTop}>
-              <Toolbar>
-                <BackIcon className={classes.iconButton} onClick={this.handleDialogClose} />
-                <Typography variant='h6' color='inherit'>Feedback Details</Typography>
-              </Toolbar>
-            </AppBar>
-
-            <DialogContent className={classes.main}>
-              {
-                Object.keys(this.state.feedback).map(key => (
-                  <div key={key} style={{textAlign: 'justify', padding: '5px'}}>
-                    <b>{key + ': ' }</b>
-                    { "" + (this.state.feedback[key].toDate ? this.state.feedback[key].toDate() : this.state.feedback[key])}
-                  </div>
-                ))
-              }
-            </DialogContent>
-
-            <DialogActions>
-              <Button
-                className={classes.button}
-                fullWidth
-                variant='contained'
-                color='secondary'
-                onClick={() => {
-                  this.handleResolvedClick(this.state.feedback);
-                  this.handleDialogClose();
-                }}
-              >
-                {this.state.feedback.resolved ? 'Unsolved' : 'Resolved'}
-              </Button>
-            </DialogActions>
-            <div className={classes.notchBottom}/>
-          </Dialog>
-        }
       </PageWrapper>
     );
   }
 }
 
-export default withMobileDialog()(withStyles(styles)(FeedbackReportsPage));
+export default withStyles(styles)(FeedbackReportsPage);

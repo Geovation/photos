@@ -103,6 +103,10 @@ const PAGES = {
     label: "Feedback Reports",
     icon: <LibraryBooksIcon/>,
     visible: (user, online) => user && user.isModerator
+  },
+  feedbackDetails: {
+    path: "/feedback-details",
+    label: "Feedback Details"
   }
 };
 

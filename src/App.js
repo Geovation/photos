@@ -25,7 +25,8 @@ import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 import TermsDialog from './components/TermsDialog';
 import EmailVerifiedDialog from './components/EmailVerifiedDialog';
-import FeedbackReportsPage from './components/FeedbackReportsPage';
+import FeedbackReportsPage from './components/FeedbackReports/FeedbackReportsPage';
+import FeedbackDetailsPage from './components/FeedbackReports/FeedbackDetailsPage';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
@@ -375,6 +376,8 @@ class App extends Component {
                     handleClose={this.goToMap}
                   />}
                 />
+
+                <Route path={this.props.config.PAGES.feedbackDetails.path} component={FeedbackDetailsPage} />
 
               </Switch>
 
