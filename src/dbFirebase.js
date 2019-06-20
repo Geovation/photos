@@ -136,6 +136,11 @@ async function getUser(id) {
   return fbUser.exists ? fbUser.data() : null;
 }
 
+async function getFeedbackByID(id) {
+  const fbFeedback = await firestore.collection("feedbacks").doc(id).get();
+  return fbFeedback.exists ? { id, ...fbFeedback.data()} : null;
+}
+
 function photosToModerate() {
   return firestore.collection('photos').where('moderated', "==", null).get()
   .then(sn => sn.docs.map(extractPhoto));
@@ -200,6 +205,7 @@ export default {
   fetchUsers,
   fetchFeedbacks,
   getUser,
+  getFeedbackByID,
   savePhoto,
   saveMetadata,
   photosToModerate,
