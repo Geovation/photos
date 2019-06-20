@@ -25,12 +25,12 @@ import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 import TermsDialog from './components/TermsDialog';
 import EmailVerifiedDialog from './components/EmailVerifiedDialog';
-import FeedbackReportsPage from './components/FeedbackReports/FeedbackReportsPage';
 import FeedbackDetailsPage from './components/FeedbackReports/FeedbackDetailsPage';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
 import './App.scss';
+import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
 
 class App extends Component {
   constructor(props){
@@ -335,10 +335,11 @@ class App extends Component {
 
                 { this.state.user && this.state.user.isModerator &&
                   <Route path={this.props.config.PAGES.feedbackReports.path} render={(props) =>
-                    <FeedbackReportsPage {...props}
+                    <FeedbackReportsSubrouter {...props}
+                      config={this.props.config}
                       label={this.props.config.PAGES.feedbackReports.label}
                       user={this.state.user}
-                      handleClose={this.goToMap}
+                      handleClose={this.props.history.goBack}
                     />}
                   />
                 }

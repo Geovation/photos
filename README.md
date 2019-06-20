@@ -37,6 +37,6 @@ And now just merge the changes by hand. Good luck !!!
 
 # Demo
 
-Demo PWA/Mobile app done from Geovation Photos. See a [PWA demo live](https://photos-demo-d4b14.firebaseapp.com)
+Demo PWA/Mobile app done from Geovation Photos. See a [PWA demo live](https://photos-demo-d4b14.web.app)
 
 See more (Documentation)[doc/]

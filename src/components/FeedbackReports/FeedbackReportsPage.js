@@ -36,56 +36,55 @@ class FeedbackReportsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isShowAll: false,
-      feedbacks: null,
+      feedbacks: null
     };
   }
 
   async componentDidMount() {
-    const feedbacks = await dbFirebase.fetchFeedbacks(this.state.isShowAll);
+    const feedbacks = await dbFirebase.fetchFeedbacks(this.props.isShowAll);
     this.setState({ feedbacks });
   }
 
   handleResolvedClick = async (feedback) => {
     await dbFirebase.toggleUnreadFeedback(feedback.id, feedback.resolved, this.props.user.id);
-    const feedbacks = await dbFirebase.fetchFeedbacks(this.state.isShowAll);
+    const feedbacks = await dbFirebase.fetchFeedbacks(this.props.isShowAll);
     this.setState({ feedbacks });
   };
 
   handleCheckboxChange = async (e) => {
     const checked = e.target.checked;
     const feedbacks = await dbFirebase.fetchFeedbacks(checked);
+    this.props.setShowAll(checked);
     this.setState({
-      isShowAll: checked,
       feedbacks
     });
   }
 
   render() {
-    const { user, label, handleClose, classes } = this.props;
+    const { label, handleClose, classes } = this.props;
 
     return (
       <PageWrapper label={label} handleClose={handleClose}>
         <div>
           <FormControlLabel
             className={classes.checkbox}
+            checked={this.props.isShowAll}
             control={<Checkbox onChange={this.handleCheckboxChange}/>}
             label="Show All"
           />
 
           {this.state.feedbacks &&
             <List dense={false}>
-              {this.state.feedbacks.filter(feedback => !feedback.resolved || this.state.isShowAll)
+              {this.state.feedbacks.filter(feedback => !feedback.resolved || this.props.isShowAll)
                 .sort( (a,b) => b.updated.toDate()-a.updated.toDate())
                 .map(feedback => (
                   <div key={feedback.id}>
                     <Divider />
                     <ListItem key={feedback.id} button component={Link}
                       to={{
-                        pathname: config.PAGES.feedbackDetails.path,
+                        pathname: config.PAGES.feedbackReports.path + "/" + feedback.id,
                         state: {
-                          feedback: feedback,
-                          user: user
+                          feedback: feedback
                         }
                       }}
                     >

@@ -10,6 +10,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { withStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../../utils';
 import config from '../../custom/config';
@@ -38,19 +39,38 @@ const page = config.PAGES.feedbackDetails;
 
 class FeedbackDetailsPage extends Component {
 
-  handleClose = () => {
-    window.history.back();
+  constructor(props) {
+    super(props);
+    this.state = {
+      feedback: this.props.location.state && this.props.location.state.feedback
+    }
   }
 
   handleResolvedClick = async (feedback, user) => {
     await dbFirebase.toggleUnreadFeedback(feedback.id, feedback.resolved, user.id);
   }
 
-  render() {
-    const { classes, location, fullScreen } = this.props;
-    const feedback = location.state.feedback;
+  readFeedbacksIfNecessary() {
+    if (!this.state.feedback && this.props.user && this.props.user.isModerator) {
+      dbFirebase.getFeedbackByID(this.props.match.params.id).then(feedback => {
+        this.setState({feedback});
+      });
+    }
+  }
 
-    return(
+  componentDidMount() {
+    this.readFeedbacksIfNecessary();
+  }
+
+  componentDidUpdate() {
+    this.readFeedbacksIfNecessary();
+  }
+
+  render() {
+    const { classes, fullScreen, handleClose, user } = this.props;
+    const feedback = this.state.feedback;
+
+    return (
         <Dialog
           fullScreen={fullScreen}
           open
@@ -58,41 +78,47 @@ class FeedbackDetailsPage extends Component {
         >
           <AppBar position='static' className={classes.notchTop}>
             <Toolbar>
-              <BackIcon className={classes.iconButton} onClick={this.handleClose} />
+              <BackIcon className={classes.iconButton} onClick={handleClose}/>
               <Typography variant='h6' color='inherit'>{page.label}</Typography>
             </Toolbar>
           </AppBar>
 
           <DialogContent className={classes.main}>
-            {
-              Object.keys(feedback).map(key => (
-                <div key={key} style={{textAlign: 'justify', padding: '5px'}}>
-                  <b>{key + ': ' }</b>
-                  { "" + (feedback[key].toDate ? feedback[key].toDate() : feedback[key])}
-                </div>
-              ))
+            {feedback ?
+                Object.keys(feedback).map(key => (
+                  <div key={key} style={{textAlign: 'justify', padding: '5px'}}>
+                    <b>{key + ': '}</b>
+                    {"" + (feedback[key].toDate ? feedback[key].toDate() : feedback[key])}
+                  </div>
+                ))
+              :
+              <Dialog open PaperProps={{style: {backgroundColor: 'transparent', boxShadow: 'none'}}}>
+                <CircularProgress color='secondary'/>
+              </Dialog>
+
             }
           </DialogContent>
 
           <DialogActions>
             <Button
+              disabled={!feedback}
               className={classes.button}
               fullWidth
               variant='contained'
               color='secondary'
-              onClick={async() => {
-                await this.handleResolvedClick(feedback, location.state.user);
-                this.handleClose();
+              onClick={async () => {
+                await this.handleResolvedClick(feedback, user);
+                handleClose();
               }}
             >
-              {feedback.resolved ? 'Unsolved' : 'Resolved'}
+              {feedback && feedback.resolved ? 'Unsolved' : 'Resolved'}
             </Button>
           </DialogActions>
           <div className={classes.notchBottom}/>
         </Dialog>
-      );
+        );
+      }
 
-  }
 }
 
 export default withMobileDialog()(withStyles(styles)(FeedbackDetailsPage));
