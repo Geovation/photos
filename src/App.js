@@ -378,7 +378,6 @@ class App extends Component {
                   />}
                 />
 
-                <Route path={this.props.config.PAGES.feedbackDetails.path} component={FeedbackDetailsPage} />
 
               </Switch>
 
