@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { gtagEvent } from '../gtag.js';
+import * as localforage from "localforage";
 
 import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
@@ -10,27 +11,16 @@ import GpsOff from '@material-ui/icons/GpsOff';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import Dehaze from '@material-ui/icons/Dehaze';
 import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import * as localforage from "localforage";
-import CardComponent from './CardComponent';
-
-import dbFirebase from '../dbFirebase';
-
-import './Map.scss';
-import { isIphoneWithNotchAndCordova } from '../utils';
 import { withStyles } from '@material-ui/core/styles';
+
+import dbFirebase from '../../dbFirebase';
+import { gtagEvent } from '../../gtag.js';
+import { isIphoneWithNotchAndCordova } from '../../utils';
+import './Map.scss';
+
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -64,7 +54,6 @@ class Map extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      openDialog: false,
       feature: {
         properties: {
           updated: {}
@@ -209,7 +198,7 @@ class Map extends Component {
     });
 
     this.map.on('zoom', e => {
-      console.log(e);
+      //console.log(e);
       const zoom = Math.round(this.map.getZoom());
       const milliSeconds = 1 * 1000;
       const timeLapsed = new Date().getTime() - this.prevZoomTime;
@@ -260,11 +249,7 @@ class Map extends Component {
     });
   }
 
-  handleDialogClose = () => {
-    this.setState({ openDialog: false });
-  }
-
-  updateRenderedThumbails = (visibleFeatures) =>{
+  updateRenderedThumbails = (visibleFeatures) => {
     _.forEach(this.renderedThumbnails, (thumbnailUrl, id) => {
       const exists = !!_.find(visibleFeatures, (feature) => feature.properties.id === id);
       // if it !exist => remove marker object - delete key from dictionary
@@ -283,7 +268,14 @@ class Map extends Component {
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
           gtagEvent('Photo Opened', 'Map', feature.properties.id);
-          this.setState({ openDialog: true, feature });
+          return ( <Link to={{
+            pathname: 'photoID',
+            state: {
+              feature: feature,
+              user: this.props.user,
+              placeholderImage: placeholderImage
+            }
+          }} />);
         });
         //create marker
         const marker = new mapboxgl.Marker(el)
@@ -297,19 +289,6 @@ class Map extends Component {
 
   componentWillUnmount() {
     if (this.map.remove) { this.map.remove(); }
-  }
-
-  formatField(value, fieldName) {
-    const formater = this.props.config.PHOTO_ZOOMED_FIELDS[fieldName];
-    if (value) {
-      return formater(value);
-    }
-
-    return "-";
-  }
-
-  capitalize(fieldName) {
-    return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
   }
 
   handleRejectClick = () => {
@@ -370,77 +349,38 @@ class Map extends Component {
     }
 
     const { location, classes } = this.props;
-    const feature = this.state.feature;
     const gpsOffline = !location.online;
     const gpsDisabled = !location.updated;
 
     return (
       <div className={"geovation-map"} style={{ visibility: this.props.visible ? "visible" : "hidden" }}>
-          <div id='map' className="map"></div>
+        <div id='map' className="map"></div>
 
-          <Fab className={classes.location} size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
-            {gpsOffline ? <GpsOff/> : <GpsFixed/>}
-          </Fab>
+        <Fab className={classes.location} size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+          {gpsOffline ? <GpsOff/> : <GpsFixed/>}
+        </Fab>
 
-          {!this.props.embeddable &&
-            <div>
-              <Fab className={classes.camera} color="secondary" onClick={this.props.handlePhotoClick}>
-                <AddAPhotoIcon />
-              </Fab>
-              <Dehaze className={classes.burger} onClick={this.props.toggleLeftDrawer(true)} />
-            </div>
-          }
+        {!this.props.embeddable &&
+          <div>
+            <Fab className={classes.camera} color="secondary" onClick={this.props.handlePhotoClick}>
+              <AddAPhotoIcon />
+            </Fab>
+            <Dehaze className={classes.burger} onClick={this.props.toggleLeftDrawer(true)} />
+          </div>
+        }
 
-          <Dialog open={this.state.confirmDialogOpen} onClose={this.handleConfirmDialogClose}>
-            <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
-            <DialogActions>
-              <Button onClick={this.handleConfirmDialogClose} color='secondary'>
-                Cancel
-              </Button>
-              <Button onClick={this.state.confirmDialogHandleOk} color='secondary'>
-                Ok
-              </Button>
-            </DialogActions>
-          </Dialog>
-          <Dialog open={this.state.openDialog} onClose={this.handleDialogClose}>
-            <DialogContent>
-              <div style={{ textAlign: 'center' }}>
-                <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={''} src={feature.properties.main}/>
-              </div>
-              <Card>
-                <CardActionArea>
-                  <CardContent>
-                    {Object.keys(this.props.config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
-                      <Typography gutterBottom key={fieldName}>
-                        <b>{this.capitalize(fieldName)} : </b>
-                        {this.formatField(feature.properties[fieldName], fieldName)}
-                      </Typography>
-                    ))}
-                  </CardContent>
-                </CardActionArea>
-                {this.props.user && this.props.user.isModerator &&
-                  <div>
-                    <Divider/>
-                    <div>
-                      <ExpansionPanel>
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                          <Typography className={classes.heading}>Moderator Details</Typography>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
-                          <CardComponent
-                            photoSelected={feature.properties}
-                            handleRejectClick={this.handleRejectClick}
-                          />
-                        </ExpansionPanelDetails>
-                      </ExpansionPanel>
-                    </div>
-                  </div>
-                }
-              </Card>
+        <Dialog open={this.state.confirmDialogOpen} onClose={this.handleConfirmDialogClose}>
+          <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
+          <DialogActions>
+            <Button onClick={this.handleConfirmDialogClose} color='secondary'>
+              Cancel
+            </Button>
+            <Button onClick={this.state.confirmDialogHandleOk} color='secondary'>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
 
-            </DialogContent>
-
-          </Dialog>
       </div>
     );
   }

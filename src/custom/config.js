@@ -109,6 +109,10 @@ const PAGES = {
   feedbackDetails: {
     path: "/feedback-details",
     label: "Feedback Details"
+  },
+  displayPhoto: {
+    path: "/photo",
+    label: "photo"
   }
 };
 
