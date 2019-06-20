@@ -40,6 +40,7 @@ const styles = theme => ({
 
 class DisplayPhoto extends Component {
 
+  // TODO: change this
   handleClose = () => {
     window.history.back();
   }
@@ -69,6 +70,10 @@ class DisplayPhoto extends Component {
   render() {
     const { location, classes, fullScreen } = this.props;
     const { feature, user, placeholderImage } = location.state;
+
+
+    console.log(this.props)
+    debugger
 
     return(
       <Dialog

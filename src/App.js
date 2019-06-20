@@ -25,7 +25,6 @@ import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 import TermsDialog from './components/TermsDialog';
 import EmailVerifiedDialog from './components/EmailVerifiedDialog';
-import FeedbackReportsPage from './components/FeedbackReportsPage';
 import DisplayPhoto from './components/MapPage/DisplayPhoto';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
@@ -384,8 +383,7 @@ class App extends Component {
                   />}
                 />
 
-
-                <Route path={this.props.config.PAGES.displayPhoto.path} component={DisplayPhoto} />
+                <Route path={`${this.props.config.PAGES.displayPhoto.path}/:id`} component={DisplayPhoto} />
 
               </Switch>
 
@@ -395,7 +393,8 @@ class App extends Component {
               <WelcomePage handleClose={this.handleWelcomePageClose}/>
             }
 
-            <Map location={this.state.location}
+            <Map history={this.props.history}
+                 location={this.state.location}
                  visible={[this.props.config.PAGES.map.path, this.props.config.PAGES.embeddable.path].includes(this.props.history.location.pathname)}
                  geojson={this.state.geojson}
                  user={this.state.user}

@@ -111,8 +111,8 @@ const PAGES = {
     label: "Feedback Details"
   },
   displayPhoto: {
-    path: "/photo",
-    label: "photo"
+    path: "/photos",
+    label: "photos"
   }
 };
 

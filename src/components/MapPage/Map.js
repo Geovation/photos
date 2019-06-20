@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+
 import { Link } from 'react-router-dom';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
@@ -53,6 +55,9 @@ class Map extends Component {
 
   constructor(props) {
     super(props);
+
+    debugger
+
     this.state = {
       feature: {
         properties: {
@@ -268,14 +273,15 @@ class Map extends Component {
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
           gtagEvent('Photo Opened', 'Map', feature.properties.id);
-          return ( <Link to={{
-            pathname: 'photoID',
-            state: {
-              feature: feature,
-              user: this.props.user,
-              placeholderImage: placeholderImage
-            }
-          }} />);
+          const location = {
+              pathname: `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`,
+              state: {
+                feature: feature,
+                user: this.props.user,
+                placeholderImage: placeholderImage
+              }
+            };
+          this.props.history.push(location);
         });
         //create marker
         const marker = new mapboxgl.Marker(el)
