@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-
-import { Link } from 'react-router-dom';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -55,9 +52,6 @@ class Map extends Component {
 
   constructor(props) {
     super(props);
-
-    debugger
-
     this.state = {
       feature: {
         properties: {
@@ -278,7 +272,10 @@ class Map extends Component {
               state: {
                 feature: feature,
                 user: this.props.user,
-                placeholderImage: placeholderImage
+                placeholderImage: placeholderImage,
+                config: this.props.config,
+                handleRejectClick: this.handleRejectClick,
+                handleClose: this.handlePhotoPageClose
               }
             };
           this.props.history.push(location);
@@ -307,11 +304,11 @@ class Map extends Component {
 
   rejectPhoto = async () => {
     const id = this.state.feature.properties.id;  // selected thumbnail id
-
+ debugger
     // close dialogs
     this.handleConfirmDialogClose();
-    this.handleDialogClose();
-
+    if (this.props.history.location.path !== this.props.config.PAGES.map.path) this.handlePhotoPageClose();
+debugger
     // unpublish photo in firestore
     try {
       await dbFirebase.rejectPhoto(this.state.feature.properties.id, this.props.user ? this.props.user.id : null);
@@ -343,6 +340,10 @@ class Map extends Component {
 
   handleConfirmDialogClose = () => {
     this.setState({ confirmDialogOpen: false });
+  }
+
+  handlePhotoPageClose = () => {
+    this.props.history.goBack();
   }
 
   render() {

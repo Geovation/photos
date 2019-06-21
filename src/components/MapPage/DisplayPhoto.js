@@ -18,7 +18,6 @@ import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { withStyles } from '@material-ui/core/styles';
 
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../../utils';
-import config from '../../custom/config';
 import CardComponent from '../CardComponent';
 
 const styles = theme => ({
@@ -37,25 +36,10 @@ const styles = theme => ({
   },
 });
 
-
 class DisplayPhoto extends Component {
 
-  // TODO: change this
-  handleClose = () => {
-    window.history.back();
-  }
-
-  handleRejectClick = () => {
-    console.log('what');
-    // this.setState({
-    //   confirmDialogOpen: true ,
-    //   confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
-    //   confirmDialogHandleOk: this.rejectPhoto
-    // });
-  };
-
   formatField(value, fieldName) {
-    const formater = this.props.config.PHOTO_ZOOMED_FIELDS[fieldName];
+    const formater = this.props.location.state.config.PHOTO_ZOOMED_FIELDS[fieldName];
     if (value) {
       return formater(value);
     }
@@ -69,11 +53,7 @@ class DisplayPhoto extends Component {
 
   render() {
     const { location, classes, fullScreen } = this.props;
-    const { feature, user, placeholderImage } = location.state;
-
-
-    console.log(this.props)
-    debugger
+    const { feature, user, placeholderImage, config, handleRejectClick, handleClose } = location.state;
 
     return(
       <Dialog
@@ -83,7 +63,7 @@ class DisplayPhoto extends Component {
       >
         <AppBar position='static' className={classes.notchTop}>
           <Toolbar>
-            <BackIcon className={classes.iconButton} onClick={this.handleClose} />
+            <BackIcon className={classes.iconButton} onClick={handleClose} />
             <Typography variant='h6' color='inherit'>{config.PAGES.displayPhoto.label}</Typography>
           </Toolbar>
         </AppBar>
@@ -97,7 +77,7 @@ class DisplayPhoto extends Component {
               <CardContent>
                 {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
                   <Typography gutterBottom key={fieldName}>
-                    <b>{this.capitalize(fieldName)} : </b>
+                    <b>{this.capitalize(fieldName)}: </b>
                     {this.formatField(feature.properties[fieldName], fieldName)}
                   </Typography>
                 ))}
@@ -114,7 +94,9 @@ class DisplayPhoto extends Component {
                     <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
                       <CardComponent
                         photoSelected={feature.properties}
-                        handleRejectClick={this.handleRejectClick}
+                        handleRejectClick={() => {
+                          handleRejectClick();
+                        }}
                       />
                     </ExpansionPanelDetails>
                   </ExpansionPanel>
