@@ -304,11 +304,11 @@ class Map extends Component {
 
   rejectPhoto = async () => {
     const id = this.state.feature.properties.id;  // selected thumbnail id
- debugger
+
     // close dialogs
     this.handleConfirmDialogClose();
     if (this.props.history.location.path !== this.props.config.PAGES.map.path) this.handlePhotoPageClose();
-debugger
+
     // unpublish photo in firestore
     try {
       await dbFirebase.rejectPhoto(this.state.feature.properties.id, this.props.user ? this.props.user.id : null);

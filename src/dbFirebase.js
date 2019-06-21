@@ -141,11 +141,15 @@ async function getFeedbackByID(id) {
   return fbFeedback.exists ? { id, ...fbFeedback.data()} : null;
 }
 
+async function getPhotoByID(id) {
+  const fbPhoto =  await firestore.collection("photos").doc(id).get();
+  return fbPhoto.exists ? fbPhoto : null;
+}
+
 function photosToModerate() {
   return firestore.collection('photos').where('moderated', "==", null).get()
   .then(sn => sn.docs.map(extractPhoto));
 }
-
 
 async function writeModeration(photoId,userId, published) {
   if (typeof published !== "boolean") {
@@ -157,7 +161,6 @@ async function writeModeration(photoId,userId, published) {
     moderator_id: userId
   });
 }
-
 
 async function disconnect() {
   return firebaseApp.delete();
@@ -206,6 +209,7 @@ export default {
   fetchFeedbacks,
   getUser,
   getFeedbackByID,
+  getPhotoByID,
   savePhoto,
   saveMetadata,
   photosToModerate,

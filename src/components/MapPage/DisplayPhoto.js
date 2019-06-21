@@ -19,6 +19,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../../utils';
 import CardComponent from '../CardComponent';
+import dbFirebase from '../../dbFirebase';
 
 const styles = theme => ({
   notchTop: {
@@ -38,6 +39,13 @@ const styles = theme => ({
 
 class DisplayPhoto extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      feature: this.props.location.state && this.props.location.state.feature
+    }
+  }
+
   formatField(value, fieldName) {
     const formater = this.props.location.state.config.PHOTO_ZOOMED_FIELDS[fieldName];
     if (value) {
@@ -49,6 +57,14 @@ class DisplayPhoto extends Component {
 
   capitalize(fieldName) {
     return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+  }
+
+  componentDidMount() {
+    if (!this.state.feature) {
+      dbFirebase.getPhotoByID(this.props.match.params.id).then(feature => {
+        this.setState({ feature });
+      });
+    }
   }
 
   render() {
@@ -94,9 +110,7 @@ class DisplayPhoto extends Component {
                     <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
                       <CardComponent
                         photoSelected={feature.properties}
-                        handleRejectClick={() => {
-                          handleRejectClick();
-                        }}
+                        handleRejectClick={handleRejectClick}
                       />
                     </ExpansionPanelDetails>
                   </ExpansionPanel>

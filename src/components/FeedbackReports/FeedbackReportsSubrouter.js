@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import '../ModeratorPage.scss';
 import FeedbackReportsPage from "./FeedbackReportsPage";
 import FeedbackDetailsPage from "./FeedbackDetailsPage";
 
