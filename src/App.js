@@ -56,6 +56,9 @@ class App extends Component {
 
     this.geoid = null;
     this.domRefInput = {};
+
+    this.VISIBILITY_REGEX = new RegExp('(^\/$|^' + this.props.config.PAGES.displayPhoto.path + '\/|^' + this.props.config.PAGES.embeddable.path + ')', 'g')
+
   }
 
   openPhotoPage = (file) => {
@@ -395,7 +398,7 @@ class App extends Component {
 
             <Map history={this.props.history}
                  location={this.state.location}
-                 visible={[this.props.config.PAGES.map.path, this.props.config.PAGES.embeddable.path].includes(this.props.history.location.pathname)}
+                 visible={this.props.history.location.pathname.match(this.VISIBILITY_REGEX)}
                  geojson={this.state.geojson}
                  user={this.state.user}
                  config={this.props.config}
