@@ -25,7 +25,6 @@ import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 import TermsDialog from './components/TermsDialog';
 import EmailVerifiedDialog from './components/EmailVerifiedDialog';
-import FeedbackDetailsPage from './components/FeedbackReports/FeedbackDetailsPage';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';

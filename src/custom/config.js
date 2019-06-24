@@ -8,6 +8,8 @@ import HelpIcon from '@material-ui/icons/Help';
 import FeedbackIcon from '@material-ui/icons/Feedback';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
+import * as _ from 'lodash';
+
 import styles from './config.scss';
 import enums from '../types/enums';
 
@@ -153,7 +155,7 @@ export default {
       title: 'Description',
       type: enums.TYPES.string,
       placeholder: 'eg. whatever',
-      regexValidation: '^\\w+( \\w+)*$'
+      regexValidation: '^([ ]*\\w+[ ]*)+$'
     },
     notes: {
       component : TitleTextField,
@@ -171,6 +173,12 @@ export default {
       placeholder: 'Add photo categories',
       data: data,
       noOptionsMessage: 'No more categories',
+      sanitize: value => {
+        _.forEach(value, category => {
+          category.brand = category.brand.replace && category.brand.replace(/\s+/g, ' ').trim();
+        });
+        return value;
+      },
 
       subfields: {
         pieces: {
@@ -188,7 +196,7 @@ export default {
           title: 'Brand',
           type: enums.TYPES.string,
           placeholder: 'eg. whatever',
-          regexValidation: '^\\w+( \\w+)*$'
+          regexValidation: '^([ ]*\\w+[ ]*)+$'
         },
       }
     },

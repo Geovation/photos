@@ -177,7 +177,12 @@ class PhotoPage extends Component {
     let filteredFields = {};
     Object.entries(fieldsJustValues).forEach(([key,value]) =>{
        if(value){
-         filteredFields[key] = value;
+         filteredFields[key] = typeof value === 'string' ? value.trim() : value;
+
+         const fieldDefinition = config.PHOTO_FIELDS[key];
+         if (fieldDefinition.sanitize) {
+           fieldDefinition.sanitize(value);
+         }
        }
      });
 
