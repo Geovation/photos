@@ -110,7 +110,7 @@ class DisplayPhoto extends Component {
                       <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
                         <CardComponent
                           photoSelected={this.state.feature.properties}
-                          handleRejectClick={handleRejectClick}
+                          handleRejectClick={() => handleRejectClick(this.state.feature.properties.id)}
                         />
                       </ExpansionPanelDetails>
                     </ExpansionPanel>

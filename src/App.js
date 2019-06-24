@@ -391,7 +391,7 @@ class App extends Component {
                     user={this.state.user}
                     placeholderImage={placeholderImage}
                     config={config}
-                    handleRejectClick={() => alert('use main page to access photos')}
+                    handleRejectClick={() => alert('Photos can only be deleted when access from main page.')}
                     handleClose={this.props.history.goBack}
                   />}
                 />

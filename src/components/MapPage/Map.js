@@ -290,24 +290,22 @@ class Map extends Component {
     if (this.map.remove) { this.map.remove(); }
   }
 
-  handleRejectClick = () => {
+  handleRejectClick = (id) => {
     this.setState({
       confirmDialogOpen: true ,
       confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
-      confirmDialogHandleOk: this.rejectPhoto
+      confirmDialogHandleOk: () => this.rejectPhoto(id)
     });
   };
 
-  rejectPhoto = async () => {
-    const id = this.state.feature.properties.id;  // selected thumbnail id
-
+  rejectPhoto = async (id) => {
     // close dialogs
     this.handleConfirmDialogClose();
     if (this.props.history.location.path !== this.props.config.PAGES.map.path) this.handlePhotoPageClose();
 
     // unpublish photo in firestore
     try {
-      await dbFirebase.rejectPhoto(this.state.feature.properties.id, this.props.user ? this.props.user.id : null);
+      await dbFirebase.rejectPhoto(id, this.props.user ? this.props.user.id : null);
 
       const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
       const geojson = {
