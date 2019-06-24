@@ -157,11 +157,11 @@ export default {
       placeholder: 'eg. whatever',
       regexValidation: '^([ ]*\\w+[ ]*)+$'
     },
-    notes: {
+    number: {
       component : TitleTextField,
       inputProps: { min: 0, step: 1},
-      name: 'notes',
-      title: 'Notes',
+      name: 'number',
+      title: 'Number',
       type: enums.TYPES.number,
       placeholder: 'eg. 1',
       regexValidation: '^[0-9]+'

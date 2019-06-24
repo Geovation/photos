@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+
+import * as _ from 'lodash';
 
 import enums from '../../types/enums';
 
@@ -13,8 +16,10 @@ const styles = theme => ({
 });
 class TitleTextField extends Component {
 
-  dataFormater = value =>{
-    return this.props.field.type === enums.TYPES.number ? Number(value) : String(value);
+  dataFormater = value => {
+    value = (value.trim && value.trim()) || value;
+    const valueTyped = this.props.field.type === enums.TYPES.number ? Number(value) : String(value);
+    return _.isEmpty(value) ? value :  valueTyped;
   }
 
   onChangeHandler = (e) => {
