@@ -57,8 +57,7 @@ class App extends Component {
     this.geoid = null;
     this.domRefInput = {};
 
-    this.VISIBILITY_REGEX = new RegExp('(^\/$|^' + this.props.config.PAGES.displayPhoto.path + '\/|^' + this.props.config.PAGES.embeddable.path + ')', 'g')
-
+    this.VISIBILITY_REGEX = new RegExp('(^/$|^' + this.props.config.PAGES.displayPhoto.path + '/|^' + this.props.config.PAGES.embeddable.path + ')', 'g');
   }
 
   openPhotoPage = (file) => {
@@ -98,7 +97,6 @@ class App extends Component {
       }
     }
   }
-
 
   handleDialogClose = () => {
     this.setState({ dialogOpen : false})
@@ -188,7 +186,7 @@ class App extends Component {
     this.setState({ loginLogoutDialogOpen:false});
   };
 
-    handlePhotoClick = () => {
+  handlePhotoClick = () => {
 
     if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
           // TODO: show popup with message saying that the user needs an account for this feature
@@ -286,7 +284,7 @@ class App extends Component {
   }
 
   render() {
-    const { fields } = this.props;
+    const { fields, config } = this.props;
 
     return (
       <div className='geovation-app'>
@@ -303,26 +301,26 @@ class App extends Component {
           <main className='content'>
 
               <Switch>
-                {this.props.config.CUSTOM_PAGES.map( (CustomPage,index) => (
+                {config.CUSTOM_PAGES.map( (CustomPage,index) => (
                   !!CustomPage.page &&
                     <Route key={index} path={CustomPage.path}
                       render={(props) => <CustomPage.page {...props} handleClose={this.goToMap} label={CustomPage.label}/>}
                     />
                 ))}
-                <Route path={this.props.config.PAGES.about.path} render={(props) =>
+                <Route path={config.PAGES.about.path} render={(props) =>
                   <AboutPage {...props}
                     label={this.props.config.PAGES.about.label}
                     handleClose={this.goToMap}
                   />}
                 />
-                <Route path={this.props.config.PAGES.tutorial.path} render={(props) =>
+                <Route path={config.PAGES.tutorial.path} render={(props) =>
                   <TutorialPage {...props}
                     label={this.props.config.PAGES.tutorial.label}
                     handleClose={this.goToMap}
                   />}
                 />
 
-                <Route path={this.props.config.PAGES.leaderboard.path} render={(props) =>
+                <Route path={config.PAGES.leaderboard.path} render={(props) =>
                   <LeaderboardPage {...props}
                     config={this.props.config}
                     label={this.props.config.PAGES.leaderboard.label}
@@ -352,7 +350,7 @@ class App extends Component {
                   />
                 }
 
-                <Route path={this.props.config.PAGES.photos.path} render={(props) =>
+                <Route path={config.PAGES.photos.path} render={(props) =>
                   <PhotoPage {...props}
                     label={this.props.config.PAGES.photos.label}
                     file={this.state.file}
@@ -376,7 +374,7 @@ class App extends Component {
                   />
                 }
 
-                <Route path={this.props.config.PAGES.writeFeedback.path} render={(props) =>
+                <Route path={config.PAGES.writeFeedback.path} render={(props) =>
                   <WriteFeedbackPage {...props}
                     label={this.props.config.PAGES.writeFeedback.label}
                     user={this.state.user}
@@ -386,12 +384,13 @@ class App extends Component {
                   />}
                 />
 
-                <Route path={`${this.props.config.PAGES.displayPhoto.path}/:id`} component={DisplayPhoto} />
+                <Route path={`${config.PAGES.displayPhoto.path}/:id`} component={DisplayPhoto}
+/>
 
               </Switch>
 
 
-            { !this.state.welcomeShown && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
+            { !this.state.welcomeShown && this.props.history.location.pathname !== config.PAGES.embeddable.path &&
               this.state.termsAccepted &&
               <WelcomePage handleClose={this.handleWelcomePageClose}/>
             }
@@ -401,8 +400,8 @@ class App extends Component {
                  visible={this.props.history.location.pathname.match(this.VISIBILITY_REGEX)}
                  geojson={this.state.geojson}
                  user={this.state.user}
-                 config={this.props.config}
-                 embeddable={this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
+                 config={config}
+                 embeddable={this.props.history.location.pathname === config.PAGES.embeddable.path}
                  handlePhotoClick={this.handlePhotoClick}
                  toggleLeftDrawer={this.toggleLeftDrawer}
             />
