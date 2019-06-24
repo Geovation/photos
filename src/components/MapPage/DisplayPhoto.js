@@ -47,7 +47,7 @@ class DisplayPhoto extends Component {
   }
 
   formatField(value, fieldName) {
-    const formater = this.props.location.state.config.PHOTO_ZOOMED_FIELDS[fieldName];
+    const formater = this.props.config.PHOTO_ZOOMED_FIELDS[fieldName];
     if (value) {
       return formater(value);
     }
@@ -59,17 +59,17 @@ class DisplayPhoto extends Component {
     return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     if (!this.state.feature) {
-      dbFirebase.getPhotoByID(this.props.match.params.id).then(feature => {
+      await dbFirebase.getPhotoByID(this.props.match.params.id).then(feature => {
         this.setState({ feature });
       });
     }
   }
 
   render() {
-    const { location, classes, fullScreen } = this.props;
-    const { feature, user, placeholderImage, config, handleRejectClick, handleClose } = location.state;
+    const { user, config, placeholderImage, handleClose, location, classes, fullScreen } = this.props;
+    const handleRejectClick = location.state ? location.state.handleRejectClick : this.props.handleRejectClick;
 
     return(
       <Dialog
@@ -83,44 +83,46 @@ class DisplayPhoto extends Component {
             <Typography variant='h6' color='inherit'>{config.PAGES.displayPhoto.label}</Typography>
           </Toolbar>
         </AppBar>
-
-        <DialogContent>
-          <div style={{ textAlign: 'center' }}>
-            <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={''} src={feature.properties.main}/>
-          </div>
-          <Card>
-            <CardActionArea>
-              <CardContent>
-                {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
-                  <Typography gutterBottom key={fieldName}>
-                    <b>{this.capitalize(fieldName)}: </b>
-                    {this.formatField(feature.properties[fieldName], fieldName)}
-                  </Typography>
-                ))}
-              </CardContent>
-            </CardActionArea>
-            {user && user.isModerator &&
-              <div>
-                <Divider/>
+        { this.state.feature &&
+          <DialogContent>
+            <div style={{ textAlign: 'center' }}>
+              <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={''} src={this.state.feature.properties.main}/>
+            </div>
+            <Card>
+              <CardActionArea>
+                <CardContent>
+                  {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
+                    <Typography gutterBottom key={fieldName}>
+                      <b>{this.capitalize(fieldName)}: </b>
+                      {this.formatField(this.state.feature.properties[fieldName], fieldName)}
+                    </Typography>
+                  ))}
+                </CardContent>
+              </CardActionArea>
+              {user && user.isModerator &&
                 <div>
-                  <ExpansionPanel>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography className={classes.heading}>Moderator Details</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
-                      <CardComponent
-                        photoSelected={feature.properties}
-                        handleRejectClick={handleRejectClick}
-                      />
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
+                  <Divider/>
+                  <div>
+                    <ExpansionPanel>
+                      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography className={classes.heading}>Moderator Details</Typography>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
+                        <CardComponent
+                          photoSelected={this.state.feature.properties}
+                          handleRejectClick={handleRejectClick}
+                        />
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                  </div>
                 </div>
-              </div>
-            }
-          </Card>
-
-        </DialogContent>
-
+              }
+            </Card>
+          </DialogContent>
+        }
+        { this.state.feature === null &&
+          <h4>Error!!! No item found at the given url</h4>
+        }
       </Dialog>
     );
   }

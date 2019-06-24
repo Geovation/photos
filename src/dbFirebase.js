@@ -143,7 +143,21 @@ async function getFeedbackByID(id) {
 
 async function getPhotoByID(id) {
   const fbPhoto =  await firestore.collection("photos").doc(id).get();
-  return fbPhoto.exists ? fbPhoto : null;
+  const photo = extractPhoto(fbPhoto);
+  if(fbPhoto.exists) {
+    return {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          photo.location.longitude,
+          photo.location.latitude
+        ]
+      },
+      "properties": photo
+    };
+  }
+  return null;
 }
 
 function photosToModerate() {

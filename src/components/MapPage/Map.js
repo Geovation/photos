@@ -271,11 +271,7 @@ class Map extends Component {
               pathname: `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`,
               state: {
                 feature: feature,
-                user: this.props.user,
-                placeholderImage: placeholderImage,
-                config: this.props.config,
                 handleRejectClick: this.handleRejectClick,
-                handleClose: this.handlePhotoPageClose
               }
             };
           this.props.history.push(location);

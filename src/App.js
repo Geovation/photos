@@ -31,6 +31,7 @@ import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
 import './App.scss';
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
+const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 class App extends Component {
   constructor(props){
@@ -384,8 +385,16 @@ class App extends Component {
                   />}
                 />
 
-                <Route path={`${config.PAGES.displayPhoto.path}/:id`} component={DisplayPhoto}
-/>
+                <Route path={`${config.PAGES.displayPhoto.path}/:id`} render={(props) =>
+                  <DisplayPhoto
+                    {...props}
+                    user={this.state.user}
+                    placeholderImage={placeholderImage}
+                    config={config}
+                    handleRejectClick={() => alert('use main page to access photos')}
+                    handleClose={this.props.history.goBack}
+                  />}
+                />
 
               </Switch>
 
