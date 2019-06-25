@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 import firebaseApp from './firebaseInit.js';
 import config from "./custom/config";
@@ -7,6 +7,8 @@ import * as localforage from "localforage";
 
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
+
+// TODO: add caching
 
 function extractPhoto(doc) {
   const prefix = `https://storage.googleapis.com/${storageRef.location.bucket}/photos/${doc.id}`;

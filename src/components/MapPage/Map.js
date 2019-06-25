@@ -267,6 +267,7 @@ class Map extends Component {
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
           gtagEvent('Photo Opened', 'Map', feature.properties.id);
+          // TODO: just call a handler from the props. (move it to the app)
           const location = {
               pathname: `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`,
               state: {
@@ -290,6 +291,7 @@ class Map extends Component {
     if (this.map.remove) { this.map.remove(); }
   }
 
+  // TODO: move this to App
   handleRejectClick = (id) => {
     this.setState({
       confirmDialogOpen: true ,
@@ -298,6 +300,7 @@ class Map extends Component {
     });
   };
 
+  // TODO: move this to App
   rejectPhoto = async (id) => {
     // close dialogs
     this.handleConfirmDialogClose();
@@ -336,6 +339,7 @@ class Map extends Component {
     this.setState({ confirmDialogOpen: false });
   }
 
+  // TODO: move to app
   handlePhotoPageClose = () => {
     this.props.history.goBack();
   }

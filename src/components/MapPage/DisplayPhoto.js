@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
-import BackIcon from '@material-ui/icons/ArrowBack';
+import _ from 'lodash';
+
+import BackIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Card from '@material-ui/core/Card';
@@ -16,6 +18,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import { withStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../../utils';
 import CardComponent from '../CardComponent';
@@ -55,10 +58,6 @@ class DisplayPhoto extends Component {
     return "-";
   }
 
-  capitalize(fieldName) {
-    return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
-  }
-
   async componentDidMount() {
     if (!this.state.feature) {
       await dbFirebase.getPhotoByID(this.props.match.params.id).then(feature => {
@@ -70,6 +69,13 @@ class DisplayPhoto extends Component {
   render() {
     const { user, config, placeholderImage, handleClose, location, classes, fullScreen } = this.props;
     const handleRejectClick = location.state ? location.state.handleRejectClick : this.props.handleRejectClick;
+
+    const feature = {
+      properties: {
+        main: ""
+      },
+      ...this.state.feature
+    }
 
     return(
       <Dialog
@@ -83,42 +89,45 @@ class DisplayPhoto extends Component {
             <Typography variant='h6' color='inherit'>{config.PAGES.displayPhoto.label}</Typography>
           </Toolbar>
         </AppBar>
-        { this.state.feature &&
-          <DialogContent>
-            <div style={{ textAlign: 'center' }}>
-              <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={''} src={this.state.feature.properties.main}/>
-            </div>
-            <Card>
-              <CardActionArea>
-                <CardContent>
-                  {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
-                    <Typography gutterBottom key={fieldName}>
-                      <b>{this.capitalize(fieldName)}: </b>
-                      {this.formatField(this.state.feature.properties[fieldName], fieldName)}
-                    </Typography>
-                  ))}
-                </CardContent>
-              </CardActionArea>
-              {user && user.isModerator &&
+
+        <DialogContent>
+          <div style={{ textAlign: 'center' }}>
+            <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={''} src={feature.properties.main}/>
+          </div>
+          <Card>
+            <CardActionArea>
+              <CardContent>
+                {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
+                  <Typography gutterBottom key={fieldName}>
+                    <b>{_.capitalize(fieldName)}: </b>
+                    {this.formatField(feature.properties[fieldName], fieldName)}
+                  </Typography>
+                ))}
+              </CardContent>
+            </CardActionArea>
+            {user && user.isModerator &&
+              <div>
+                <Divider/>
                 <div>
-                  <Divider/>
-                  <div>
-                    <ExpansionPanel>
-                      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography className={classes.heading}>Moderator Details</Typography>
-                      </ExpansionPanelSummary>
-                      <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
-                        <CardComponent
-                          photoSelected={this.state.feature.properties}
-                          handleRejectClick={() => handleRejectClick(this.state.feature.properties.id)}
-                        />
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                  </div>
+                  <ExpansionPanel>
+                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography className={classes.heading}>Moderator Details</Typography>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
+                      <CardComponent
+                        photoSelected={feature.properties}
+                        handleRejectClick={() => handleRejectClick(feature.properties.id)}
+                      />
+                    </ExpansionPanelDetails>
+                  </ExpansionPanel>
                 </div>
-              }
-            </Card>
-          </DialogContent>
+              </div>
+            }
+          </Card>
+        </DialogContent>
+
+        { typeof this.state.feature === 'undefined' &&
+          <CircularProgress/>
         }
         { this.state.feature === null &&
           <h4>Error!!! No item found at the given url</h4>
