@@ -100,29 +100,7 @@ class App extends Component {
     this.setState({ dialogOpen : false})
   }
 
-  async componentDidMount(){
-    dbFirebase.fetchStats()
-      .then(stats => {
-        console.log(stats);
-        this.setState({ usersLeaderboard: stats.users})
-      });
-
-    gtagPageView(this.props.location.pathname);
-
-    await Promise.all([dbFirebase.fetchStats(),dbFirebase.fetchPhotos()]).then(values => {
-      const dbStats = values[0] || {};
-      const geojson = values[1] || {};
-      let stats = 0;
-
-      try {
-        stats = this.props.config.getStats(geojson, dbStats);
-      } catch (err) {
-        console.error('Get Stats: ', err.message);
-      }
-
-      this.setState({ dbStats, stats, geojson });
-    });
-
+  componentDidMount(){
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
     });
@@ -138,6 +116,33 @@ class App extends Component {
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
+
+    //delay a second to speedup the app startup
+    setTimeout( async () => {
+      const statsPromise = dbFirebase.fetchStats()
+        .then(stats => {
+          console.log(stats);
+          this.setState({ usersLeaderboard: stats.users});
+
+          return stats;
+        });
+
+      gtagPageView(this.props.location.pathname);
+
+      await Promise.all([statsPromise, dbFirebase.fetchPhotos()]).then(values => {
+        const dbStats = values[0] || {};
+        const geojson = values[1] || {};
+        let stats = 0;
+
+        try {
+          stats = this.props.config.getStats(geojson, dbStats);
+        } catch (err) {
+          console.error('Get Stats: ', err.message);
+        }
+
+        this.setState({ dbStats, stats, geojson });
+      });
+    }, 1000);
   }
 
   async componentWillUnmount() {
