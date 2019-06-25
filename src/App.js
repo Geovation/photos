@@ -385,7 +385,11 @@ class App extends Component {
                   />}
                 />
 
-                <Route path={`${config.PAGES.displayPhoto.path}/:id`} render={(props) =>
+                <Route path={[
+                  `${config.PAGES.displayPhoto.path}/:id`,
+                  `${config.PAGES.embeddable.path}${config.PAGES.displayPhoto.path}/:id`
+                ]}
+                render={(props) =>
                   <DisplayPhoto
                     {...props}
                     user={this.state.user}
@@ -410,7 +414,7 @@ class App extends Component {
                  geojson={this.state.geojson}
                  user={this.state.user}
                  config={config}
-                 embeddable={this.props.history.location.pathname === config.PAGES.embeddable.path}
+                 embeddable={this.props.history.location.pathname.match(new RegExp(config.PAGES.embeddable.path , 'g'))}
                  handlePhotoClick={this.handlePhotoClick}
                  toggleLeftDrawer={this.toggleLeftDrawer}
             />

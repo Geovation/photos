@@ -268,8 +268,11 @@ class Map extends Component {
         el.addEventListener('click', () => {
           gtagEvent('Photo Opened', 'Map', feature.properties.id);
           // TODO: just call a handler from the props. (move it to the app)
+          let pathname = `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`;
+          const currentPath = this.props.history.location.pathname;
+          pathname = (currentPath === this.props.config.PAGES.embeddable.path) ? currentPath + pathname : pathname;
           const location = {
-              pathname: `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`,
+              pathname,
               state: {
                 feature: feature,
                 handleRejectClick: this.handleRejectClick,
