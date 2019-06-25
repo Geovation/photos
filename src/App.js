@@ -392,7 +392,7 @@ class App extends Component {
                     placeholderImage={placeholderImage}
                     config={config}
                     handleRejectClick={() => alert('Photos can only be deleted when access from main page.')}
-                    handleClose={this.props.history.goBack}
+                    handleClose={() => this.props.history.replace(config.PAGES.map.path)}
                   />}
                 />
 
