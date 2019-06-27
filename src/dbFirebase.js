@@ -78,7 +78,7 @@ async function fetchPhotos() {
   }
 
   if (!geojson) {
-    geojson = await promise;
+    geojson = promise;
   }
   return geojson;
 }

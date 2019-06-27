@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 
+import * as localforage from "localforage";
+
 import RootRef from '@material-ui/core/RootRef';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -52,7 +54,9 @@ class App extends Component {
       srcType: null,
       cordovaMetadata : {},
       dialogOpen: false,
-      usersLeaderboard: []
+      confirmDialogOpen: false,
+      usersLeaderboard: [],
+      confirmDialogHandleOk: null
     };
 
     this.geoid = null;
@@ -145,7 +149,7 @@ class App extends Component {
 
         this.setState({ dbStats, stats, geojson });
       });
-    }, 1000);
+    }, 2000);
   }
 
   async componentWillUnmount() {
@@ -188,11 +192,7 @@ class App extends Component {
   };
 
   handlePhotoClick = () => {
-
     if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
-          // TODO: show popup with message saying that the user needs an account for this feature
-          // alert("Please log in")
-
           this.setState({
             dialogOpen: true,
             dialogTitle: "attention",
@@ -284,12 +284,81 @@ class App extends Component {
     }
   }
 
+  handleConfirmDialogClose = () => {
+    this.setState({ confirmDialogOpen: false });
+  }
+
+  handleRejectClick = (id) => {
+    this.setState({
+      confirmDialogOpen: true ,
+      confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
+      confirmDialogHandleOk: () => this.rejectPhoto(id)
+    });
+  };
+
+
+  handleApproveClick = (id) => {
+    this.setState({
+      confirmDialogOpen: true ,
+      confirmDialogTitle: `Are you sure you want to publish the photo ?`,
+      confirmDialogHandleOk: () => this.approvePhoto(id)
+    });
+  };
+
+  approveRejectPhoto = async (isApproved, id) => {
+    // close dialogs
+    this.handleConfirmDialogClose();
+
+    // unpublish photo in firestore
+    try {
+      if (isApproved) {
+        await dbFirebase.approvePhoto(id, this.state.user ? this.state.user.id : null);
+      } else {
+        await dbFirebase.rejectPhoto(id, this.state.user ? this.state.user.id : null);
+      }
+
+      const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
+      const geojson = {
+        "type": "FeatureCollection",
+        "features": updatedFeatures
+      };
+      // update localStorage
+      localforage.setItem("cachedGeoJson", geojson);
+
+      // remove thumbnail from the map
+      this.setState({ geojson }); //update state for next updatedFeatures
+
+      alert(`Photo with ID ${id} ${isApproved ? 'published' : 'unpublished'}`)
+
+    } catch (e) {
+      this.setState({
+        confirmDialogOpen: true ,
+        confirmDialogTitle: `The photo state has not changed. Please try again, id:${id}`,
+        confirmDialogHandleOk: this.handleConfirmDialogClose
+      });
+    }
+
+  }
+
+  approvePhoto = id => this.approveRejectPhoto(true, id);
+  rejectPhoto = id => this.approveRejectPhoto(false, id);
+
+  handlePhotoPageClose = () => {
+    const action = this.props.history.location.state ? 'goBack' : 'replace';
+
+    if ( this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path)) {
+      this.props.history[action](this.props.config.PAGES.embeddable.path);
+    } else {
+      this.props.history[action](this.props.config.PAGES.map.path);
+    }
+  }
+
   render() {
     const { fields, config } = this.props;
 
     return (
       <div className='geovation-app'>
-        { !this.state.termsAccepted && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
+        { !this.state.termsAccepted && !this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path) &&
           <TermsDialog handleClose={this.handleTermsPageClose}/>
         }
 
@@ -299,7 +368,7 @@ class App extends Component {
           handleNextClick={this.handleNextClick}
         />
 
-          <main className='content'>
+        <main className='content'>
 
               <Switch>
                 {config.CUSTOM_PAGES.map( (CustomPage,index) => (
@@ -385,6 +454,7 @@ class App extends Component {
                   />}
                 />
 
+                {/* TODO: set back button to embedeble if necessary */}
                 <Route path={[
                   `${config.PAGES.displayPhoto.path}/:id`,
                   `${config.PAGES.embeddable.path}${config.PAGES.displayPhoto.path}/:id`
@@ -395,8 +465,9 @@ class App extends Component {
                     user={this.state.user}
                     placeholderImage={placeholderImage}
                     config={config}
-                    handleRejectClick={() => alert('Photos can only be deleted when access from main page.')}
-                    handleClose={() => this.props.history.replace(config.PAGES.map.path)}
+                    handleRejectClick={this.handleRejectClick}
+                    handleApproveClick={this.handleApproveClick}
+                    handleClose={this.handlePhotoPageClose}
                   />}
                 />
 
@@ -420,6 +491,7 @@ class App extends Component {
             />
           </main>
 
+        <Snackbar open={!this.state.geojson} message='Loading photos...' />
         <Snackbar open={this.state.welcomeShown && !this.state.online} message='Connecting to our servers...' />
 
         { window.cordova ?
@@ -461,12 +533,21 @@ class App extends Component {
             <Button onClick={this.handleLoginPhotoAdd} color='secondary'>
               Login
             </Button>
-
-
           </DialogActions>
 
         </Dialog>
 
+        <Dialog open={this.state.confirmDialogOpen} onClose={this.handleConfirmDialogClose}>
+          <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
+          <DialogActions>
+            <Button onClick={this.handleConfirmDialogClose} color='secondary'>
+              Cancel
+            </Button>
+            <Button onClick={this.state.confirmDialogHandleOk} color='secondary'>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }

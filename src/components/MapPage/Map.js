@@ -2,20 +2,15 @@ import React, { Component } from 'react';
 import _ from "lodash";
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import * as localforage from "localforage";
 
 import Fab from '@material-ui/core/Fab';
 import GpsFixed from '@material-ui/icons/GpsFixed';
 import GpsOff from '@material-ui/icons/GpsOff';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import Dehaze from '@material-ui/icons/Dehaze';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
+
 import { withStyles } from '@material-ui/core/styles';
 
-import dbFirebase from '../../dbFirebase';
 import { gtagEvent } from '../../gtag.js';
 import { isIphoneWithNotchAndCordova } from '../../utils';
 import './Map.scss';
@@ -274,8 +269,7 @@ class Map extends Component {
           const location = {
               pathname,
               state: {
-                feature: feature,
-                handleRejectClick: this.handleRejectClick,
+                feature: feature
               }
             };
           this.props.history.push(location);
@@ -292,59 +286,6 @@ class Map extends Component {
 
   componentWillUnmount() {
     if (this.map.remove) { this.map.remove(); }
-  }
-
-  // TODO: move this to App
-  handleRejectClick = (id) => {
-    this.setState({
-      confirmDialogOpen: true ,
-      confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
-      confirmDialogHandleOk: () => this.rejectPhoto(id)
-    });
-  };
-
-  // TODO: move this to App
-  rejectPhoto = async (id) => {
-    // close dialogs
-    this.handleConfirmDialogClose();
-    if (this.props.history.location.path !== this.props.config.PAGES.map.path) this.handlePhotoPageClose();
-
-    // unpublish photo in firestore
-    try {
-      await dbFirebase.rejectPhoto(id, this.props.user ? this.props.user.id : null);
-
-      const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
-      const geojson = {
-        "type": "FeatureCollection",
-        "features": updatedFeatures
-      };
-      // update localStorage
-      localforage.setItem("cachedGeoJson", geojson);
-
-      // remove thumbnail from the map
-      this.setState({ geojson }); //update state for next updatedFeatures
-      this.map.getSource('data').setData(geojson); //update source data
-
-      this.renderedThumbnails[id].remove();
-      delete this.renderedThumbnails[id];
-
-    } catch (e) {
-      this.setState({
-        confirmDialogOpen: true ,
-        confirmDialogTitle: `The photo wasn't deleted please try again, id:${id}`,
-        confirmDialogHandleOk: this.handleConfirmDialogClose
-      });
-    }
-
-  }
-
-  handleConfirmDialogClose = () => {
-    this.setState({ confirmDialogOpen: false });
-  }
-
-  // TODO: move to app
-  handlePhotoPageClose = () => {
-    this.props.history.goBack();
   }
 
   render() {
@@ -376,18 +317,6 @@ class Map extends Component {
             <Dehaze className={classes.burger} onClick={this.props.toggleLeftDrawer(true)} />
           </div>
         }
-
-        <Dialog open={this.state.confirmDialogOpen} onClose={this.handleConfirmDialogClose}>
-          <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
-          <DialogActions>
-            <Button onClick={this.handleConfirmDialogClose} color='secondary'>
-              Cancel
-            </Button>
-            <Button onClick={this.state.confirmDialogHandleOk} color='secondary'>
-              Ok
-            </Button>
-          </DialogActions>
-        </Dialog>
 
       </div>
     );

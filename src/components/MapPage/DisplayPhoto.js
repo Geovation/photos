@@ -59,16 +59,24 @@ class DisplayPhoto extends Component {
   }
 
   async componentDidMount() {
+    // TODO: remove this hack. Just need to decouple Firebase from this UI component
     if (!this.state.feature) {
-      await dbFirebase.getPhotoByID(this.props.match.params.id).then(feature => {
-        this.setState({ feature });
-      });
+      try {
+        await dbFirebase.getPhotoByID(this.props.match.params.id).then(feature => {
+          this.setState({feature});
+        });
+      }
+      catch (e) {
+        console.log(e)
+        this.setState({feature: null});
+      }
     }
   }
 
   render() {
-    const { user, config, placeholderImage, handleClose, location, classes, fullScreen } = this.props;
-    const handleRejectClick = location.state ? location.state.handleRejectClick : this.props.handleRejectClick;
+    const { user, config, placeholderImage, handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
+
+    console.log(this.state.feature)
 
     const feature = {
       properties: {
@@ -126,6 +134,7 @@ class DisplayPhoto extends Component {
                             <CardComponent
                               photoSelected={feature.properties}
                               handleRejectClick={() => handleRejectClick(feature.properties.id)}
+                              handleApproveClick={() => handleApproveClick(feature.properties.id)}
                             />
                           </ExpansionPanelDetails>
                         </ExpansionPanel>
