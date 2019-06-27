@@ -42,7 +42,7 @@ class CardComponent extends React.Component {
           rtn = (<a href={fieldValue} target="_">See photo</a>);
           break;
         default:
-          rtn = fieldValue;
+          rtn = String(fieldValue);
       }
     }
     return rtn;
@@ -56,19 +56,23 @@ class CardComponent extends React.Component {
           <CardContent>
             {Object.keys(photoSelected).map(key => (
               <div key={key}>
-                {key}: <strong>{this.presentField(key,photoSelected[key])}</strong>
+                {key}: <strong> {this.presentField(key,photoSelected[key])}</strong>
               </div>
             ))}
           </CardContent>
         </CardActionArea>
         <CardActions>
         { handleRejectClick &&
-          <IconButton aria-label='Reject' onClick={() => handleRejectClick(photoSelected)}>
+          <IconButton aria-label='Reject'
+                      disabled={!photoSelected.published}
+                      onClick={() => handleRejectClick(photoSelected)}>
             <ThumbDownIcon />
           </IconButton>
         }
         { handleApproveClick &&
-          <IconButton aria-label='Approve' onClick={() => handleApproveClick(photoSelected)}>
+          <IconButton aria-label='Approve'
+                      disabled={!!photoSelected.published}
+                      onClick={() => handleApproveClick(photoSelected)}>
             <ThumbUpIcon />
           </IconButton>
         }

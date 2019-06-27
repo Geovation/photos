@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 import enums from '../../types/enums';
 

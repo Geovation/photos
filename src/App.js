@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 
+import * as localforage from "localforage";
+
 import RootRef from '@material-ui/core/RootRef';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -12,7 +14,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 
 import PhotoPage from './components/PhotoPage';
 import ProfilePage from './components/ProfilePage';
-import Map from './components/Map';
+import Map from './components/MapPage/Map';
 import CustomPhotoDialog from './components/CustomPhotoDialog';
 import ModeratorPage from './components/ModeratorPage';
 import LoginFirebase from './components/LoginFirebase';
@@ -25,11 +27,13 @@ import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
 import TermsDialog from './components/TermsDialog';
 import EmailVerifiedDialog from './components/EmailVerifiedDialog';
+import DisplayPhoto from './components/MapPage/DisplayPhoto';
 import authFirebase from './authFirebase';
 import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
 import './App.scss';
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
+const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 class App extends Component {
   constructor(props){
@@ -50,11 +54,15 @@ class App extends Component {
       srcType: null,
       cordovaMetadata : {},
       dialogOpen: false,
-      usersLeaderboard: []
+      confirmDialogOpen: false,
+      usersLeaderboard: [],
+      confirmDialogHandleOk: null
     };
 
     this.geoid = null;
     this.domRefInput = {};
+
+    this.VISIBILITY_REGEX = new RegExp('(^/$|^' + this.props.config.PAGES.displayPhoto.path + '/|^' + this.props.config.PAGES.embeddable.path + ')', 'g');
   }
 
   openPhotoPage = (file) => {
@@ -94,7 +102,6 @@ class App extends Component {
       }
     }
   }
-
 
   handleDialogClose = () => {
     this.setState({ dialogOpen : false})
@@ -142,7 +149,7 @@ class App extends Component {
 
         this.setState({ dbStats, stats, geojson });
       });
-    }, 1000);
+    }, 2000);
   }
 
   async componentWillUnmount() {
@@ -184,12 +191,8 @@ class App extends Component {
     this.setState({ loginLogoutDialogOpen:false});
   };
 
-    handlePhotoClick = () => {
-
+  handlePhotoClick = () => {
     if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
-          // TODO: show popup with message saying that the user needs an account for this feature
-          // alert("Please log in")
-
           this.setState({
             dialogOpen: true,
             dialogTitle: "attention",
@@ -281,12 +284,81 @@ class App extends Component {
     }
   }
 
+  handleConfirmDialogClose = () => {
+    this.setState({ confirmDialogOpen: false });
+  }
+
+  handleRejectClick = (id) => {
+    this.setState({
+      confirmDialogOpen: true ,
+      confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
+      confirmDialogHandleOk: () => this.rejectPhoto(id)
+    });
+  };
+
+
+  handleApproveClick = (id) => {
+    this.setState({
+      confirmDialogOpen: true ,
+      confirmDialogTitle: `Are you sure you want to publish the photo ?`,
+      confirmDialogHandleOk: () => this.approvePhoto(id)
+    });
+  };
+
+  approveRejectPhoto = async (isApproved, id) => {
+    // close dialogs
+    this.handleConfirmDialogClose();
+
+    // unpublish photo in firestore
+    try {
+      if (isApproved) {
+        await dbFirebase.approvePhoto(id, this.state.user ? this.state.user.id : null);
+      } else {
+        await dbFirebase.rejectPhoto(id, this.state.user ? this.state.user.id : null);
+      }
+
+      const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
+      const geojson = {
+        "type": "FeatureCollection",
+        "features": updatedFeatures
+      };
+      // update localStorage
+      localforage.setItem("cachedGeoJson", geojson);
+
+      // remove thumbnail from the map
+      this.setState({ geojson }); //update state for next updatedFeatures
+
+      alert(`Photo with ID ${id} ${isApproved ? 'published' : 'unpublished'}`)
+
+    } catch (e) {
+      this.setState({
+        confirmDialogOpen: true ,
+        confirmDialogTitle: `The photo state has not changed. Please try again, id:${id}`,
+        confirmDialogHandleOk: this.handleConfirmDialogClose
+      });
+    }
+
+  }
+
+  approvePhoto = id => this.approveRejectPhoto(true, id);
+  rejectPhoto = id => this.approveRejectPhoto(false, id);
+
+  handlePhotoPageClose = () => {
+    const action = this.props.history.location.state ? 'goBack' : 'replace';
+
+    if ( this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path)) {
+      this.props.history[action](this.props.config.PAGES.embeddable.path);
+    } else {
+      this.props.history[action](this.props.config.PAGES.map.path);
+    }
+  }
+
   render() {
-    const { fields } = this.props;
+    const { fields, config } = this.props;
 
     return (
       <div className='geovation-app'>
-        { !this.state.termsAccepted && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
+        { !this.state.termsAccepted && !this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path) &&
           <TermsDialog handleClose={this.handleTermsPageClose}/>
         }
 
@@ -296,29 +368,29 @@ class App extends Component {
           handleNextClick={this.handleNextClick}
         />
 
-          <main className='content'>
+        <main className='content'>
 
               <Switch>
-                {this.props.config.CUSTOM_PAGES.map( (CustomPage,index) => (
+                {config.CUSTOM_PAGES.map( (CustomPage,index) => (
                   !!CustomPage.page &&
                     <Route key={index} path={CustomPage.path}
                       render={(props) => <CustomPage.page {...props} handleClose={this.goToMap} label={CustomPage.label}/>}
                     />
                 ))}
-                <Route path={this.props.config.PAGES.about.path} render={(props) =>
+                <Route path={config.PAGES.about.path} render={(props) =>
                   <AboutPage {...props}
                     label={this.props.config.PAGES.about.label}
                     handleClose={this.goToMap}
                   />}
                 />
-                <Route path={this.props.config.PAGES.tutorial.path} render={(props) =>
+                <Route path={config.PAGES.tutorial.path} render={(props) =>
                   <TutorialPage {...props}
                     label={this.props.config.PAGES.tutorial.label}
                     handleClose={this.goToMap}
                   />}
                 />
 
-                <Route path={this.props.config.PAGES.leaderboard.path} render={(props) =>
+                <Route path={config.PAGES.leaderboard.path} render={(props) =>
                   <LeaderboardPage {...props}
                     config={this.props.config}
                     label={this.props.config.PAGES.leaderboard.label}
@@ -348,7 +420,7 @@ class App extends Component {
                   />
                 }
 
-                <Route path={this.props.config.PAGES.photos.path} render={(props) =>
+                <Route path={config.PAGES.photos.path} render={(props) =>
                   <PhotoPage {...props}
                     label={this.props.config.PAGES.photos.label}
                     file={this.state.file}
@@ -372,7 +444,7 @@ class App extends Component {
                   />
                 }
 
-                <Route path={this.props.config.PAGES.writeFeedback.path} render={(props) =>
+                <Route path={config.PAGES.writeFeedback.path} render={(props) =>
                   <WriteFeedbackPage {...props}
                     label={this.props.config.PAGES.writeFeedback.label}
                     user={this.state.user}
@@ -382,26 +454,44 @@ class App extends Component {
                   />}
                 />
 
+                {/* TODO: set back button to embedeble if necessary */}
+                <Route path={[
+                  `${config.PAGES.displayPhoto.path}/:id`,
+                  `${config.PAGES.embeddable.path}${config.PAGES.displayPhoto.path}/:id`
+                ]}
+                render={(props) =>
+                  <DisplayPhoto
+                    {...props}
+                    user={this.state.user}
+                    placeholderImage={placeholderImage}
+                    config={config}
+                    handleRejectClick={this.handleRejectClick}
+                    handleApproveClick={this.handleApproveClick}
+                    handleClose={this.handlePhotoPageClose}
+                  />}
+                />
 
               </Switch>
 
 
-            { !this.state.welcomeShown && this.props.history.location.pathname !== this.props.config.PAGES.embeddable.path &&
+            { !this.state.welcomeShown && this.props.history.location.pathname !== config.PAGES.embeddable.path &&
               this.state.termsAccepted &&
               <WelcomePage handleClose={this.handleWelcomePageClose}/>
             }
 
-            <Map location={this.state.location}
-                 visible={[this.props.config.PAGES.map.path, this.props.config.PAGES.embeddable.path].includes(this.props.history.location.pathname)}
+            <Map history={this.props.history}
+                 location={this.state.location}
+                 visible={this.props.history.location.pathname.match(this.VISIBILITY_REGEX)}
                  geojson={this.state.geojson}
                  user={this.state.user}
-                 config={this.props.config}
-                 embeddable={this.props.history.location.pathname === this.props.config.PAGES.embeddable.path}
+                 config={config}
+                 embeddable={this.props.history.location.pathname.match(new RegExp(config.PAGES.embeddable.path , 'g'))}
                  handlePhotoClick={this.handlePhotoClick}
                  toggleLeftDrawer={this.toggleLeftDrawer}
             />
           </main>
 
+        <Snackbar open={!this.state.geojson} message='Loading photos...' />
         <Snackbar open={this.state.welcomeShown && !this.state.online} message='Connecting to our servers...' />
 
         { window.cordova ?
@@ -443,12 +533,21 @@ class App extends Component {
             <Button onClick={this.handleLoginPhotoAdd} color='secondary'>
               Login
             </Button>
-
-
           </DialogActions>
 
         </Dialog>
 
+        <Dialog open={this.state.confirmDialogOpen} onClose={this.handleConfirmDialogClose}>
+          <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
+          <DialogActions>
+            <Button onClick={this.handleConfirmDialogClose} color='secondary'>
+              Cancel
+            </Button>
+            <Button onClick={this.state.confirmDialogHandleOk} color='secondary'>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }

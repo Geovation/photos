@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 import firebaseApp from './firebaseInit.js';
 import config from "./custom/config";
@@ -7,6 +7,8 @@ import * as localforage from "localforage";
 
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
+
+// TODO: add caching
 
 function extractPhoto(doc) {
   const prefix = `https://storage.googleapis.com/${storageRef.location.bucket}/photos/${doc.id}`;
@@ -76,7 +78,7 @@ async function fetchPhotos() {
   }
 
   if (!geojson) {
-    geojson = await promise;
+    geojson = promise;
   }
   return geojson;
 }
@@ -141,11 +143,29 @@ async function getFeedbackByID(id) {
   return fbFeedback.exists ? { id, ...fbFeedback.data()} : null;
 }
 
+async function getPhotoByID(id) {
+  const fbPhoto =  await firestore.collection("photos").doc(id).get();
+  const photo = extractPhoto(fbPhoto);
+  if(fbPhoto.exists) {
+    return {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          photo.location.longitude,
+          photo.location.latitude
+        ]
+      },
+      "properties": photo
+    };
+  }
+  return null;
+}
+
 function photosToModerate() {
   return firestore.collection('photos').where('moderated', "==", null).get()
   .then(sn => sn.docs.map(extractPhoto));
 }
-
 
 async function writeModeration(photoId,userId, published) {
   if (typeof published !== "boolean") {
@@ -157,7 +177,6 @@ async function writeModeration(photoId,userId, published) {
     moderator_id: userId
   });
 }
-
 
 async function disconnect() {
   return firebaseApp.delete();
@@ -206,6 +225,7 @@ export default {
   fetchFeedbacks,
   getUser,
   getFeedbackByID,
+  getPhotoByID,
   savePhoto,
   saveMetadata,
   photosToModerate,
