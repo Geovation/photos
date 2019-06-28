@@ -96,9 +96,9 @@ class Map extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.geojson && this.props.geojson.features && this.props.geojson.features.length
-        && this.props.geojson !== prevProps.geojson) {
+      && this.props.geojson !== prevProps.geojson) {
 
-        this.addFeaturesToMap(this.props.geojson);
+      this.addFeaturesToMap(this.props.geojson);
     }
     if(this.props.embeddable!==prevProps.embeddable){
       if (this.props.embeddable){
@@ -121,74 +121,74 @@ class Map extends Component {
     if (this.map.getSource("data")) this.map.removeSource("data")
 
     this.map.addSource("data", {
-        type: "geojson",
-        data: geojson,
-        cluster: true,
-        clusterMaxZoom: 14, // Max zoom to cluster points on
-        clusterRadius: 48 // Radius of each cluster when clustering points (defaults to 50)
+      type: "geojson",
+      data: geojson,
+      cluster: true,
+      clusterMaxZoom: 14, // Max zoom to cluster points on
+      clusterRadius: 48 // Radius of each cluster when clustering points (defaults to 50)
     });
 
     this.map.addLayer({
-        id: "clusters",
-        type: "circle",
-        source: "data",
-        filter: ["has", "point_count"],
-        paint: {
-            // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-            // with six steps to implement six types of circles:
-            "circle-color": [
-                "step",
-                ["get", "point_count"],
-                "#89b685",
-                50,
-                "#E8DB52",
-                100,
-                "#FEB460",
-                300,
-                "#FF928B",
-                1000,
-                "#E084B4",
-                5000,
-                "#8097BF"
-            ],
-            "circle-radius": [
-                "step",
-                ["get", "point_count"],
-                17,
-                50,
-                18,
-                100,
-                19,
-                300,
-                20,
-                1000,
-                21,
-                5000,
-                22
-            ]
-        }
+      id: "clusters",
+      type: "circle",
+      source: "data",
+      filter: ["has", "point_count"],
+      paint: {
+        // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+        // with six steps to implement six types of circles:
+        "circle-color": [
+          "step",
+          ["get", "point_count"],
+          "#89b685",
+          50,
+          "#E8DB52",
+          100,
+          "#FEB460",
+          300,
+          "#FF928B",
+          1000,
+          "#E084B4",
+          5000,
+          "#8097BF"
+        ],
+        "circle-radius": [
+          "step",
+          ["get", "point_count"],
+          17,
+          50,
+          18,
+          100,
+          19,
+          300,
+          20,
+          1000,
+          21,
+          5000,
+          22
+        ]
+      }
     });
 
     this.map.addLayer({
-        id: "cluster-count",
-        type: "symbol",
-        source: "data",
-        filter: ["has", "point_count"],
-        layout: {
-            "text-field": "{point_count_abbreviated}",
-            "text-font": ["Source Sans Pro Bold"],
-            "text-size": 15
-        }
+      id: "cluster-count",
+      type: "symbol",
+      source: "data",
+      filter: ["has", "point_count"],
+      layout: {
+        "text-field": "{point_count_abbreviated}",
+        "text-font": ["Source Sans Pro Bold"],
+        "text-size": 15
+      }
     });
 
     this.map.addLayer({
-        id: "unclustered-point",
-        type: "circle",
-        source: "data",
-        filter: ["!", ["has", "point_count"]],
-        paint: {
-            "circle-radius": 0,
-        }
+      id: "unclustered-point",
+      type: "circle",
+      source: "data",
+      filter: ["!", ["has", "point_count"]],
+      paint: {
+        "circle-radius": 0,
+      }
     });
 
     this.map.on('zoom', e => {
@@ -215,10 +215,10 @@ class Map extends Component {
     });
 
     this.map.on('mouseenter', 'clusters', () => {
-        this.map.getCanvas().style.cursor = 'pointer';
+      this.map.getCanvas().style.cursor = 'pointer';
     });
     this.map.on('mouseleave', 'clusters', () => {
-        this.map.getCanvas().style.cursor = '';
+      this.map.getCanvas().style.cursor = '';
     });
 
     this.map.on('click', 'clusters', (e) => {
@@ -227,10 +227,10 @@ class Map extends Component {
       const clusterId = features[0].properties.cluster_id;
       this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
         if (err)
-            return;
+          return;
         this.map.easeTo({
-            center: features[0].geometry.coordinates,
-            zoom: zoom
+          center: features[0].geometry.coordinates,
+          zoom: zoom
         });
       });
     });
@@ -261,18 +261,8 @@ class Map extends Component {
         el.id = feature.properties.id;
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
-          gtagEvent('Photo Opened', 'Map', feature.properties.id);
-          // TODO: just call a handler from the props. (move it to the app)
-          let pathname = `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`;
-          const currentPath = this.props.history.location.pathname;
-          pathname = (currentPath === this.props.config.PAGES.embeddable.path) ? currentPath + pathname : pathname;
-          const location = {
-              pathname,
-              state: {
-                feature: feature
-              }
-            };
-          this.props.history.push(location);
+          gtagEvent('Photo Clicked', 'Map', feature.properties.id);
+          this.props.handlePhotoClick(feature)
         });
         //create marker
         const marker = new mapboxgl.Marker(el)
@@ -310,12 +300,12 @@ class Map extends Component {
         </Fab>
 
         {!this.props.embeddable &&
-          <div>
-            <Fab className={classes.camera} color="secondary" onClick={this.props.handlePhotoClick}>
-              <AddAPhotoIcon />
-            </Fab>
-            <Dehaze className={classes.burger} onClick={this.props.toggleLeftDrawer(true)} />
-          </div>
+        <div>
+          <Fab className={classes.camera} color="secondary" onClick={this.props.handleCameraClick}>
+            <AddAPhotoIcon />
+          </Fab>
+          <Dehaze className={classes.burger} onClick={this.props.toggleLeftDrawer(true)} />
+        </div>
         }
 
       </div>

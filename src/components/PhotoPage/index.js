@@ -176,15 +176,15 @@ class PhotoPage extends Component {
 
     let filteredFields = {};
     Object.entries(fieldsJustValues).forEach(([key,value]) =>{
-       if(value){
-         filteredFields[key] = typeof value === 'string' ? value.trim() : value;
+      if(value){
+        filteredFields[key] = typeof value === 'string' ? value.trim() : value;
 
-         const fieldDefinition = config.PHOTO_FIELDS[key];
-         if (fieldDefinition.sanitize) {
-           fieldDefinition.sanitize(value);
-         }
-       }
-     });
+        const fieldDefinition = config.PHOTO_FIELDS[key];
+        if (fieldDefinition.sanitize) {
+          fieldDefinition.sanitize(value);
+        }
+      }
+    });
 
     const data = { ...location, ...filteredFields};
 
@@ -208,19 +208,19 @@ class PhotoPage extends Component {
       this.uploadTask = dbFirebase.savePhoto(photoRef.id, base64);
 
       this.uploadTask.on('state_changed', snapshot => {
-        const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
-        this.setState({ sendingProgress });
+          const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
+          this.setState({ sendingProgress });
 
-        switch (snapshot.state) {
-          case firebase.storage.TaskState.PAUSED: // or 'paused'
-            console.log('Upload is paused');
-            break;
-          case firebase.storage.TaskState.RUNNING: // or 'running'
-            console.log('Upload is running');
-            break;
-          default:
-            console.log(snapshot.state);
-        }
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log('Upload is paused');
+              break;
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log('Upload is running');
+              break;
+            default:
+              console.log(snapshot.state);
+          }
 
         }, error => {
           this.openDialog('Photo upload was canceled');
@@ -305,7 +305,7 @@ class PhotoPage extends Component {
   retakePhoto = () => {
     gtagEvent('Retake Photo', 'Photo');
     this.resetState();
-    this.props.handlePhotoClick();
+    this.props.handleRetakeClick();
   }
 
   handleClosePhotoPage = () => {
@@ -366,19 +366,19 @@ class PhotoPage extends Component {
           {this.state.next
             ?
             <div className={classes.fields}>
-            <Fields
-              handleChange={this.handleChangeFields}
-              sendFile={this.sendFile}
-              enabledUploadButton={this.state.enabledUploadButton}
-              imgSrc={this.state.imgSrc}
-              fields={fields}
-              error={this.state.anyError}
+              <Fields
+                handleChange={this.handleChangeFields}
+                sendFile={this.sendFile}
+                enabledUploadButton={this.state.enabledUploadButton}
+                imgSrc={this.state.imgSrc}
+                fields={fields}
+                error={this.state.anyError}
               />
             </div>
             :
             <div style={{display:'flex',flexDirection:'column',flex:1}} className={classes.photo}>
               <div className='picture'>
-               <img src={this.state.imgSrc} alt={""}/>
+                <img src={this.state.imgSrc} alt={""}/>
               </div>
 
               <div className={classes.button}>
@@ -434,7 +434,7 @@ PhotoPage.propTypes = {
   online: PropTypes.bool.isRequired,
   file: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
-  handlePhotoClick: PropTypes.func.isRequired
+  handleRetakeClick: PropTypes.func.isRequired
 };
 
 export default withStyles(styles, { withTheme: true })(PhotoPage);
