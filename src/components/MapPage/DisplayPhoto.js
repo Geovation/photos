@@ -54,9 +54,6 @@ class DisplayPhoto extends Component {
     const { user, config, placeholderImage, feature,
       handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
 
-    // TODO remove
-    console.log(feature)
-
     return(
       <div>
         { typeof feature === 'undefined' ?

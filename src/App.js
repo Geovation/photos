@@ -112,15 +112,15 @@ class App extends Component {
     const regexMatch = this.props.history.location.pathname
       .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)$`));
 
-    // debugger
-
     const photoId = regexMatch && regexMatch[1];
-
+    const promises = [];
     // it means that we landed on the app with a photoId in the url
     if (photoId) {
-      dbFirebase.getPhotoByID(photoId)
-        .then(selectedFeature => this.setState({ selectedFeature}))
-        .catch( e => this.setState({selectedFeature: null}));
+      promises.push(
+        dbFirebase.getPhotoByID(photoId)
+          .then(selectedFeature => this.setState({ selectedFeature}))
+          .catch( e => this.setState({selectedFeature: null}))
+      );
     }
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
@@ -140,31 +140,34 @@ class App extends Component {
     this.unregisterLocationObserver = this.setLocationWatcher();
 
     //delay a second to speedup the app startup
-    setTimeout( async () => {
-      const statsPromise = dbFirebase.fetchStats()
-        .then(stats => {
-          console.log(stats);
-          this.setState({ usersLeaderboard: stats.users});
+    Promise.all(promises).then(() => {
+      setTimeout( async () => {
+        const statsPromise = dbFirebase.fetchStats()
+          .then(stats => {
+            console.log(stats);
+            this.setState({ usersLeaderboard: stats.users});
 
-          return stats;
+            return stats;
+          });
+
+        gtagPageView(this.props.location.pathname);
+
+        await Promise.all([statsPromise, dbFirebase.fetchPhotos()]).then(values => {
+          const dbStats = values[0] || {};
+          const geojson = values[1] || {};
+          let stats = 0;
+
+          try {
+            stats = this.props.config.getStats(geojson, dbStats);
+          } catch (err) {
+            console.error('Get Stats: ', err.message);
+          }
+
+          this.setState({ dbStats, stats, geojson });
         });
+      }, 2000);
+    })
 
-      gtagPageView(this.props.location.pathname);
-
-      await Promise.all([statsPromise, dbFirebase.fetchPhotos()]).then(values => {
-        const dbStats = values[0] || {};
-        const geojson = values[1] || {};
-        let stats = 0;
-
-        try {
-          stats = this.props.config.getStats(geojson, dbStats);
-        } catch (err) {
-          console.error('Get Stats: ', err.message);
-        }
-
-        this.setState({ dbStats, stats, geojson });
-      });
-    }, 2000);
   }
 
   async componentWillUnmount() {
