@@ -22,12 +22,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../../utils';
 import CardComponent from '../CardComponent';
-import dbFirebase from '../../dbFirebase';
 
 const styles = theme => ({
   notchTop: {
     paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
-    isIphoneAndCordova ? theme.spacing(1.5) : null
+      isIphoneAndCordova ? theme.spacing(1.5) : null
   },
   iconButton: {
     marginRight: theme.spacing(2),
@@ -42,13 +41,6 @@ const styles = theme => ({
 
 class DisplayPhoto extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      feature: this.props.location.state && this.props.location.state.feature
-    }
-  }
-
   formatField(value, fieldName) {
     const formater = this.props.config.PHOTO_ZOOMED_FIELDS[fieldName];
     if (value) {
@@ -58,40 +50,20 @@ class DisplayPhoto extends Component {
     return "-";
   }
 
-  async componentDidMount() {
-    // TODO: remove this hack. Just need to decouple Firebase from this UI component
-    if (!this.state.feature) {
-      try {
-        await dbFirebase.getPhotoByID(this.props.match.params.id).then(feature => {
-          this.setState({feature});
-        });
-      }
-      catch (e) {
-        console.log(e)
-        this.setState({feature: null});
-      }
-    }
-  }
-
   render() {
-    const { user, config, placeholderImage, handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
+    const { user, config, placeholderImage, feature,
+      handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
 
-    console.log(this.state.feature)
-
-    const feature = {
-      properties: {
-        main: ""
-      },
-      ...this.state.feature
-    }
+    // TODO remove
+    console.log(feature)
 
     return(
       <div>
-        { typeof this.state.feature === 'undefined' ?
+        { typeof feature === 'undefined' ?
           <Dialog open PaperProps={{style: {backgroundColor: 'transparent', boxShadow: 'none'}}}>
             <CircularProgress color='secondary'/>
           </Dialog>
-        :
+          :
           <Dialog
             fullScreen={fullScreen}
             open
@@ -106,11 +78,11 @@ class DisplayPhoto extends Component {
 
             <DialogContent>
               <div style={{ textAlign: 'center' }}>
-                <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={''} src={feature.properties.main}/>
+                <img onError={(e) => { e.target.src=placeholderImage}} className={'main-image'} alt={''} src={(feature && feature.properties.main) || placeholderImage}/>
               </div>
-              { this.state.feature === null ?
+              { feature === null ?
                 <h3>Error!!! No item found at the given url</h3>
-              :
+                :
                 <Card>
                   <CardActionArea>
                     <CardContent>
@@ -123,30 +95,30 @@ class DisplayPhoto extends Component {
                     </CardContent>
                   </CardActionArea>
                   {user && user.isModerator &&
+                  <div>
+                    <Divider/>
                     <div>
-                      <Divider/>
-                      <div>
-                        <ExpansionPanel>
-                          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                            <Typography className={classes.heading}>Moderator Details</Typography>
-                          </ExpansionPanelSummary>
-                          <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
-                            <CardComponent
-                              photoSelected={feature.properties}
-                              handleRejectClick={() => handleRejectClick(feature.properties.id)}
-                              handleApproveClick={() => handleApproveClick(feature.properties.id)}
-                            />
-                          </ExpansionPanelDetails>
-                        </ExpansionPanel>
-                      </div>
+                      <ExpansionPanel>
+                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                          <Typography className={classes.heading}>Moderator Details</Typography>
+                        </ExpansionPanelSummary>
+                        <ExpansionPanelDetails classes={{root:classes.expansionDetails}}>
+                          <CardComponent
+                            photoSelected={feature.properties}
+                            handleRejectClick={() => handleRejectClick(feature.properties.id)}
+                            handleApproveClick={() => handleApproveClick(feature.properties.id)}
+                          />
+                        </ExpansionPanelDetails>
+                      </ExpansionPanel>
                     </div>
+                  </div>
                   }
                 </Card>
               }
             </DialogContent>
           </Dialog>
         }
-    </div>
+      </div>
     );
   }
 }
