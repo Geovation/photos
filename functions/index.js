@@ -274,8 +274,60 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
   return await firestore.collection('sys').doc('stats').set(stats);
 });
 
+async function hostMetadata(req, res) {
+  // TODO: get text from config
+  const SERVER_URL = 'https://photos-demo-d4b14.web.app';
+  const BUCKET = 'photos-demo-d4b14.appspot.com'
+  const TW_SITE = "@Geovation";
+  const TW_CREATOR = "@Geovation";
+  const TW_DOMAIN = "www.geovation.co.uk";
+
+  const photoId = req.url.substr(1);
+  let photo;
+  if (photoId.length > 0) {
+     photo = await firestore.collection("photos").doc(photoId).get();
+  }
+
+  let indexHTML;
+  if (photo && photo.exists && photo.data().published) {
+    // TODO: from config.
+    const TW_DESCRIPTION = photo.data().description;
+    const TW_TITLE = 'Nice photo';
+    const TW_IMAGE = `https://storage.googleapis.com/${BUCKET}/photos/${photoId}/1024.jpg`;
+    const TW_IMAGE_ALT = 'Nice photo';
+
+    indexHTML = `
+      <html>
+        <meta http-equiv="refresh" content="0; URL='${SERVER_URL}/#/photos/${photoId}'" />
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="${TW_SITE}">
+        <meta name="twitter:title" content="${TW_TITLE}">
+        <meta name="twitter:description" content="${TW_DESCRIPTION}">
+        <meta name="twitter:creator" content="${TW_CREATOR}">
+        <meta name="twitter:image:src" content="${TW_IMAGE}">
+        <meta name="twitter:image:alt" content="${TW_IMAGE_ALT}" />
+        <meta name="twitter:domain" content="${TW_DOMAIN}">
+        <body>${JSON.stringify(photo.data())}</body>
+      </html>
+    `;
+  } else {
+    indexHTML = `
+      <html>
+        <meta http-equiv="refresh" content="0; URL='${SERVER_URL}'" />
+        <body>
+            URL: ${JSON.stringify(req.url)}
+            URL: ${JSON.stringify(req.path)}
+         </body>
+      </html>
+    `;
+  }
+
+  res.status(200).send(indexHTML);
+}
+
 module.exports = {
   api: functions.https.onRequest(app),
+  hostMetadata: functions.https.onRequest(hostMetadata),
   generateThumbnail,
   updateStats
 };

@@ -20,6 +20,16 @@
       ]
     },
     {
+      "target": "md",
+      "public": "empty",
+      "rewrites": [
+        {
+          "source": "/**",
+          "function": "hostMetadata"
+        }
+      ]
+    },
+    {
       "target": "app",
       "public": "build",
       "ignore": [

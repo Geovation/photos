@@ -10,6 +10,9 @@
         ],
         "api": [
           "photos-demo-d4b14-api"
+        ],
+        "md": [
+          "photos-demo-d4b14-md"
         ]
       }
     }
