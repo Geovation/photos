@@ -48,7 +48,8 @@ const CUSTOM_STRING = {
     "Privacy Policy": "Privacy Policy ",
     "T&C link": " https://geovation.uk/terms-conditions/",
     "Privacy Policy Link": "https://geovation.uk/privacy-policy/"
-  }
+  },
+  tweetMessage: "Photo in the showing link will be tweeted"
 };
 
 const PAGES = {
