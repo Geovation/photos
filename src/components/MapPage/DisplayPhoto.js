@@ -61,7 +61,7 @@ class DisplayPhoto extends Component {
 
     const photoID = _.get(feature, "properties.id", "");
     const photoUrl = `${config.metadata.metadataServerUrl}/${photoID}`
-    const photoTweetLink = `https://twitter.com/intent/tweet?text=${config.CUSTOM_STRING.tweetMessage}&url=https://${photoUrl}`;
+    const photoTweetLink = `https://twitter.com/intent/tweet?text=${config.CUSTOM_STRING.tweetMessage}&url=${photoUrl}`;
 
     return(
       <div>
