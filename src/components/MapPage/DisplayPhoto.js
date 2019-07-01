@@ -23,6 +23,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from '../../utils';
 import CardComponent from '../CardComponent';
 
+const tweetLogo = process.env.PUBLIC_URL + "/images/twitter.svg";
+
 const styles = theme => ({
   notchTop: {
     paddingTop:  isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-top)' :
@@ -33,6 +35,9 @@ const styles = theme => ({
   },
   main: {
     marginTop: theme.spacing(2),
+  },
+  tweetLogo: {
+    padding: theme.spacing(1.6),
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova() ? 'env(safe-area-inset-bottom)' : 0
@@ -53,6 +58,9 @@ class DisplayPhoto extends Component {
   render() {
     const { user, config, placeholderImage, feature,
       handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
+
+    const photoUrl = window.location.hostname + this.props.history.location.pathname;
+    const photoTweetLink = `https://twitter.com/intent/tweet?text=${config.CUSTOM_STRING.tweetMessage}&url=https://${photoUrl}`;
 
     return(
       <div>
@@ -81,16 +89,21 @@ class DisplayPhoto extends Component {
                 <h3>Error!!! No item found at the given url</h3>
                 :
                 <Card>
-                  <CardActionArea>
-                    <CardContent>
-                      {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
-                        <Typography gutterBottom key={fieldName}>
-                          <b>{_.capitalize(fieldName)}: </b>
-                          {this.formatField(feature.properties[fieldName], fieldName)}
-                        </Typography>
-                      ))}
-                    </CardContent>
-                  </CardActionArea>
+                  <div style={{display: 'flex'}}>
+                    <CardActionArea>
+                      <CardContent>
+                        {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(fieldName => (
+                          <Typography gutterBottom key={fieldName}>
+                            <b>{_.capitalize(fieldName)}: </b>
+                            {this.formatField(feature.properties[fieldName], fieldName)}
+                          </Typography>
+                        ))}
+                      </CardContent>
+                    </CardActionArea>
+                    <a className={classes.tweetLogo} href={photoTweetLink} target='blank'>
+                      <img src={tweetLogo} alt='tweet'/>
+                    </a>
+                  </div>
                   {user && user.isModerator &&
                   <div>
                     <Divider/>
