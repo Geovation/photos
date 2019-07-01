@@ -21,6 +21,7 @@ const TOPIC = "update-stats";
 const DB_CACHE_AGE_MS = 1000 * 60 * 60 * 24 * 1; // 1 day
 const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
 
+const config = require("./config.json");
 // const DB_CACHE_AGE_MS = 0; // 1 day
 // const WEB_CACHE_AGE_S =    0; // 1day
 
@@ -274,8 +275,57 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
   return await firestore.collection('sys').doc('stats').set(stats);
 });
 
+async function hostMetadata(req, res) {
+  const BUCKET = config.FIREBASE.storageBucket;
+  const SERVER_URL = config.metadata.serverUrl;
+  const TW_SITE = config.metadata.twSite;
+  const TW_CREATOR = config.metadata.twCreator;
+  const TW_DOMAIN = config.metadata.twDomain;
+
+  const photoId = req.url.substr(1);
+  let photo;
+  if (photoId.length > 0) {
+     photo = await firestore.collection("photos").doc(photoId).get();
+  }
+
+  let indexHTML;
+  if (photo && photo.exists && photo.data().published) {
+    const TW_DESCRIPTION = photo.data()[config.metadata.twDescriptionField];
+    const TW_TITLE = config.metadata.twTitle;
+    const TW_IMAGE = `https://storage.googleapis.com/${BUCKET}/photos/${photoId}/1024.jpg`;
+    const TW_IMAGE_ALT = TW_DESCRIPTION;
+
+    indexHTML = `
+      <html>
+        <meta http-equiv="refresh" content="0; URL='${SERVER_URL}/#/photos/${photoId}'" />
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="${TW_SITE}">
+        <meta name="twitter:title" content="${TW_TITLE}">
+        <meta name="twitter:description" content="${TW_DESCRIPTION}">
+        <meta name="twitter:creator" content="${TW_CREATOR}">
+        <meta name="twitter:image:src" content="${TW_IMAGE}">
+        <meta name="twitter:image:alt" content="${TW_IMAGE_ALT}" />
+        <meta name="twitter:domain" content="${TW_DOMAIN}">
+        <body> <!-- ${JSON.stringify(photo.data())} --> </body>
+      </html>
+    `;
+  } else {
+    indexHTML = `
+      <html>
+        <meta http-equiv="refresh" content="0; URL='${SERVER_URL}'" />
+        <body>
+            Nothing here
+         </body>
+      </html>
+    `;
+  }
+
+  res.status(200).send(indexHTML);
+}
+
 module.exports = {
   api: functions.https.onRequest(app),
+  hostMetadata: functions.https.onRequest(hostMetadata),
   generateThumbnail,
   updateStats
 };

@@ -2,6 +2,8 @@
 
 set -x;
 
+cp src/custom/config.json functions/
+
 VERSION_MAYOR=$(echo $npm_package_version| cut -d'.' -f 1)
 VERSION_MINOR=$(echo $npm_package_version| cut -d'.' -f 2)
 

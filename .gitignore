@@ -67,3 +67,5 @@ scripts/tmp.jpg
 cordova-app/www
 
 .DS_Store
+
+functions/config.json
