@@ -21,6 +21,7 @@ const TOPIC = "update-stats";
 const DB_CACHE_AGE_MS = 1000 * 60 * 60 * 24 * 1; // 1 day
 const WEB_CACHE_AGE_S =    1 * 60 * 60 * 24 * 1; // 1day
 
+const config = require("./config.json");
 // const DB_CACHE_AGE_MS = 0; // 1 day
 // const WEB_CACHE_AGE_S =    0; // 1day
 
@@ -275,12 +276,11 @@ const updateStats = functions.pubsub.topic(TOPIC).onPublish( async (message, con
 });
 
 async function hostMetadata(req, res) {
-  // TODO: get text from config
-  const SERVER_URL = 'https://photos-demo-d4b14.web.app';
-  const BUCKET = 'photos-demo-d4b14.appspot.com'
-  const TW_SITE = "@Geovation";
-  const TW_CREATOR = "@Geovation";
-  const TW_DOMAIN = "www.geovation.co.uk";
+  const BUCKET = config.FIREBASE.storageBucket;
+  const SERVER_URL = config.metadata.serverUrl;
+  const TW_SITE = config.metadata.twSite;
+  const TW_CREATOR = config.metadata.twCreator;
+  const TW_DOMAIN = config.metadata.twDomain;
 
   const photoId = req.url.substr(1);
   let photo;
@@ -290,11 +290,10 @@ async function hostMetadata(req, res) {
 
   let indexHTML;
   if (photo && photo.exists && photo.data().published) {
-    // TODO: from config.
-    const TW_DESCRIPTION = photo.data().description;
-    const TW_TITLE = 'Nice photo';
+    const TW_DESCRIPTION = photo.data()[config.metadata.twDescriptionField];
+    const TW_TITLE = config.metadata.twTitle;
     const TW_IMAGE = `https://storage.googleapis.com/${BUCKET}/photos/${photoId}/1024.jpg`;
-    const TW_IMAGE_ALT = 'Nice photo';
+    const TW_IMAGE_ALT = TW_DESCRIPTION;
 
     indexHTML = `
       <html>
@@ -315,8 +314,7 @@ async function hostMetadata(req, res) {
       <html>
         <meta http-equiv="refresh" content="0; URL='${SERVER_URL}'" />
         <body>
-            URL: ${JSON.stringify(req.url)}
-            URL: ${JSON.stringify(req.path)}
+            Nothing here
          </body>
       </html>
     `;
