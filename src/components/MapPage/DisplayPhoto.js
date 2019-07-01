@@ -59,7 +59,8 @@ class DisplayPhoto extends Component {
     const { user, config, placeholderImage, feature,
       handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
 
-    const photoUrl = window.location.hostname + this.props.history.location.pathname;
+    const photoID = _.get(feature, "properties.id", "");
+    const photoUrl = `${config.metadata.metadataServerUrl}/${photoID}`
     const photoTweetLink = `https://twitter.com/intent/tweet?text=${config.CUSTOM_STRING.tweetMessage}&url=https://${photoUrl}`;
 
     return(
