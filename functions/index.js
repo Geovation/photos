@@ -320,7 +320,7 @@ async function hostMetadata(req, res) {
     `;
   }
 
-  res.status(200).send(indexHTML);
+  res.status(301).send(indexHTML);
 }
 
 module.exports = {
