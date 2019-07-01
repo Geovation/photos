@@ -54,6 +54,10 @@ class DisplayPhoto extends Component {
     const { user, config, placeholderImage, feature,
       handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
 
+    const photoUrl = window.location.hostname + this.props.history.location.pathname;
+    const tweet = { message: 'Photo%20in%20the%20showing%20link%20will%20be%20tweeted'};
+    const photoTweetLink = `https://twitter.com/intent/tweet?button_text=${tweet.message}&url=https://${photoUrl}`;
+
     return(
       <div>
         { typeof feature === 'undefined' ?
@@ -91,6 +95,11 @@ class DisplayPhoto extends Component {
                       ))}
                     </CardContent>
                   </CardActionArea>
+                    <a className="twitter-share-button"
+                      href={photoTweetLink}>
+                      Tweet
+                    </a>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                   {user && user.isModerator &&
                   <div>
                     <Divider/>
