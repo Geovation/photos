@@ -306,7 +306,7 @@ async function hostMetadata(req, res) {
         <meta name="twitter:image:src" content="${TW_IMAGE}">
         <meta name="twitter:image:alt" content="${TW_IMAGE_ALT}" />
         <meta name="twitter:domain" content="${TW_DOMAIN}">
-        <body>${JSON.stringify(photo.data())}</body>
+        <body> <!-- ${JSON.stringify(photo.data())} --> </body>
       </html>
     `;
   } else {
