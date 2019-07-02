@@ -185,7 +185,7 @@ class App extends Component {
   }
 
   goToMap = () => {
-    this.goToPage(this.props.config.PAGES.map)
+    this.props.history.goBack();
   }
 
   componentDidUpdate(prevProps) {
@@ -260,7 +260,6 @@ class App extends Component {
   handleWelcomePageClose = () => {
     this.setState({ welcomeShown: true });
     localStorage.setItem("welcomeShown", true);
-    this.goToMap();
   };
 
   handleTermsPageClose = (e) => {
@@ -314,7 +313,6 @@ class App extends Component {
     });
   };
 
-
   handleApproveClick = (id) => {
     this.setState({
       confirmDialogOpen: true ,
@@ -359,6 +357,7 @@ class App extends Component {
   }
 
   approvePhoto = id => this.approveRejectPhoto(true, id);
+
   rejectPhoto = id => this.approveRejectPhoto(false, id);
 
   handlePhotoPageClose = () => {
@@ -404,12 +403,14 @@ class App extends Component {
                      render={(props) => <CustomPage.page {...props} handleClose={this.goToMap} label={CustomPage.label}/>}
               />
             ))}
+
             <Route path={config.PAGES.about.path} render={(props) =>
               <AboutPage {...props}
                          label={this.props.config.PAGES.about.label}
                          handleClose={this.goToMap}
               />}
             />
+
             <Route path={config.PAGES.tutorial.path} render={(props) =>
               <TutorialPage {...props}
                             label={this.props.config.PAGES.tutorial.label}
