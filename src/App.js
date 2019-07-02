@@ -57,7 +57,8 @@ class App extends Component {
       confirmDialogOpen: false,
       usersLeaderboard: [],
       confirmDialogHandleOk: null,
-      selectedFeature: undefined // undefined = not selectd, null = feature not found
+      selectedFeature: undefined, // undefined = not selectd, null = feature not found
+      photoAccessedByUrl: false
     };
 
     this.geoid = null;
@@ -109,16 +110,16 @@ class App extends Component {
   }
 
   async featchPhotoIfUndefined() {
-    // debugger
     const regexMatch = this.props.history.location.pathname
       .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)$`));
 
     const photoId = regexMatch && regexMatch[1];
     // it means that we landed on the app with a photoId in the url
     if (photoId && !this.state.selectedFeature ) {
+      this.setState({ photoAccessedByUrl: true });
       return dbFirebase.getPhotoByID(photoId)
-        .then(selectedFeature => this.setState({ selectedFeature}))
-        .catch( e => this.setState({selectedFeature: null}));
+        .then(selectedFeature => this.setState({ selectedFeature }))
+        .catch( e => this.setState({ selectedFeature: null }));
     }
   }
 
@@ -359,18 +360,19 @@ class App extends Component {
 
   rejectPhoto = id => this.approveRejectPhoto(false, id);
 
-  handlePhotoPageClose = () => {
-    const action = this.props.history.location.state ? 'goBack' : 'replace';
-
+  handlePhotoPageClose = (photoAccessedByUrl) => {
+    const action = photoAccessedByUrl ? 'replace' : 'goBack';
+    
     if ( this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path)) {
       this.props.history[action](this.props.config.PAGES.embeddable.path);
     } else {
       this.props.history[action](this.props.config.PAGES.map.path);
     }
+    this.setState({ photoAccessedByUrl: false });
   }
 
   handlePhotoClick = (feature) => {
-    this.setState({selectedFeature: feature});
+    this.setState({ selectedFeature: feature });
 
     let pathname = `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`;
     const currentPath = this.props.history.location.pathname;
@@ -495,6 +497,7 @@ class App extends Component {
                        handleApproveClick={this.handleApproveClick}
                        handleClose={this.handlePhotoPageClose}
                        feature={this.state.selectedFeature}
+                       photoAccessedByUrl={this.state.photoAccessedByUrl}
                      />}
             />
 

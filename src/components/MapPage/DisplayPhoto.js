@@ -56,7 +56,7 @@ class DisplayPhoto extends Component {
   }
 
   render() {
-    const { user, config, placeholderImage, feature,
+    const { user, config, placeholderImage, feature, photoAccessedByUrl,
       handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
 
     const photoID = _.get(feature, "properties.id", "");
@@ -77,7 +77,7 @@ class DisplayPhoto extends Component {
           >
             <AppBar position='static' className={classes.notchTop}>
               <Toolbar>
-                <BackIcon className={classes.iconButton} onClick={handleClose} />
+                <BackIcon className={classes.iconButton} onClick={() => handleClose(photoAccessedByUrl)} />
                 <Typography variant='h6' color='inherit'>{config.PAGES.displayPhoto.label}</Typography>
               </Toolbar>
             </AppBar>
