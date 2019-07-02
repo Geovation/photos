@@ -108,20 +108,21 @@ class App extends Component {
     this.setState({ dialogOpen : false})
   }
 
-  componentDidMount(){
+  async featchPhotoIfUndefined() {
+    // debugger
     const regexMatch = this.props.history.location.pathname
       .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)$`));
 
     const photoId = regexMatch && regexMatch[1];
-    const promises = [];
     // it means that we landed on the app with a photoId in the url
-    if (photoId) {
-      promises.push(
-        dbFirebase.getPhotoByID(photoId)
-          .then(selectedFeature => this.setState({ selectedFeature}))
-          .catch( e => this.setState({selectedFeature: null}))
-      );
+    if (photoId && !this.state.selectedFeature ) {
+      return dbFirebase.getPhotoByID(photoId)
+        .then(selectedFeature => this.setState({ selectedFeature}))
+        .catch( e => this.setState({selectedFeature: null}));
     }
+  }
+
+  componentDidMount(){
 
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
@@ -140,7 +141,7 @@ class App extends Component {
     this.unregisterLocationObserver = this.setLocationWatcher();
 
     //delay a second to speedup the app startup
-    Promise.all(promises).then(() => {
+    this.featchPhotoIfUndefined().then(() => {
       setTimeout( async () => {
         const statsPromise = dbFirebase.fetchStats()
           .then(stats => {
@@ -183,6 +184,8 @@ class App extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
+
+      this.featchPhotoIfUndefined();
     }
   }
 
