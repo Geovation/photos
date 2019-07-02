@@ -71,7 +71,7 @@ class App extends Component {
       file
     });
 
-    this.goToPage(this.props.config.PAGES.photos);
+    this.props.history.push(this.props.config.PAGES.photos.path);
   };
 
   setLocationWatcher() {
@@ -131,7 +131,7 @@ class App extends Component {
       if (this.state.user && !user) {
         gtagEvent('Signed out','User')
 
-        this.goToPage(this.props.config.PAGES.map);
+        this.props.history.push(this.props.config.PAGES.map.path);
         window.location.reload();
       }
       this.setState({ user });
@@ -178,14 +178,6 @@ class App extends Component {
     await dbFirebase.disconnect();
     await this.unregisterLocationObserver();
     await this.unregisterConnectionObserver();
-  }
-
-  goToPage = page => {
-    this.props.history.push(page.path);
-  }
-
-  goToMap = () => {
-    this.props.history.goBack();
   }
 
   componentDidUpdate(prevProps) {
@@ -380,7 +372,7 @@ class App extends Component {
   }
 
   render() {
-    const { fields, config } = this.props;
+    const { fields, config, history } = this.props;
 
     return (
       <div className='geovation-app'>
@@ -400,21 +392,21 @@ class App extends Component {
             {config.CUSTOM_PAGES.map( (CustomPage,index) => (
               !!CustomPage.page &&
               <Route key={index} path={CustomPage.path}
-                     render={(props) => <CustomPage.page {...props} handleClose={this.goToMap} label={CustomPage.label}/>}
+                     render={(props) => <CustomPage.page {...props} handleClose={history.goBack} label={CustomPage.label}/>}
               />
             ))}
 
             <Route path={config.PAGES.about.path} render={(props) =>
               <AboutPage {...props}
                          label={this.props.config.PAGES.about.label}
-                         handleClose={this.goToMap}
+                         handleClose={history.goBack}
               />}
             />
 
             <Route path={config.PAGES.tutorial.path} render={(props) =>
               <TutorialPage {...props}
                             label={this.props.config.PAGES.tutorial.label}
-                            handleClose={this.goToMap}
+                            handleClose={history.goBack}
               />}
             />
 
@@ -423,7 +415,7 @@ class App extends Component {
                                config={this.props.config}
                                label={this.props.config.PAGES.leaderboard.label}
                                usersLeaderboard={this.state.usersLeaderboard}
-                               handleClose={this.goToMap}
+                               handleClose={history.goBack}
               />}
             />
 
@@ -432,7 +424,7 @@ class App extends Component {
               <ModeratorPage  {...props}
                               label={this.props.config.PAGES.moderator.label}
                               user={this.state.user}
-                              handleClose={this.goToMap}
+                              handleClose={history.goBack}
               />}
             />
             }
@@ -457,7 +449,7 @@ class App extends Component {
                          srcType={this.state.srcType}
                          cordovaMetadata={this.state.cordovaMetadata}
                          fields={fields}
-                         handleClose={this.goToMap}
+                         handleClose={history.goBack}
                          handleRetakeClick={this.handleCameraClick}
               />}
             />
@@ -467,7 +459,7 @@ class App extends Component {
               <ProfilePage {...props}
                            label={this.props.config.PAGES.account.label}
                            user={this.state.user}
-                           handleClose={this.goToMap}
+                           handleClose={history.goBack}
               />}
             />
             }
@@ -478,7 +470,7 @@ class App extends Component {
                                  user={this.state.user}
                                  location={this.state.location}
                                  online={this.state.online}
-                                 handleClose={this.goToMap}
+                                 handleClose={history.goBack}
               />}
             />
 
