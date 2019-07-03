@@ -328,6 +328,10 @@ class App extends Component {
         await dbFirebase.rejectPhoto(id, this.state.user ? this.state.user.id : null);
       }
 
+      const selectedFeature = this.state.selectedFeature;
+      selectedFeature.properties.published = isApproved;
+      this.setState({ selectedFeature});
+
       const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
       const geojson = {
         "type": "FeatureCollection",
