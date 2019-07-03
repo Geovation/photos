@@ -64,7 +64,7 @@ class CardComponent extends React.Component {
         <CardActions>
         { handleRejectClick &&
           <IconButton aria-label='Reject'
-                      disabled={!photoSelected.published}
+                      disabled={photoSelected.published === false}
                       onClick={() => handleRejectClick(photoSelected)}>
             <ThumbDownIcon />
           </IconButton>
