@@ -13,7 +13,8 @@
     "twSite": "@Geovation",
     "twCreator": "@Geovation",
     "twDomain": "www.geovation.co.uk",
-    "twDescriptionField": "description",
+    "_twDescriptionField": "description",
+    "twDescription": "Nice one",
     "twTitle": "Check This Photo"
   }
 }

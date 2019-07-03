@@ -290,7 +290,7 @@ async function hostMetadata(req, res) {
 
   let indexHTML;
   if (photo && photo.exists && photo.data().published) {
-    const TW_DESCRIPTION = photo.data()[config.metadata.twDescriptionField];
+    const TW_DESCRIPTION = twDescriptionField ? photo.data()[config.metadata.twDescriptionField] : twDescription;
     const TW_TITLE = config.metadata.twTitle;
     const TW_IMAGE = `https://storage.googleapis.com/${BUCKET}/photos/${photoId}/1024.jpg`;
     const TW_IMAGE_ALT = TW_DESCRIPTION;
