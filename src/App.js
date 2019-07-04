@@ -139,6 +139,19 @@ class App extends Component {
 
   componentDidMount(){
 
+    // TODO: coordinates
+    // const location = this.props.location;
+    // let mapLocation = this.props.mapLocation;
+    //
+    // const center = location.updated ? [location.longitude, location.latitude] : this.props.config.CENTER;
+    // mapLocation = {
+    //   latitude: center[1],
+    //   longitude: center[0],
+    //   zoom: this.props.config.ZOOM,
+    //   ...mapLocation
+    // };
+
+
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
     });
@@ -205,6 +218,21 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+
+    // TODO: coordinates
+    // const location = this.props.location;
+    // let mapLocation = this.props.mapLocation;
+    //
+    // const center = location.updated ? [location.longitude, location.latitude] : this.props.config.CENTER;
+    // mapLocation = {
+    //   latitude: center[1],
+    //   longitude: center[0],
+    //   zoom: this.props.config.ZOOM,
+    //   ...mapLocation
+    // };
+
+
+
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
 
@@ -416,6 +444,33 @@ class App extends Component {
 
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
+  handlerMapLocationChange(mapLocation) {
+
+
+    debugger
+
+
+
+    this.props.history.replace(`/@${mapLocation.latitude},${mapLocation.longitude},${mapLocation.zoom}z`);
+  }
+
+  handleLocationClick() {
+    gtagEvent('Location FAB clicked', 'Map');
+
+
+    // TODO
+    // change URL
+    console.log()
+
+    debugger
+    console.log(this.props.location);
+
+    this.props.history.replace(`/@${this.props.location.center[0]},${this.props.location.center[1]},${this.config.ZOOM}z`);
+
+
+    debugger
+  }
+
   handlePhotoPageClose = () => {
     const PAGES = this.props.config.PAGES;
     const photoPath = this.props.location.pathname;
@@ -571,7 +626,6 @@ class App extends Component {
           }
 
           <Map history={this.props.history}
-               location={this.state.location}
                visible={this.props.history.location.pathname.match(this.VISIBILITY_REGEX)}
                geojson={this.state.geojson}
                user={this.state.user}
@@ -581,6 +635,10 @@ class App extends Component {
                toggleLeftDrawer={this.toggleLeftDrawer}
                handlePhotoClick={this.handlePhotoClick}
                mapLocation={this.state.mapLocation}
+               handlerMapLocationChange={this.handlerMapLocationChange}
+               handleLocationClick={this.handleLocationClick}
+               gpsOffline={!this.state.location.online}
+               gpsDisabled={!this.state.location.updated}
           />
         </main>
 

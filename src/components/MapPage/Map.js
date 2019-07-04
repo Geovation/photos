@@ -66,19 +66,21 @@ class Map extends Component {
     this.map = {};
     this.renderedThumbnails = {};
     this.navControl = null;
+    this.updatingCoordinates = {};
   }
 
   async componentDidMount(){
-    const location = this.props.location;
 
     mapboxgl.accessToken = this.props.config.MAPBOX_TOKEN;
     this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: this.props.config.MAP_SOURCE,
-      center: location.updated ? [location.longitude, location.latitude] : this.props.config.CENTER, // starting position [lng, lat]
+      center: this.props.config.CENTER, // starting position [lng, lat]
       zoom: this.props.config.ZOOM, // starting zoom
       attributionControl: false,
     });
+
+    debugger
 
     this.navControl = new mapboxgl.NavigationControl({
       showCompass:false
@@ -95,6 +97,20 @@ class Map extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    let mapLocation = this.props.mapLocation;
+
+    // TODO: do we need an if or flyTo is clever enough ?
+
+    if (mapLocation) {
+      this.map.flyTo({
+        center: [
+          mapLocation.longitude,
+          mapLocation.latitude
+        ],
+        zoom: mapLocation.zoom
+      });
+    }
+
     if (this.props.geojson && this.props.geojson.features && this.props.geojson.features.length
       && this.props.geojson !== prevProps.geojson) {
 
@@ -191,7 +207,11 @@ class Map extends Component {
       }
     });
 
-    this.map.on('zoom', e => {
+    this.map.on('zoomend', e => {
+
+      debugger
+
+
       //console.log(e);
       const zoom = Math.round(this.map.getZoom());
       const milliSeconds = 1 * 1000;
@@ -203,11 +223,28 @@ class Map extends Component {
       }
 
       this.prevZoomTime = new Date().getTime();
+
+      this.callHandlerCoordinates();
     });
 
     this.map.on('moveend', e => {
+
+      debugger
+
+
       gtagEvent('Moved at zoom', 'Map', this.prevZoom + '');
       gtagEvent('Moved at location', 'Map', `${this.map.getCenter()}`);
+
+
+
+
+      const seb = this;
+
+      console.log(seb)
+
+      debugger
+
+      this.callHandlerCoordinates();
     });
 
     this.map.on('render', 'unclustered-point', e => {
@@ -236,11 +273,29 @@ class Map extends Component {
     });
   }
 
-  flyToGpsLocation = () => {
-    gtagEvent('Location FAB clicked', 'Map');
-    this.map.flyTo({
-      center: [this.props.location.longitude, this.props.location.latitude]
-    });
+  callHandlerCoordinates() {
+    debugger
+
+
+    console.log(this.map.getCenter())
+
+    debugger
+
+
+
+    clearTimeout(this.updatingCoordinates);
+
+
+    this.updatingCoordinates = setTimeout(() => {
+
+      debugger
+
+      this.props.handlerMapLocationChange({
+        longitude: this.map.getCenter().lng,
+        latitude: this.map.getCenter().lat,
+        zoom: this.map.getZoom()
+      })
+    }, 1000);
   }
 
   updateRenderedThumbails = (visibleFeatures) => {
@@ -287,15 +342,13 @@ class Map extends Component {
       });
     }
 
-    const { location, classes } = this.props;
-    const gpsOffline = !location.online;
-    const gpsDisabled = !location.updated;
+    const { gpsOffline, gpsDisabled, classes } = this.props;
 
     return (
       <div className={"geovation-map"} style={{ visibility: this.props.visible ? "visible" : "hidden" }}>
         <div id='map' className="map"></div>
 
-        <Fab className={classes.location} size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+        <Fab className={classes.location} size="small" onClick={this.handleLocationClick} disabled={gpsDisabled}>
           {gpsOffline ? <GpsOff/> : <GpsFixed/>}
         </Fab>
 
