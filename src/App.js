@@ -60,13 +60,14 @@ class App extends Component {
       confirmDialogHandleOk: null,
       selectedFeature: undefined, // undefined = not selectd, null = feature not found
       photoAccessedByUrl: false,
-      photosToModerate: {}
+      photosToModerate: {},
+      mapLocation: undefined
     };
 
     this.geoid = null;
     this.domRefInput = {};
 
-    this.VISIBILITY_REGEX = new RegExp('(^/$|^' + this.props.config.PAGES.displayPhoto.path + '/|^' + this.props.config.PAGES.embeddable.path + ')', 'g');
+    this.VISIBILITY_REGEX = new RegExp('(^/@|^/$|^' + this.props.config.PAGES.displayPhoto.path + '/|^' + this.props.config.PAGES.embeddable.path + ')', 'g');
   }
 
   openPhotoPage = (file) => {
@@ -111,17 +112,29 @@ class App extends Component {
     this.setState({ dialogOpen : false})
   }
 
-  async featchPhotoIfUndefined() {
-    const regexMatch = this.props.history.location.pathname
-      .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)$`));
-
-    const photoId = regexMatch && regexMatch[1];
+  async featchPhotoIfUndefined(photoId) {
     // it means that we landed on the app with a photoId in the url
     if (photoId && !this.state.selectedFeature ) {
       return dbFirebase.getPhotoByID(photoId)
         .then(selectedFeature => this.setState({ selectedFeature }))
         .catch( e => this.setState({ selectedFeature: null }));
     }
+  }
+
+  extractPathnameParams() {
+    // extracts photoID
+    const regexPhotoIDMatch = this.props.location.pathname
+      .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)$`));
+
+    const photoId = regexPhotoIDMatch && regexPhotoIDMatch[1];
+
+    // extracts mapLocation
+    const regexMapLocationMatch = this.props.location.pathname
+      .match(new RegExp("@(-?\\d+\\.\\d+),(-?\\d+\\.\\d+),(\\d+)z$"));
+
+    const mapLocation = regexMapLocationMatch && { latitude: regexMapLocationMatch[1], longitude: regexMapLocationMatch[2], zoom: regexMapLocationMatch[3]};
+
+    return {photoId, mapLocation};
   }
 
   componentDidMount(){
@@ -142,8 +155,11 @@ class App extends Component {
 
     this.unregisterLocationObserver = this.setLocationWatcher();
 
+    const { photoId, mapLocation} = this.extractPathnameParams();
+    this.setState({ photoId, mapLocation});
+
     //delay a second to speedup the app startup
-    this.featchPhotoIfUndefined().then(() => {
+    this.featchPhotoIfUndefined(photoId).then(() => {
 
       // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
       // into the photoId.
@@ -194,8 +210,7 @@ class App extends Component {
 
       // if it updates, then it is guaranteed that we didn't landed into the photo
       this.setState({ photoAccessedByUrl: false });
-
-      this.featchPhotoIfUndefined();
+      this.featchPhotoIfUndefined(_.get(this.state, "selectedFeature.properties.id"));
     }
 
     if (_.get(this.state.user, "isModerator") && !this.unregisterPhotosToModerate) {
@@ -565,6 +580,7 @@ class App extends Component {
                handleCameraClick={this.handleCameraClick}
                toggleLeftDrawer={this.toggleLeftDrawer}
                handlePhotoClick={this.handlePhotoClick}
+               mapLocation={this.state.mapLocation}
           />
         </main>
 
