@@ -116,7 +116,6 @@ class App extends Component {
     const photoId = regexMatch && regexMatch[1];
     // it means that we landed on the app with a photoId in the url
     if (photoId && !this.state.selectedFeature ) {
-      this.setState({ photoAccessedByUrl: true });
       return dbFirebase.getPhotoByID(photoId)
         .then(selectedFeature => this.setState({ selectedFeature }))
         .catch( e => this.setState({ selectedFeature: null }));
@@ -143,6 +142,11 @@ class App extends Component {
 
     //delay a second to speedup the app startup
     this.featchPhotoIfUndefined().then(() => {
+
+      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
+      // into the photoId.
+      this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
+
       setTimeout( async () => {
         const statsPromise = dbFirebase.fetchStats()
           .then(stats => {
@@ -185,6 +189,9 @@ class App extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
+
+      // if it updates, then it is guaranteed that we didn't landed into the photo
+      this.setState({ photoAccessedByUrl: false });
 
       this.featchPhotoIfUndefined();
     }
@@ -360,15 +367,17 @@ class App extends Component {
 
   rejectPhoto = id => this.approveRejectPhoto(false, id);
 
-  handlePhotoPageClose = (photoAccessedByUrl) => {
-    const action = photoAccessedByUrl ? 'replace' : 'goBack';
-    
-    if ( this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path)) {
-      this.props.history[action](this.props.config.PAGES.embeddable.path);
-    } else {
-      this.props.history[action](this.props.config.PAGES.map.path);
+  handlePhotoPageClose = () => {
+    const PAGES = this.props.config.PAGES;
+    const photoPath = this.props.location.pathname;
+    const mapPath = this.props.location.pathname.startsWith(PAGES.embeddable.path) ? PAGES.embeddable.path : PAGES.map.path;
+
+    if (this.state.photoAccessedByUrl) {
+      this.props.history.replace(mapPath);
+      this.props.history.push(photoPath);
     }
-    this.setState({ photoAccessedByUrl: false });
+
+    this.props.history.goBack();
   }
 
   handlePhotoClick = (feature) => {
@@ -497,7 +506,6 @@ class App extends Component {
                        handleApproveClick={this.handleApproveClick}
                        handleClose={this.handlePhotoPageClose}
                        feature={this.state.selectedFeature}
-                       photoAccessedByUrl={this.state.photoAccessedByUrl}
                      />}
             />
 
