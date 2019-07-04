@@ -7,6 +7,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import HelpIcon from '@material-ui/icons/Help';
 import FeedbackIcon from '@material-ui/icons/Feedback';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
+import GroupIcon from '@material-ui/icons/Group';
 
 import _ from 'lodash';
 
@@ -114,6 +115,22 @@ const PAGES = {
   displayPhoto: {
     path: "/photos",
     label: "photos"
+  },
+  groups: {
+    path: "/groups",
+    label: "Groups",
+    visible: (user, online) => true,
+    icon: <GroupIcon/>
+  },
+  grouplist: {
+    path: "/grouplist",
+    label: "List Groups",
+    visible: (user, online) => user && user.isOwner,
+  },
+  groupadd: {
+    path: "/groupadd",
+    label: "Create a Group",
+    visible: (user, online) => true,
   }
 };
 
@@ -217,4 +234,8 @@ export default { ...STATIC_CONFIG,
       field: "uploaded",
       displayedUsers: 20,
     },
+  GROUPS_FIELD: {
+      name: "name",
+      description: "description"
+  }
 }

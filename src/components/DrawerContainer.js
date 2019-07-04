@@ -57,6 +57,7 @@ class DrawerContainer extends Component {
       PAGES.feedbackReports,
       PAGES.tutorial,
       PAGES.leaderboard,
+      PAGES.groups
     ];
     const ListItemsConfigurable = config.CUSTOM_PAGES;
     const ListItemsBottom = [

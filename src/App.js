@@ -22,6 +22,9 @@ import Login from './components/Login';
 import AboutPage from './components/AboutPage';
 import TutorialPage from './components/TutorialPage';
 import LeaderboardPage from './components/Leaderboard';
+import Groups from './components/Groups/GroupMain';
+import GroupList from './components/Groups/GroupList';
+import GroupAdd from './components/Groups/GroupAdd';
 import WelcomePage from './components/WelcomePage';
 import WriteFeedbackPage from './components/WriteFeedbackPage';
 import DrawerContainer from './components/DrawerContainer';
@@ -56,6 +59,7 @@ class App extends Component {
       dialogOpen: false,
       confirmDialogOpen: false,
       usersLeaderboard: [],
+      groupsArray: [],
       confirmDialogHandleOk: null,
       selectedFeature: undefined // undefined = not selectd, null = feature not found
     };
@@ -424,6 +428,33 @@ class App extends Component {
                                usersLeaderboard={this.state.usersLeaderboard}
                                handleClose={history.goBack}
               />}
+            />
+
+            <Route path={config.PAGES.groups.path} render={(props) =>
+                <Groups {...props}
+                            config={this.props.config}
+                            label={this.props.config.PAGES.groups.label}
+                            handleClose={history.goBack}
+                />}
+            />
+
+            {/*{this.state.user && this.state.user.isOwner &&*/}
+            <Route path={config.PAGES.grouplist.path} render={(props) =>
+                <GroupList {...props}
+                           config={this.props.config}
+                           label={this.props.config.PAGES.grouplist.label}
+                           groupsArray={this.state.groupsArray}
+                           handleClose={history.goBack}
+                />}
+            />
+            {/*}*/}
+
+            <Route path={config.PAGES.groupadd.path} render={(props) =>
+                <GroupAdd {...props}
+                          config={this.props.config}
+                          label={this.props.config.PAGES.groupadd.label}
+                          handleClose={history.goBack}
+                />}
             />
 
             { this.state.user && this.state.user.isModerator &&
