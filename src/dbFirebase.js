@@ -163,7 +163,11 @@ async function getPhotoByID(id) {
 }
 
 function photosToModerate() {
-  return firestore.collection('photos').where('moderated', "==", null).get()
+  return firestore.collection('photos')
+    .where('moderated', "==", null)
+    .orderBy("updated", "desc")
+    .limit(50)
+    .get()
   .then(sn => sn.docs.map(extractPhoto));
 }
 

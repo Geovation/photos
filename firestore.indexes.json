@@ -1,3 +1,11 @@
 {
-  "indexes": []
+  "indexes": [
+    {
+      "collectionId": "photos",
+      "fields": [
+        { "fieldPath": "moderated", "mode": "ASCENDING" },
+        { "fieldPath": "updated", "mode": "DESCENDING" }
+      ]
+    }
+  ]
 }
