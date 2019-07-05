@@ -212,6 +212,7 @@ export default { ...STATIC_CONFIG,
     URL: "https://photos-demo-d4b14-api.web.app",
     // URL: "http://localhost:5000/photos-demo-d4b14/us-central1/api"
   },
+  MODERATING_PHOTOS: 10,
     LEADERBOARD_FIELD: {
       label: "Uploads",
       field: "uploaded",

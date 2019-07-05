@@ -38,7 +38,7 @@ class ModeratorPage extends Component {
   }
 
   async componentDidMount() {
-    this.setState({ photos: await dbFirebase.photosToModerate() });
+    this.setState({ photos: await dbFirebase.photosToModerate(this.props.config.MODERATING_PHOTOS) });
   }
 
   handleRejectClick = (photo) => {
@@ -76,7 +76,7 @@ class ModeratorPage extends Component {
     this.setState({
       confirmDialogOpen: false,
       zoomDialogOpen: false,
-      photos: await dbFirebase.photosToModerate()
+      photos: await dbFirebase.photosToModerate(this.props.config.MODERATING_PHOTOS)
     });
   };
 
@@ -85,7 +85,7 @@ class ModeratorPage extends Component {
     this.setState({
       confirmDialogOpen: false,
       zoomDialogOpen: false,
-      photos: await dbFirebase.photosToModerate()
+      photos: await dbFirebase.photosToModerate(this.props.config.MODERATING_PHOTOS)
     });
   };
 
