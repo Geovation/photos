@@ -162,11 +162,11 @@ async function getPhotoByID(id) {
   return null;
 }
 
-function photosToModerate() {
+function photosToModerate(howMany) {
   return firestore.collection('photos')
     .where('moderated', "==", null)
     .orderBy("updated", "desc")
-    .limit(50)
+    .limit(howMany)
     .get()
   .then(sn => sn.docs.map(extractPhoto));
 }

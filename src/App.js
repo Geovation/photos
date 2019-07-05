@@ -440,6 +440,7 @@ class App extends Component {
             { this.state.user && this.state.user.isModerator &&
             <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
               <ModeratorPage  {...props}
+                              config={this.props.config}
                               label={this.props.config.PAGES.moderator.label}
                               user={this.state.user}
                               handleClose={history.goBack}
