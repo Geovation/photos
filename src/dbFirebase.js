@@ -88,12 +88,6 @@ async function fetchStats() {
     .then(response => response.json());
 }
 
-async function fetchUsers() {
-  return fetch(config.API.URL + "/stats", {mode: "cors"})
-    .then(response => response.json())
-    // .then(userstats => console.log('users from Firebase:', userstats.users));
-}
-
 function fetchFeedbacks(isShowAll) {
   let query = firestore.collection('feedbacks')
     .orderBy("updated",  "desc")
@@ -162,20 +156,42 @@ async function getPhotoByID(id) {
   return null;
 }
 
-function photosToModerate(howMany) {
+/**
+ *
+ * @param howMany
+ * @param photos object to keep up to date
+ * @returns {() => void}
+ */
+function photosToModerateRT(howMany, updatePhotoToModerate, removePhotoToModerate) {
+
   return firestore.collection('photos')
     .where('moderated', "==", null)
     .orderBy("updated", "desc")
     .limit(howMany)
-    .get()
-  .then(sn => sn.docs.map(extractPhoto));
+    .onSnapshot(snapshot => {
+      snapshot.docChanges().forEach( change => {
+        const photo = extractPhoto(change.doc);
+        // debugger
+
+        if (change.type === "added" || change.type === "modified") {
+          updatePhotoToModerate(photo);
+        } else if (change.type === "removed") {
+          removePhotoToModerate(photo);
+        } else {
+          console.error(`the photo ${photo.id} as type ${change.type}`);
+        }
+      });
+    });
 }
 
-async function writeModeration(photoId,userId, published) {
+
+function writeModeration(photoId,userId, published) {
+  console.log(`The photo ${photoId} will have field published = ${published}`)
+
   if (typeof published !== "boolean") {
     throw new Error("Only boolean pls")
   }
-  return await firestore.collection('photos').doc(photoId).update({
+  return firestore.collection('photos').doc(photoId).update({
     moderated: firebase.firestore.FieldValue.serverTimestamp(),
     published: published,
     moderator_id: userId
@@ -225,14 +241,13 @@ export default {
   onConnectionStateChanged,
   fetchPhotos,
   fetchStats,
-  fetchUsers,
   fetchFeedbacks,
   getUser,
   getFeedbackByID,
   getPhotoByID,
   savePhoto,
   saveMetadata,
-  photosToModerate,
+  photosToModerateRT,
   rejectPhoto: (photoId, userId) => writeModeration(photoId, userId, false),
   approvePhoto: (photoId, userId) => writeModeration(photoId, userId, true),
   disconnect,
