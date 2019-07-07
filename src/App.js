@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 
 import * as localforage from "localforage";
+import _ from "lodash";
 
 import RootRef from '@material-ui/core/RootRef';
 import Button from '@material-ui/core/Button';
@@ -58,7 +59,7 @@ class App extends Component {
       usersLeaderboard: [],
       confirmDialogHandleOk: null,
       selectedFeature: undefined, // undefined = not selectd, null = feature not found
-      photoAccessedByUrl: false
+      photosToModerate: {}
     };
 
     this.geoid = null;
@@ -142,11 +143,6 @@ class App extends Component {
 
     //delay a second to speedup the app startup
     this.featchPhotoIfUndefined().then(() => {
-
-      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
-      // into the photoId.
-      this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
-
       setTimeout( async () => {
         const statsPromise = dbFirebase.fetchStats()
           .then(stats => {
@@ -186,15 +182,36 @@ class App extends Component {
     await this.unregisterConnectionObserver();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
 
-      // if it updates, then it is guaranteed that we didn't landed into the photo
-      this.setState({ photoAccessedByUrl: false });
-
       this.featchPhotoIfUndefined();
     }
+
+    if (_.get(this.state.user, "isModerator") && !this.unregisterPhotosToModerate) {
+      this.unregisterPhotosToModerate = dbFirebase.photosToModerateRT(this.props.config.MODERATING_PHOTOS,
+        photo => this.updatePhotoToModerate(photo),
+        photo => this.removePhotoToModerate(photo));
+    }
+  }
+
+  removePhotoToModerate(photo) {
+    console.debug(`removing the photo ${photo.id} from view`);
+
+    const photosToModerate = _.cloneDeep(this.state.photosToModerate);
+    delete photosToModerate[photo.id];
+
+    this.setState({photosToModerate});
+  }
+
+  updatePhotoToModerate(photo) {
+    console.debug(`updating the photo ${photo.id} in the view`);
+
+    const photosToModerate = _.cloneDeep(this.state.photosToModerate);
+    photosToModerate[photo.id] = photo;
+
+    this.setState({photosToModerate});
   }
 
   handleClickLoginLogout = () => {
@@ -308,76 +325,81 @@ class App extends Component {
     this.setState({ confirmDialogOpen: false });
   }
 
-  handleRejectClick = (id) => {
+  handleRejectClick = (photo) => {
     this.setState({
       confirmDialogOpen: true ,
       confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
-      confirmDialogHandleOk: () => this.rejectPhoto(id)
+      confirmDialogHandleOk: () => this.rejectPhoto(photo)
     });
   };
 
-  handleApproveClick = (id) => {
+  handleApproveClick = (photo) => {
     this.setState({
       confirmDialogOpen: true ,
       confirmDialogTitle: `Are you sure you want to publish the photo ?`,
-      confirmDialogHandleOk: () => this.approvePhoto(id)
+      confirmDialogHandleOk: () => this.approvePhoto(photo)
     });
   };
 
-  approveRejectPhoto = async (isApproved, id) => {
+  approveRejectPhoto = async (isApproved, photo) => {
     // close dialogs
     this.handleConfirmDialogClose();
 
-    // unpublish photo in firestore
+    // publish/unpublish photo in firestore
     try {
+
       if (isApproved) {
-        await dbFirebase.approvePhoto(id, this.state.user ? this.state.user.id : null);
+        await dbFirebase.approvePhoto(photo.id, this.state.user ? this.state.user.id : null);
       } else {
-        await dbFirebase.rejectPhoto(id, this.state.user ? this.state.user.id : null);
+        await dbFirebase.rejectPhoto(photo.id, this.state.user ? this.state.user.id : null);
       }
 
       const selectedFeature = this.state.selectedFeature;
-      selectedFeature.properties.published = isApproved;
-      this.setState({ selectedFeature});
 
-      const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== id);
-      const geojson = {
-        "type": "FeatureCollection",
-        "features": updatedFeatures
-      };
-      // update localStorage
-      localforage.setItem("cachedGeoJson", geojson);
+      photo.published = isApproved;
 
-      // remove thumbnail from the map
-      this.setState({ geojson }); //update state for next updatedFeatures
+      if (_.get(selectedFeature, "properties.id") === photo.id ) {
+        selectedFeature.properties.published = isApproved;
+        this.setState({ selectedFeature});
 
-      alert(`Photo with ID ${id} ${isApproved ? 'published' : 'unpublished'}`)
+        const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== photo.id);
+        const geojson = {
+          "type": "FeatureCollection",
+          "features": updatedFeatures
+        };
+        // update localStorage
+        localforage.setItem("cachedGeoJson", geojson);
+
+        // remove thumbnail from the map
+        this.setState({ geojson }); //update state for next updatedFeatures
+      }
+
+      // alert(`Photo with ID ${photo.id} ${isApproved ? 'published' : 'unpublished'}`)
 
     } catch (e) {
+      console.error(e);
+
       this.setState({
         confirmDialogOpen: true ,
-        confirmDialogTitle: `The photo state has not changed. Please try again, id:${id}`,
+        confirmDialogTitle: `The photo state has not changed. Please try again, id:${photo.id}`,
         confirmDialogHandleOk: this.handleConfirmDialogClose
       });
     }
 
   }
 
-  approvePhoto = id => this.approveRejectPhoto(true, id);
+  approvePhoto = photo => this.approveRejectPhoto(true, photo);
 
-  rejectPhoto = id => this.approveRejectPhoto(false, id);
+  rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
   handlePhotoPageClose = () => {
-    const PAGES = this.props.config.PAGES;
-    const photoPath = this.props.location.pathname;
-    const mapPath = this.props.location.pathname.startsWith(PAGES.embeddable.path) ? PAGES.embeddable.path : PAGES.map.path;
+    const action = this.props.history.location.state ? 'goBack' : 'replace';
 
-    if (this.state.photoAccessedByUrl) {
-      this.props.history.replace(mapPath);
-      this.props.history.push(photoPath);
+    if ( this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path)) {
+      this.props.history[action](this.props.config.PAGES.embeddable.path);
+    } else {
+      this.props.history[action](this.props.config.PAGES.map.path);
     }
-
-    this.props.history.goBack();
   }
 
   handlePhotoClick = (feature) => {
@@ -440,10 +462,13 @@ class App extends Component {
             { this.state.user && this.state.user.isModerator &&
             <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
               <ModeratorPage  {...props}
+                              photos={this.state.photosToModerate}
                               config={this.props.config}
                               label={this.props.config.PAGES.moderator.label}
                               user={this.state.user}
                               handleClose={history.goBack}
+                              handleRejectClick={this.handleRejectClick}
+                              handleApproveClick={this.handleApproveClick}
               />}
             />
             }
