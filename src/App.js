@@ -59,6 +59,7 @@ class App extends Component {
       usersLeaderboard: [],
       confirmDialogHandleOk: null,
       selectedFeature: undefined, // undefined = not selectd, null = feature not found
+      photoAccessedByUrl: false,
       photosToModerate: {}
     };
 
@@ -143,6 +144,11 @@ class App extends Component {
 
     //delay a second to speedup the app startup
     this.featchPhotoIfUndefined().then(() => {
+
+      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
+      // into the photoId.
+      this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
+
       setTimeout( async () => {
         const statsPromise = dbFirebase.fetchStats()
           .then(stats => {
@@ -185,6 +191,9 @@ class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
+
+      // if it updates, then it is guaranteed that we didn't landed into the photo
+      this.setState({ photoAccessedByUrl: false });
 
       this.featchPhotoIfUndefined();
     }
@@ -393,13 +402,16 @@ class App extends Component {
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
   handlePhotoPageClose = () => {
-    const action = this.props.history.location.state ? 'goBack' : 'replace';
+    const PAGES = this.props.config.PAGES;
+    const photoPath = this.props.location.pathname;
+    const mapPath = this.props.location.pathname.startsWith(PAGES.embeddable.path) ? PAGES.embeddable.path : PAGES.map.path;
 
-    if ( this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path)) {
-      this.props.history[action](this.props.config.PAGES.embeddable.path);
-    } else {
-      this.props.history[action](this.props.config.PAGES.map.path);
+    if (this.state.photoAccessedByUrl) {
+      this.props.history.replace(mapPath);
+      this.props.history.push(photoPath);
     }
+
+    this.props.history.goBack();
   }
 
   handlePhotoClick = (feature) => {
