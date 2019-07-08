@@ -82,8 +82,8 @@ class App extends Component {
     if (navigator && navigator.geolocation) {
       this.geoid = navigator.geolocation.watchPosition(position => {
         const location = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
+          latitude: position.coords.latitude.toFixed(7),
+          longitude: position.coords.longitude.toFixed(7),
           online: true,
           updated: new Date(position.timestamp) // it indicate the freshness of the location.
         };
@@ -447,24 +447,23 @@ class App extends Component {
 
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
-  handlerMapLocationChange = (mapLocation) => {
+  handleMapLocationChange = (mapLocation) => {
     const previousMapLocation = this.extractPathnameParams().mapLocation;
 
-    if (previousMapLocation && !_.isEqual(previousMapLocation, mapLocation)) {
-      console.log('not equal');
+    if ( (this.props.location.pathname === this.props.config.PAGES.map.path) ||
+         (previousMapLocation && !_.isEqual(previousMapLocation, mapLocation)) ) {
       this.props.history.replace(`/@${mapLocation.latitude},${mapLocation.longitude},${mapLocation.zoom}z`);
     }
+
   }
 
   handleLocationClick = () => {
     gtagEvent('Location FAB clicked', 'Map');
 
-    // TODO
-    // change URL
-
-    console.log(this.props.location);
-
-    this.props.history.replace(`/@${this.props.location.center[0]},${this.props.location.center[1]},${this.config.ZOOM}z`);
+    const location = this.state.location;
+    if (location !== {}) {
+      this.props.history.replace(`/@${location.latitude},${location.longitude},${this.props.config.ZOOM * 3}z`);
+    }
   }
 
   handlePhotoPageClose = () => {
@@ -631,7 +630,7 @@ class App extends Component {
                toggleLeftDrawer={this.toggleLeftDrawer}
                handlePhotoClick={this.handlePhotoClick}
                mapLocation={mapLocation}
-               handlerMapLocationChange={(mapLocation) => this.handlerMapLocationChange(mapLocation)}
+               handleMapLocationChange={(mapLocation) => this.handleMapLocationChange(mapLocation)}
                handleLocationClick={this.handleLocationClick}
                gpsOffline={!this.state.location.online}
                gpsDisabled={!this.state.location.updated}

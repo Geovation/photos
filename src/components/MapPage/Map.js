@@ -262,7 +262,7 @@ class Map extends Component {
     clearTimeout(this.updatingCoordinates);
 
     this.updatingCoordinates = setTimeout(() => {
-      this.props.handlerMapLocationChange({
+      this.props.handleMapLocationChange({
         latitude: this.map.getCenter().lat.toFixed(7),
         longitude: this.map.getCenter().lng.toFixed(7),
         zoom: this.map.getZoom().toFixed(2)
@@ -320,7 +320,7 @@ class Map extends Component {
       <div className={"geovation-map"} style={{ visibility: this.props.visible ? "visible" : "hidden" }}>
         <div id='map' className="map"></div>
 
-        <Fab className={classes.location} size="small" onClick={this.handleLocationClick} disabled={gpsDisabled}>
+        <Fab className={classes.location} size="small" onClick={this.props.handleLocationClick} disabled={gpsDisabled}>
           {gpsOffline ? <GpsOff/> : <GpsFixed/>}
         </Fab>
 
