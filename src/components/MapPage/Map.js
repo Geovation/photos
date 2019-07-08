@@ -59,7 +59,7 @@ class Map extends Component {
       confirmDialogOpen: false,
       confirmDialogTitle: '',
       confirmDialogHandleOk: null,
-      geojson: null,
+      geojson: null
     }
     this.prevZoom = this.props.config.ZOOM;
     this.prevZoomTime = new Date().getTime();
@@ -72,15 +72,18 @@ class Map extends Component {
   async componentDidMount(){
 
     mapboxgl.accessToken = this.props.config.MAPBOX_TOKEN;
+
+    const mapLocation = this.props.mapLocation;
+    const zoom = (!!mapLocation) ? mapLocation.zoom : this.props.config.ZOOM;
+    const center = (!!mapLocation) ? [mapLocation.latitude, mapLocation.longitude] : this.props.config.CENTER;
+
     this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: this.props.config.MAP_SOURCE,
-      center: this.props.config.CENTER, // starting position [lng, lat]
-      zoom: this.props.config.ZOOM, // starting zoom
+      center: center, // starting position [lng, lat]
+      zoom: zoom, // starting zoom
       attributionControl: false,
     });
-
-    debugger
 
     this.navControl = new mapboxgl.NavigationControl({
       showCompass:false
@@ -97,9 +100,9 @@ class Map extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    let mapLocation = this.props.mapLocation;
+    const mapLocation = this.props.mapLocation;
 
-    // TODO: do we need an if or flyTo is clever enough ?
+    // TODO: do we need an if or flyTo is clever enough ?;
 
     if (mapLocation) {
       this.map.flyTo({
@@ -127,9 +130,10 @@ class Map extends Component {
   }
 
   addFeaturesToMap = geojson => {
-    if (!this.map.loaded()) {
-      return
-    }
+
+    // if (!this.map.loaded()) {
+    //   return
+    // }
 
     if (this.map.getLayer("clusters")) this.map.removeLayer("clusters")
     if (this.map.getLayer("cluster-count")) this.map.removeLayer("cluster-count")
@@ -208,11 +212,6 @@ class Map extends Component {
     });
 
     this.map.on('zoomend', e => {
-
-      debugger
-
-
-      //console.log(e);
       const zoom = Math.round(this.map.getZoom());
       const milliSeconds = 1 * 1000;
       const timeLapsed = new Date().getTime() - this.prevZoomTime;
@@ -223,26 +222,11 @@ class Map extends Component {
       }
 
       this.prevZoomTime = new Date().getTime();
-
-      this.callHandlerCoordinates();
     });
 
     this.map.on('moveend', e => {
-
-      debugger
-
-
       gtagEvent('Moved at zoom', 'Map', this.prevZoom + '');
       gtagEvent('Moved at location', 'Map', `${this.map.getCenter()}`);
-
-
-
-
-      const seb = this;
-
-      console.log(seb)
-
-      debugger
 
       this.callHandlerCoordinates();
     });
@@ -254,6 +238,7 @@ class Map extends Component {
     this.map.on('mouseenter', 'clusters', () => {
       this.map.getCanvas().style.cursor = 'pointer';
     });
+
     this.map.on('mouseleave', 'clusters', () => {
       this.map.getCanvas().style.cursor = '';
     });
@@ -274,26 +259,13 @@ class Map extends Component {
   }
 
   callHandlerCoordinates() {
-    debugger
-
-
-    console.log(this.map.getCenter())
-
-    debugger
-
-
-
     clearTimeout(this.updatingCoordinates);
 
-
     this.updatingCoordinates = setTimeout(() => {
-
-      debugger
-
       this.props.handlerMapLocationChange({
-        longitude: this.map.getCenter().lng,
-        latitude: this.map.getCenter().lat,
-        zoom: this.map.getZoom()
+        latitude: this.map.getCenter().lat.toFixed(7),
+        longitude: this.map.getCenter().lng.toFixed(7),
+        zoom: this.map.getZoom().toFixed(2)
       })
     }, 1000);
   }
