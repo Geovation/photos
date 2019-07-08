@@ -99,12 +99,18 @@ class Map extends Component {
     }), "bottom-left");
   }
 
+  calcMapLocation() {
+    return {
+      latitude: this.map.getCenter().lat.toFixed(7),
+      longitude: this.map.getCenter().lng.toFixed(7),
+      zoom: this.map.getZoom().toFixed(2)
+    }
+  }
+
   componentDidUpdate(prevProps) {
     const mapLocation = this.props.mapLocation;
 
-    // TODO: do we need an if or flyTo is clever enough ?;
-
-    if (mapLocation) {
+    if (mapLocation && !_.isEqual(mapLocation, this.calcMapLocation())) {
       this.map.flyTo({
         center: [
           mapLocation.longitude,
@@ -262,11 +268,7 @@ class Map extends Component {
     clearTimeout(this.updatingCoordinates);
 
     this.updatingCoordinates = setTimeout(() => {
-      this.props.handleMapLocationChange({
-        latitude: this.map.getCenter().lat.toFixed(7),
-        longitude: this.map.getCenter().lng.toFixed(7),
-        zoom: this.map.getZoom().toFixed(2)
-      })
+      this.props.handleMapLocationChange(this.calcMapLocation());
     }, 1000);
   }
 
