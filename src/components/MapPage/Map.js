@@ -137,9 +137,9 @@ class Map extends Component {
 
   addFeaturesToMap = geojson => {
 
-    // if (!this.map.loaded()) {
-    //   return
-    // }
+    if (!this.map.loaded()) {
+      return
+    }
 
     if (this.map.getLayer("clusters")) this.map.removeLayer("clusters")
     if (this.map.getLayer("cluster-count")) this.map.removeLayer("cluster-count")
