@@ -15,7 +15,6 @@ import { gtagEvent } from '../../gtag.js';
 import { isIphoneWithNotchAndCordova } from '../../utils';
 import './Map.scss';
 
-
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 const styles = theme => ({
@@ -59,7 +58,6 @@ class Map extends Component {
       confirmDialogOpen: false,
       confirmDialogTitle: '',
       confirmDialogHandleOk: null,
-      geojson: null
     }
     this.prevZoom = this.props.config.ZOOM;
     this.prevZoomTime = new Date().getTime();
@@ -75,7 +73,7 @@ class Map extends Component {
 
     const mapLocation = this.props.mapLocation;
     const zoom = (!!mapLocation) ? mapLocation.zoom : this.props.config.ZOOM;
-    const center = (!!mapLocation) ? [mapLocation.latitude, mapLocation.longitude] : this.props.config.CENTER;
+    const center = (!!mapLocation) ? [mapLocation.longitude, mapLocation.latitude] : this.props.config.CENTER;
 
     this.map = new mapboxgl.Map({
       container: 'map', // container id
@@ -97,15 +95,67 @@ class Map extends Component {
       compact: true,
       customAttribution: this.props.config.MAP_ATTRIBUTION
     }), "bottom-left");
+
+    if (this.props.geojson) {
+      console.log('yes');
+      this.map.on('load', async () => {
+        console.log('load');
+        this.addFeaturesToMap(this.props.geojson);
+      });
+    }
+
+    this.map.on('zoomend', e => {
+      const zoom = Math.round(this.map.getZoom());
+      const milliSeconds = 1 * 1000;
+      const timeLapsed = new Date().getTime() - this.prevZoomTime;
+
+      if (this.prevZoom !== zoom && timeLapsed > milliSeconds) {
+        gtagEvent('Zoom','Map',zoom + '');
+        this.prevZoom = zoom;
+      }
+
+      this.prevZoomTime = new Date().getTime();
+    });
+
+    this.map.on('moveend', e => {
+      gtagEvent('Moved at zoom', 'Map', this.prevZoom + '');
+      gtagEvent('Moved at location', 'Map', `${this.map.getCenter()}`);
+
+      this.callHandlerCoordinates();
+    });
+
+    this.map.on('render', 'unclustered-point', e => {
+      this.updateRenderedThumbails(e.features);
+    });
+
+    this.map.on('mouseenter', 'clusters', () => {
+      this.map.getCanvas().style.cursor = 'pointer';
+    });
+
+    this.map.on('mouseleave', 'clusters', () => {
+      this.map.getCanvas().style.cursor = '';
+    });
+
+    this.map.on('click', 'clusters', (e) => {
+      gtagEvent('Cluster Clicked', 'Map');
+      const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+      const clusterId = features[0].properties.cluster_id;
+      this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
+        if (err)
+          return;
+        this.map.easeTo({
+          center: features[0].geometry.coordinates,
+          zoom: zoom
+        });
+      });
+    });
   }
 
-  calcMapLocation() {
-    return {
+  calcMapLocation = () => ({
       latitude: this.map.getCenter().lat.toFixed(7),
       longitude: this.map.getCenter().lng.toFixed(7),
       zoom: this.map.getZoom().toFixed(2)
-    }
-  }
+    });
 
   componentDidUpdate(prevProps) {
     const mapLocation = this.props.mapLocation;
@@ -136,7 +186,6 @@ class Map extends Component {
   }
 
   addFeaturesToMap = geojson => {
-
     if (!this.map.loaded()) {
       return
     }
@@ -216,55 +265,9 @@ class Map extends Component {
         "circle-radius": 0,
       }
     });
-
-    this.map.on('zoomend', e => {
-      const zoom = Math.round(this.map.getZoom());
-      const milliSeconds = 1 * 1000;
-      const timeLapsed = new Date().getTime() - this.prevZoomTime;
-
-      if (this.prevZoom !== zoom && timeLapsed > milliSeconds) {
-        gtagEvent('Zoom','Map',zoom + '');
-        this.prevZoom = zoom;
-      }
-
-      this.prevZoomTime = new Date().getTime();
-    });
-
-    this.map.on('moveend', e => {
-      gtagEvent('Moved at zoom', 'Map', this.prevZoom + '');
-      gtagEvent('Moved at location', 'Map', `${this.map.getCenter()}`);
-
-      this.callHandlerCoordinates();
-    });
-
-    this.map.on('render', 'unclustered-point', e => {
-      this.updateRenderedThumbails(e.features);
-    });
-
-    this.map.on('mouseenter', 'clusters', () => {
-      this.map.getCanvas().style.cursor = 'pointer';
-    });
-
-    this.map.on('mouseleave', 'clusters', () => {
-      this.map.getCanvas().style.cursor = '';
-    });
-
-    this.map.on('click', 'clusters', (e) => {
-      gtagEvent('Cluster Clicked', 'Map');
-      const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-      const clusterId = features[0].properties.cluster_id;
-      this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
-        if (err)
-          return;
-        this.map.easeTo({
-          center: features[0].geometry.coordinates,
-          zoom: zoom
-        });
-      });
-    });
   }
 
-  callHandlerCoordinates() {
+  callHandlerCoordinates = () => {
     clearTimeout(this.updatingCoordinates);
 
     this.updatingCoordinates = setTimeout(() => {
@@ -308,13 +311,6 @@ class Map extends Component {
   }
 
   render() {
-    if (this.props.geojson) {
-      this.map.on('load', async () => {
-        const geojson = this.props.geojson;
-        this.setState({ geojson });
-        this.addFeaturesToMap(geojson);
-      });
-    }
 
     const { gpsOffline, gpsDisabled, classes } = this.props;
 
