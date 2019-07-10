@@ -65,6 +65,7 @@ class Map extends Component {
     this.renderedThumbnails = {};
     this.navControl = null;
     this.updatingCoordinates = {};
+    this.numberOfFlying = 0;
   }
 
   async componentDidMount(){
@@ -103,10 +104,25 @@ class Map extends Component {
     this.callHandlerCoordinates();
 
     this.map.on('moveend', e => {
-      gtagEvent('Moved at zoom', 'Map', this.calcMapLocation().zoom + '');
-      gtagEvent('Moved at location', 'Map', `${this.calcMapLocation()}`);
 
-      this.callHandlerCoordinates();
+      console.log(this.numberOfFlying);
+
+      debugger
+
+      // identify end of fly event
+      if (!e.originalEvent) {
+        this.numberOfFlying--;
+
+      }
+
+      if (this.numberOfFlying === 0) {
+
+        gtagEvent('Moved at zoom', 'Map', this.calcMapLocation().zoom + '');
+        gtagEvent('Moved at location', 'Map', `${this.calcMapLocation()}`);
+        debugger
+
+        this.callHandlerCoordinates();
+      }
     });
 
     this.map.on('render', 'unclustered-point', e => {
@@ -146,6 +162,10 @@ class Map extends Component {
     const mapLocation = this.props.mapLocation;
 
     if (mapLocation && !_.isEqual(mapLocation, this.calcMapLocation()) && !this.updatingCoordinates) {
+      console.log(this.numberOfFlying);
+
+      debugger
+      this.numberOfFlying++;
       this.map.flyTo({
         center: [
           mapLocation.longitude,
