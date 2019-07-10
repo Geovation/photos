@@ -96,30 +96,15 @@ class Map extends Component {
       customAttribution: this.props.config.MAP_ATTRIBUTION
     }), "bottom-left");
 
-    if (this.props.geojson) {
-      console.log('yes');
-      this.map.on('load', async () => {
-        console.log('load');
-        this.addFeaturesToMap(this.props.geojson);
-      });
-    }
-
-    this.map.on('zoomend', e => {
-      const zoom = Math.round(this.map.getZoom());
-      const milliSeconds = 1 * 1000;
-      const timeLapsed = new Date().getTime() - this.prevZoomTime;
-
-      if (this.prevZoom !== zoom && timeLapsed > milliSeconds) {
-        gtagEvent('Zoom','Map',zoom + '');
-        this.prevZoom = zoom;
-      }
-
-      this.prevZoomTime = new Date().getTime();
+    this.map.on('load', () => {
+      this.addFeaturesToMap(this.props.geojson);
     });
 
+    this.callHandlerCoordinates();
+
     this.map.on('moveend', e => {
-      gtagEvent('Moved at zoom', 'Map', this.prevZoom + '');
-      gtagEvent('Moved at location', 'Map', `${this.map.getCenter()}`);
+      gtagEvent('Moved at zoom', 'Map', this.calcMapLocation().zoom + '');
+      gtagEvent('Moved at location', 'Map', `${this.calcMapLocation()}`);
 
       this.callHandlerCoordinates();
     });
@@ -160,7 +145,7 @@ class Map extends Component {
   componentDidUpdate(prevProps) {
     const mapLocation = this.props.mapLocation;
 
-    if (mapLocation && !_.isEqual(mapLocation, this.calcMapLocation())) {
+    if (mapLocation && !_.isEqual(mapLocation, this.calcMapLocation()) && !this.updatingCoordinates) {
       this.map.flyTo({
         center: [
           mapLocation.longitude,
@@ -170,9 +155,8 @@ class Map extends Component {
       });
     }
 
-    if (this.props.geojson && this.props.geojson.features && this.props.geojson.features.length
-      && this.props.geojson !== prevProps.geojson) {
-
+    // if the geofeatures have changed
+    if (_.get(this.props, "geojson.features.length") && this.props.geojson !== prevProps.geojson && this.map.loaded()) {
       this.addFeaturesToMap(this.props.geojson);
     }
     if(this.props.embeddable!==prevProps.embeddable){
@@ -186,10 +170,6 @@ class Map extends Component {
   }
 
   addFeaturesToMap = geojson => {
-    if (!this.map.loaded()) {
-      return
-    }
-
     if (this.map.getLayer("clusters")) this.map.removeLayer("clusters")
     if (this.map.getLayer("cluster-count")) this.map.removeLayer("cluster-count")
     if (this.map.getLayer("unclustered-point")) this.map.removeLayer("unclustered-point")
@@ -272,6 +252,10 @@ class Map extends Component {
 
     this.updatingCoordinates = setTimeout(() => {
       this.props.handleMapLocationChange(this.calcMapLocation());
+
+      clearTimeout(this.updatingCoordinates);
+      delete this.updatingCoordinates
+
     }, 1000);
   }
 
@@ -310,6 +294,12 @@ class Map extends Component {
     if (this.map.remove) { this.map.remove(); }
   }
 
+  handlerLocation() {
+    clearTimeout(this.updatingCoordinates);
+    delete this.updatingCoordinates;
+    this.props.handleLocationClick();
+  }
+
   render() {
 
     const { gpsOffline, gpsDisabled, classes } = this.props;
@@ -318,7 +308,7 @@ class Map extends Component {
       <div className={"geovation-map"} style={{ visibility: this.props.visible ? "visible" : "hidden" }}>
         <div id='map' className="map"></div>
 
-        <Fab className={classes.location} size="small" onClick={this.props.handleLocationClick} disabled={gpsDisabled}>
+        <Fab className={classes.location} size="small" onClick={() => this.handlerLocation()} disabled={gpsDisabled}>
           {gpsOffline ? <GpsOff/> : <GpsFixed/>}
         </Fab>
 

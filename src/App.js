@@ -490,7 +490,7 @@ class App extends Component {
 
   render() {
     const { fields, config, history } = this.props;
-    const {photoId, mapLocation} = this.extractPathnameParams()
+    const { mapLocation} = this.extractPathnameParams()
     return (
       <div className='geovation-app'>
         { !this.state.termsAccepted && !this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path) &&
