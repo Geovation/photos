@@ -42,6 +42,8 @@ const styles = theme => ({
   }
 });
 
+const UPDATE_URL_COORDS_DELAY = 1000;
+
 class Map extends Component {
 
   constructor(props) {
@@ -89,19 +91,14 @@ class Map extends Component {
     this.callHandlerCoordinates();
 
     this.map.on('moveend', e => {
-      // identify end of fly event
-      console.log('moveEnd', e);
-      debugger
-
-      // if originalEvent is not present it means the the event was originated by a mapbox map.*to function
+      // identify end of fly event. if originalEvent is not present it means the the event was originated by a mapbox map.*to function
       if (!e.originalEvent) {
         this.numberOfFlying--;
       }
-console.log(this.numberOfFlying);
+
       if (this.numberOfFlying === 0) {
         gtagEvent('Moved at zoom', 'Map', this.calcMapLocation().zoom + '');
         gtagEvent('Moved at location', 'Map', `${this.calcMapLocation()}`);
-
 
         this.callHandlerCoordinates();
       }
@@ -120,7 +117,6 @@ console.log(this.numberOfFlying);
     });
 
     this.map.on('click', 'clusters', (e) => {
-      console.log('click');
       gtagEvent('Cluster Clicked', 'Map');
       const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
       const clusterId = features[0].properties.cluster_id;
@@ -135,7 +131,6 @@ console.log(this.numberOfFlying);
           });
         }
       });
-      console.log(this.numberOfFlying);
     });
   }
 
@@ -159,17 +154,7 @@ console.log(this.numberOfFlying);
     const mapLocation = this.props.mapLocation;
 
     if (mapLocation && !_.isEqual(mapLocation, this.calcMapLocation()) && !this.updatingCoordinates) {
-
       this.flyTo({...mapLocation});
-      //
-      // this.numberOfFlying++;
-      // this.map.flyTo({
-      //   center: [
-      //     mapLocation.longitude,
-      //     mapLocation.latitude
-      //   ],
-      //   zoom: mapLocation.zoom
-      // });
     }
 
     // if the geofeatures have changed
@@ -275,13 +260,8 @@ console.log(this.numberOfFlying);
     clearTimeout(this.updatingCoordinates);
 
     this.updatingCoordinates = setTimeout(() => {
-
       this.callLocationChangeHandler();
-      // this.props.handleMapLocationChange(this.calcMapLocation());
-      //
-      // clearTimeout(this.updatingCoordinates);
-      // delete this.updatingCoordinates
-    }, 3000);
+    }, UPDATE_URL_COORDS_DELAY);
   }
 
   updateRenderedThumbails = (visibleFeatures) => {
