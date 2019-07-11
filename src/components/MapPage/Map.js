@@ -90,7 +90,10 @@ class Map extends Component {
 
     this.map.on('moveend', e => {
       // identify end of fly event
-      console.log('moveEnd');
+      console.log('moveEnd', e);
+      debugger
+
+      // if originalEvent is not present it means the the event was originated by a mapbox map.*to function
       if (!e.originalEvent) {
         this.numberOfFlying--;
       }
@@ -122,17 +125,29 @@ console.log(this.numberOfFlying);
       const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
       const clusterId = features[0].properties.cluster_id;
       this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
-        if (err)
+        if (err) {
           return;
-        this.map.easeTo({
-          center: features[0].geometry.coordinates,
-          zoom: zoom
-        });
+        } else {
+          this.flyTo({
+            longitude: features[0].geometry.coordinates[0],
+            latitude: features[0].geometry.coordinates[1],
+            zoom: zoom
+          });
+        }
       });
-      this.numberOfFlying++;
       console.log(this.numberOfFlying);
     });
   }
+
+  // Mapbox will trigger an moveend event every time a flyto/easetoo/*to ends even if called in sequence. So we need to
+  // count them to determine when they are actually completed.
+  flyTo = ({latitude, longitude, zoom}) => {
+    this.map.flyTo({
+      center: [ longitude, latitude ],
+      zoom: zoom
+    });
+    this.numberOfFlying++;
+  };
 
   calcMapLocation = () => ({
       latitude: this.map.getCenter().lat.toFixed(7),
@@ -144,14 +159,17 @@ console.log(this.numberOfFlying);
     const mapLocation = this.props.mapLocation;
 
     if (mapLocation && !_.isEqual(mapLocation, this.calcMapLocation()) && !this.updatingCoordinates) {
-      this.numberOfFlying++;
-      this.map.flyTo({
-        center: [
-          mapLocation.longitude,
-          mapLocation.latitude
-        ],
-        zoom: mapLocation.zoom
-      });
+
+      this.flyTo({...mapLocation});
+      //
+      // this.numberOfFlying++;
+      // this.map.flyTo({
+      //   center: [
+      //     mapLocation.longitude,
+      //     mapLocation.latitude
+      //   ],
+      //   zoom: mapLocation.zoom
+      // });
     }
 
     // if the geofeatures have changed
@@ -246,15 +264,24 @@ console.log(this.numberOfFlying);
     });
   }
 
+  callLocationChangeHandler = () => {
+    clearTimeout(this.updatingCoordinates);
+    delete this.updatingCoordinates;
+
+    this.props.handleMapLocationChange(this.calcMapLocation());
+  }
+
   callHandlerCoordinates = () => {
     clearTimeout(this.updatingCoordinates);
 
     this.updatingCoordinates = setTimeout(() => {
-      this.props.handleMapLocationChange(this.calcMapLocation());
 
-      clearTimeout(this.updatingCoordinates);
-      delete this.updatingCoordinates
-    }, 1000);
+      this.callLocationChangeHandler();
+      // this.props.handleMapLocationChange(this.calcMapLocation());
+      //
+      // clearTimeout(this.updatingCoordinates);
+      // delete this.updatingCoordinates
+    }, 3000);
   }
 
   updateRenderedThumbails = (visibleFeatures) => {
@@ -276,7 +303,8 @@ console.log(this.numberOfFlying);
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
           gtagEvent('Photo Clicked', 'Map', feature.properties.id);
-          this.props.handlePhotoClick(feature)
+          this.callLocationChangeHandler();
+          this.props.handlePhotoClick(feature);
         });
         //create marker
         const marker = new mapboxgl.Marker(el)
