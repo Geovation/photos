@@ -130,7 +130,7 @@ class App extends Component {
 
     // extracts mapLocation
     const regexMapLocationMatch = this.props.location.pathname
-      .match(new RegExp("@(-?\\d+\\.?\\d+|-?\\d+\\.?),(-?\\d+\\.?[\\d?]+|-?\\d+\\.?),(\\d+\\.?[\\d?]+|\\d+\\.?)z"));
+      .match(new RegExp("@(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(\\d*\\.?\\d*)z"));
 
     const mapLocation = regexMapLocationMatch && {
       latitude: parseFloat(regexMapLocationMatch[1]).toFixed(7),

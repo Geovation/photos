@@ -46,21 +46,6 @@ class Map extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      feature: {
-        properties: {
-          updated: {}
-        },
-        geometry: {
-          coordinates:{}
-        }
-      },
-      confirmDialogOpen: false,
-      confirmDialogTitle: '',
-      confirmDialogHandleOk: null,
-    }
-    this.prevZoom = this.props.config.ZOOM;
-    this.prevZoomTime = new Date().getTime();
     this.map = {};
     this.renderedThumbnails = {};
     this.navControl = null;
@@ -86,9 +71,9 @@ class Map extends Component {
 
     this.navControl = new mapboxgl.NavigationControl({
       showCompass:false
-    })
+    });
 
-    if (this.props.embeddable){
+    if (this.props.embeddable) {
       this.map.addControl(this.navControl,'top-left');
     }
 
@@ -104,22 +89,16 @@ class Map extends Component {
     this.callHandlerCoordinates();
 
     this.map.on('moveend', e => {
-
-      console.log(this.numberOfFlying);
-
-      debugger
-
       // identify end of fly event
+      console.log('moveEnd');
       if (!e.originalEvent) {
         this.numberOfFlying--;
-
       }
-
+console.log(this.numberOfFlying);
       if (this.numberOfFlying === 0) {
-
         gtagEvent('Moved at zoom', 'Map', this.calcMapLocation().zoom + '');
         gtagEvent('Moved at location', 'Map', `${this.calcMapLocation()}`);
-        debugger
+
 
         this.callHandlerCoordinates();
       }
@@ -138,6 +117,7 @@ class Map extends Component {
     });
 
     this.map.on('click', 'clusters', (e) => {
+      console.log('click');
       gtagEvent('Cluster Clicked', 'Map');
       const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
       const clusterId = features[0].properties.cluster_id;
@@ -149,6 +129,8 @@ class Map extends Component {
           zoom: zoom
         });
       });
+      this.numberOfFlying++;
+      console.log(this.numberOfFlying);
     });
   }
 
@@ -162,9 +144,6 @@ class Map extends Component {
     const mapLocation = this.props.mapLocation;
 
     if (mapLocation && !_.isEqual(mapLocation, this.calcMapLocation()) && !this.updatingCoordinates) {
-      console.log(this.numberOfFlying);
-
-      debugger
       this.numberOfFlying++;
       this.map.flyTo({
         center: [
@@ -275,7 +254,6 @@ class Map extends Component {
 
       clearTimeout(this.updatingCoordinates);
       delete this.updatingCoordinates
-
     }, 1000);
   }
 
