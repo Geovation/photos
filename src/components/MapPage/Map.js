@@ -14,6 +14,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { gtagEvent } from '../../gtag.js';
 import { isIphoneWithNotchAndCordova } from '../../utils';
 import './Map.scss';
+import MapLocation from "../../types/MapLocation";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -60,8 +61,8 @@ class Map extends Component {
     mapboxgl.accessToken = this.props.config.MAPBOX_TOKEN;
 
     const mapLocation = this.props.mapLocation;
-    const zoom = (!!mapLocation) ? mapLocation.zoom : this.props.config.ZOOM;
-    const center = (!!mapLocation) ? [mapLocation.longitude, mapLocation.latitude] : this.props.config.CENTER;
+    const zoom = mapLocation.zoom;
+    const center = mapLocation.getCenter();
 
     this.map = new mapboxgl.Map({
       container: 'map', // container id
@@ -145,23 +146,12 @@ class Map extends Component {
     this.numberOfFlying++;
   };
 
-  // TODO: duplication
-  formatMapLocation = loc => ({
-    latitude: loc.latitude.toFixed(7),
-    longitude: loc.longitude.toFixed(7),
-    zoom: loc.zoom.toFixed(2)
-  });
-
-  calcMapLocation = () => ({
-      latitude: this.map.getCenter().lat,
-      longitude: this.map.getCenter().lng,
-      zoom: this.map.getZoom()
-    });
+  calcMapLocation = () => (new MapLocation(this.map.getCenter().lat, this.map.getCenter().lng, this.map.getZoom()));
 
   componentDidUpdate(prevProps) {
     const mapLocation = this.props.mapLocation;
 
-    if (mapLocation && !_.isEqual(this.formatMapLocation(mapLocation), this.formatMapLocation(this.calcMapLocation())) && !this.updatingCoordinates) {
+    if (mapLocation && !mapLocation.isEqual(this.calcMapLocation()) && !this.updatingCoordinates) {
       this.flyTo({...mapLocation});
     }
 

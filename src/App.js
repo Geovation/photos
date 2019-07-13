@@ -34,6 +34,7 @@ import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
 import './App.scss';
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
+import MapLocation from "./types/MapLocation";
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 class App extends Component {
@@ -42,11 +43,7 @@ class App extends Component {
 
     this.state = {
       file: null,
-      location: {
-        zoom: this.props.config.ZOOM,
-        latitude: this.props.config.CENTER[1],
-        longitude: this.props.config.CENTER[0]
-      },
+      location: new MapLocation(),
       user: null,
       online: false,
       loginLogoutDialogOpen: false,
@@ -137,29 +134,13 @@ class App extends Component {
     const regexMapLocationMatch = this.props.location.pathname
       .match(new RegExp("@(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(\\d*\\.?\\d*)z"));
 
-    const mapLocation = regexMapLocationMatch && {
-      latitude: Number(regexMapLocationMatch[1]),
-      longitude: Number(regexMapLocationMatch[2]),
-      zoom: Number(regexMapLocationMatch[3])
-    };
+    const mapLocation = regexMapLocationMatch &&
+      new MapLocation(regexMapLocationMatch[1], regexMapLocationMatch[2],regexMapLocationMatch[3] );
 
     return {photoId, mapLocation};
   }
 
   componentDidMount(){
-    // TODO: coordinates
-    // const location = this.props.location;
-    // let mapLocation = this.props.mapLocation;
-    //
-    // const center = location.updated ? [location.longitude, location.latitude] : this.props.config.CENTER;
-    // mapLocation = {
-    //   latitude: center[1],
-    //   longitude: center[0],
-    //   zoom: this.props.config.ZOOM,
-    //   ...mapLocation
-    // };
-
-
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
     });
@@ -226,21 +207,6 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-
-    // TODO: coordinates
-    // const location = this.props.location;
-    // let mapLocation = this.props.mapLocation;
-    //
-    // const center = location.updated ? [location.longitude, location.latitude] : this.props.config.CENTER;
-    // mapLocation = {
-    //   latitude: center[1],
-    //   longitude: center[0],
-    //   zoom: this.props.config.ZOOM,
-    //   ...mapLocation
-    // };
-
-
-
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
 
@@ -452,18 +418,18 @@ class App extends Component {
 
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
-  handleMapLocationChange = (newMapLocation) => {
+  handleMapLocationChange = (newLocation) => {
+    const newMapLocation = new MapLocation(newLocation.latitude, newLocation.longitude, newLocation.zoom);
     const currentMapLocation = this.extractPathnameParams().mapLocation;
 
     // change url coords if the coords are different
-    if (  currentMapLocation == null ||
-          !_.isEqual(this.formatMapLocation(currentMapLocation), this.formatMapLocation(newMapLocation))) {
-      this.setCoordsInUrl(newMapLocation)
+    if (  currentMapLocation == null || !currentMapLocation.isEqual(newMapLocation)) {
+      this.setCoordsInUrl(newMapLocation);
     }
   }
 
   setCoordsInUrl = mapLocation => {
-    const formatedMapLocation = this.formatMapLocation(mapLocation);
+    const formatedMapLocation = mapLocation.formatted();
     const currentUrl = this.props.history.location;
     const prefix = currentUrl.pathname.split("@")[0];
     const newUrl = `${prefix}@${formatedMapLocation.latitude},${formatedMapLocation.longitude},${formatedMapLocation.zoom}z`;
@@ -498,12 +464,6 @@ class App extends Component {
     pathname = (currentPath === this.props.config.PAGES.embeddable.path) ? currentPath + pathname : pathname;
     this.props.history.push(pathname);
   }
-
-  formatMapLocation = loc => ({
-    latitude: loc.latitude.toFixed(7),
-    longitude: loc.longitude.toFixed(7),
-    zoom: loc.zoom.toFixed(2)
-  });
 
   render() {
     const { fields, config, history } = this.props;
