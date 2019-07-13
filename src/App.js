@@ -126,7 +126,7 @@ class App extends Component {
   extractPathnameParams() {
     // extracts photoID
     const regexPhotoIDMatch = this.props.location.pathname
-      .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)$`));
+      .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)`));
 
     const photoId = regexPhotoIDMatch && regexPhotoIDMatch[1];
 
@@ -447,10 +447,11 @@ class App extends Component {
   handlePhotoPageClose = () => {
     const PAGES = this.props.config.PAGES;
     const photoPath = this.props.location.pathname;
+    const coords = photoPath.split("@")[1];
     const mapPath = this.props.location.pathname.startsWith(PAGES.embeddable.path) ? PAGES.embeddable.path : PAGES.map.path;
-
     if (this.state.photoAccessedByUrl) {
-      this.props.history.replace(mapPath);
+      const mapUrl = mapPath + (coords ? `@${coords}` : '');
+      this.props.history.replace(mapUrl);
       this.props.history.push(photoPath);
     }
 
@@ -462,9 +463,11 @@ class App extends Component {
 
     let pathname = `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`;
     const currentPath = this.props.history.location.pathname;
+    const coordsUrl = currentPath.split("@")[1];
     pathname = (currentPath === this.props.config.PAGES.embeddable.path) ? currentPath + pathname : pathname;
-    this.props.history.push(pathname);
-  }
+    // this.props.history.push(pathname);
+    this.props.history.push(`${pathname}@${coordsUrl}`);
+  };
 
   render() {
     const { fields, config, history } = this.props;
