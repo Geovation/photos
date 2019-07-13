@@ -134,8 +134,9 @@ class App extends Component {
     const regexMapLocationMatch = this.props.location.pathname
       .match(new RegExp("@(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(\\d*\\.?\\d*)z"));
 
-    const mapLocation = regexMapLocationMatch &&
-      new MapLocation(regexMapLocationMatch[1], regexMapLocationMatch[2],regexMapLocationMatch[3] );
+    const mapLocation = (regexMapLocationMatch &&
+      new MapLocation(regexMapLocationMatch[1], regexMapLocationMatch[2],regexMapLocationMatch[3] )) ||
+      new MapLocation();
 
     return {photoId, mapLocation};
   }
