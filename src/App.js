@@ -34,6 +34,7 @@ import dbFirebase from './dbFirebase';
 import { gtagPageView, gtagEvent } from './gtag.js';
 import './App.scss';
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
+import MapLocation from "./types/MapLocation";
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 class App extends Component {
@@ -42,7 +43,7 @@ class App extends Component {
 
     this.state = {
       file: null,
-      location: {},
+      location: new MapLocation(),
       user: null,
       online: false,
       loginLogoutDialogOpen: false,
@@ -60,13 +61,14 @@ class App extends Component {
       confirmDialogHandleOk: null,
       selectedFeature: undefined, // undefined = not selectd, null = feature not found
       photoAccessedByUrl: false,
-      photosToModerate: {}
+      photosToModerate: {},
+      mapLocation: undefined
     };
 
     this.geoid = null;
     this.domRefInput = {};
 
-    this.VISIBILITY_REGEX = new RegExp('(^/$|^' + this.props.config.PAGES.displayPhoto.path + '/|^' + this.props.config.PAGES.embeddable.path + ')', 'g');
+    this.VISIBILITY_REGEX = new RegExp('(^/@|^/$|^' + this.props.config.PAGES.displayPhoto.path + '/|^' + this.props.config.PAGES.embeddable.path + ')', 'g');
   }
 
   openPhotoPage = (file) => {
@@ -81,6 +83,7 @@ class App extends Component {
     if (navigator && navigator.geolocation) {
       this.geoid = navigator.geolocation.watchPosition(position => {
         const location = {
+          ...this.state.location,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           online: true,
@@ -111,11 +114,7 @@ class App extends Component {
     this.setState({ dialogOpen : false})
   }
 
-  async featchPhotoIfUndefined() {
-    const regexMatch = this.props.history.location.pathname
-      .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)$`));
-
-    const photoId = regexMatch && regexMatch[1];
+  async fetchPhotoIfUndefined(photoId) {
     // it means that we landed on the app with a photoId in the url
     if (photoId && !this.state.selectedFeature ) {
       return dbFirebase.getPhotoByID(photoId)
@@ -124,8 +123,24 @@ class App extends Component {
     }
   }
 
-  componentDidMount(){
+  extractPathnameParams() {
+    // extracts photoID
+    const regexPhotoIDMatch = this.props.location.pathname
+      .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)$`));
 
+    const photoId = regexPhotoIDMatch && regexPhotoIDMatch[1];
+
+    // extracts mapLocation
+    const regexMapLocationMatch = this.props.location.pathname
+      .match(new RegExp("@(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(\\d*\\.?\\d*)z"));
+
+    const mapLocation = regexMapLocationMatch &&
+      new MapLocation(regexMapLocationMatch[1], regexMapLocationMatch[2],regexMapLocationMatch[3] );
+
+    return {photoId, mapLocation};
+  }
+
+  componentDidMount(){
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
     });
@@ -142,8 +157,11 @@ class App extends Component {
 
     this.unregisterLocationObserver = this.setLocationWatcher();
 
+    let { photoId, mapLocation} = this.extractPathnameParams();
+    this.setState({ photoId, mapLocation});
+
     //delay a second to speedup the app startup
-    this.featchPhotoIfUndefined().then(() => {
+    this.fetchPhotoIfUndefined(photoId).then(() => {
 
       // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
       // into the photoId.
@@ -194,8 +212,7 @@ class App extends Component {
 
       // if it updates, then it is guaranteed that we didn't landed into the photo
       this.setState({ photoAccessedByUrl: false });
-
-      this.featchPhotoIfUndefined();
+      this.fetchPhotoIfUndefined(_.get(this.state, "selectedFeature.properties.id"));
     }
 
     if (_.get(this.state.user, "isModerator") && !this.unregisterPhotosToModerate) {
@@ -401,6 +418,31 @@ class App extends Component {
 
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
+  handleMapLocationChange = (newLocation) => {
+    const newMapLocation = new MapLocation(newLocation.latitude, newLocation.longitude, newLocation.zoom);
+    const currentMapLocation = this.extractPathnameParams().mapLocation;
+
+    // change url coords if the coords are different
+    if (  currentMapLocation == null || !currentMapLocation.isEqual(newMapLocation)) {
+      this.setCoordsInUrl(newMapLocation);
+    }
+  }
+
+  setCoordsInUrl = mapLocation => {
+    const formatedMapLocation = mapLocation.formatted();
+    const currentUrl = this.props.history.location;
+    const prefix = currentUrl.pathname.split("@")[0];
+    const newUrl = `${prefix}@${formatedMapLocation.latitude},${formatedMapLocation.longitude},${formatedMapLocation.zoom}z`;
+
+    this.props.history.replace(newUrl);
+  }
+
+  handleLocationClick = () => {
+    gtagEvent('Location FAB clicked', 'Map');
+
+    this.handleMapLocationChange(this.state.location);
+  }
+
   handlePhotoPageClose = () => {
     const PAGES = this.props.config.PAGES;
     const photoPath = this.props.location.pathname;
@@ -425,7 +467,7 @@ class App extends Component {
 
   render() {
     const { fields, config, history } = this.props;
-
+    const { mapLocation} = this.extractPathnameParams();
     return (
       <div className='geovation-app'>
         { !this.state.termsAccepted && !this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path) &&
@@ -556,7 +598,6 @@ class App extends Component {
           }
 
           <Map history={this.props.history}
-               location={this.state.location}
                visible={this.props.history.location.pathname.match(this.VISIBILITY_REGEX)}
                geojson={this.state.geojson}
                user={this.state.user}
@@ -565,6 +606,11 @@ class App extends Component {
                handleCameraClick={this.handleCameraClick}
                toggleLeftDrawer={this.toggleLeftDrawer}
                handlePhotoClick={this.handlePhotoClick}
+               mapLocation={mapLocation}
+               handleMapLocationChange={(mapLocation) => this.handleMapLocationChange(mapLocation)}
+               handleLocationClick={this.handleLocationClick}
+               gpsOffline={!this.state.location.online}
+               gpsDisabled={!this.state.location.updated}
           />
         </main>
 

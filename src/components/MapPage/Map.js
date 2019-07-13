@@ -14,7 +14,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { gtagEvent } from '../../gtag.js';
 import { isIphoneWithNotchAndCordova } from '../../utils';
 import './Map.scss';
-
+import MapLocation from "../../types/MapLocation";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -43,48 +43,40 @@ const styles = theme => ({
   }
 });
 
+const UPDATE_URL_COORDS_DELAY = 1000;
+
 class Map extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      feature: {
-        properties: {
-          updated: {}
-        },
-        geometry: {
-          coordinates:{}
-        }
-      },
-      confirmDialogOpen: false,
-      confirmDialogTitle: '',
-      confirmDialogHandleOk: null,
-      geojson: null,
-    }
-    this.prevZoom = this.props.config.ZOOM;
-    this.prevZoomTime = new Date().getTime();
     this.map = {};
     this.renderedThumbnails = {};
     this.navControl = null;
+    this.updatingCoordinates = {};
+    this.numberOfFlying = 0;
   }
 
   async componentDidMount(){
-    const location = this.props.location;
 
     mapboxgl.accessToken = this.props.config.MAPBOX_TOKEN;
+
+    const mapLocation = this.props.mapLocation;
+    const zoom = mapLocation.zoom;
+    const center = mapLocation.getCenter();
+
     this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: this.props.config.MAP_SOURCE,
-      center: location.updated ? [location.longitude, location.latitude] : this.props.config.CENTER, // starting position [lng, lat]
-      zoom: this.props.config.ZOOM, // starting zoom
+      center: center, // starting position [lng, lat]
+      zoom: zoom, // starting zoom
       attributionControl: false,
     });
 
     this.navControl = new mapboxgl.NavigationControl({
       showCompass:false
-    })
+    });
 
-    if (this.props.embeddable){
+    if (this.props.embeddable) {
       this.map.addControl(this.navControl,'top-left');
     }
 
@@ -92,12 +84,79 @@ class Map extends Component {
       compact: true,
       customAttribution: this.props.config.MAP_ATTRIBUTION
     }), "bottom-left");
+
+    this.map.on('load', () => {
+      this.addFeaturesToMap(this.props.geojson);
+    });
+
+    this.callHandlerCoordinates();
+
+    this.map.on('moveend', e => {
+      // identify end of fly event. if originalEvent is not present it means the the event was originated by a mapbox map.*to function
+      if (!e.originalEvent) {
+        this.numberOfFlying--;
+      }
+
+      if (this.numberOfFlying <= 0) {
+        this.numberOfFlying = 0;
+        gtagEvent('Moved at zoom', 'Map', this.calcMapLocation().zoom + '');
+        gtagEvent('Moved at location', 'Map', `${this.calcMapLocation()}`);
+
+        this.callHandlerCoordinates();
+      }
+    });
+
+    this.map.on('render', 'unclustered-point', e => {
+      this.updateRenderedThumbails(e.features);
+    });
+
+    this.map.on('mouseenter', 'clusters', () => {
+      this.map.getCanvas().style.cursor = 'pointer';
+    });
+
+    this.map.on('mouseleave', 'clusters', () => {
+      this.map.getCanvas().style.cursor = '';
+    });
+
+    this.map.on('click', 'clusters', (e) => {
+      gtagEvent('Cluster Clicked', 'Map');
+      const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+      const clusterId = features[0].properties.cluster_id;
+      this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
+        if (err) {
+          return;
+        } else {
+          this.flyTo({
+            longitude: features[0].geometry.coordinates[0],
+            latitude: features[0].geometry.coordinates[1],
+            zoom: zoom
+          });
+        }
+      });
+    });
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.geojson && this.props.geojson.features && this.props.geojson.features.length
-      && this.props.geojson !== prevProps.geojson) {
+  // Mapbox will trigger an moveend event every time a flyto/easetoo/*to ends even if called in sequence. So we need to
+  // count them to determine when they are actually completed.
+  flyTo = ({latitude, longitude, zoom}) => {
+    this.map.flyTo({
+      center: [ longitude, latitude ],
+      zoom: zoom
+    });
+    this.numberOfFlying++;
+  };
 
+  calcMapLocation = () => (new MapLocation(this.map.getCenter().lat, this.map.getCenter().lng, this.map.getZoom()));
+
+  componentDidUpdate(prevProps) {
+    const mapLocation = this.props.mapLocation;
+
+    if (mapLocation && !mapLocation.isEqual(this.calcMapLocation()) && !this.updatingCoordinates) {
+      this.flyTo({...mapLocation});
+    }
+
+    // if the geofeatures have changed
+    if (_.get(this.props, "geojson.features.length") && this.props.geojson !== prevProps.geojson && this.map.loaded()) {
       this.addFeaturesToMap(this.props.geojson);
     }
     if(this.props.embeddable!==prevProps.embeddable){
@@ -111,10 +170,6 @@ class Map extends Component {
   }
 
   addFeaturesToMap = geojson => {
-    if (!this.map.loaded()) {
-      return
-    }
-
     if (this.map.getLayer("clusters")) this.map.removeLayer("clusters")
     if (this.map.getLayer("cluster-count")) this.map.removeLayer("cluster-count")
     if (this.map.getLayer("unclustered-point")) this.map.removeLayer("unclustered-point")
@@ -190,57 +245,21 @@ class Map extends Component {
         "circle-radius": 0,
       }
     });
-
-    this.map.on('zoom', e => {
-      //console.log(e);
-      const zoom = Math.round(this.map.getZoom());
-      const milliSeconds = 1 * 1000;
-      const timeLapsed = new Date().getTime() - this.prevZoomTime;
-
-      if (this.prevZoom !== zoom && timeLapsed > milliSeconds) {
-        gtagEvent('Zoom','Map',zoom + '');
-        this.prevZoom = zoom;
-      }
-
-      this.prevZoomTime = new Date().getTime();
-    });
-
-    this.map.on('moveend', e => {
-      gtagEvent('Moved at zoom', 'Map', this.prevZoom + '');
-      gtagEvent('Moved at location', 'Map', `${this.map.getCenter()}`);
-    });
-
-    this.map.on('render', 'unclustered-point', e => {
-      this.updateRenderedThumbails(e.features);
-    });
-
-    this.map.on('mouseenter', 'clusters', () => {
-      this.map.getCanvas().style.cursor = 'pointer';
-    });
-    this.map.on('mouseleave', 'clusters', () => {
-      this.map.getCanvas().style.cursor = '';
-    });
-
-    this.map.on('click', 'clusters', (e) => {
-      gtagEvent('Cluster Clicked', 'Map');
-      const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
-      const clusterId = features[0].properties.cluster_id;
-      this.map.getSource('data').getClusterExpansionZoom(clusterId, (err, zoom) => {
-        if (err)
-          return;
-        this.map.easeTo({
-          center: features[0].geometry.coordinates,
-          zoom: zoom
-        });
-      });
-    });
   }
 
-  flyToGpsLocation = () => {
-    gtagEvent('Location FAB clicked', 'Map');
-    this.map.flyTo({
-      center: [this.props.location.longitude, this.props.location.latitude]
-    });
+  callLocationChangeHandler = () => {
+    clearTimeout(this.updatingCoordinates);
+    delete this.updatingCoordinates;
+
+    this.props.handleMapLocationChange(this.calcMapLocation());
+  }
+
+  callHandlerCoordinates = () => {
+    clearTimeout(this.updatingCoordinates);
+
+    this.updatingCoordinates = setTimeout(() => {
+      this.callLocationChangeHandler();
+    }, UPDATE_URL_COORDS_DELAY);
   }
 
   updateRenderedThumbails = (visibleFeatures) => {
@@ -262,7 +281,8 @@ class Map extends Component {
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
           gtagEvent('Photo Clicked', 'Map', feature.properties.id);
-          this.props.handlePhotoClick(feature)
+          this.callLocationChangeHandler();
+          this.props.handlePhotoClick(feature);
         });
         //create marker
         const marker = new mapboxgl.Marker(el)
@@ -278,24 +298,21 @@ class Map extends Component {
     if (this.map.remove) { this.map.remove(); }
   }
 
-  render() {
-    if (this.props.geojson) {
-      this.map.on('load', async () => {
-        const geojson = this.props.geojson;
-        this.setState({ geojson });
-        this.addFeaturesToMap(geojson);
-      });
-    }
+  handlerLocation() {
+    clearTimeout(this.updatingCoordinates);
+    delete this.updatingCoordinates;
+    this.props.handleLocationClick();
+  }
 
-    const { location, classes } = this.props;
-    const gpsOffline = !location.online;
-    const gpsDisabled = !location.updated;
+  render() {
+
+    const { gpsOffline, gpsDisabled, classes } = this.props;
 
     return (
       <div className={"geovation-map"} style={{ visibility: this.props.visible ? "visible" : "hidden" }}>
         <div id='map' className="map"></div>
 
-        <Fab className={classes.location} size="small" onClick={this.flyToGpsLocation} disabled={gpsDisabled}>
+        <Fab className={classes.location} size="small" onClick={() => this.handlerLocation()} disabled={gpsDisabled}>
           {gpsOffline ? <GpsOff/> : <GpsFixed/>}
         </Fab>
 
