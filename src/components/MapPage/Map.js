@@ -49,7 +49,10 @@ class Map extends Component {
 
   constructor(props) {
     super(props);
-    this.map = {};
+    this.map = {
+      getCenter: () => ({ lat:0, lng: 0}),
+      getZoom: () => 0
+    };
     this.renderedThumbnails = {};
     this.navControl = null;
     this.updatingCoordinates = {};
