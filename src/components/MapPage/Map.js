@@ -96,7 +96,8 @@ class Map extends Component {
         this.numberOfFlying--;
       }
 
-      if (this.numberOfFlying === 0) {
+      if (this.numberOfFlying <= 0) {
+        this.numberOfFlying = 0;
         gtagEvent('Moved at zoom', 'Map', this.calcMapLocation().zoom + '');
         gtagEvent('Moved at location', 'Map', `${this.calcMapLocation()}`);
 
@@ -144,16 +145,23 @@ class Map extends Component {
     this.numberOfFlying++;
   };
 
+  // TODO: duplication
+  formatMapLocation = loc => ({
+    latitude: loc.latitude.toFixed(7),
+    longitude: loc.longitude.toFixed(7),
+    zoom: loc.zoom.toFixed(2)
+  });
+
   calcMapLocation = () => ({
-      latitude: this.map.getCenter().lat.toFixed(7),
-      longitude: this.map.getCenter().lng.toFixed(7),
-      zoom: this.map.getZoom().toFixed(2)
+      latitude: this.map.getCenter().lat,
+      longitude: this.map.getCenter().lng,
+      zoom: this.map.getZoom()
     });
 
   componentDidUpdate(prevProps) {
     const mapLocation = this.props.mapLocation;
 
-    if (mapLocation && !_.isEqual(mapLocation, this.calcMapLocation()) && !this.updatingCoordinates) {
+    if (mapLocation && !_.isEqual(this.formatMapLocation(mapLocation), this.formatMapLocation(this.calcMapLocation())) && !this.updatingCoordinates) {
       this.flyTo({...mapLocation});
     }
 

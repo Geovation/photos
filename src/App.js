@@ -42,7 +42,11 @@ class App extends Component {
 
     this.state = {
       file: null,
-      location: {},
+      location: {
+        zoom: this.props.config.ZOOM,
+        latitude: this.props.config.CENTER[1],
+        longitude: this.props.config.CENTER[0]
+      },
       user: null,
       online: false,
       loginLogoutDialogOpen: false,
@@ -82,8 +86,9 @@ class App extends Component {
     if (navigator && navigator.geolocation) {
       this.geoid = navigator.geolocation.watchPosition(position => {
         const location = {
-          latitude: position.coords.latitude.toFixed(7),
-          longitude: position.coords.longitude.toFixed(7),
+          ...this.state.location,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
           online: true,
           updated: new Date(position.timestamp) // it indicate the freshness of the location.
         };
@@ -133,9 +138,9 @@ class App extends Component {
       .match(new RegExp("@(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(\\d*\\.?\\d*)z"));
 
     const mapLocation = regexMapLocationMatch && {
-      latitude: parseFloat(regexMapLocationMatch[1]).toFixed(7),
-      longitude: parseFloat(regexMapLocationMatch[2]).toFixed(7),
-      zoom: parseFloat(regexMapLocationMatch[3]).toFixed(2)
+      latitude: Number(regexMapLocationMatch[1]),
+      longitude: Number(regexMapLocationMatch[2]),
+      zoom: Number(regexMapLocationMatch[3])
     };
 
     return {photoId, mapLocation};
@@ -171,7 +176,7 @@ class App extends Component {
 
     this.unregisterLocationObserver = this.setLocationWatcher();
 
-    const { photoId, mapLocation} = this.extractPathnameParams();
+    let { photoId, mapLocation} = this.extractPathnameParams();
     this.setState({ photoId, mapLocation});
 
     //delay a second to speedup the app startup
@@ -447,23 +452,29 @@ class App extends Component {
 
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
-  handleMapLocationChange = (mapLocation) => {
-    const previousMapLocation = this.extractPathnameParams().mapLocation;
+  handleMapLocationChange = (newMapLocation) => {
+    const currentMapLocation = this.extractPathnameParams().mapLocation;
 
-    if ( (this.props.location.pathname === this.props.config.PAGES.map.path) ||
-         (previousMapLocation && !_.isEqual(previousMapLocation, mapLocation)) ) {
-      this.props.history.replace(`/@${mapLocation.latitude},${mapLocation.longitude},${mapLocation.zoom}z`);
+    // change url coords if the coords are different
+    if (  currentMapLocation == null ||
+          !_.isEqual(this.formatMapLocation(currentMapLocation), this.formatMapLocation(newMapLocation))) {
+      this.setCoordsInUrl(newMapLocation)
     }
+  }
 
+  setCoordsInUrl = mapLocation => {
+    const formatedMapLocation = this.formatMapLocation(mapLocation);
+    const currentUrl = this.props.history.location;
+    const prefix = currentUrl.pathname.split("@")[0];
+    const newUrl = `${prefix}@${formatedMapLocation.latitude},${formatedMapLocation.longitude},${formatedMapLocation.zoom}z`;
+
+    this.props.history.replace(newUrl);
   }
 
   handleLocationClick = () => {
     gtagEvent('Location FAB clicked', 'Map');
 
-    const location = this.state.location;
-    if (location !== {}) {
-      this.props.history.replace(`/@${location.latitude},${location.longitude},${this.props.config.ZOOM * 3}z`);
-    }
+    this.handleMapLocationChange(this.state.location);
   }
 
   handlePhotoPageClose = () => {
@@ -488,9 +499,15 @@ class App extends Component {
     this.props.history.push(pathname);
   }
 
+  formatMapLocation = loc => ({
+    latitude: loc.latitude.toFixed(7),
+    longitude: loc.longitude.toFixed(7),
+    zoom: loc.zoom.toFixed(2)
+  });
+
   render() {
     const { fields, config, history } = this.props;
-    const { mapLocation} = this.extractPathnameParams()
+    const { mapLocation} = this.extractPathnameParams();
     return (
       <div className='geovation-app'>
         { !this.state.termsAccepted && !this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path) &&

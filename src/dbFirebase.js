@@ -171,8 +171,6 @@ function photosToModerateRT(howMany, updatePhotoToModerate, removePhotoToModerat
     .onSnapshot(snapshot => {
       snapshot.docChanges().forEach( change => {
         const photo = extractPhoto(change.doc);
-        // debugger
-
         if (change.type === "added" || change.type === "modified") {
           updatePhotoToModerate(photo);
         } else if (change.type === "removed") {
