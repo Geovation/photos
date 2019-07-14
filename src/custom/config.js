@@ -49,7 +49,7 @@ const CUSTOM_STRING = {
     "T&C link": " https://geovation.uk/terms-conditions/",
     "Privacy Policy Link": "https://geovation.uk/privacy-policy/"
   },
-  tweetMessage: "Photo in the showing link will be tweeted"
+  tweetMessage: "Check out this photo "
 };
 
 const PAGES = {

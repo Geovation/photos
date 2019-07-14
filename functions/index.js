@@ -282,7 +282,10 @@ async function hostMetadata(req, res) {
   const TW_CREATOR = config.metadata.twCreator;
   const TW_DOMAIN = config.metadata.twDomain;
 
-  const photoId = req.url.substr(1);
+  const paramsStr = req.url.substr(1);
+  const params = paramsStr.split("@");
+  const photoId = params[0];
+
   let photo;
   if (photoId.length > 0) {
      photo = await firestore.collection("photos").doc(photoId).get();
@@ -297,7 +300,7 @@ async function hostMetadata(req, res) {
 
     indexHTML = `
       <html>
-        <meta http-equiv="refresh" content="0; URL='${SERVER_URL}/#/photos/${photoId}'" />
+        <meta http-equiv="refresh" content="0; URL='${SERVER_URL}/#/photos/${paramsStr}'" />
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="${TW_SITE}">
         <meta name="twitter:title" content="${TW_TITLE}">
