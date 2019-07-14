@@ -145,7 +145,7 @@ export default { ...STATIC_CONFIG,
     "description": s => s,
     "notes": s => s
   },
-  ZOOM: 5,
+  ZOOM: 15,
   CENTER: [-2, 55],
   PHOTO_FIELDS : {
     description: {
