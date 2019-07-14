@@ -152,6 +152,12 @@ class Map extends Component {
   calcMapLocation = () => (new MapLocation(this.map.getCenter().lat, this.map.getCenter().lng, this.map.getZoom()));
 
   componentDidUpdate(prevProps) {
+
+    // ignore it if it is not visible
+    if (!this.props.visible) {
+      return;
+    }
+
     const mapLocation = this.props.mapLocation;
 
     if (mapLocation && !mapLocation.isEqual(this.calcMapLocation()) && !this.updatingCoordinates) {
