@@ -136,16 +136,26 @@ class App extends Component {
 
     const mapLocation = (regexMapLocationMatch &&
       new MapLocation(regexMapLocationMatch[1], regexMapLocationMatch[2],regexMapLocationMatch[3] )) ||
-      new MapLocation();
+        new MapLocation();
+    if (!regexMapLocationMatch) {
+      mapLocation.zoom = this.props.config.ZOOM;
+    }
 
     return {photoId, mapLocation};
   }
 
   componentDidMount(){
+    let { photoId, mapLocation} = this.extractPathnameParams();
+    this.setState({ photoId, mapLocation});
+
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
       this.setState({online});
     });
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
+
+      // will do this after the user has been loaded. It should speed up the users login.
+      this.someInits(photoId);
+
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
         gtagEvent('Signed out','User')
@@ -157,18 +167,19 @@ class App extends Component {
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
+  }
 
-    let { photoId, mapLocation} = this.extractPathnameParams();
-    this.setState({ photoId, mapLocation});
+  someInits(photoId) {
+    if (!this.initDone) {
+      this.initDone = true;
 
-    //delay a second to speedup the app startup
-    this.fetchPhotoIfUndefined(photoId).then(() => {
+      this.fetchPhotoIfUndefined(photoId)
+        .then(async () => {
 
-      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
-      // into the photoId.
-      this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
+        // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
+        // into the photoId.
+        this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
 
-      setTimeout( async () => {
         const statsPromise = dbFirebase.fetchStats()
           .then(stats => {
             console.log(stats);
@@ -192,9 +203,8 @@ class App extends Component {
 
           this.setState({ dbStats, stats, geojson });
         });
-      }, 2000);
-    })
-
+      })
+    }
   }
 
   async componentWillUnmount() {
@@ -420,20 +430,28 @@ class App extends Component {
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
   handleMapLocationChange = (newLocation) => {
+
+    if (!this.props.history.location.pathname.match(this.VISIBILITY_REGEX)) {
+      return;
+    }
+
     const newMapLocation = new MapLocation(newLocation.latitude, newLocation.longitude, newLocation.zoom);
     const currentMapLocation = this.extractPathnameParams().mapLocation;
 
-    // change url coords if the coords are different
-    if (  currentMapLocation == null || !currentMapLocation.isEqual(newMapLocation)) {
+    // change url coords if the coords are different and if we are in the map
+
+    console.log(this.props.location.pathname.startsWith(this.props.config.PAGES.embeddable.path))
+    console.log(this.props.location.pathname.startsWith(this.props.config.PAGES.map.path))
+
+    if ( currentMapLocation == null || !currentMapLocation.isEqual(newMapLocation)) {
       this.setCoordsInUrl(newMapLocation);
     }
   }
 
   setCoordsInUrl = mapLocation => {
-    const formatedMapLocation = mapLocation.formatted();
     const currentUrl = this.props.history.location;
     const prefix = currentUrl.pathname.split("@")[0];
-    const newUrl = `${prefix}@${formatedMapLocation.latitude},${formatedMapLocation.longitude},${formatedMapLocation.zoom}z`;
+    const newUrl = `${prefix}@${mapLocation.urlFormated()}`;
 
     this.props.history.replace(newUrl);
   }
@@ -463,9 +481,16 @@ class App extends Component {
 
     let pathname = `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`;
     const currentPath = this.props.history.location.pathname;
-    const coordsUrl = currentPath.split("@")[1];
+
+    const coordsUrl = currentPath.split("@")[1] ||
+      new MapLocation(feature.geometry.coordinates[1], feature.geometry.coordinates[0], this.props.config.ZOOM_FLYTO).urlFormated();
     pathname = (currentPath === this.props.config.PAGES.embeddable.path) ? currentPath + pathname : pathname;
-    // this.props.history.push(pathname);
+
+    // if it is in map, change the url
+    if (this.props.history.location.pathname.match(this.VISIBILITY_REGEX)) {
+      this.props.history.replace(`${currentPath.split("@")[0]}@${coordsUrl}`);
+    }
+
     this.props.history.push(`${pathname}@${coordsUrl}`);
   };
 
@@ -559,9 +584,12 @@ class App extends Component {
             { this.state.user &&
             <Route path={this.props.config.PAGES.account.path} render={(props) =>
               <ProfilePage {...props}
+                           config={this.props.config}
                            label={this.props.config.PAGES.account.label}
                            user={this.state.user}
+                           geojson={this.state.geojson}
                            handleClose={history.goBack}
+                           handlePhotoClick={this.handlePhotoClick}
               />}
             />
             }
