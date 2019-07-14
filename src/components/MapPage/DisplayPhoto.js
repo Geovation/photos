@@ -57,10 +57,11 @@ class DisplayPhoto extends Component {
 
   render() {
     const { user, config, placeholderImage, feature,
-      handleClose, handleRejectClick, handleApproveClick, classes, fullScreen } = this.props;
+      handleClose, handleRejectClick, handleApproveClick, classes, fullScreen, location } = this.props;
 
     const photoID = _.get(feature, "properties.id", "");
-    const photoUrl = `${config.metadata.metadataServerUrl}/${photoID}`
+    const coords = location.pathname.split("@")[1];
+    const photoUrl = `${config.metadata.metadataServerUrl}/${photoID}@${coords}`
     const photoTweetLink = `https://twitter.com/intent/tweet?text=${config.CUSTOM_STRING.tweetMessage}&url=${photoUrl}`;
 
     return(
