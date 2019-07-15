@@ -51,7 +51,8 @@ class Map extends Component {
     super(props);
     this.map = {
       getCenter: () => ({ lat:0, lng: 0}),
-      getZoom: () => 0
+      getZoom: () => 0,
+      loaded: () => false
     };
     this.renderedThumbnails = {};
     this.navControl = null;
@@ -165,9 +166,10 @@ class Map extends Component {
     }
 
     // if the geofeatures have changed
-    if (_.get(this.props, "geojson.features.length") && this.props.geojson !== prevProps.geojson && this.map.loaded()) {
+    if (this.map.loaded() && !_.isEqual(this.props.geojson, prevProps.geojson)) {
       this.addFeaturesToMap(this.props.geojson);
     }
+
     if(this.props.embeddable!==prevProps.embeddable){
       if (this.props.embeddable){
         this.map.addControl(this.navControl,'top-left');

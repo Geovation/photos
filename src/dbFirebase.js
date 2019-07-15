@@ -3,7 +3,6 @@ import _ from 'lodash'
 
 import firebaseApp from './firebaseInit.js';
 import config from "./custom/config";
-import * as localforage from "localforage";
 
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
@@ -31,56 +30,21 @@ function extractPhoto(doc) {
   return photo;
 }
 
-/**
- *
- * @returns {Promise<{geojson}>}
- */
-async function fetchPhotos() {
-
-  // for making it realtime: https://firebase.google.com/docs/firestore/query-data/listen
-  const promise = firestore.collection("photos").where("published", "==", true).get()
-    .then(querySnapshot => {
-      const geojson = {
-        "type": "FeatureCollection",
-        "features": []
-      };
-
-      querySnapshot.forEach( doc => {
-        const photo = extractPhoto(doc);
-        console.debug(`${doc.id} =>`, photo);
-
-        const feature = {
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [
-              photo.location.longitude,
-              photo.location.latitude
-            ]
-          },
-          "properties": photo
-        };
-
-        geojson.features.push(feature);
-      });
-
-      localforage.setItem("cachedGeoJson", geojson);
-
-      return geojson;
+function photosRT(addedFn, modifiedFn, removedFn, errorFn) {
+  firestore.collection("photos").where("published", "==", true).onSnapshot( snapshot => {
+    snapshot.docChanges().forEach( change => {
+      const photo = extractPhoto(change.doc);
+      if (change.type === "added") {
+        addedFn(photo);
+      } else if (change.type === "modified") {
+        modifiedFn(photo);
+      } else if (change.type === "removed") {
+        removedFn(photo);
+      } else {
+        console.error(`the photo ${photo.id} as type ${change.type}`);
+      }
     });
-
-  // get features from local storage
-  let geojson;
-  try {
-    geojson = await localforage.getItem("cachedGeoJson");
-  } catch (e) {
-    console.log(e);
-  }
-
-  if (!geojson) {
-    geojson = promise;
-  }
-  return geojson;
+  }, errorFn);
 }
 
 async function fetchStats() {
@@ -237,7 +201,7 @@ async function toggleUnreadFeedback(id, resolved, userId) {
 
 export default {
   onConnectionStateChanged,
-  fetchPhotos,
+  photosRT,
   fetchStats,
   fetchFeedbacks,
   getUser,
