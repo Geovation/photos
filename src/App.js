@@ -37,6 +37,8 @@ import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackRepor
 import MapLocation from "./types/MapLocation";
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
+const SET_GEOJSON_INTERVAL = 10000;
+
 class App extends Component {
   constructor(props){
     super(props);
@@ -67,7 +69,7 @@ class App extends Component {
 
     this.geoid = null;
     this.domRefInput = {};
-
+    this.featuresDict = {};
     this.VISIBILITY_REGEX = new RegExp('(^/@|^/$|^' + this.props.config.PAGES.displayPhoto.path + '/|^' + this.props.config.PAGES.embeddable.path + ')', 'g');
   }
 
@@ -152,10 +154,6 @@ class App extends Component {
       this.setState({online});
     });
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
-
-      // will do this after the user has been loaded. It should speed up the users login.
-      this.someInits(photoId);
-
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
         gtagEvent('Signed out','User')
@@ -167,11 +165,80 @@ class App extends Component {
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
+
+    // will do this after the user has been loaded. It should speed up the users login.
+    this.someInits(photoId);
+  }
+
+  saveGeojson = () => {
+    let geojson = _.cloneDeep(this.state.geojson);
+
+    if (!geojson) {
+      geojson = {
+        "type": "FeatureCollection",
+        "features": []
+      };
+    }
+
+    geojson.features = _.map(this.featuresDict, f => f);
+
+    // save only if different
+    if (!_.isEqual(this.state.geojson, geojson)) {
+      this.setState({geojson});
+
+      // after the first time, wait for a bit before updating.
+      localforage.setItem("cachedGeoJson", geojson);
+    }
+
+  }
+
+  delayedSaveGeojson = () => {
+
+    // checked automatically.
+    if (this.settingGeojsonInterval) {
+      return;
+    }
+
+    if (this.settingGeojson) {
+      clearTimeout(this.settingGeojson);
+      delete this.settingGeojson;
+    }
+
+    this.settingGeojson = setTimeout(() => {
+      this.saveGeojson();
+      this.settingGeojsonInterval = setInterval( () => {
+        this.saveGeojson();
+      }, SET_GEOJSON_INTERVAL);
+    }, 100);
+  }
+
+  modifyFeature = photo => {
+    this.featuresDict[photo.id] = {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          photo.location.longitude,
+          photo.location.latitude
+        ]
+      },
+      "properties": photo
+    }
+
+    this.delayedSaveGeojson();
+  }
+
+  addFeature = photo => this.modifyFeature(photo);
+
+  removeFeature = photo => {
+    delete this.featuresDict[photo.id]
+    this.delayedSaveGeojson();
   }
 
   someInits(photoId) {
-    if (!this.initDone) {
-      this.initDone = true;
+    // not sure if we need this if.
+    // if (!this.initDone) {
+    //   this.initDone = true;
 
       this.fetchPhotoIfUndefined(photoId)
         .then(async () => {
@@ -180,31 +247,36 @@ class App extends Component {
         // into the photoId.
         this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
 
-        const statsPromise = dbFirebase.fetchStats()
-          .then(stats => {
-            console.log(stats);
-            this.setState({ usersLeaderboard: stats.users});
+        dbFirebase.fetchStats()
+          .then(dbStats => {
+            console.log(dbStats);
+            this.setState({ usersLeaderboard: dbStats.users, dbStats});
 
-            return stats;
+            return dbStats;
           });
 
         gtagPageView(this.props.location.pathname);
 
-        await Promise.all([statsPromise, dbFirebase.fetchPhotos()]).then(values => {
-          const dbStats = values[0] || {};
-          const geojson = values[1] || {};
-          let stats = 0;
-
-          try {
-            stats = this.props.config.getStats(geojson, dbStats);
-          } catch (err) {
-            console.error('Get Stats: ', err.message);
+        dbFirebase.photosRT(this.addFeature, this.modifyFeature, this.removeFeature, error => {
+            console.log(error)
+            alert(error)
+            window.location.reload();
           }
+        );
+      });
 
-          this.setState({ dbStats, stats, geojson });
-        });
-      })
-    }
+      // use the locals one if we have them: faster boot.
+      localforage.getItem("cachedGeoJson")
+        .then(geojson => {
+          if (geojson) {
+            this.geojson = geojson;
+            this.setState({geojson, stats: this.props.config.getStats(geojson, this.state.dbStats) });
+          }
+        })
+        .catch(console.error);
+    // } else {
+    //   debugger
+    // }
   }
 
   async componentWillUnmount() {
@@ -399,16 +471,16 @@ class App extends Component {
         selectedFeature.properties.published = isApproved;
         this.setState({ selectedFeature});
 
-        const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== photo.id);
-        const geojson = {
-          "type": "FeatureCollection",
-          "features": updatedFeatures
-        };
-        // update localStorage
-        localforage.setItem("cachedGeoJson", geojson);
-
-        // remove thumbnail from the map
-        this.setState({ geojson }); //update state for next updatedFeatures
+        // const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== photo.id);
+        // const geojson = {
+        //   "type": "FeatureCollection",
+        //   "features": updatedFeatures
+        // };
+        // // update localStorage
+        // localforage.setItem("cachedGeoJson", geojson);
+        //
+        // // remove thumbnail from the map
+        // this.setState({ geojson }); //update state for next updatedFeatures
       }
 
       // alert(`Photo with ID ${photo.id} ${isApproved ? 'published' : 'unpublished'}`)
@@ -439,10 +511,6 @@ class App extends Component {
     const currentMapLocation = this.extractPathnameParams().mapLocation;
 
     // change url coords if the coords are different and if we are in the map
-
-    console.log(this.props.location.pathname.startsWith(this.props.config.PAGES.embeddable.path))
-    console.log(this.props.location.pathname.startsWith(this.props.config.PAGES.map.path))
-
     if ( currentMapLocation == null || !currentMapLocation.isEqual(newMapLocation)) {
       this.setCoordsInUrl(newMapLocation);
     }
