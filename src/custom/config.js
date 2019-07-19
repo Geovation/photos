@@ -118,7 +118,7 @@ const PAGES = {
 };
 
 const getStats = (geojson, dbStats) => {
-  return dbStats.published || 0;
+  return (dbStats && dbStats.published) || 0;
 }
 
 const STATIC_CONFIG = require("./config.json");
