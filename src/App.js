@@ -138,7 +138,7 @@ class App extends Component {
 
     const mapLocation = (regexMapLocationMatch &&
       new MapLocation(regexMapLocationMatch[1], regexMapLocationMatch[2],regexMapLocationMatch[3] )) ||
-        new MapLocation();
+      new MapLocation();
     if (!regexMapLocationMatch) {
       mapLocation.zoom = this.props.config.ZOOM;
     }
@@ -186,7 +186,8 @@ class App extends Component {
 
     // save only if different
     if (!_.isEqual(this.state.geojson, geojson)) {
-      this.setState({geojson});
+      const stats = this.props.config.getStats(geojson, this.state.dbStats);
+      this.setState({geojson, stats});
 
       // after the first time, wait for a bit before updating.
       localforage.setItem("cachedGeoJson", geojson);
@@ -245,34 +246,35 @@ class App extends Component {
     this.fetchPhotoIfUndefined(photoId)
       .then(async () => {
 
-      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
-      // into the photoId.
-      this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
+        // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
+        // into the photoId.
+        this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
 
-      dbFirebase.fetchStats()
-        .then(dbStats => {
-          console.log(dbStats);
-          this.setState({ usersLeaderboard: dbStats.users, dbStats, stats: this.props.config.getStats(this.state.geojson, this.state.dbStats) });
+        dbFirebase.fetchStats()
+          .then(dbStats => {
+            console.log(dbStats);
+            this.setState({ usersLeaderboard: dbStats.users, dbStats, stats: this.props.config.getStats(this.state.geojson, this.state.dbStats) });
 
-          return dbStats;
-        });
+            return dbStats;
+          });
 
-      gtagPageView(this.props.location.pathname);
+        gtagPageView(this.props.location.pathname);
 
-      dbFirebase.photosRT(this.addFeature, this.modifyFeature, this.removeFeature, error => {
-          console.log(error)
-          alert(error)
-          window.location.reload();
-        }
-      );
-    });
+        dbFirebase.photosRT(this.addFeature, this.modifyFeature, this.removeFeature, error => {
+            console.log(error)
+            alert(error)
+            window.location.reload();
+          }
+        );
+      });
 
     // use the locals one if we have them: faster boot.
     localforage.getItem("cachedGeoJson")
       .then(geojson => {
         if (geojson) {
           this.geojson = geojson;
-          this.setState({geojson, stats: this.props.config.getStats(geojson, this.state.dbStats) });
+          const stats = this.props.config.getStats(geojson, this.state.dbStats);
+          this.setState({geojson, stats });
         }
       })
       .catch(console.error);
