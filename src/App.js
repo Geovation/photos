@@ -252,7 +252,7 @@ class App extends Component {
       dbFirebase.fetchStats()
         .then(dbStats => {
           console.log(dbStats);
-          this.setState({ usersLeaderboard: dbStats.users, dbStats});
+          this.setState({ usersLeaderboard: dbStats.users, dbStats, stats: this.props.config.getStats(this.state.geojson, this.state.dbStats) });
 
           return dbStats;
         });
