@@ -10,33 +10,39 @@ import config from './custom/config'
  * When the user login call fn
  * @param fn
  */
+
+let currentUser;
+
 const onAuthStateChanged = (fn) => {
-  const firebaseStatusChange = async (user) => {
-    let currentUser = user;
+  const firebaseStatusChange = (user) => {
+    currentUser = user;
     if (config.ENABLE_GRAVATAR_PROFILES && currentUser) {
       gtagSetId(user.uid)
       gtagEvent('Logged in','User',user.uid)
 
-      const fbUser = await dbFirebase.getUser(user.uid);
-      const isModerator = fbUser ? fbUser.isModerator : false;
-
       const gravatarURL = "https://www.gravatar.com/" + md5(user.email) + ".json";
       const photoURL = user.photoURL || "https://www.gravatar.com/avatar/" + md5(user.email);
-      currentUser = new User(user.uid, user.displayName, isModerator, user.email, user.emailVerified, user.isAnonymous, user.phoneNumber, photoURL, null, null, null);
+      currentUser = new User(user.uid, user.displayName, false, user.email, user.emailVerified, user.isAnonymous, user.phoneNumber, photoURL, null, null, null);
 
       // this has to be global to be found by the jsonp
       window.userFromGravatar = (profile) => {
-          const info = profile.entry[0];
-          currentUser.description = info.aboutMe;
-          currentUser.location = info.currentLocation;
-          currentUser.profileURL = info.profileUrl;
-          currentUser.displayName = info.name ? info.name.formatted : currentUser.displayName;
+        const info = profile.entry[0];
+        currentUser.description = info.aboutMe;
+        currentUser.location = info.currentLocation;
+        currentUser.profileURL = info.profileUrl;
+        currentUser.displayName = info.name ? info.name.formatted : currentUser.displayName;
       };
 
       // add a script node to the dom. The browser will run it but we don't know when.
       const script= document.createElement('script');
       script.src=`${gravatarURL}?callback=userFromGravatar`;
       document.head.append(script);
+
+      dbFirebase.getUser(user.uid)
+        .then(fbUser => {
+          currentUser.isModerator = fbUser ? fbUser.isModerator : false;
+          fn(currentUser);
+        })
 	  }
 	  fn(currentUser);
   };
