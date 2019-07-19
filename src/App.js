@@ -150,10 +150,15 @@ class App extends Component {
     let { photoId, mapLocation} = this.extractPathnameParams();
     this.setState({ photoId, mapLocation});
 
-    this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
-      this.setState({online});
-    });
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
+
+      // will do this after the user has been loaded. It should speed up the users login.
+      // not sure if we need this if.
+      if (!this.initDone) {
+        this.initDone = true;
+        this.someInits(photoId);
+      }
+
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
         gtagEvent('Signed out','User')
@@ -165,9 +170,6 @@ class App extends Component {
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
-
-    // will do this after the user has been loaded. It should speed up the users login.
-    this.someInits(photoId);
   }
 
   saveGeojson = () => {
@@ -236,47 +238,44 @@ class App extends Component {
   }
 
   someInits(photoId) {
-    // not sure if we need this if.
-    // if (!this.initDone) {
-    //   this.initDone = true;
+    this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
+      this.setState({online});
+    });
 
-      this.fetchPhotoIfUndefined(photoId)
-        .then(async () => {
+    this.fetchPhotoIfUndefined(photoId)
+      .then(async () => {
 
-        // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
-        // into the photoId.
-        this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
+      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
+      // into the photoId.
+      this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
 
-        dbFirebase.fetchStats()
-          .then(dbStats => {
-            console.log(dbStats);
-            this.setState({ usersLeaderboard: dbStats.users, dbStats});
+      dbFirebase.fetchStats()
+        .then(dbStats => {
+          console.log(dbStats);
+          this.setState({ usersLeaderboard: dbStats.users, dbStats});
 
-            return dbStats;
-          });
+          return dbStats;
+        });
 
-        gtagPageView(this.props.location.pathname);
+      gtagPageView(this.props.location.pathname);
 
-        dbFirebase.photosRT(this.addFeature, this.modifyFeature, this.removeFeature, error => {
-            console.log(error)
-            alert(error)
-            window.location.reload();
-          }
-        );
-      });
+      dbFirebase.photosRT(this.addFeature, this.modifyFeature, this.removeFeature, error => {
+          console.log(error)
+          alert(error)
+          window.location.reload();
+        }
+      );
+    });
 
-      // use the locals one if we have them: faster boot.
-      localforage.getItem("cachedGeoJson")
-        .then(geojson => {
-          if (geojson) {
-            this.geojson = geojson;
-            this.setState({geojson, stats: this.props.config.getStats(geojson, this.state.dbStats) });
-          }
-        })
-        .catch(console.error);
-    // } else {
-    //   debugger
-    // }
+    // use the locals one if we have them: faster boot.
+    localforage.getItem("cachedGeoJson")
+      .then(geojson => {
+        if (geojson) {
+          this.geojson = geojson;
+          this.setState({geojson, stats: this.props.config.getStats(geojson, this.state.dbStats) });
+        }
+      })
+      .catch(console.error);
   }
 
   async componentWillUnmount() {
