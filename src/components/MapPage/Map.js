@@ -57,7 +57,6 @@ class Map extends Component {
     this.renderedThumbnails = {};
     this.navControl = null;
     this.updatingCoordinates = {};
-    this.numberOfFlying = 0;
   }
 
   async componentDidMount(){
@@ -93,21 +92,10 @@ class Map extends Component {
       this.addFeaturesToMap(this.props.geojson);
     });
 
-    this.callHandlerCoordinates();
+    // this.callHandlerCoordinates();
 
     this.map.on('moveend', e => {
-      // identify end of fly event. if originalEvent is not present it means the the event was originated by a mapbox map.*to function
-      if (!e.originalEvent) {
-        this.numberOfFlying--;
-      }
-
-      if (this.numberOfFlying <= 0) {
-        this.numberOfFlying = 0;
-        gtagEvent('Moved at zoom', 'Map', this.calcMapLocation().zoom + '');
-        gtagEvent('Moved at location', 'Map', `${this.calcMapLocation()}`);
-
-        this.callHandlerCoordinates();
-      }
+      this.callHandlerCoordinates();
     });
 
     this.map.on('render', 'unclustered-point', e => {
@@ -130,39 +118,32 @@ class Map extends Component {
         if (err) {
           return;
         } else {
-          this.flyTo({
-            longitude: features[0].geometry.coordinates[0],
-            latitude: features[0].geometry.coordinates[1],
-            zoom: zoom
-          });
+          this.flyTo(new MapLocation(features[0].geometry.coordinates[1],features[0].geometry.coordinates[0],  zoom));
         }
       });
     });
   }
 
-  // Mapbox will trigger an moveend event every time a flyto/easetoo/*to ends even if called in sequence. So we need to
-  // count them to determine when they are actually completed.
-  flyTo = ({latitude, longitude, zoom}) => {
+  flyTo = (mapLocation) => {
     this.map.flyTo({
-      center: [ longitude, latitude ],
-      zoom: zoom
+      center: [ mapLocation.longitude, mapLocation.latitude ],
+      zoom: mapLocation.zoom
     });
-    this.numberOfFlying++;
   };
 
   calcMapLocation = () => (new MapLocation(this.map.getCenter().lat, this.map.getCenter().lng, this.map.getZoom()));
 
   componentDidUpdate(prevProps) {
-
     // ignore it if it is not visible
     if (!this.props.visible) {
       return;
     }
 
     const mapLocation = this.props.mapLocation;
+    const prevMapLocation = prevProps.mapLocation;
 
-    if (mapLocation && !mapLocation.isEqual(this.calcMapLocation()) && !this.updatingCoordinates) {
-      this.flyTo({...mapLocation});
+    if (mapLocation && !mapLocation.isEqual(prevMapLocation)) {
+      this.flyTo(mapLocation);
     }
 
     // if the geofeatures have changed
@@ -292,7 +273,7 @@ class Map extends Component {
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener('click', () => {
           gtagEvent('Photo Clicked', 'Map', feature.properties.id);
-          this.callLocationChangeHandler();
+          // this.callLocationChangeHandler();
           this.props.handlePhotoClick(feature);
         });
         //create marker

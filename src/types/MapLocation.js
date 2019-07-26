@@ -27,7 +27,7 @@ class MapLocation {
   }
 
   isEqual(otherMapLocation) {
-    return _.isEqual(this.formatted(), otherMapLocation.formatted());
+    return otherMapLocation && otherMapLocation.formatted && _.isEqual(this.formatted(), otherMapLocation.formatted());
   }
 }
 

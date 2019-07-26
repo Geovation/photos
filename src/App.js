@@ -45,7 +45,7 @@ class App extends Component {
 
     this.state = {
       file: null,
-      location: new MapLocation(),
+      location: new MapLocation(), // from GPS
       user: null,
       online: false,
       loginLogoutDialogOpen: false,
@@ -64,7 +64,7 @@ class App extends Component {
       selectedFeature: undefined, // undefined = not selectd, null = feature not found
       photoAccessedByUrl: false,
       photosToModerate: {},
-      mapLocation: undefined
+      mapLocation: new MapLocation(), // from the map
     };
 
     this.geoid = null;
@@ -84,13 +84,14 @@ class App extends Component {
   setLocationWatcher() {
     if (navigator && navigator.geolocation) {
       this.geoid = navigator.geolocation.watchPosition(position => {
-        const location = {
-          ...this.state.location,
+
+        const location = Object.assign(this.state.location, {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           online: true,
           updated: new Date(position.timestamp) // it indicate the freshness of the location.
-        };
+        });
+
         this.setState({
           location
         });
@@ -502,33 +503,29 @@ class App extends Component {
 
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
-  handleMapLocationChange = (newLocation) => {
+  handleMapLocationChange = (newMapLocation) => {
 
     if (!this.props.history.location.pathname.match(this.VISIBILITY_REGEX)) {
       return;
     }
 
-    const newMapLocation = new MapLocation(newLocation.latitude, newLocation.longitude, newLocation.zoom);
     const currentMapLocation = this.extractPathnameParams().mapLocation;
 
     // change url coords if the coords are different and if we are in the map
     if ( currentMapLocation == null || !currentMapLocation.isEqual(newMapLocation)) {
-      this.setCoordsInUrl(newMapLocation);
+
+      const currentUrl = this.props.history.location;
+      const prefix = currentUrl.pathname.split("@")[0];
+      const newUrl = `${prefix}@${newMapLocation.urlFormated()}`;
+
+      this.props.history.replace(newUrl);
+      this.setState({mapLocation : newMapLocation})
     }
-  }
-
-  setCoordsInUrl = mapLocation => {
-    const currentUrl = this.props.history.location;
-    const prefix = currentUrl.pathname.split("@")[0];
-    const newUrl = `${prefix}@${mapLocation.urlFormated()}`;
-
-    this.props.history.replace(newUrl);
   }
 
   handleLocationClick = () => {
     gtagEvent('Location FAB clicked', 'Map');
-
-    this.handleMapLocationChange(this.state.location);
+    this.setState({mapLocation:this.state.location});
   }
 
   handlePhotoPageClose = () => {
@@ -565,7 +562,6 @@ class App extends Component {
 
   render() {
     const { fields, config, history } = this.props;
-    const { mapLocation} = this.extractPathnameParams();
     return (
       <div className='geovation-app'>
         { !this.state.termsAccepted && !this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path) &&
@@ -707,8 +703,8 @@ class App extends Component {
                handleCameraClick={this.handleCameraClick}
                toggleLeftDrawer={this.toggleLeftDrawer}
                handlePhotoClick={this.handlePhotoClick}
-               mapLocation={mapLocation}
-               handleMapLocationChange={(mapLocation) => this.handleMapLocationChange(mapLocation)}
+               mapLocation={this.state.mapLocation}
+               handleMapLocationChange={(newMapLocation) => this.handleMapLocationChange(newMapLocation)}
                handleLocationClick={this.handleLocationClick}
                gpsOffline={!this.state.location.online}
                gpsDisabled={!this.state.location.updated}
