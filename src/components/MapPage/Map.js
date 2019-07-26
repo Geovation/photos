@@ -52,7 +52,8 @@ class Map extends Component {
     this.map = {
       getCenter: () => ({ lat:0, lng: 0}),
       getZoom: () => 0,
-      loaded: () => false
+      loaded: () => false,
+      flyTo: () => false
     };
     this.renderedThumbnails = {};
     this.navControl = null;
