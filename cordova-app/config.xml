@@ -66,6 +66,9 @@
         <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
             <string>Geovation needs camera access to take pictures.</string>
         </edit-config>
+        <edit-config file="*-Info.plist" mode="add" target="ITSAppUsesNonExemptEncryption">
+            <false/>
+        </edit-config>
     </platform>
     <hook src="scripts/changeVersion.js" type="before_prepare"/>
 </widget>
