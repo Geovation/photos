@@ -15,6 +15,7 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
+import _ from 'lodash';
 import { getValueFromTree } from '../../utils';
 
 
@@ -227,10 +228,10 @@ class SelectControlSingleValue extends React.Component {
 
 
   getItems = (tree) => {
-  let items = [];
+    let items = [];
 
-  function getNodesInLowestHierarchy(tree){
-    Object.entries(tree).forEach( ([key,value]) => {
+    function getNodesInLowestHierarchy(tree){
+      Object.entries(tree).forEach( ([key,value]) => {
         if (!value.children) {
           items.push({ label: value.label, key: key });
         }
@@ -245,9 +246,12 @@ class SelectControlSingleValue extends React.Component {
   }
 
   initializeOptions = (data) => {
-    const options = Object
-                  .entries(data)
-                  .map(([key,value]) => ({label: value.label, key: value.key }));
+    const unsortedOptions = Object
+      .entries(data)
+      .map(([key,value]) => ({label: value.label, key: value.key }));
+
+    const options = _.sortBy(unsortedOptions, "label");
+
     this.options = options;
     this.setState({ options });
   }
