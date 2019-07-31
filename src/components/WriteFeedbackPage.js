@@ -139,7 +139,7 @@ class WriteFeedbackPage extends React.Component {
             <TextField
               fullWidth
               id='feedback-textfield'
-              placeholder='eg. I like the app'
+              placeholder='Type you feedback here'
               onChange={this.handleFeedbackChange}
               value={this.state.feedback}
               autoFocus
