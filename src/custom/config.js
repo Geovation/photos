@@ -196,7 +196,7 @@ export default { ...STATIC_CONFIG,
           title: 'Brand',
           type: enums.TYPES.string,
           placeholder: 'eg. whatever',
-          regexValidation: '^([ ]*\\w+[ ]*)+$'
+          regexValidation: '.+'
         },
       }
     },
