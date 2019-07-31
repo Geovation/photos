@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
-import _ from 'lodash';
-
 import enums from '../../types/enums';
 
 const styles = theme => ({
@@ -16,10 +14,8 @@ const styles = theme => ({
 });
 class TitleTextField extends Component {
 
-  dataFormater = value => {
-    value = (value.trim && value.trim()) || value;
-    const valueTyped = this.props.field.type === enums.TYPES.number ? Number(value) : String(value);
-    return _.isEmpty(value) ? value :  valueTyped;
+  dataFormater = value =>{
+    return this.props.field.type === enums.TYPES.number ? Number(value) : String(value);
   }
 
   onChangeHandler = (e) => {
@@ -33,25 +29,25 @@ class TitleTextField extends Component {
     // TODO: proptypes
     const { field, fieldValue, classes } = this.props;
     return (
-        <TextField
-          InputLabelProps= {{
-            shrink: true,
-            style: { color: '#000' },
-          }}
-          label={field.title}
-          fullWidth
-          id={'textfield' + field.title}
-          type={field.type}
-          required={true}
-          placeholder={field.placeholder}
-          className='text-field'
-          value={fieldValue.value}
-          onChange={this.onChangeHandler}
-          error= {fieldValue.error}
-          InputProps={Object.assign({
-            className: classes.cssUnderline
-          }, field.inputProps)}
-        />
+      <TextField
+        InputLabelProps= {{
+          shrink: true,
+          style: { color: '#000' },
+        }}
+        label={field.title}
+        fullWidth
+        id={'textfield' + field.title}
+        type={field.type}
+        required={true}
+        placeholder={field.placeholder}
+        className='text-field'
+        value={fieldValue.value}
+        onChange={this.onChangeHandler}
+        error= {fieldValue.error}
+        InputProps={Object.assign({
+          className: classes.cssUnderline
+        }, field.inputProps)}
+      />
     )
   }
 }
