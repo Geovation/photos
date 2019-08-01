@@ -174,6 +174,27 @@ app.get('/stats', async (req, res) => {
   }
 });
 
+app.get('/photos', async (req, res) => {
+  if (req.method !== 'GET') {
+    return res.status(403).send('Forbidden!');
+  }
+
+  res.set('Cache-Control', `public, max-age=${WEB_CACHE_AGE_S}, s-maxage=${WEB_CACHE_AGE_S * 2}`);
+
+  const querySnapshot = await firestore.collection('photos').get();
+  const data = {
+    photos: {},
+    serverTime: new Date()
+  };
+  querySnapshot.forEach( doc => {
+    // doc.data() is never undefined for query doc snapshots
+    data.photos[doc.id] = doc.data();
+  });
+
+  res.json(data);
+  return true;
+});
+
 async function fetchUsers() {
   // get all the users
   let users = [];
