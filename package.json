@@ -42,14 +42,14 @@
     "workbox-cli": "^4.1.1"
   },
   "dependencies": {
-    "@material-ui/core": "^4.2.1",
+    "@material-ui/core": "^4.3.0",
     "@material-ui/icons": "^4.1.0",
     "blueimp-load-image": "^2.22.0",
     "dms2dec": "^1.1.0",
-    "firebase": "^6.3.2",
+    "firebase": "^6.3.3",
     "localforage": "^1.7.3",
     "lodash": "^4.17.15",
-    "mapbox-gl": "^1.1.0",
+    "mapbox-gl": "^1.2.0",
     "md5": "^2.2.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.5",
