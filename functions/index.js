@@ -1,5 +1,7 @@
 'use strict';
 
+const _ = require('lodash');
+const json2csv = require('json2csv');
 const functions = require('firebase-functions');
 const mkdirp = require('mkdirp-promise');
 const admin = require('firebase-admin');
@@ -174,14 +176,14 @@ app.get('/stats', async (req, res) => {
   }
 });
 
-app.get('/photos', async (req, res) => {
+app.get('/photos.json', async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(403).send('Forbidden!');
   }
 
   res.set('Cache-Control', `public, max-age=${WEB_CACHE_AGE_S}, s-maxage=${WEB_CACHE_AGE_S * 2}`);
 
-  const querySnapshot = await firestore.collection('photos').get();
+  const querySnapshot = await firestore.collection('photos').where("published", "==", true).get();
   const data = {
     photos: {},
     serverTime: new Date()
@@ -192,6 +194,55 @@ app.get('/photos', async (req, res) => {
   });
 
   res.json(data);
+  return true;
+});
+
+function plainToFlattenObject(object) {
+  const result = {}
+
+  function flatten(obj, prefix = '') {
+    _.forEach(obj, (value, key) => {
+      if (_.isObject(value)) {
+        flatten(value, `${prefix}${key}.`)
+      } else {
+        result[`${prefix}${key}`] = value
+      }
+    })
+  }
+
+  flatten(object)
+
+  return result
+}
+
+app.get('/photos.csv', async (req, res) => {
+  if (req.method !== 'GET') {
+    return res.status(403).send('Forbidden!');
+  }
+
+  res.set('Cache-Control', `public, max-age=${WEB_CACHE_AGE_S}, s-maxage=${WEB_CACHE_AGE_S * 2}`);
+
+  const querySnapshot = await firestore.collection('photos').where("published", "==", true).get();
+  const photos = [];
+  querySnapshot.forEach( doc => {
+    const newPhoto = plainToFlattenObject(_.extend(doc.data(), {id: doc.id}));
+    photos.push(newPhoto);
+  });
+
+  const parser = new json2csv.Parser();
+
+  let csv = "?";
+  try {
+    csv = parser.parse(photos);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+    return false;
+  }
+
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="' + 'photos-' + Date.now() + '.csv"');
+  res.status(200).send(csv);
   return true;
 });
 
