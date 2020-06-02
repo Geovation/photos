@@ -1,46 +1,57 @@
-import React, { Component } from 'react';
-import { Route, Switch, withRouter } from 'react-router-dom';
+import React, { Component } from "react";
+import { Route, Switch, withRouter } from "react-router-dom";
 
 import * as localforage from "localforage";
 import _ from "lodash";
 
-import RootRef from '@material-ui/core/RootRef';
-import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
+import RootRef from "@material-ui/core/RootRef";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import CloseIcon from "@material-ui/icons/Close";
 
-import PhotoPage from './components/PhotoPage';
-import ProfilePage from './components/ProfilePage';
-import Map from './components/MapPage/Map';
-import CustomPhotoDialog from './components/CustomPhotoDialog';
-import ModeratorPage from './components/ModeratorPage';
-import LoginFirebase from './components/LoginFirebase';
-import Login from './components/Login';
-import AboutPage from './components/AboutPage';
-import TutorialPage from './components/TutorialPage';
-import LeaderboardPage from './components/Leaderboard';
-import WelcomePage from './components/WelcomePage';
-import WriteFeedbackPage from './components/WriteFeedbackPage';
-import DrawerContainer from './components/DrawerContainer';
-import TermsDialog from './components/TermsDialog';
-import EmailVerifiedDialog from './components/EmailVerifiedDialog';
-import DisplayPhoto from './components/MapPage/DisplayPhoto';
-import authFirebase from './authFirebase';
-import dbFirebase from './dbFirebase';
-import { gtagPageView, gtagEvent } from './gtag.js';
-import './App.scss';
+import { dbFirebase, authFirebase } from "features/firebase";
+
+import TutorialPage from "./components/pages/TutorialPage";
+import WelcomePage from "./components/pages/WelcomePage";
+import PhotoPage from "./components/pages/PhotoPage";
+import ProfilePage from "./components/ProfilePage";
+import Map from "./components/MapPage/Map";
+import CustomPhotoDialog from "./components/CustomPhotoDialog";
+import ModeratorPage from "./components/ModeratorPage";
+import LoginFirebase from "./components/LoginFirebase";
+import Login from "./components/Login";
+import AboutPage from "./components/AboutPage";
+import LeaderboardPage from "./components/Leaderboard";
+import WriteFeedbackPage from "./components/WriteFeedbackPage";
+import DrawerContainer from "./components/DrawerContainer";
+import TermsDialog from "./components/TermsDialog";
+import EmailVerifiedDialog from "./components/EmailVerifiedDialog";
+import DisplayPhoto from "./components/MapPage/DisplayPhoto";
+
+import { gtagPageView, gtagEvent } from "./gtag.js";
+import "./App.scss";
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
 import MapLocation from "./types/MapLocation";
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
-const SET_GEOJSON_INTERVAL = 10000;
+const styles = theme => ({
+  dialogClose: {
+    position: "absolute",
+    top: theme.spacing(1),
+    right: theme.spacing(1)
+  }
+});
 
 class App extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -56,7 +67,7 @@ class App extends Component {
       geojson: null,
       stats: null,
       srcType: null,
-      cordovaMetadata : {},
+      cordovaMetadata: {},
       dialogOpen: false,
       confirmDialogOpen: false,
       usersLeaderboard: [],
@@ -65,15 +76,23 @@ class App extends Component {
       photoAccessedByUrl: false,
       photosToModerate: {},
       mapLocation: new MapLocation(), // from the map
+      sponsorImage: undefined
     };
 
     this.geoid = null;
     this.domRefInput = {};
     this.featuresDict = {};
-    this.VISIBILITY_REGEX = new RegExp('(^/@|^/$|^' + this.props.config.PAGES.displayPhoto.path + '/|^' + this.props.config.PAGES.embeddable.path + ')', 'g');
+    this.VISIBILITY_REGEX = new RegExp(
+      "(^/@|^/$|^" +
+        this.props.config.PAGES.displayPhoto.path +
+        "/|^" +
+        this.props.config.PAGES.embeddable.path +
+        ")",
+      "g"
+    );
   }
 
-  openPhotoPage = (file) => {
+  openPhotoPage = file => {
     this.setState({
       file
     });
@@ -83,76 +102,84 @@ class App extends Component {
 
   setLocationWatcher() {
     if (navigator && navigator.geolocation) {
-      this.geoid = navigator.geolocation.watchPosition(position => {
+      this.geoid = navigator.geolocation.watchPosition(
+        position => {
+          const location = Object.assign(this.state.location, {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            online: true,
+            updated: new Date(position.timestamp) // it indicate the freshness of the location.
+          });
 
-        const location = Object.assign(this.state.location, {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          online: true,
-          updated: new Date(position.timestamp) // it indicate the freshness of the location.
-        });
-
-        this.setState({
-          location
-        });
-
-      }, error => {
-        console.log('Error: ', error.message);
-        const location = this.state.location;
-        location.online = false;
-        this.setState({
-          location
-        });
-      });
+          this.setState({
+            location
+          });
+        },
+        error => {
+          console.log("Error: ", error.message);
+          const location = this.state.location;
+          location.online = false;
+          this.setState({
+            location
+          });
+        }
+      );
     }
 
     return async () => {
-      if(this.geoid && navigator.geolocation) {
+      if (this.geoid && navigator.geolocation) {
         navigator.geolocation.clearWatch(this.geoid);
       }
-    }
+    };
   }
 
   handleDialogClose = () => {
-    this.setState({ dialogOpen : false})
-  }
+    this.setState({ dialogOpen: false });
+  };
 
   async fetchPhotoIfUndefined(photoId) {
     // it means that we landed on the app with a photoId in the url
-    if (photoId && !this.state.selectedFeature ) {
-      return dbFirebase.getPhotoByID(photoId)
+    if (photoId && !this.state.selectedFeature) {
+      return dbFirebase
+        .getPhotoByID(photoId)
         .then(selectedFeature => this.setState({ selectedFeature }))
-        .catch( e => this.setState({ selectedFeature: null }));
+        .catch(e => this.setState({ selectedFeature: null }));
     }
   }
 
   extractPathnameParams() {
     // extracts photoID
-    const regexPhotoIDMatch = this.props.location.pathname
-      .match(new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)`));
+    const regexPhotoIDMatch = this.props.location.pathname.match(
+      new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)`)
+    );
 
     const photoId = regexPhotoIDMatch && regexPhotoIDMatch[1];
 
     // extracts mapLocation
-    const regexMapLocationMatch = this.props.location.pathname
-      .match(new RegExp("@(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(\\d*\\.?\\d*)z"));
+    const regexMapLocationMatch = this.props.location.pathname.match(
+      new RegExp("@(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(\\d*\\.?\\d*)z")
+    );
 
-    const mapLocation = (regexMapLocationMatch &&
-      new MapLocation(regexMapLocationMatch[1], regexMapLocationMatch[2],regexMapLocationMatch[3] )) ||
+    const mapLocation =
+      (regexMapLocationMatch &&
+        new MapLocation(
+          regexMapLocationMatch[1],
+          regexMapLocationMatch[2],
+          regexMapLocationMatch[3]
+        )) ||
       new MapLocation();
     if (!regexMapLocationMatch) {
       mapLocation.zoom = this.props.config.ZOOM;
     }
 
-    return {photoId, mapLocation};
+    return { photoId, mapLocation };
   }
 
-  componentDidMount(){
-    let { photoId, mapLocation} = this.extractPathnameParams();
-    this.setState({ photoId, mapLocation});
+  async componentDidMount() {
+    let { photoId, mapLocation } = this.extractPathnameParams();
+    this.setState({ photoId, mapLocation });
 
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged(user => {
-
       // will do this after the user has been loaded. It should speed up the users login.
       // not sure if we need this if.
       if (!this.initDone) {
@@ -162,7 +189,7 @@ class App extends Component {
 
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
-        gtagEvent('Signed out','User')
+        gtagEvent("Signed out", "User");
 
         this.props.history.push(this.props.config.PAGES.map.path);
         window.location.reload();
@@ -171,114 +198,123 @@ class App extends Component {
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
+    this.unregisterConfigObserver = dbFirebase.configObserver(
+      config => this.setState(config),
+      console.error
+    );
   }
 
-  saveGeojson = () => {
-    let geojson = _.cloneDeep(this.state.geojson);
-
-    if (!geojson) {
-      geojson = {
-        "type": "FeatureCollection",
-        "features": []
-      };
-    }
-
-    geojson.features = _.map(this.featuresDict, f => f);
-
-    // save only if different
-    if (!_.isEqual(this.state.geojson, geojson)) {
-      const stats = this.props.config.getStats(geojson, this.state.dbStats);
-      this.setState({geojson, stats});
-
-      // after the first time, wait for a bit before updating.
-      localforage.setItem("cachedGeoJson", geojson);
-    }
-
-  }
-
+  // Saving means also to update the state which means also tro re display the maop which is very slow.
+  // Wait 100 miliseconds before saving. That allows to enque few changes before actually saving it.
   delayedSaveGeojson = () => {
-
-    // checked automatically.
-    if (this.settingGeojsonInterval) {
-      return;
-    }
-
     if (this.settingGeojson) {
       clearTimeout(this.settingGeojson);
       delete this.settingGeojson;
     }
 
     this.settingGeojson = setTimeout(() => {
-      this.saveGeojson();
-      this.settingGeojsonInterval = setInterval( () => {
-        this.saveGeojson();
-      }, SET_GEOJSON_INTERVAL);
+      let geojson = _.cloneDeep(this.state.geojson);
+
+      if (!geojson) {
+        geojson = {
+          type: "FeatureCollection",
+          features: []
+        };
+      }
+
+      geojson.features = _.map(this.featuresDict, f => f);
+
+      // save only if different
+      if (!_.isEqual(this.state.geojson, geojson)) {
+        this.setState({ geojson });
+        // after the first time, wait for a bit before updating.
+        localforage.setItem("cachedGeoJson", geojson);
+      }
     }, 100);
-  }
+  };
 
   modifyFeature = photo => {
     this.featuresDict[photo.id] = {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          photo.location.longitude,
-          photo.location.latitude
-        ]
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [photo.location.longitude, photo.location.latitude]
       },
-      "properties": photo
-    }
+      properties: photo
+    };
 
     this.delayedSaveGeojson();
-  }
+  };
 
   addFeature = photo => this.modifyFeature(photo);
 
   removeFeature = photo => {
-    delete this.featuresDict[photo.id]
+    delete this.featuresDict[photo.id];
     this.delayedSaveGeojson();
-  }
+  };
 
   someInits(photoId) {
-    this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(online => {
-      this.setState({online});
-    });
+    this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(
+      online => {
+        this.setState({ online });
+      }
+    );
 
-    this.fetchPhotoIfUndefined(photoId)
-      .then(async () => {
+    this.fetchPhotoIfUndefined(photoId).then(async () => {
+      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
+      // into the photoId.
+      this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
 
-        // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
-        // into the photoId.
-        this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
+      dbFirebase.fetchStats().then(dbStats => {
+        console.log(dbStats);
+        this.setState({
+          usersLeaderboard: dbStats.users,
+          dbStats,
+          stats: this.props.config.getStats(
+            this.state.geojson,
+            this.state.dbStats
+          )
+        });
 
-        dbFirebase.fetchStats()
-          .then(dbStats => {
-            console.log(dbStats);
-            this.setState({ usersLeaderboard: dbStats.users, dbStats, stats: this.props.config.getStats(this.state.geojson, this.state.dbStats) });
-
-            return dbStats;
-          });
-
-        gtagPageView(this.props.location.pathname);
-
-        dbFirebase.photosRT(this.addFeature, this.modifyFeature, this.removeFeature, error => {
-            console.log(error)
-            alert(error)
-            window.location.reload();
-          }
-        );
+        return dbStats;
       });
 
+      gtagPageView(this.props.location.pathname);
+
+      dbFirebase.photosRT(
+        this.addFeature,
+        this.modifyFeature,
+        this.removeFeature,
+        error => {
+          console.log(error);
+          alert(error);
+          window.location.reload();
+        }
+      );
+    });
+
     // use the locals one if we have them: faster boot.
-    localforage.getItem("cachedGeoJson")
+    localforage
+      .getItem("cachedGeoJson")
       .then(geojson => {
         if (geojson) {
           this.geojson = geojson;
           const stats = this.props.config.getStats(geojson, this.state.dbStats);
-          this.setState({geojson, stats });
+          this.setState({ geojson, stats });
+          this.featuresDict = geojson.features;
+        } else {
+          this.fetchPhotos();
         }
       })
       .catch(console.error);
+  }
+
+  fetchPhotos() {
+    dbFirebase.fetchPhotos().then(photos => {
+      _.forEach(photos, photo => {
+        this.addFeature(photo);
+      });
+    });
   }
 
   async componentWillUnmount() {
@@ -286,24 +322,40 @@ class App extends Component {
     this.setState = console.log;
 
     await this.unregisterAuthObserver();
-    await dbFirebase.disconnect();
     await this.unregisterLocationObserver();
     await this.unregisterConnectionObserver();
+    await this.unregisterConfigObserver();
+    await dbFirebase.disconnect();
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const stats = this.props.config.getStats(
+      this.state.geojson,
+      this.state.dbStats
+    );
+    if (!_.isEqual(this.state.stats, stats)) {
+      this.setState({ stats });
+    }
+
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
 
       // if it updates, then it is guaranteed that we didn't landed into the photo
       this.setState({ photoAccessedByUrl: false });
-      this.fetchPhotoIfUndefined(_.get(this.state, "selectedFeature.properties.id"));
+      this.fetchPhotoIfUndefined(
+        _.get(this.state, "selectedFeature.properties.id")
+      );
     }
 
-    if (_.get(this.state.user, "isModerator") && !this.unregisterPhotosToModerate) {
-      this.unregisterPhotosToModerate = dbFirebase.photosToModerateRT(this.props.config.MODERATING_PHOTOS,
+    if (
+      _.get(this.state.user, "isModerator") &&
+      !this.unregisterPhotosToModerate
+    ) {
+      this.unregisterPhotosToModerate = dbFirebase.photosToModerateRT(
+        this.props.config.MODERATING_PHOTOS,
         photo => this.updatePhotoToModerate(photo),
-        photo => this.removePhotoToModerate(photo));
+        photo => this.removePhotoToModerate(photo)
+      );
     }
   }
 
@@ -313,7 +365,7 @@ class App extends Component {
     const photosToModerate = _.cloneDeep(this.state.photosToModerate);
     delete photosToModerate[photo.id];
 
-    this.setState({photosToModerate});
+    this.setState({ photosToModerate });
   }
 
   updatePhotoToModerate(photo) {
@@ -322,7 +374,7 @@ class App extends Component {
     const photosToModerate = _.cloneDeep(this.state.photosToModerate);
     photosToModerate[photo.id] = photo;
 
-    this.setState({photosToModerate});
+    this.setState({ photosToModerate });
   }
 
   handleClickLoginLogout = () => {
@@ -337,54 +389,63 @@ class App extends Component {
   };
 
   handleLoginClose = () => {
-    this.setState({ loginLogoutDialogOpen:false});
+    this.setState({ loginLogoutDialogOpen: false });
   };
 
   handleCameraClick = () => {
     if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
       this.setState({
         dialogOpen: true,
-        dialogTitle: "attention",
-        dialogContentText: "Before adding photos, you must be logged into your account."
+        dialogTitle: "Please login to add a photo",
+        dialogContentText:
+          "Before adding photos, you must be logged into your account."
       });
     } else {
       if (window.cordova) {
-        console.log('Opening cordova dialog');
+        console.log("Opening cordova dialog");
         this.setState({ openPhotoDialog: true });
       } else {
-        console.log('Clicking on photo');
+        console.log("Clicking on photo");
         this.domRefInput.current.click();
       }
     }
   };
 
-  openFile = (e) => {
+  openFile = e => {
     if (e.target.files[0]) {
       this.openPhotoPage(e.target.files[0]);
     }
-  }
+  };
 
   handlePhotoDialogClose = dialogSelectedValue => {
     this.setState({ openPhotoDialog: false });
     if (dialogSelectedValue) {
       const Camera = navigator.camera;
-      const srcType = dialogSelectedValue === 'CAMERA' ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY;
+      const srcType =
+        dialogSelectedValue === "CAMERA"
+          ? Camera.PictureSourceType.CAMERA
+          : Camera.PictureSourceType.PHOTOLIBRARY;
 
-      this.setState({ srcType  : dialogSelectedValue === 'CAMERA' ? 'camera' : 'filesystem' });
-      Camera.getPicture(imageUri => {
+      this.setState({
+        srcType: dialogSelectedValue === "CAMERA" ? "camera" : "filesystem"
+      });
+      Camera.getPicture(
+        imageUri => {
           const file = JSON.parse(imageUri);
           const cordovaMetadata = JSON.parse(file.json_metadata);
           this.setState({ cordovaMetadata });
           this.openPhotoPage(file.filename);
-        }, message => {
-          console.log('Failed because: ', message);
+        },
+        message => {
+          console.log("Failed because: ", message);
         },
         {
           quality: 50,
           destinationType: Camera.DestinationType.FILE_URI,
           sourceType: srcType,
           correctOrientation: true
-        });
+        }
+      );
     }
   };
 
@@ -393,60 +454,59 @@ class App extends Component {
     localStorage.setItem("welcomeShown", true);
   };
 
-  handleTermsPageClose = (e) => {
+  handleTermsPageClose = e => {
     localStorage.setItem("termsAccepted", "Yes");
     this.setState({ termsAccepted: "Yes" });
   };
 
-  toggleLeftDrawer = (isItOpen) => () => {
-    gtagEvent(isItOpen ? 'Opened' : 'Closed','Menu');
-    this.setState({leftDrawerOpen: isItOpen})
+  toggleLeftDrawer = isItOpen => () => {
+    gtagEvent(isItOpen ? "Opened" : "Closed", "Menu");
+    this.setState({ leftDrawerOpen: isItOpen });
   };
 
-  handleLoginPhotoAdd = (e) => {
+  handleLoginPhotoAdd = e => {
     this.setState({
       loginLogoutDialogOpen: true,
       dialogOpen: false
-    })
+    });
   };
-
-  handleRejectLoginPhotoAdd = () => {
-    this.setState({ dialogOpen: false });
-  }
 
   handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
-      this.setState({user: {...this.state.user, emailVerified: user.emailVerified}});
+      this.setState({
+        user: { ...this.state.user, emailVerified: user.emailVerified }
+      });
       let message = {
-        title: 'Confirmation',
-        body: 'Thank you for verifying your email.'
+        title: "Confirmation",
+        body: "Thank you for verifying your email."
       };
       return message;
     } else {
       let message = {
-        title: 'Warning',
-        body: 'Email not verified yet. Please click the link in the email we sent you.'
+        title: "Warning",
+        body:
+          "Email not verified yet. Please click the link in the email we sent you."
       };
       return message;
     }
-  }
+  };
 
   handleConfirmDialogClose = () => {
     this.setState({ confirmDialogOpen: false });
-  }
+  };
 
-  handleRejectClick = (photo) => {
+  handleRejectClick = photo => {
     this.setState({
-      confirmDialogOpen: true ,
+      confirmDialogOpen: true,
       confirmDialogTitle: `Are you sure you want to unpublish the photo ?`,
       confirmDialogHandleOk: () => this.rejectPhoto(photo)
     });
   };
 
-  handleApproveClick = (photo) => {
+  handleApproveClick = photo => {
     this.setState({
-      confirmDialogOpen: true ,
+      confirmDialogOpen: true,
       confirmDialogTitle: `Are you sure you want to publish the photo ?`,
       confirmDialogHandleOk: () => this.approvePhoto(photo)
     });
@@ -458,20 +518,25 @@ class App extends Component {
 
     // publish/unpublish photo in firestore
     try {
-
       if (isApproved) {
-        await dbFirebase.approvePhoto(photo.id, this.state.user ? this.state.user.id : null);
+        await dbFirebase.approvePhoto(
+          photo.id,
+          this.state.user ? this.state.user.id : null
+        );
       } else {
-        await dbFirebase.rejectPhoto(photo.id, this.state.user ? this.state.user.id : null);
+        await dbFirebase.rejectPhoto(
+          photo.id,
+          this.state.user ? this.state.user.id : null
+        );
       }
 
       const selectedFeature = this.state.selectedFeature;
 
       photo.published = isApproved;
 
-      if (_.get(selectedFeature, "properties.id") === photo.id ) {
+      if (_.get(selectedFeature, "properties.id") === photo.id) {
         selectedFeature.properties.published = isApproved;
-        this.setState({ selectedFeature});
+        this.setState({ selectedFeature });
 
         // const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== photo.id);
         // const geojson = {
@@ -486,25 +551,22 @@ class App extends Component {
       }
 
       // alert(`Photo with ID ${photo.id} ${isApproved ? 'published' : 'unpublished'}`)
-
     } catch (e) {
       console.error(e);
 
       this.setState({
-        confirmDialogOpen: true ,
+        confirmDialogOpen: true,
         confirmDialogTitle: `The photo state has not changed. Please try again, id:${photo.id}`,
         confirmDialogHandleOk: this.handleConfirmDialogClose
       });
     }
-
-  }
+  };
 
   approvePhoto = photo => this.approveRejectPhoto(true, photo);
 
   rejectPhoto = photo => this.approveRejectPhoto(false, photo);
 
-  handleMapLocationChange = (newMapLocation) => {
-
+  handleMapLocationChange = newMapLocation => {
     if (!this.props.history.location.pathname.match(this.VISIBILITY_REGEX)) {
       return;
     }
@@ -512,45 +574,59 @@ class App extends Component {
     const currentMapLocation = this.extractPathnameParams().mapLocation;
 
     // change url coords if the coords are different and if we are in the map
-    if ( currentMapLocation == null || !currentMapLocation.isEqual(newMapLocation)) {
-
+    if (
+      currentMapLocation == null ||
+      !currentMapLocation.isEqual(newMapLocation)
+    ) {
       const currentUrl = this.props.history.location;
       const prefix = currentUrl.pathname.split("@")[0];
       const newUrl = `${prefix}@${newMapLocation.urlFormated()}`;
 
       this.props.history.replace(newUrl);
-      this.setState({mapLocation : newMapLocation})
+      this.setState({ mapLocation: newMapLocation });
     }
-  }
+  };
 
   handleLocationClick = () => {
-    gtagEvent('Location FAB clicked', 'Map');
-    this.setState({mapLocation:this.state.location});
-  }
+    gtagEvent("Location FAB clicked", "Map");
+    this.setState({ mapLocation: this.state.location });
+  };
 
   handlePhotoPageClose = () => {
     const PAGES = this.props.config.PAGES;
     const photoPath = this.props.location.pathname;
     const coords = photoPath.split("@")[1];
-    const mapPath = this.props.location.pathname.startsWith(PAGES.embeddable.path) ? PAGES.embeddable.path : PAGES.map.path;
+    const mapPath = this.props.location.pathname.startsWith(
+      PAGES.embeddable.path
+    )
+      ? PAGES.embeddable.path
+      : PAGES.map.path;
     if (this.state.photoAccessedByUrl) {
-      const mapUrl = mapPath + (coords ? `@${coords}` : '');
+      const mapUrl = mapPath + (coords ? `@${coords}` : "");
       this.props.history.replace(mapUrl);
       this.props.history.push(photoPath);
     }
 
     this.props.history.goBack();
-  }
+  };
 
-  handlePhotoClick = (feature) => {
+  handlePhotoClick = feature => {
     this.setState({ selectedFeature: feature });
 
     let pathname = `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`;
     const currentPath = this.props.history.location.pathname;
 
-    const coordsUrl = currentPath.split("@")[1] ||
-      new MapLocation(feature.geometry.coordinates[1], feature.geometry.coordinates[0], this.props.config.ZOOM_FLYTO).urlFormated();
-    pathname = (currentPath === this.props.config.PAGES.embeddable.path) ? currentPath + pathname : pathname;
+    const coordsUrl =
+      currentPath.split("@")[1] ||
+      new MapLocation(
+        feature.geometry.coordinates[1],
+        feature.geometry.coordinates[0],
+        this.props.config.ZOOM_FLYTO
+      ).urlFormated();
+    pathname =
+      currentPath === this.props.config.PAGES.embeddable.path
+        ? currentPath + pathname
+        : pathname;
 
     // if it is in map, change the url
     if (this.props.history.location.pathname.match(this.VISIBILITY_REGEX)) {
@@ -560,13 +636,23 @@ class App extends Component {
     this.props.history.push(`${pathname}@${coordsUrl}`);
   };
 
+  reloadPhotos = () => {
+    // delete photos.
+    this.featuresDict = {};
+
+    // it will open the "loading photos" message
+    this.setState({ geojson: null });
+    this.fetchPhotos();
+  };
+
   render() {
-    const { fields, config, history } = this.props;
+    const { classes, fields, config, history } = this.props;
     return (
-      <div className='geovation-app'>
-        { !this.state.termsAccepted && !this.props.history.location.pathname.startsWith(this.props.config.PAGES.embeddable.path) &&
-        <TermsDialog handleClose={this.handleTermsPageClose}/>
-        }
+      <div className="geovation-app">
+        {!this.state.termsAccepted &&
+          !this.props.history.location.pathname.startsWith(
+            this.props.config.PAGES.embeddable.path
+          ) && <TermsDialog handleClose={this.handleTermsPageClose} />}
 
         <EmailVerifiedDialog
           user={this.state.user}
@@ -574,155 +660,217 @@ class App extends Component {
           handleNextClick={this.handleNextClick}
         />
 
-        <main className='content'>
-
+        <main className="content">
           <Switch>
-            {config.CUSTOM_PAGES.map( (CustomPage,index) => (
-              !!CustomPage.page &&
-              <Route key={index} path={CustomPage.path}
-                     render={(props) => <CustomPage.page {...props} handleClose={history.goBack} label={CustomPage.label}/>}
+            {config.CUSTOM_PAGES.map(
+              (CustomPage, index) =>
+                !!CustomPage.page && (
+                  <Route
+                    key={index}
+                    path={CustomPage.path}
+                    render={props => (
+                      <CustomPage.page
+                        {...props}
+                        handleClose={history.goBack}
+                        label={CustomPage.label}
+                      />
+                    )}
+                  />
+                )
+            )}
+
+            <Route
+              path={config.PAGES.about.path}
+              render={props => (
+                <AboutPage
+                  {...props}
+                  label={this.props.config.PAGES.about.label}
+                  handleClose={history.goBack}
+                  reloadPhotos={this.reloadPhotos}
+                />
+              )}
+            />
+
+            <Route
+              path={config.PAGES.tutorial.path}
+              render={props => (
+                <TutorialPage
+                  {...props}
+                  label={this.props.config.PAGES.tutorial.label}
+                  handleClose={history.goBack}
+                />
+              )}
+            />
+
+            <Route
+              path={config.PAGES.leaderboard.path}
+              render={props => (
+                <LeaderboardPage
+                  {...props}
+                  config={this.props.config}
+                  label={this.props.config.PAGES.leaderboard.label}
+                  usersLeaderboard={this.state.usersLeaderboard}
+                  handleClose={history.goBack}
+                  user={this.state.user}
+                />
+              )}
+            />
+
+            {this.state.user && this.state.user.isModerator && (
+              <Route
+                path={this.props.config.PAGES.moderator.path}
+                render={props => (
+                  <ModeratorPage
+                    {...props}
+                    photos={this.state.photosToModerate}
+                    config={this.props.config}
+                    label={this.props.config.PAGES.moderator.label}
+                    user={this.state.user}
+                    handleClose={history.goBack}
+                    handleRejectClick={this.handleRejectClick}
+                    handleApproveClick={this.handleApproveClick}
+                  />
+                )}
               />
-            ))}
+            )}
 
-            <Route path={config.PAGES.about.path} render={(props) =>
-              <AboutPage {...props}
-                         label={this.props.config.PAGES.about.label}
-                         handleClose={history.goBack}
-              />}
+            {this.state.user && this.state.user.isModerator && (
+              <Route
+                path={this.props.config.PAGES.feedbackReports.path}
+                render={props => (
+                  <FeedbackReportsSubrouter
+                    {...props}
+                    config={this.props.config}
+                    label={this.props.config.PAGES.feedbackReports.label}
+                    user={this.state.user}
+                    handleClose={this.props.history.goBack}
+                  />
+                )}
+              />
+            )}
+
+            <Route
+              path={config.PAGES.photos.path}
+              render={props => (
+                <PhotoPage
+                  {...props}
+                  label={this.props.config.PAGES.photos.label}
+                  file={this.state.file}
+                  gpsLocation={this.state.location}
+                  online={this.state.online}
+                  srcType={this.state.srcType}
+                  cordovaMetadata={this.state.cordovaMetadata}
+                  fields={fields}
+                  handleClose={history.goBack}
+                  handleRetakeClick={this.handleCameraClick}
+                />
+              )}
             />
 
-            <Route path={config.PAGES.tutorial.path} render={(props) =>
-              <TutorialPage {...props}
-                            label={this.props.config.PAGES.tutorial.label}
-                            handleClose={history.goBack}
-              />}
+            {this.state.user && (
+              <Route
+                path={this.props.config.PAGES.account.path}
+                render={props => (
+                  <ProfilePage
+                    {...props}
+                    config={this.props.config}
+                    label={this.props.config.PAGES.account.label}
+                    user={this.state.user}
+                    geojson={this.state.geojson}
+                    handleClose={history.goBack}
+                    handlePhotoClick={this.handlePhotoClick}
+                  />
+                )}
+              />
+            )}
+
+            <Route
+              path={config.PAGES.writeFeedback.path}
+              render={props => (
+                <WriteFeedbackPage
+                  {...props}
+                  label={this.props.config.PAGES.writeFeedback.label}
+                  user={this.state.user}
+                  location={this.state.location}
+                  online={this.state.online}
+                  handleClose={history.goBack}
+                />
+              )}
             />
 
-            <Route path={config.PAGES.leaderboard.path} render={(props) =>
-              <LeaderboardPage {...props}
-                               config={this.props.config}
-                               label={this.props.config.PAGES.leaderboard.label}
-                               usersLeaderboard={this.state.usersLeaderboard}
-                               handleClose={history.goBack}
-              />}
+            <Route
+              path={[
+                `${config.PAGES.displayPhoto.path}/:id`,
+                `${config.PAGES.embeddable.path}${config.PAGES.displayPhoto.path}/:id`
+              ]}
+              render={props => (
+                <DisplayPhoto
+                  {...props}
+                  user={this.state.user}
+                  placeholderImage={placeholderImage}
+                  config={config}
+                  handleRejectClick={this.handleRejectClick}
+                  handleApproveClick={this.handleApproveClick}
+                  handleClose={this.handlePhotoPageClose}
+                  feature={this.state.selectedFeature}
+                />
+              )}
             />
-
-            { this.state.user && this.state.user.isModerator &&
-            <Route path={this.props.config.PAGES.moderator.path} render={(props) =>
-              <ModeratorPage  {...props}
-                              photos={this.state.photosToModerate}
-                              config={this.props.config}
-                              label={this.props.config.PAGES.moderator.label}
-                              user={this.state.user}
-                              handleClose={history.goBack}
-                              handleRejectClick={this.handleRejectClick}
-                              handleApproveClick={this.handleApproveClick}
-              />}
-            />
-            }
-
-            { this.state.user && this.state.user.isModerator &&
-            <Route path={this.props.config.PAGES.feedbackReports.path} render={(props) =>
-              <FeedbackReportsSubrouter {...props}
-                                        config={this.props.config}
-                                        label={this.props.config.PAGES.feedbackReports.label}
-                                        user={this.state.user}
-                                        handleClose={this.props.history.goBack}
-              />}
-            />
-            }
-
-            <Route path={config.PAGES.photos.path} render={(props) =>
-              <PhotoPage {...props}
-                         label={this.props.config.PAGES.photos.label}
-                         file={this.state.file}
-                         gpsLocation={this.state.location}
-                         online={this.state.online}
-                         srcType={this.state.srcType}
-                         cordovaMetadata={this.state.cordovaMetadata}
-                         fields={fields}
-                         handleClose={history.goBack}
-                         handleRetakeClick={this.handleCameraClick}
-              />}
-            />
-
-            { this.state.user &&
-            <Route path={this.props.config.PAGES.account.path} render={(props) =>
-              <ProfilePage {...props}
-                           config={this.props.config}
-                           label={this.props.config.PAGES.account.label}
-                           user={this.state.user}
-                           geojson={this.state.geojson}
-                           handleClose={history.goBack}
-                           handlePhotoClick={this.handlePhotoClick}
-              />}
-            />
-            }
-
-            <Route path={config.PAGES.writeFeedback.path} render={(props) =>
-              <WriteFeedbackPage {...props}
-                                 label={this.props.config.PAGES.writeFeedback.label}
-                                 user={this.state.user}
-                                 location={this.state.location}
-                                 online={this.state.online}
-                                 handleClose={history.goBack}
-              />}
-            />
-
-            <Route path={[
-              `${config.PAGES.displayPhoto.path}/:id`,
-              `${config.PAGES.embeddable.path}${config.PAGES.displayPhoto.path}/:id`
-            ]}
-                   render={(props) =>
-                     <DisplayPhoto
-                       {...props}
-                       user={this.state.user}
-                       placeholderImage={placeholderImage}
-                       config={config}
-                       handleRejectClick={this.handleRejectClick}
-                       handleApproveClick={this.handleApproveClick}
-                       handleClose={this.handlePhotoPageClose}
-                       feature={this.state.selectedFeature}
-                     />}
-            />
-
           </Switch>
 
+          {!this.state.welcomeShown &&
+            config.PAGES.embeddable.path &&
+            !this.props.history.location.pathname.includes(
+              config.PAGES.embeddable.path
+            ) && <WelcomePage handleClose={this.handleWelcomePageClose} />}
 
-          { !this.state.welcomeShown && this.props.history.location.pathname !== config.PAGES.embeddable.path &&
-          this.state.termsAccepted &&
-          <WelcomePage handleClose={this.handleWelcomePageClose}/>
-          }
-
-          <Map history={this.props.history}
-               visible={this.props.history.location.pathname.match(this.VISIBILITY_REGEX)}
-               geojson={this.state.geojson}
-               user={this.state.user}
-               config={config}
-               embeddable={this.props.history.location.pathname.match(new RegExp(config.PAGES.embeddable.path , 'g'))}
-               handleCameraClick={this.handleCameraClick}
-               toggleLeftDrawer={this.toggleLeftDrawer}
-               handlePhotoClick={this.handlePhotoClick}
-               mapLocation={this.state.mapLocation}
-               handleMapLocationChange={(newMapLocation) => this.handleMapLocationChange(newMapLocation)}
-               handleLocationClick={this.handleLocationClick}
-               gpsOffline={!this.state.location.online}
-               gpsDisabled={!this.state.location.updated}
+          <Map
+            history={this.props.history}
+            visible={this.props.history.location.pathname.match(
+              this.VISIBILITY_REGEX
+            )}
+            geojson={this.state.geojson}
+            user={this.state.user}
+            config={config}
+            embeddable={this.props.history.location.pathname.match(
+              new RegExp(config.PAGES.embeddable.path, "g")
+            )}
+            handleCameraClick={this.handleCameraClick}
+            toggleLeftDrawer={this.toggleLeftDrawer}
+            handlePhotoClick={this.handlePhotoClick}
+            mapLocation={this.state.mapLocation}
+            handleMapLocationChange={newMapLocation =>
+              this.handleMapLocationChange(newMapLocation)
+            }
+            handleLocationClick={this.handleLocationClick}
+            gpsOffline={!this.state.location.online}
+            gpsDisabled={!this.state.location.updated}
           />
         </main>
 
-        <Snackbar open={!this.state.geojson} message='Loading photos...' />
-        <Snackbar open={this.state.welcomeShown && !this.state.online} message='Connecting to our servers...' />
+        <Snackbar open={!this.state.geojson} message="Loading photos..." />
+        <Snackbar
+          open={this.state.welcomeShown && !this.state.online}
+          message="Connecting to our servers..."
+        />
 
-        { window.cordova ?
-          <CustomPhotoDialog open={this.state.openPhotoDialog} onClose={this.handlePhotoDialogClose}/>
-          :
+        {window.cordova ? (
+          <CustomPhotoDialog
+            open={this.state.openPhotoDialog}
+            onClose={this.handlePhotoDialogClose}
+          />
+        ) : (
           <RootRef rootRef={this.domRefInput}>
-            <input className='hidden' type='file' accept='image/*' id={'fileInput'}
-                   onChange={this.openFile} onClick={(e)=> e.target.value = null}
+            <input
+              className="hidden"
+              type="file"
+              accept="image/*"
+              id={"fileInput"}
+              onChange={this.openFile}
+              onClick={e => (e.target.value = null)}
             />
           </RootRef>
-        }
+        )}
 
         <Login
           open={this.state.loginLogoutDialogOpen && !this.state.user}
@@ -730,14 +878,27 @@ class App extends Component {
           loginComponent={LoginFirebase}
         />
 
-        <DrawerContainer user={this.state.user} online={this.state.online}
-                         handleClickLoginLogout={this.handleClickLoginLogout}
-                         leftDrawerOpen={this.state.leftDrawerOpen} toggleLeftDrawer={this.toggleLeftDrawer}
-                         stats={this.state.stats}
+        <DrawerContainer
+          user={this.state.user}
+          online={this.state.online}
+          handleClickLoginLogout={this.handleClickLoginLogout}
+          leftDrawerOpen={this.state.leftDrawerOpen}
+          toggleLeftDrawer={this.toggleLeftDrawer}
+          stats={this.state.stats}
+          sponsorImage={this.state.sponsorImage}
         />
 
         <Dialog open={this.state.dialogOpen} onClose={this.handleDialogClose}>
-          <DialogTitle>{this.state.dialogTitle}</DialogTitle>
+          <DialogTitle disableTypography>
+            <Typography variant="h6">{this.state.dialogTitle}</Typography>
+            <IconButton
+              className={classes.dialogClose}
+              aria-label="close"
+              onClick={this.handleDialogClose}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
           <DialogContent>
             <DialogContentText>
               {this.state.dialogContentText}
@@ -745,25 +906,26 @@ class App extends Component {
           </DialogContent>
 
           <DialogActions>
-            <Button onClick={this.handleRejectLoginPhotoAdd} color='secondary'>
-              No thanks!
-            </Button>
-
             {/* clicking ok should either open a login box or there should be a text field in the box to enter your email address */}
-            <Button onClick={this.handleLoginPhotoAdd} color='secondary'>
+            <Button onClick={this.handleLoginPhotoAdd} color="secondary">
               Login
             </Button>
           </DialogActions>
-
         </Dialog>
 
-        <Dialog open={this.state.confirmDialogOpen} onClose={this.handleConfirmDialogClose}>
+        <Dialog
+          open={this.state.confirmDialogOpen}
+          onClose={this.handleConfirmDialogClose}
+        >
           <DialogTitle>{this.state.confirmDialogTitle}</DialogTitle>
           <DialogActions>
-            <Button onClick={this.handleConfirmDialogClose} color='secondary'>
+            <Button onClick={this.handleConfirmDialogClose} color="secondary">
               Cancel
             </Button>
-            <Button onClick={this.state.confirmDialogHandleOk} color='secondary'>
+            <Button
+              onClick={this.state.confirmDialogHandleOk}
+              color="secondary"
+            >
               Ok
             </Button>
           </DialogActions>
@@ -773,4 +935,5 @@ class App extends Component {
   }
 }
 
-export default withRouter(App);
+export default withRouter(withStyles(styles, { withTheme: true })(App));
+

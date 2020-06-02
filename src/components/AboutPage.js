@@ -1,25 +1,47 @@
-import React from 'react';
-import PageWrapper from './PageWrapper';
-import Typography from '@material-ui/core/Typography';
-import utils from '../utils';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
+import CachedIcon from "@material-ui/icons/Cached";
+import { withStyles } from "@material-ui/core/styles";
+
+import PageWrapper from "./PageWrapper";
+import utils from "../utils";
 
 const styles = theme => ({
-  typography : {
+  typography: {
     ...theme.mixins.gutters(),
-    whiteSpace: 'pre-wrap',
+    whiteSpace: "pre-wrap"
   }
 });
 
 class AboutPage extends React.Component {
   render() {
-    const { classes, label } = this.props;
+    const { classes, label, reloadPhotos } = this.props;
     return (
-      <PageWrapper label={label} handleClose={this.props.handleClose} hasLogo={true}>
-        <Typography align={'justify'} variant={'subtitle1'} className={classes.typography}>
-          {utils.customiseString('about', 'We are Geovation and we Geovate')}
-          <br /><br /><br />
-            Version {process.env.REACT_APP_VERSION}, build {process.env.REACT_APP_BUILD_NUMBER}
+      <PageWrapper
+        label={label}
+        handleClose={this.props.handleClose}
+        hasLogo={true}
+      >
+        <Typography
+          align={"justify"}
+          variant={"subtitle1"}
+          className={classes.typography}
+        >
+          {utils.customiseString("about", "We are Geovation and we Geovate")}
+          <br />
+          <span style={{ display: "block", textAlign: "center" }}>
+            <Button
+              onClick={reloadPhotos}
+              color="secondary"
+              startIcon={<CachedIcon />}
+            >
+              Recache Photos
+            </Button>
+          </span>
+          <br />
+          Version {process.env.REACT_APP_VERSION}, build{" "}
+          {process.env.REACT_APP_BUILD_NUMBER}
         </Typography>
       </PageWrapper>
     );

@@ -1,0 +1,29 @@
+@import "../../common.scss";
+
+.FirstSlide__container {
+  @include commonContainer;
+}
+
+.FirstSlide__bottomText {
+  @include rockedRegularTextFontWeightLight;
+  font-size: 25px;
+  margin: 5px;
+}
+
+.FirstSlide__welcomeText {
+  font-weight: 600;
+  margin: 5px 10vw;
+  font-size: 16px;
+}
+
+.FirstSlide__globe {
+  max-height: 30vh;
+  width: 290px;
+  height: 290px;
+  min-height: 290px;
+}
+
+.FirstSlide__logo {
+  max-height: 20vh;
+  margin-bottom: 20px;
+}

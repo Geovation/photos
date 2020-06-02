@@ -1,500 +1,463 @@
 export const data = {
   1: {
-    label: 'Non-specific plastic',
+    label: "Non-specific Plastic",
     children: {
       100: {
-        label:'4 / 6 pack rings',
-
+        label: "4 / 6 pack rings"
       },
       101: {
-        label:'Bags',
+        label: "Bags",
         children: {
           1000: {
-            label:'Carrier',
-
+            label: "Plastic carrier bag (shopping / grocery bag)"
           },
           1001: {
-            label:'Packaging',
-
+            label: "Packaging"
           },
           1002: {
-            label:'Other (Bags)',
-
+            label: "Other (Bags)"
           },
+          1069: {
+            label: "Sandwich and snack plastic bag (e.g. Ziploc)"
+          }
         }
       },
       102: {
-        label:'Bottles and containers',
+        label: "Bottles and Containers",
         children: {
           1003: {
-            label:'Drinks',
-
+            label: "Plastic drinks bottle"
           },
           1004: {
-            label:'Cleaning products',
-
+            label: "Plastic cleaning product bottle"
           },
           1005: {
-            label:'Food (e.g. pots, tubs, sachets)',
-
+            label:
+              "Plastic food container (e.g. pots, tubs, sachets, clamshells)"
           },
           1006: {
-            label:'Toiletries',
-
-          },
+            label: "Plastic toiletries bottle (e.g. shampoo, soap, lotion)"
+          }
         }
       },
       103: {
-        label:'Caps / lids',
-
+        label: "Plastic bottle lid / cap"
       },
       104: {
-        label:'Cigarette lighters',
-
+        label: "Cigarette Lighters"
       },
       105: {
-        label:'Tobacco pouches',
-
+        label: "Plastic Tobacco Pouches"
       },
       106: {
-        label:'Cigarette buts',
-
+        label: "Cigarette Butts"
       },
       107: {
-        label:'Combs / hair brushes',
-
+        label: "Combs / Hair Brushes"
       },
       108: {
-        label:'Sunglasses',
-
+        label: "Sunglasses"
       },
       109: {
-        label:'Crisp wrappers',
-
+        label: "Crisp Wrappers / Foil Chip Bags"
       },
       110: {
-        label:'Sandwich packaging',
-
+        label: "Plastic Sandwich Packaging"
       },
       111: {
-        label:'Pasta pots',
-
+        label: "Plastic Pasta Pots"
       },
       112: {
-        label:'Chocolate wrappers',
-
+        label: "Chocolate / Candybar Wrappers"
       },
       113: {
-        label:'Sweet wrappers',
-
+        label: "Sweet / Candy / Gum Wrappers"
       },
       114: {
-        label:'Cutlery',
-
+        label: "Plastic Cutlery / utensils (e.g. Spoon, Fork, Knife)"
       },
       115: {
-        label:'Trays (e.g. meat trays)',
-
+        label: "Plastic Trays (e.g. Meat Trays)"
       },
       116: {
-        label:'Straws',
-
+        label: "Plastic Straws"
       },
       117: {
-        label:'Disposable cups (not paper)',
-
+        label: "Disposable Plastic Cups (not paper)"
       },
       118: {
-        label:'Disposable cup lids',
-
+        label: "Disposable Cup Lids"
       },
       119: {
-        label:'Fishing',
+        label: "Fishing",
         children: {
           1007: {
-            label:'Fishing line',
-
+            label: "Fishing Line"
           },
           1008: {
-            label:'Fishing net and net pieces (< 50cm)',
-
+            label: "Fishing Net and Net Pieces (< 50cm)"
           },
           1009: {
-            label:'Fishing net and net pieces (> 50cm)',
-
+            label: "Fishing Net and Net Pieces (> 50cm)"
           },
           1010: {
-            label:'Fishing floats and reels',
-
-          },
+            label: "Fishing Floats/Bobbers and Reels"
+          }
         }
       },
       120: {
-        label:'Industrial packaging / crates / sheeting',
-
+        label: "Industrial Plastic Packaging / Crates / Sheeting"
       },
       121: {
-        label:'Mesh bags (e.g. fruit / vegetable)',
-
+        label: "Mesh Bags (e.g. Fruit / Vegetable)"
       },
       122: {
-        label:'Pallets / crates',
-
+        label: "Plastic Pallets / Crates"
       },
       123: {
-        label:'Rope (diameter > 1cm)',
-
+        label: "Rope (diameter > 1cm)"
       },
       124: {
-        label:'String / cord (diameter < 1cm)',
-
+        label: "String / cord (diameter < 1cm)"
       },
       125: {
-        label:'Toys',
-
+        label: "Plastic String / Cord (diameter < 1cm)"
       },
       126: {
-        label:'Balloon string',
-
+        label: "Balloon string"
       },
       127: {
-        label:'Traffic cones',
-
+        label: "Plastic Balloon String"
       },
       128: {
-        label:'Plastic pieces (<2.5 cm)',
-
+        label: "Traffic Cones"
       },
       129: {
-        label:'Plastic pieces (>2.5 cm)',
-
+        label: "Plastic Pieces (< 2.5 cm)"
       },
       130: {
-        label:'Other (Non-specific plastic)',
-
+        label: "Plastic Pieces (> 2.5 cm)"
       },
       131: {
-        label:'Balloon string',
-
+        label: "Other (Non-specific Plastic)"
       },
+      170: { label: "Plastic stirrers" },
+      171: { label: "Plastic food container lid" },
+      172: { label: "Plastic wrap (e.g. clingfilm, cellophane)" },
+      173: { label: "Plastic toothpick" },
+      174: { label: "Glasses (not sunglasses)" },
+      175: { label: "Hair tie / band / bobble" },
+      176: { label: "Lipstick / chapstick" },
+      177: { label: "Make up container" },
+      178: { label: "Plastic toy" },
+      180: { label: "Balls " },
+      181: { label: "Dog toy (e.g. ball, rope)" },
+      182: { label: "Plastic frisbee" },
+      183: { label: "Dog leash / collar" },
+      184: { label: "Tarpaulin (e.g. canvas, tarp, weedcover)" },
+      185: { label: "Plastic plant / flower pot" },
+      186: { label: "Plastic plant / flower label" },
+      187: { label: "Cigar tip" },
+      188: { label: "Plastic buoy" },
+      189: { label: "Bubble wrap" },
+      190: { label: "Plastic bucket" },
+      191: { label: "Plastic tape (e.g. sticky tape, cellotape)" },
+      192: { label: "Plastic sign (e.g. road sign)" },
+      193: { label: "Plastic car parts" },
+      194: { label: "Nurdles" },
+      195: { label: "Drinks carton" },
+      196: { label: "Plastic label" },
+      197: {
+        label: "Electrical",
+        children: {
+          1070: { label: "Mobile phone" },
+          1071: { label: "Headphone" },
+          1072: { label: "Electrical cable" },
+          1073: { label: "Radio/ stero" }
+        }
+      }
     }
   },
   2: {
-    label: 'Specific plastic',
+    label: "Specific Plastic",
     children: {
       132: {
-        label:'Polystyrene',
+        label: "Polystyrene",
         children: {
           1011: {
-            label:'Fast food containers',
-
+            label:
+              "Fast-food Polystyrene / Styrofoam Containers (e.g. clamshell)"
           },
           1012: {
-            label:'Foam / sponge insulation',
-
+            label: "Polystyrene Foam / Sponge Insulation"
           },
           1013: {
-            label:'Packaging',
-
+            label: "Polystyrene / styrofoam packaging"
           },
           1014: {
-            label:'Fishing net and net pieces (< 50cm)',
-
+            label: "Polystyrene / Stryofoam Pieces (< 5 cm)"
           },
           1015: {
-            label:'Fishing net and net pieces (> 50cm)',
-
+            label: "Polystyrene / Stryofoam Pieces (5-50 cm)"
           },
           1016: {
-            label:'Polystyrene pieces (5-50 cm)',
-
+            label: "Polystyrene / Stryofoam Pieces (> 50 cm)"
           },
           1017: {
-            label:'Polystyrene pieces (5 cm)',
-
+            label: "Individual Polystyrene / Styrofoam Beads"
           },
+          // repeat, is it safe to delete?
           1018: {
-            label:'Individual polystyrene beads',
-
+            label: "Individual polystyrene / Styrofoam beads"
           },
           1019: {
-            label:'Other (Specific plastic)',
-
+            label: "Other (Specific plastic)"
           },
+          1074: { label: "Polystyrene / styrofoam plate / tray" }
         }
       },
       133: {
-        label:'Rubber',
+        label: "Rubber",
         children: {
           1020: {
-            label:'Balloons',
-
+            label: "Balloons"
           },
           1021: {
-            label:'Gloves (heavy duty)',
-
+            label: "Rubber Gloves (heavy-duty)"
           },
           1022: {
-            label:'Gloves (light weight)',
-
+            label: "Rubber Gloves (light-weight)"
           },
           1023: {
-            label:'Rubber pieces (< 50 cm)',
-
+            label: "Rubber Pieces (< 50 cm)"
           },
           1024: {
-            label:'Tyres (no wheel)',
+            label: "Tyres (without Rims)",
             children: {
               10000: {
-                label:'Bike',
-
+                label: "Bike Tyres (without Rims)"
               },
               10001: {
-                label:'Car',
-
+                label: "Car Tyres (without Rims)"
               },
               10002: {
-                label:'Other (Tyres (no wheel))',
-
-              },
+                label: "Other Tyres (without Rims)"
+              }
             }
           },
           1025: {
-            label:'Tyres (with wheel)',
+            label: "Tyres (with Rims)",
             children: {
               10003: {
-                label:'Bike',
-
+                label: "Bike Tyres (with Rims)"
               },
               10004: {
-                label:'Car',
-
+                label: "Car Tyres (with Rims)"
               },
               10005: {
-                label:'Other Tyres (with wheel)',
-
-              },
+                label: "Other Tyres (with wheel)"
+              }
             }
           },
           1026: {
-            label:'Other (Rubber)',
-
+            label: "Other (Rubber)"
           },
+          1075: {
+            label: "Chewing gum"
+          },
+          1076: {
+            label: "Elastic / rubber band"
+          }
         }
       },
       134: {
-        label:'Medical',
+        label: "Medical",
         children: {
           1027: {
-            label:'Inhaler',
-
+            label: "Inhaler"
           },
           1028: {
-            label:'Plasters',
-
+            label: "Plasters"
           },
           1029: {
-            label:'Syringes',
-
+            label: "Syringes"
           },
           1030: {
-            label:'Other (Medical)',
-
-          },
+            label: "Other (Medical)"
+          }
         }
       },
       135: {
-        label:'Sanitary',
+        label: "Sanitary",
         children: {
           1031: {
-            label:'Condoms',
-
+            label: "Condoms"
           },
           1032: {
-            label:'Cotton bud sticks',
-
+            label: "Cotton Buds / Swabs (e.g. Q tips)"
           },
           1033: {
-            label:'Nappies',
-
+            label: "Nappies"
           },
           1034: {
-            label:'Tampon applicators / tampons',
-
+            label: "Tampon"
           },
+          1077: { label: "Tampon applicator" },
+          1078: { label: "Sanitary pad/ napkin" },
           1035: {
-            label:'Toilet fresheners',
-
+            label: "Toilet Fresheners"
           },
           1036: {
-            label:'Towels',
-
+            label: "Towels"
           },
           1037: {
-            label:'Wet wipes',
-
+            label: "Wet Wipes / Hand Sanitiser Wipe / Cleaning Wipe"
           },
           1038: {
-            label:'Other (Sanitary)',
-
+            label: "Other (Sanitary)"
           },
+          1079: { label: "Plastic deoderant container" }
         }
       },
       136: {
-        label:'Animal faeces (Do not touch!)',
+        label: "Animal faeces (Do not touch!)",
         children: {
           1039: {
-            label:'In bags',
-
+            label: "Animal Faeces/ Faeces Bag"
           },
           1040: {
-            label:'Not in bags',
-
-          },
+            label: "Animal Faeces (not in bags)"
+          }
         }
-      },
+      }
     }
   },
   3: {
-    label: 'Other',
+    label: "Other",
     children: {
       137: {
-        label:'Cloth / clothing',
+        label: "Fabric / Clothing",
         children: {
           1041: {
-            label:'Cloth pieces',
-
+            label: "Cloth / fabric pieces"
           },
           1042: {
-            label:'Clothing',
-
+            label: "Clothing"
           },
           1043: {
-            label:'Footwear',
-
+            label: "Footwear / shoes"
           },
           1044: {
-            label:'Sacking',
-
+            label: "Sacking"
           },
           1045: {
-            label:'Other (Cloth / clothing)',
-
-          },
+            label: "Other (Fabric / Clothing)"
+          }
         }
       },
       138: {
-        label:'Metal',
+        label: "Metal",
         children: {
           1046: {
-            label:'Aerosol cans',
-
+            label: "Aerosol Cans"
           },
           1047: {
-            label:'BBQs (disposable)',
-
+            label: "BBQs / grill (disposable)"
           },
           1048: {
-            label:'Bottle caps',
-
+            label: "Metal Bottle Caps"
           },
           1049: {
-            label:'Car parts / car batteries',
-
+            label: "Metal Car Parts / Car Batteries"
           },
           1050: {
-            label:'Drinks cans',
-
+            label: "Drinks Cans"
           },
           1051: {
-            label:'Fishing weights / hooks / lures',
-
+            label: "Fishing Weights / Hooks / Bait"
           },
           1052: {
-            label:'Foil wrappers',
-
+            label: "Foil Wrappers (e.g. aluminium foil)"
           },
           1053: {
-            label:'Food cans',
-
+            label: "Metal Food Cans"
           },
           1054: {
-            label:'Scrap / Metal appliances / paint tins',
-
+            label: "Scrap / Metal Appliances / Paint Tins"
           },
           1055: {
-            label:'Household batteries',
-
+            label: "Household Batteries"
           },
           1056: {
-            label:'Wire / wire mesh',
-
+            label: "Metal Wire / Wire Mesh"
           },
           1057: {
-            label:'Metal pieces',
-
+            label: "Metal Pieces"
           },
           1058: {
-            label:'Other (Metal)',
-
+            label: "Other (Metal)"
           },
+          1080: { label: "Money (coins)" },
+          1081: { lablel: "Metal cutlery / utensils" },
+          1082: { lablel: "Metal weapon" },
+          1083: { lablel: "Metal nail / screw" },
+          1084: { lablel: "Metal tool" },
+          1085: { lablel: "Metal bike part" },
+          1086: { lablel: "Metal lid" },
+          1087: { lablel: "CD / disc" }
         }
       },
       139: {
-        label:'Wood',
+        label: "Wood",
         children: {
           1059: {
-            label:'Corks',
-
+            label: "Corks"
           },
           1060: {
-            label:'Pallets / crates',
-
+            label: "Wooden Pallets / Crates"
           },
           1061: {
-            label:'Ice lolly sticks / chip forks',
-
+            label: "Wooden Ice Lolly Sticks / Chip Forks"
           },
           1062: {
-            label:'Paint brushes',
-
+            label: "Wooden Paint Brushes"
           },
           1063: {
-            label:'Wood pieces (not twigs etc.)',
-
+            label: "Wooden Pieces (not twigs etc.)"
           },
           1064: {
-            label:'Other (Wood)',
-
+            label: "Other (Wood)"
           },
+          1088: { label: "Book" },
+          1089: { label: "Newspaper / magazine" },
+          1090: { label: "Paper money / notes" },
+          1091: { label: "Cardboard" },
+          1092: { label: "Paper packaging" }
         }
       },
       140: {
-        label:'Glass',
+        label: "Glass",
         children: {
           1065: {
-            label:'Bottles',
-
+            label: "Glass Bottle"
           },
           1066: {
-            label:'Light bulbs / tubes',
-
+            label: "Light Bulbs / Neon Tubes"
           },
           1067: {
-            label:'Glass pieces',
-
+            label: "Glass Pieces"
           },
+          1092: { label: "Glass jar" }
         }
       },
       141: {
-        label:'Pottery / ceramic',
+        label: "Pottery / Ceramics",
         children: {
           1068: {
-            label:'Any pottery / ceramic',
-
-          },
+            label: "Any pottery / Ceramic tiles"
+          }
         }
-      },
+      }
     }
   }
-}
+};

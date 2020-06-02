@@ -13,8 +13,8 @@ class MapLocation {
     return {
       latitude: this.latitude.toFixed(7),
       longitude: this.longitude.toFixed(7),
-      zoom: this.zoom.toFixed(2),
-    }
+      zoom: this.zoom.toFixed(2)
+    };
   }
 
   urlFormated() {
@@ -27,7 +27,11 @@ class MapLocation {
   }
 
   isEqual(otherMapLocation) {
-    return otherMapLocation && otherMapLocation.formatted && _.isEqual(this.formatted(), otherMapLocation.formatted());
+    return (
+      otherMapLocation &&
+      otherMapLocation.formatted &&
+      _.isEqual(this.formatted(), otherMapLocation.formatted())
+    );
   }
 }
 

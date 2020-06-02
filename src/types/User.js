@@ -1,5 +1,17 @@
 class User {
-  constructor(id, displayName, isModerator, email, emailVerified, isAnonymous, phoneNumber, photoURL, description, location, profileURL) {
+  constructor(
+    id,
+    displayName,
+    isModerator,
+    email,
+    emailVerified,
+    isAnonymous,
+    phoneNumber,
+    photoURL,
+    description,
+    location,
+    profileURL
+  ) {
     this.id = id;
     this.displayName = displayName;
     this.isModerator = isModerator;

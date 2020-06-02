@@ -1,7 +1,6 @@
-import React from 'react';
+import React from "react";
 
 class Login extends React.Component {
-
   /**
    *
    * @param props are {open, handleClose, loginName  }
@@ -12,7 +11,7 @@ class Login extends React.Component {
     this.state = {
       open: false
     };
-    }
+  }
 
   handleClose = () => {
     this.props.handleClose();
@@ -21,9 +20,7 @@ class Login extends React.Component {
 
   render() {
     const Component = this.props.loginComponent;
-    return (
-      <Component key={""} {...this.props}/>
-    );
+    return <Component key={""} {...this.props} />;
   }
 }
 

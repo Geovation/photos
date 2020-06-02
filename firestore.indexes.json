@@ -3,8 +3,15 @@
     {
       "collectionId": "photos",
       "fields": [
-        { "fieldPath": "moderated", "mode": "ASCENDING" },
+        { "fieldPath": "moderated", "mode": "DESCENDING" },
         { "fieldPath": "updated", "mode": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionId": "photos",
+      "fields": [
+        { "fieldPath": "published", "mode": "DESCENDING" },
+        { "fieldPath": "moderated", "mode": "DESCENDING" }
       ]
     }
   ]

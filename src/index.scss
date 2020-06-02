@@ -3,9 +3,16 @@ body {
   padding: 0;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
+}
+
+@font-face {
+  font-family: rockedRegular;
+  src: url(./assets/fonts/Rocked-Regular.otf);
 }

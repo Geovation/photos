@@ -4,6 +4,9 @@ set -x;
 
 cp src/custom/config.json functions/
 
+# any better way ???? it muast be inserted in the HEAD as first thing
+cp node_modules/first-input-delay/dist/first-input-delay.min.js  public/
+
 VERSION_MAYOR=$(echo $npm_package_version| cut -d'.' -f 1)
 VERSION_MINOR=$(echo $npm_package_version| cut -d'.' -f 2)
 
@@ -13,3 +16,4 @@ export REACT_APP_TITLE=$npm_package_title
 
 eval $@
 set +x;
+ls public

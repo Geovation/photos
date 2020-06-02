@@ -1,3 +1,3 @@
 export default {
-  TYPES: {string: "string", number: "number"}
+  TYPES: { string: "string", number: "number" }
 };

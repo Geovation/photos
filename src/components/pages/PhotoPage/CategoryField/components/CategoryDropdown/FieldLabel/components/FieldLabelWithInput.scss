@@ -1,0 +1,14 @@
+@import "custom/config.scss";
+
+.FieldLabelWithInput {
+  width: 100%;
+  border: 0;
+  border-bottom: $secondary solid 2px;
+  outline: none;
+  background: inherit;
+  font-size: inherit;
+}
+
+.FieldLabelWithInput__Error {
+  border-bottom-color: red;
+}

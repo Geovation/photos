@@ -57,5 +57,10 @@ service cloud.firestore {
     match /sys/stats {
       allow read: if true;
     }
+
+    // some extra config
+    match /sys/config {
+      allow read: if true;
+    }
   }
 }
