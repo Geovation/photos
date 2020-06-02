@@ -1,5 +1,10 @@
-import welcome_logo_png from "assets/images/plasticPatrolLogoWhite.PNG";
-import welcome_globe_png from "assets/images/intro/globe.PNG";
+import React from "react";
+
+import CameraRearTwoToneIcon from "@material-ui/icons/CameraRearTwoTone";
+import welcome_logo_png from "assets/images/logo.png";
+import welcome_globe_png from "assets/images/globe.png";
+import welcome_chart_png from "assets/images/chart.png";
+import welcome_croud_png from "assets/images/croud.png";
 
 export const CUSTOM_STRING = {
   drawer: {
@@ -33,5 +38,10 @@ export const CUSTOM_STRING = {
   welcome: {
     "logo.png": welcome_logo_png,
     "globe.png": welcome_globe_png,
+    "chart.png": welcome_chart_png,
+    "croud.png": welcome_croud_png,
+    camera_icon: (
+      <CameraRearTwoToneIcon style={{ fontSize: 300, margin: 40 }} />
+    ),
   },
 };

@@ -1,17 +1,23 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 
-import handPrint from "assets/images/intro/handPrint.PNG";
+import utils from "../../../../../../../../utils";
 
 import "./FinalSlide.scss";
 
 const FinalSlide = ({ onButtonClick }) => {
   return (
     <div className="FinalSlide__container">
-      <div className="FinalSlide__title">Ready to make your mark?</div>
-      <img src={handPrint} className="FinalSlide__image" alt="" />
-      <Button className="FinalSlide__button" onClick={onButtonClick}>
-        Get started
+      <div className="FinalSlide__title">
+        {utils.customiseString("welcome", "Ready to make your mark?")}
+      </div>
+      {utils.customiseString("welcome", "camera_icon")}
+      <Button
+        className="FinalSlide__button"
+        onClick={onButtonClick}
+        color="primary"
+      >
+        {utils.customiseString("welcome", "Get started")}
       </Button>
     </div>
   );

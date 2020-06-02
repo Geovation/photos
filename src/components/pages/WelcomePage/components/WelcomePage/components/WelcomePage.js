@@ -1,30 +1,34 @@
 import React, { useRef, useState } from "react";
 import ReactSwipe from "react-swipe";
 
-import NavDots from "components/common/NavDots";
+import utils from "../../../../../../utils";
 
-import chart from "assets/images/intro/chart.PNG";
-import seeItSnapItMapIt from "assets/images/intro/seeItSnapItMapIt.PNG";
+import NavDots from "components/common/NavDots";
 
 import { FirstSlide, MiddleSlide, FinalSlide } from "../../Slides";
 
 import "./WelcomePage.scss";
 
 const globalResearchSlideProps = {
-  topText: "Global research",
-  imgSrc: chart,
-  bottomText:
-    "Data you collect helps develop solutions to stop pollution at the source"
+  topText: utils.customiseString("welcome", "Global research"),
+  imgSrc: utils.customiseString("welcome", "chart.png"),
+  bottomText: utils.customiseString(
+    "welcome",
+    "Data you collect helps develop solutions for a better world"
+  ),
 };
 
 const seeItSnapItSlideProps = {
-  topText: "Be part of the solution",
-  imgSrc: seeItSnapItMapIt,
-  bottomText: "Photograph and document rubbish you find - it's simple"
+  topText: utils.customiseString("welcome", "Be part of the solution"),
+  imgSrc: utils.customiseString("welcome", "croud.png"),
+  bottomText: utils.customiseString(
+    "welcome",
+    "Photograph and document - it is simple"
+  ),
 };
 
 const carouselStyle = {
-  wrapper: { height: "100vh", display: "flex" }
+  wrapper: { height: "100vh", display: "flex" },
 };
 
 // TODO: in a separate PR clean up duplicate logic betweedn here and the tutorial
@@ -34,12 +38,12 @@ const WelcomePage = ({ handleClose }) => {
   const reactSwipeEl = useRef();
   const [navDotActiveIndex, setNavDotActiveIndex] = useState(0);
 
-  const handleNavdotClick = index => {
+  const handleNavdotClick = (index) => {
     setNavDotActiveIndex(index);
     reactSwipeEl.current && reactSwipeEl.current.slide(index);
   };
 
-  const onSwipe = index => {
+  const onSwipe = (index) => {
     setNavDotActiveIndex(index);
   };
 
@@ -47,12 +51,12 @@ const WelcomePage = ({ handleClose }) => {
     <div className="WelcomePage__container">
       <ReactSwipe
         style={{ ...carouselStyle }}
-        ref={el => (reactSwipeEl.current = el)}
+        ref={(el) => (reactSwipeEl.current = el)}
         swipeOptions={{
           startSlide: navDotActiveIndex,
           callback: onSwipe,
           continuous: false,
-          widthOfSiblingSlidePreview: 0
+          widthOfSiblingSlidePreview: 0,
         }}
       >
         <FirstSlide />
