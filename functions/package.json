@@ -27,7 +27,7 @@
     "firebase-functions-test": "latest"
   },
   "engines": {
-    "node": "8"
+    "node": "10"
   },
   "private": true
 }
