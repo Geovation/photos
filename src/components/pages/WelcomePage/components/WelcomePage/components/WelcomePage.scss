@@ -1,0 +1,31 @@
+@import "custom/config";
+
+.WelcomePage__container {
+  height: 100vh;
+  width: 100vw;
+  //TODO: get new asset so $secondary can be used
+  background: #2aa9a6;
+  position: absolute;
+  z-index: 100;
+}
+
+.WelcomePage__navDotsWrapper {
+  position: absolute;
+  bottom: 10px;
+}
+
+.WelcomePage__navDot {
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+}
+
+.WelcomePage__navDotActive {
+  background: white;
+}
+
+.Title {
+  font-family: rockedRegular;
+  color: white;
+  font-weight: lighter;
+  -webkit-font-smoothing: antialiased;
+}

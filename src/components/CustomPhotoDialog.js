@@ -1,18 +1,17 @@
 // Custom Dialog to choose camera and photo library to interact with cordova-plugin-camera
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import IconButton from '@material-ui/core/IconButton';
-import ListItemText from '@material-ui/core/ListItemText';
-import Dialog from '@material-ui/core/Dialog';
-import CameraIcon from '@material-ui/icons/PhotoCamera';
-import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
-import CancelIcon from '@material-ui/icons/Close';
+import React from "react";
+import PropTypes from "prop-types";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import IconButton from "@material-ui/core/IconButton";
+import ListItemText from "@material-ui/core/ListItemText";
+import Dialog from "@material-ui/core/Dialog";
+import CameraIcon from "@material-ui/icons/PhotoCamera";
+import PhotoLibraryIcon from "@material-ui/icons/PhotoLibrary";
+import CancelIcon from "@material-ui/icons/Close";
 
 class CustomPhotoDialog extends React.Component {
-
   handleClose = () => {
     this.props.onClose();
   };
@@ -27,23 +26,26 @@ class CustomPhotoDialog extends React.Component {
     return (
       <Dialog onClose={this.handleClose} open={open}>
         <List>
-          <ListItem button onClick={() => this.handleListItemClick('CAMERA')}>
-            <IconButton color='primary' edge={false}>
+          <ListItem button onClick={() => this.handleListItemClick("CAMERA")}>
+            <IconButton color="primary" edge={false}>
               <CameraIcon />
             </IconButton>
-            <ListItemText primary={'Camera'} />
+            <ListItemText primary={"Camera"} />
           </ListItem>
-          <ListItem button onClick={() => this.handleListItemClick('PHOTOLIBRARY')}>
-            <IconButton color='primary' edge={false}>
-                <PhotoLibraryIcon />
+          <ListItem
+            button
+            onClick={() => this.handleListItemClick("PHOTOLIBRARY")}
+          >
+            <IconButton color="primary" edge={false}>
+              <PhotoLibraryIcon />
             </IconButton>
-            <ListItemText primary={'Photo Library'} />
+            <ListItemText primary={"Photo Library"} />
           </ListItem>
           <ListItem button onClick={this.handleClose}>
             <IconButton edge={false}>
               <CancelIcon />
             </IconButton>
-            <ListItemText primary='Cancel' />
+            <ListItemText primary="Cancel" />
           </ListItem>
         </List>
       </Dialog>

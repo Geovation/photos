@@ -1,18 +1,24 @@
 {
   "name": "geovation-photos",
   "title": "Geovation Photos",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Simple Reactjs PWA that allows you to upload photos into a map.",
   "main": "index.js",
+  "public": true,
   "scripts": {
     "start": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
     "build": "npm run build:react",
     "test": "react-scripts test --env=jsdom --forceExit",
     "eject": "react-scripts eject",
+    "backup": "./scripts/backup.sh",
     "serve-prod": "npm run build:react && http-server build",
     "build:ios": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm ios && cordova platform add ios && cordova build ios --prod --release --device --buildConfig build.json && cd ..'",
+    "build:ios:dev": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova build ios --debug --buildFlag=\"-UseModernBuildSystem=0\" && cd ..'",
     "build:android": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build android --prod --release --buildConfig build.json && cd ..'",
+    "build:android:dev": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova build android && cd ..'",
     "build:react": "./scripts/runWithVars.sh 'react-scripts build'",
+    "beta:android": "#cd cordova-app; fastlane android beta --verbose",
+    "beta:ios": "#cd cordova-app; fastlane ios beta",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "geovation-photos-update": "geovation-photos-update",
@@ -29,34 +35,41 @@
   },
   "homepage": "./",
   "devDependencies": {
-    "coveralls": "^3.1.0",
-    "firebase-admin": "^8.12.1",
-    "http-server": "^0.12.3",
-    "jimp": "^0.12.1",
-    "ncp": "^2.0.0",
-    "node-sass": "^4.14.1",
-    "random-location": "^1.1.3",
-    "react-scripts": "^3.4.1",
-    "rimraf": "^3.0.2",
-    "workbox-cli": "^5.1.3"
+    "coveralls": "latest",
+    "firebase-admin": "latest",
+    "firebase-tools": "latest",
+    "first-input-delay": "latest",
+    "http-server": "latest",
+    "husky": "latest",
+    "jimp": "latest",
+    "ncp": "latest",
+    "node-sass": "latest",
+    "precise-commits": "latest",
+    "prettier": "latest",
+    "random-location": "latest",
+    "react-scripts": "latest",
+    "rimraf": "latest",
+    "workbox-cli": "latest"
   },
   "dependencies": {
-    "@material-ui/core": "^4.10.1",
-    "@material-ui/icons": "^4.9.1",
-    "blueimp-load-image": "^5.12.0",
-    "classnames": "^2.2.6",
-    "dms2dec": "^1.1.0",
-    "firebase": "^7.14",
-    "localforage": "^1.7.3",
+    "@material-ui/core": "latest",
+    "@material-ui/icons": "latest",
+    "@turf/turf": "latest",
+    "blueimp-load-image": "latest",
+    "classnames": "latest",
+    "dms2dec": "latest",
+    "firebase": "latest",
+    "localforage": "latest",
     "lodash": "^4.17.15",
-    "mapbox-gl": "^1.10.1",
-    "md5": "^2.2.1",
+    "mapbox-gl": "latest",
+    "md5": "latest",
     "prop-types": "^15.7.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-firebaseui": "^4.1.0",
-    "react-router-dom": "^5.2.0",
-    "react-select": "^3.1.0"
+    "react": "latest",
+    "react-dom": "latest",
+    "react-firebaseui": "latest",
+    "react-router-dom": "latest",
+    "react-select": "latest",
+    "react-swipe": "latest"
   },
   "bin": {
     "geovation-photos-update": "./bin/geovation-photos-update.js"
@@ -66,5 +79,10 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "precise-commits"
+    }
+  }
 }

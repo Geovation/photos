@@ -1,0 +1,15 @@
+@mixin commonContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  color: white;
+}
+
+@mixin rockedRegularTextFontWeightLight {
+  font-family: rockedRegular;
+  font-weight: lighter;
+  -webkit-font-smoothing: antialiased;
+}

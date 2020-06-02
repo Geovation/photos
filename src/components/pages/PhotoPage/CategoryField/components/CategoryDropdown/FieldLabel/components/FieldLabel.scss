@@ -1,0 +1,15 @@
+@import "custom/config.scss";
+
+.FieldLabel__container {
+  margin: 10px 0;
+  width: 100%;
+}
+
+.FieldLabel__label {
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.FieldLabel__required {
+  color: red;
+}

@@ -18,12 +18,32 @@
     }
   }
 
-  .built-by-geovation {
+  .DrawerContainer-stats-95 {
+    padding-bottom: 10px;
+  }
+
+  .built-by-geovation, .sponsored-by {
     display: flex;
     flex: 1;
     align-items: flex-end;
     justify-content: center;
+  }
+
+  .built-by-geovation {
     padding-bottom: 35px;
+  }
+
+  .sponsored-by-container {
+    padding: 4px;
+    display: block;
+  }
+
+  .sponsored-by-image {
+    height: 25px;
+    display: block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 
   .built-by-text {

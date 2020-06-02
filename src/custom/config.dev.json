@@ -1,0 +1,11 @@
+{
+  "apiKey": "AIzaSyBkuZPVStg_zRfUaxLJ-mP4xxdFv8GzdZw",
+  "authDomain": "photos-demo-d4b14.firebaseapp.com",
+  "databaseURL": "https://photos-demo-d4b14.firebaseio.com",
+  "projectId": "photos-demo-d4b14",
+  "storageBucket": "photos-demo-d4b14.appspot.com",
+  "messagingSenderId": "639308065605",
+  "appId": "1:639308065605:web:46ce26dd8eb235d9",
+  "measurementId": "G-DGE7JVNP95",
+  "apiURL": "https://us-central1-plastic-patrol-dev-722eb.cloudfunctions.net/api"
+}

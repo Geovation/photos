@@ -1,0 +1,42 @@
+@import "custom/config.scss";
+$navDotsHeight: 10px;
+
+.NavDots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.NavDot {
+  height: $navDotsHeight;
+  width: $navDotsHeight;
+  border-radius: 50%;
+  margin: 2px 7px 0;
+  transition: 0.2s;
+  outline: none;
+  border: solid 1px #c8c8c8;
+
+  &--clickable {
+    cursor: pointer;
+  }
+
+  &--active {
+    background: black;
+  }
+}
+
+.NavDot__inner {
+  background: $secondary;
+  transition: 0.2s ease;
+  height: 100%;
+  width: 100%;
+  transform: scale(0);
+  transform-origin: center;
+  border-radius: 50%;
+  border: none;
+
+  &--active {
+    transform: scale(1);
+  }
+}
