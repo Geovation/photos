@@ -18,38 +18,38 @@ import { authFirebase } from "features/firebase";
 
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from "../utils";
 
-const styles = theme => ({
+const styles = (theme) => ({
   typography: {
     ...theme.mixins.gutters(),
     whiteSpace: "pre-wrap",
     paddingRight: 0,
-    paddingLeft: 0
+    paddingLeft: 0,
   },
   body: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(3),
   },
   iconButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   link: {
     cursor: "pointer",
-    color: "blue",,,,,,
+    color: "blue",
   },
   button: {
-    margin: theme.spacing(1.5)
+    margin: theme.spacing(1.5),
   },
   notchTop: {
     paddingTop: isIphoneWithNotchAndCordova()
       ? "env(safe-area-inset-top)"
       : isIphoneAndCordova
       ? theme.spacing(1.5)
-      : null
+      : null,
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova()
       ? "env(safe-area-inset-bottom)"
-      : 0
-  }
+      : 0,
+  },
 });
 
 class EmailVerifiedDialog extends React.Component {
@@ -59,7 +59,7 @@ class EmailVerifiedDialog extends React.Component {
       openProgressCircle: false,
       openConformationDialog: false,
       conformationTitle: "",
-      conformationMessage: ""
+      conformationMessage: "",
     };
   }
 
@@ -74,7 +74,7 @@ class EmailVerifiedDialog extends React.Component {
       openProgressCircle: false,
       openConformationDialog: true,
       conformationTitle: message.title,
-      conformationMessage: message.body
+      conformationMessage: message.body,
     });
   };
 
@@ -87,7 +87,7 @@ class EmailVerifiedDialog extends React.Component {
       openProgressCircle: false,
       openConformationDialog: true,
       conformationTitle: message.title,
-      conformationMessage: message.body
+      conformationMessage: message.body,
     });
   };
 
@@ -161,7 +161,7 @@ class EmailVerifiedDialog extends React.Component {
         <Dialog
           open={this.state.openProgressCircle}
           PaperProps={{
-            style: { backgroundColor: "transparent", boxShadow: "none" }
+            style: { backgroundColor: "transparent", boxShadow: "none" },
           }}
         >
           <CircularProgress color="secondary" />
@@ -202,7 +202,7 @@ class EmailVerifiedDialog extends React.Component {
 }
 
 EmailVerifiedDialog.propTypes = {
-  fullScreen: PropTypes.bool.isRequired
+  fullScreen: PropTypes.bool.isRequired,
 };
 
 export default withMobileDialog()(withStyles(styles)(EmailVerifiedDialog));
