@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import config from "../custom/config";
 
 export const device = () => {
@@ -22,17 +24,17 @@ export const isIphoneAndCordova = !!(device() === "iOS" && window.cordova);
 export const isIphoneWithNotchAndCordova = () => {
   const IPHONEX = {
     width: 1125,
-    height: 2436
+    height: 2436,
   };
 
   const IPHONEXR = {
     width: 828,
-    height: 1792
+    height: 1792,
   };
 
   const IPHONEXSMAX = {
     width: 1242,
-    height: 2688
+    height: 2688,
   };
 
   // Really basic check for the ios platform
@@ -45,7 +47,7 @@ export const isIphoneWithNotchAndCordova = () => {
   // Define the users device screen dimensions
   const screen = {
     width: window.screen.width * ratio,
-    height: window.screen.height * ratio
+    height: window.screen.height * ratio,
   };
 
   // check if device is iOS and cordova exists
@@ -122,11 +124,11 @@ export function getValueAndAncestorsFromTree(tree, key_to_find) {
 }
 
 export function customiseString(page, key) {
-  return config.CUSTOM_STRING[page][key] || key;
+  return _.get(config.CUSTOM_STRING, `${page}["${key}"]`, key);
 }
 
 export default {
-  customiseString
+  customiseString,
 };
 
 export const sortArrayByObjectKey = (array, keyName) => {

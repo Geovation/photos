@@ -18,11 +18,10 @@ import TitleTextField from "../components/pages/PhotoPage/AdminApproval/TitleTex
 import MultiFields from "../components/pages/PhotoPage/AdminApproval/MultiFields";
 
 import { data } from "./categories";
+import { CUSTOM_STRING } from "./strings.js";
 
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
-
-const CUSTOM_STRING = require("./strings.json");
 
 const PAGES = {
   map: {
