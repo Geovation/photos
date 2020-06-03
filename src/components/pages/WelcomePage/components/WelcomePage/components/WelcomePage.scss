@@ -15,18 +15,16 @@
 }
 
 .WelcomePage__navDot {
-  background: $secondary;
+  // background: $secondary;
   border: solid;
-  border-color: $primary;
+  // border-color: $primary;
 }
 
 .WelcomePage__navDotActive {
-  background: $primary;
+  background: black;
 }
 
 .Title {
-  font-family: rockedRegular;
   color: $primary;
-  font-weight: lighter;
   -webkit-font-smoothing: antialiased;
 }
