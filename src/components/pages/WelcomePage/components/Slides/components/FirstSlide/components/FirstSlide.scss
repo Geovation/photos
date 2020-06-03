@@ -6,17 +6,14 @@
 }
 
 .FirstSlide__bottomText {
-  @include rockedRegularTextFontWeightLight;
   font-size: 25px;
   margin: 5px;
-  // color: $secondary;
 }
 
 .FirstSlide__welcomeText {
   font-weight: 600;
   margin: 5px 10vw;
   font-size: 16px;
-  // color: $secondary;
 }
 
 .FirstSlide__globe {
@@ -24,11 +21,9 @@
   width: 290px;
   height: 290px;
   min-height: 290px;
-  // color: $secondary;
 }
 
 .FirstSlide__logo {
   max-height: 20vh;
-  margin-bottom: 20px;
-  // color: $secondary;
+  margin: 20px;
 }

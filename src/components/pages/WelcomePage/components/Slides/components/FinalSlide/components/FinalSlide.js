@@ -12,11 +12,7 @@ const FinalSlide = ({ onButtonClick }) => {
         {utils.customiseString("welcome", "Ready to make your mark?")}
       </div>
       {utils.customiseString("welcome", "camera_icon")}
-      <Button
-        className="FinalSlide__button"
-        onClick={onButtonClick}
-        color="primary"
-      >
+      <Button className="FinalSlide__button" onClick={onButtonClick}>
         {utils.customiseString("welcome", "Get started")}
       </Button>
     </div>

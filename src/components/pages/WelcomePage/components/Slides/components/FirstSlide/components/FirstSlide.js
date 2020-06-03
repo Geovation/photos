@@ -6,7 +6,7 @@ import utils from "../../../../../../../../utils";
 const FirstSlide = () => (
   <div className="FirstSlide__container">
     <img
-      src={utils.customiseString("welcome", "logo.png")}
+      src={utils.customiseString("welcome", "logo.svg")}
       className="FirstSlide__logo"
       alt=""
     />
