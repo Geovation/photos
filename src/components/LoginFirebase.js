@@ -22,7 +22,7 @@ class LoginFirebase extends React.Component {
     super(props);
 
     this.state = {
-      open: false
+      open: false,
     };
   }
 
@@ -32,18 +32,19 @@ class LoginFirebase extends React.Component {
       signInSuccessUrl: "/",
       credentialHelper: firebaseui.auth.CredentialHelper.NONE,
       signInOptions: [
-        // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-        firebase.auth.EmailAuthProvider.PROVIDER_ID
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
       ],
       callbacks: {
         // Avoid redirects after sign-in.
-        signInSuccessWithAuthResult: authResult => {
+        signInSuccessWithAuthResult: (authResult) => {
           if (authResult.additionalUserInfo.isNewUser) {
             authFirebase.sendEmailVerification();
           }
           return false;
-        }
-      }
+        },
+      },
     };
   }
 
