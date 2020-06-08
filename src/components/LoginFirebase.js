@@ -5,7 +5,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import withMobileDialog from "@material-ui/core/withMobileDialog";
 
-import * as firebaseui from "firebaseui";
+// import * as firebaseui from "firebaseui";
 import firebase from "firebase/app";
 import "firebase/auth";
 
@@ -24,22 +24,32 @@ class LoginFirebase extends React.Component {
     this.state = {
       open: false,
     };
-  }
 
-  componentDidMount() {
     this.uiConfig = {
-      // signInFlow: 'redirect',
-      signInSuccessUrl: "/",
-      credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+      // see https://github.com/firebase/firebaseui-web/issues/522#ref-issue-261600787
+      // signInFlow:
+      //   "matchMedia" in window &&
+      //   window.matchMedia("(display-mode: standalone)").matches
+      //     ? "popup"
+      //     : "redirect",
+      signInFlow: "popup",
+
       signInOptions: [
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        // {
+        //   provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        //   scopes: ["public_profile", "email"],
+        // },
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       ],
       callbacks: {
-        // Avoid redirects after sign-in.
         signInSuccessWithAuthResult: (authResult) => {
-          if (authResult.additionalUserInfo.isNewUser) {
+          // The users logging in with an email, need to validate the email.
+          if (
+            authResult.additionalUserInfo.providerId ===
+              firebase.auth.EmailAuthProvider.PROVIDER_ID &&
+            !authResult.user.emailVerified
+          ) {
             authFirebase.sendEmailVerification();
           }
           return false;
