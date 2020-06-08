@@ -14,17 +14,18 @@ import dbFirebase from "./dbFirebase";
 
 let currentUser;
 
-const onAuthStateChanged = fn => {
-  const firebaseStatusChange = user => {
+const onAuthStateChanged = (fn) => {
+  const firebaseStatusChange = (user) => {
     currentUser = user;
     if (config.ENABLE_GRAVATAR_PROFILES && currentUser) {
       gtagSetId(user.uid);
       gtagEvent("Logged in", "User", user.uid);
 
-      const gravatarURL =
-        "https://www.gravatar.com/" + md5(user.email) + ".json";
+      // still to fix it. Sometimes (facebook) the email is null.
+      const md5UserEmail = md5(user.email || "");
+      const gravatarURL = "https://www.gravatar.com/" + md5UserEmail + ".json";
       const photoURL =
-        user.photoURL || "https://www.gravatar.com/avatar/" + md5(user.email);
+        user.photoURL || "https://www.gravatar.com/avatar/" + md5UserEmail;
       currentUser = new User(
         user.uid,
         user.displayName,
@@ -40,7 +41,7 @@ const onAuthStateChanged = fn => {
       );
 
       // this has to be global to be found by the jsonp
-      window.userFromGravatar = profile => {
+      window.userFromGravatar = (profile) => {
         const info = profile.entry[0];
         currentUser.description = info.aboutMe;
         currentUser.location = info.currentLocation;
@@ -55,7 +56,7 @@ const onAuthStateChanged = fn => {
       script.src = `${gravatarURL}?callback=userFromGravatar`;
       document.head.append(script);
 
-      dbFirebase.getUser(user.uid).then(fbUser => {
+      dbFirebase.getUser(user.uid).then((fbUser) => {
         currentUser.isModerator = fbUser ? fbUser.isModerator : false;
         fn(currentUser);
       });
@@ -78,14 +79,14 @@ const sendEmailVerification = () => {
         title: "Notification",
         body:
           "A verification link has been sent to email account: " +
-          firebase.auth().currentUser.email
+          firebase.auth().currentUser.email,
       };
       return message;
     })
-    .catch(error => {
+    .catch((error) => {
       const message = {
         title: "Warning",
-        body: error.message
+        body: error.message,
       };
       return message;
     });
@@ -100,5 +101,5 @@ export default {
   onAuthStateChanged,
   signOut,
   sendEmailVerification,
-  reloadUser
+  reloadUser,
 };
