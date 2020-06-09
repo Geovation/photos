@@ -10,6 +10,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 
 import { authFirebase } from "features/firebase";
+import config from "custom/config";
 
 // TODO: change theme: https://github.com/firebase/firebaseui-web-react/tree/master/dist
 
@@ -34,14 +35,7 @@ class LoginFirebase extends React.Component {
       //     : "redirect",
       signInFlow: "popup",
 
-      signInOptions: [
-        firebase.auth.EmailAuthProvider.PROVIDER_ID,
-        // {
-        //   provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-        //   scopes: ["public_profile", "email"],
-        // },
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      ],
+      signInOptions: config.USER.SIGN_IN_OPTIONS,
       callbacks: {
         signInSuccessWithAuthResult: (authResult) => {
           // The users logging in with an email, need to validate the email.

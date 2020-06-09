@@ -1,3 +1,6 @@
+import firebase from "firebase/app";
+import "firebase/auth";
+
 import React from "react";
 
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
@@ -176,7 +179,6 @@ export default {
   PAGES,
   CUSTOM_PAGES: [],
   getStats,
-  ENABLE_GRAVATAR_PROFILES: true, //To update user-profile from Gravatar, value: true or false.
   SECURITY: {
     UPLOAD_REQUIRES_LOGIN: true,
   },
@@ -185,5 +187,13 @@ export default {
     label: "Uploads",
     field: "uploaded",
     displayedUsers: 20,
+  },
+  USER: {
+    SIGN_IN_OPTIONS: [
+      firebase.auth.EmailAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+    ],
+    ENABLE_GRAVATAR_PROFILES: true, //To update user-profile from Gravatar, value: true or false.
   },
 };
