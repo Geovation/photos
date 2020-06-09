@@ -1,9 +1,10 @@
 import React from "react";
-import FirebaseAuth from "react-firebaseui/FirebaseAuth";
+import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import withMobileDialog from "@material-ui/core/withMobileDialog";
+import { CircularProgress } from "@material-ui/core";
 
 // import * as firebaseui from "firebaseui";
 import firebase from "firebase/app";
@@ -24,6 +25,7 @@ class LoginFirebase extends React.Component {
 
     this.state = {
       open: false,
+      uiShown: false,
     };
 
     this.uiConfig = {
@@ -48,6 +50,9 @@ class LoginFirebase extends React.Component {
           }
           return false;
         },
+        uiShown: () => {
+          this.setState({ uiShown: true });
+        },
       },
     };
   }
@@ -67,8 +72,9 @@ class LoginFirebase extends React.Component {
         onClose={this.handleClose}
         // aria-labelledby="responsive-dialog-title"
       >
-        <DialogContent>
-          <FirebaseAuth
+        {!this.state.uiShown && <CircularProgress color="secondary" />}
+        <DialogContent style={{ padding: "0" }}>
+          <StyledFirebaseAuth
             // uiCallback={ui => ui.disableAutoSignIn()}
             uiConfig={this.uiConfig}
             firebaseAuth={firebase.auth()}
