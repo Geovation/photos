@@ -26,12 +26,20 @@ const onAuthStateChanged = (fn) => {
       const gravatarURL = "https://www.gravatar.com/" + md5UserEmail + ".json";
       const photoURL =
         user.photoURL || "https://www.gravatar.com/avatar/" + md5UserEmail;
+
+      const emailVerified =
+        user.emailVerified ||
+        (user.providerData &&
+          user.providerData[0] &&
+          user.providerData[0].providerId !==
+            firebase.auth.EmailAuthProvider.PROVIDER_ID);
+
       currentUser = new User(
         user.uid,
         user.displayName,
         false,
         user.email,
-        user.emailVerified,
+        emailVerified,
         user.isAnonymous,
         user.phoneNumber,
         photoURL,

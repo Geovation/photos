@@ -1,3 +1,6 @@
+import firebase from "firebase/app";
+import "firebase/auth";
+
 import React from "react";
 
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
@@ -186,4 +189,10 @@ export default {
     field: "uploaded",
     displayedUsers: 20,
   },
+
+  SIGN_IN_OPTIONS: [
+    // firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+    // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+  ],
 };
