@@ -35,7 +35,7 @@ class LoginFirebase extends React.Component {
       //     : "redirect",
       signInFlow: "popup",
 
-      signInOptions: config.SIGN_IN_OPTIONS,
+      signInOptions: config.USER.SIGN_IN_OPTIONS,
       callbacks: {
         signInSuccessWithAuthResult: (authResult) => {
           // The users logging in with an email, need to validate the email.

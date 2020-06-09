@@ -17,7 +17,7 @@ let currentUser;
 const onAuthStateChanged = (fn) => {
   const firebaseStatusChange = (user) => {
     currentUser = user;
-    if (config.ENABLE_GRAVATAR_PROFILES && currentUser) {
+    if (config.USER.ENABLE_GRAVATAR_PROFILES && currentUser) {
       gtagSetId(user.uid);
       gtagEvent("Logged in", "User", user.uid);
 
