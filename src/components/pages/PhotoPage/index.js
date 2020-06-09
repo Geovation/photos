@@ -32,42 +32,42 @@ const emptyState = {
   enabledUploadButton: true,
   next: false,
   fieldsValues: [],
-  totalCount: null
+  totalCount: null,
 };
 
-const styles = theme => ({
+const styles = (theme) => ({
   cssUnderline: {
     "&:after": {
-      borderBottomColor: theme.palette.secondary.main
-    }
+      borderBottomColor: theme.palette.secondary.main,
+    },
   },
   progress: {
-    margin: theme.spacing(2)
+    margin: theme.spacing(2),
   },
   button: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   link: {
-    color: theme.palette.secondary.main
+    color: theme.palette.secondary.main,
   },
   notchTop: {
-    paddingTop: isIphoneWithNotchAndCordova() ? "env(safe-area-inset-top)" : 0
+    paddingTop: isIphoneWithNotchAndCordova() ? "env(safe-area-inset-top)" : 0,
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova()
       ? "env(safe-area-inset-bottom)"
-      : 0
+      : 0,
   },
   fields: {
-    margin: theme.spacing(1.5)
+    margin: theme.spacing(1.5),
   },
   photo: {
     marginRight: theme.spacing(1.5),
     marginLeft: theme.spacing(1.5),
-    marginBottom: theme.spacing(0.5)
-  }
+    marginBottom: theme.spacing(0.5),
+  },
 });
 
 class PhotoPage extends Component {
@@ -87,7 +87,7 @@ class PhotoPage extends Component {
       sending: false,
       sendingProgress: 0,
       open: true,
-      message
+      message,
     });
 
     this.dialogCloseCallback = fn;
@@ -102,15 +102,16 @@ class PhotoPage extends Component {
   /**
    * Given an exif object, return the coordinates {latitude, longitude} or undefined if an error occurs
    */
-  getLocationFromExifMetadata = imgExif => {
+  getLocationFromExifMetadata = (imgExif) => {
     let location, latitude, longitude;
     try {
       if (!window.cordova) {
         // https://www.npmjs.com/package/dms2dec
-        const lat = imgExif.GPSLatitude.split(",").map(Number);
-        const latRef = imgExif.GPSLatitudeRef;
-        const lon = imgExif.GPSLongitude.split(",").map(Number);
-        const lonRef = imgExif.GPSLongitudeRef;
+        const GPSInfo = imgExif.GPSInfo;
+        const lat = GPSInfo.GPSLatitude.split(",").map(Number);
+        const latRef = GPSInfo.GPSLatitudeRef;
+        const lon = GPSInfo.GPSLongitude.split(",").map(Number);
+        const lonRef = GPSInfo.GPSLongitudeRef;
         const latLon = dms2dec(lat, latRef, lon, lonRef);
         latitude = latLon[0];
         longitude = latLon[1];
@@ -161,9 +162,9 @@ class PhotoPage extends Component {
 
     const { fieldsValues, totalCount } = this.state;
 
-    const fieldValuesToSend = fieldsValues.map(value => {
+    const fieldValuesToSend = fieldsValues.map((value) => {
       const {
-        values: { error, number, ...otherNonExtraneousFields }
+        values: { error, number, ...otherNonExtraneousFields },
       } = value;
       const numberAsNumber = Number(number);
 
@@ -173,13 +174,13 @@ class PhotoPage extends Component {
     const data = {
       ...location,
       pieces: totalCount,
-      categories: fieldValuesToSend
+      categories: fieldValuesToSend,
     };
 
     this.setState({
       sending: true,
       sendingProgress: 0,
-      enabledUploadButton: false
+      enabledUploadButton: false,
     });
     this.uploadTask = null;
     this.cancelClickUpload = false;
@@ -204,7 +205,7 @@ class PhotoPage extends Component {
 
       this.uploadTask.on(
         "state_changed",
-        snapshot => {
+        (snapshot) => {
           const sendingProgress = Math.ceil(
             (snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1
           );
@@ -221,7 +222,7 @@ class PhotoPage extends Component {
               console.log(snapshot.state);
           }
         },
-        error => {
+        (error) => {
           // debugger
           console.error(error);
           const extraInfo =
@@ -249,20 +250,20 @@ class PhotoPage extends Component {
     if (!window.cordova) {
       loadImage.parseMetaData(
         this.props.file,
-        data => {
+        (data) => {
           imgExif = data.exif ? data.exif.getAll() : imgExif;
           imgIptc = data.iptc ? data.iptc.getAll() : imgIptc;
         },
         {
           maxMetaDataSize: 262144,
-          disableImageHead: false
+          disableImageHead: false,
         }
       );
     }
 
     loadImage(
       this.props.file,
-      img => {
+      (img) => {
         let imgFromCamera;
         const imgSrc = img.toDataURL("image/jpeg");
         if (window.cordova) {
@@ -311,9 +312,10 @@ class PhotoPage extends Component {
         }
       },
       {
+        canvas: true,
         orientation: true,
         maxWidth: config.MAX_IMAGE_SIZE,
-        maxHeight: config.MAX_IMAGE_SIZE
+        maxHeight: config.MAX_IMAGE_SIZE,
       }
     );
   };
@@ -333,7 +335,7 @@ class PhotoPage extends Component {
     this.setState({
       sending: false,
       sendingProgress: 0,
-      enabledUploadButton: true
+      enabledUploadButton: true,
     });
 
     if (this.uploadTask) {
@@ -438,7 +440,7 @@ PhotoPage.propTypes = {
   online: PropTypes.bool.isRequired,
   file: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
-  handleRetakeClick: PropTypes.func.isRequired
+  handleRetakeClick: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(PhotoPage);
