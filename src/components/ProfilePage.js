@@ -15,28 +15,28 @@ import "./ProfilePage.scss";
 import PageWrapper from "./PageWrapper";
 import MapLocation from "../types/MapLocation";
 
-const styles = theme => ({
+const styles = (theme) => ({
   avatar: {
     margin: 10,
     height: 100,
-    width: 100
+    width: 100,
   },
   row: {
     display: "flex",
-    width: "100%"
+    width: "100%",
     // padding: `0 ${theme.spacing(2)}px`
   },
   colr: {
     flex: "50%",
-    textAlign: "right"
+    textAlign: "right",
   },
   coll: {
     flex: "50%",
-    textAlign: "left"
+    textAlign: "left",
   },
   centered: {
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
 
 class Profile extends React.Component {
@@ -55,14 +55,14 @@ class Profile extends React.Component {
 
     const myPhotos =
       geojson &&
-      geojson.features.filter(f => f.properties.owner_id === user.id);
+      geojson.features.filter((f) => f.properties.owner_id === user.id);
     const myLastPhotos = _.reverse(
-      _.sortBy(myPhotos, o => o.properties.moderated)
+      _.sortBy(myPhotos, (o) => o.properties.moderated)
     ).slice(0, 20);
 
     console.log(myLastPhotos);
 
-    const numPieces = _.sumBy(myPhotos, o => o.properties.pieces);
+    const numPieces = _.sumBy(myPhotos, (o) => o.properties.pieces);
 
     return (
       <PageWrapper
@@ -77,7 +77,7 @@ class Profile extends React.Component {
             src={user.photoURL}
           />
           <Typography gutterBottom variant="h5">
-            {user.displayName}
+            {user.displayName} {user.phoneNumber && ` ph: ${user.phoneNumber}`}
           </Typography>
           <Typography component="p">{user.email}</Typography>
           <Typography>{user.location}</Typography>
@@ -104,7 +104,7 @@ class Profile extends React.Component {
                 Last {myLastPhotos.length} approved
               </Typography>
 
-              {_.map(myLastPhotos, photo => (
+              {_.map(myLastPhotos, (photo) => (
                 <div className={classes.centered} key={photo.properties.id}>
                   <Typography variant="body1">
                     {photo.properties.pieces && (
@@ -153,7 +153,7 @@ class Profile extends React.Component {
 }
 
 Profile.propTypes = {
-  user: PropTypes.object
+  user: PropTypes.object,
 };
 
 export default withStyles(styles)(Profile);
