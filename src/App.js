@@ -19,7 +19,7 @@ import CloseIcon from "@material-ui/icons/Close";
 
 import { dbFirebase, authFirebase } from "features/firebase";
 
-import TutorialPage from "./components/pages/TutorialPage";
+import SwipeTutorialPage from "./components/common/SwipeTutorialPage";
 import WelcomePage from "./components/pages/WelcomePage";
 import PhotoPage from "./components/pages/PhotoPage";
 import ProfilePage from "./components/ProfilePage";
@@ -40,6 +40,9 @@ import { gtagPageView, gtagEvent } from "./gtag.js";
 import "./App.scss";
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
 import MapLocation from "./types/MapLocation";
+
+import { tutorialSteps } from "./tutorialSteps";
+
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 const styles = (theme) => ({
@@ -694,8 +697,9 @@ class App extends Component {
             <Route
               path={config.PAGES.tutorial.path}
               render={(props) => (
-                <TutorialPage
+                <SwipeTutorialPage
                   {...props}
+                  steps={tutorialSteps}
                   label={this.props.config.PAGES.tutorial.label}
                   handleClose={history.goBack}
                 />

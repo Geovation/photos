@@ -3,22 +3,21 @@ import ReactSwipe from "react-swipe";
 
 import PageWrapper from "components/PageWrapper";
 import NavDots from "components/common/NavDots";
-import TutorialItem from "../../TutorialItem";
-import { tutorialSteps } from "../static";
+import TutorialItem from "./TutorialItem";
 import "./TutorialPage.scss";
 
 const swipeConfig = { continuous: false, widthOfSiblingSlidePreview: 15 };
 
-const TutorialPage = ({ handleClose, label }) => {
+const TutorialPage = ({ steps, handleClose, label }) => {
   const reactSwipeEl = useRef();
   const [navDotActiveIndex, setNavDotActiveIndex] = useState(0);
 
-  const handleNavdotClick = index => {
+  const handleNavdotClick = (index) => {
     setNavDotActiveIndex(index);
     reactSwipeEl.current && reactSwipeEl.current.slide(index);
   };
 
-  const onSwipe = index => {
+  const onSwipe = (index) => {
     setNavDotActiveIndex(index);
   };
 
@@ -28,11 +27,11 @@ const TutorialPage = ({ handleClose, label }) => {
         swipeOptions={{
           ...swipeConfig,
           callback: onSwipe,
-          startSlide: navDotActiveIndex
+          startSlide: navDotActiveIndex,
         }}
-        ref={el => (reactSwipeEl.current = el)}
+        ref={(el) => (reactSwipeEl.current = el)}
       >
-        {Object.values(tutorialSteps).map((value, index) => (
+        {Object.values(steps).map((value, index) => (
           <div key={index}>
             <TutorialItem
               stepNumber={index + 1}
@@ -43,7 +42,7 @@ const TutorialPage = ({ handleClose, label }) => {
         ))}
       </ReactSwipe>
       <NavDots
-        numberOfDots={Object.values(tutorialSteps).length}
+        numberOfDots={Object.values(steps).length}
         onClick={handleNavdotClick}
         activeIndex={navDotActiveIndex}
       />
