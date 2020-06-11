@@ -61,7 +61,7 @@
     "firebase": "^7.15.0",
     "localforage": "^1.7.4",
     "lodash": "^4.17.15",
-    "mapbox-gl": "latest",
+    "mapbox-gl": "^1.11.0",
     "md5": "latest",
     "prop-types": "^15.7.2",
     "react": "latest",
