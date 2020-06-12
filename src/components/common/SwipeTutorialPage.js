@@ -18,9 +18,12 @@ const useStyles = makeStyles({
     textAlign: "center",
     backgroundColor: "#f3f3f3",
     borderRadius: "8px",
-    margin: "50px 10px",
+    margin: "10px 10px",
     padding: "15px",
     boxShadow: "0 0 8px #cccccc",
+  },
+  container: {
+    backgroundColor: "white",
   },
 });
 
@@ -39,7 +42,12 @@ const TutorialPage = ({ steps, handleClose, label, hasLogo }) => {
 
   const classes = useStyles();
   return (
-    <PageWrapper label={label} handleClose={handleClose} hasLogo={hasLogo}>
+    <PageWrapper
+      label={label}
+      handleClose={handleClose}
+      hasLogo={hasLogo}
+      classes={{ container: classes.container }}
+    >
       <ReactSwipe
         swipeOptions={{
           ...swipeConfig,
@@ -71,4 +79,4 @@ const TutorialPage = ({ steps, handleClose, label, hasLogo }) => {
   );
 };
 
-export default React.memo(TutorialPage);
+export default TutorialPage;

@@ -20,7 +20,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import { dbFirebase, authFirebase } from "features/firebase";
 
 import SwipeTutorialPage from "./components/common/SwipeTutorialPage";
-import WelcomePage from "./components/pages/WelcomePage";
 import PhotoPage from "./components/pages/PhotoPage";
 import ProfilePage from "./components/ProfilePage";
 import Map from "./components/MapPage/Map";
@@ -41,8 +40,8 @@ import "./App.scss";
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
 import MapLocation from "./types/MapLocation";
 
-import tutorialSteps from "./tutorialSteps";
-import welcomeSteps from "./welcomeSteps";
+import tutorialSteps from "./custom/tutorialSteps";
+import welcomeSteps from "./custom/welcomeSteps";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -836,12 +835,6 @@ class App extends Component {
             />
           </Switch>
 
-          {!this.state.welcomeShown &&
-            config.PAGES.embeddable.path &&
-            !this.props.history.location.pathname.includes(
-              config.PAGES.embeddable.path
-            ) && <WelcomePage handleClose={this.handleWelcomePageClose} />}
-
           <Map
             history={this.props.history}
             visible={this.props.history.location.pathname.match(
@@ -864,6 +857,24 @@ class App extends Component {
             gpsOffline={!this.state.location.online}
             gpsDisabled={!this.state.location.updated}
           />
+
+          {/* {!this.state.welcomeShown &&
+            config.PAGES.embeddable.path &&
+            !this.props.history.location.pathname.includes(
+              config.PAGES.embeddable.path
+            ) && <WelcomePage handleClose={this.handleWelcomePageClose} />} */}
+
+          {!this.state.welcomeShown &&
+            config.PAGES.embeddable.path &&
+            !this.props.history.location.pathname.includes(
+              config.PAGES.embeddable.path
+            ) && (
+              <SwipeTutorialPage
+                steps={welcomeSteps}
+                label={this.props.config.PAGES.welcome.label}
+                handleClose={this.handleWelcomePageClose}
+              />
+            )}
         </main>
 
         <Snackbar open={!this.state.geojson} message="Loading photos..." />
