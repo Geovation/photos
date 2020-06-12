@@ -68,6 +68,12 @@ const PAGES = {
     visible: (user, online) => true,
     icon: <FeedbackIcon />,
   },
+  welcome: {
+    path: "/welcome",
+    label: "welcome",
+    visible: (user, online) => true,
+    icon: <SchoolIcon />,
+  },
   leaderboard: {
     path: "/leaderboard",
     label: "Leaderboard",

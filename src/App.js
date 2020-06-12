@@ -41,7 +41,8 @@ import "./App.scss";
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
 import MapLocation from "./types/MapLocation";
 
-import { tutorialSteps } from "./tutorialSteps";
+import tutorialSteps from "./tutorialSteps";
+import welcomeSteps from "./welcomeSteps";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -701,6 +702,19 @@ class App extends Component {
                   {...props}
                   steps={tutorialSteps}
                   label={this.props.config.PAGES.tutorial.label}
+                  handleClose={history.goBack}
+                  hasLogo={true}
+                />
+              )}
+            />
+
+            <Route
+              path={config.PAGES.welcome.path}
+              render={(props) => (
+                <SwipeTutorialPage
+                  {...props}
+                  steps={welcomeSteps}
+                  label={this.props.config.PAGES.welcome.label}
                   handleClose={history.goBack}
                 />
               )}

@@ -6,24 +6,27 @@ import CloudUpload from "@material-ui/icons/CloudUpload";
 
 import utils from "utils";
 
-export const tutorialSteps = {
+export default {
   1: {
-    photo: <CameraAlt />,
-    text: utils.customiseString(
+    topImg: <CameraAlt />,
+    title: "Step 1",
+    topText: utils.customiseString(
       "tutorial",
       "Walk around the city and take photos"
     ),
   },
   2: {
-    photo: <CloudUpload />,
-    text: utils.customiseString(
+    topImg: <CloudUpload />,
+    title: "Step 2",
+    topText: utils.customiseString(
       "tutorial",
       "Write info about the photos and upload it to the cloud"
     ),
   },
   3: {
-    photo: <LocationOn />,
-    text: utils.customiseString(
+    topImg: <LocationOn />,
+    title: "Step 3",
+    topText: utils.customiseString(
       "tutorial",
       "View your images in our interactive map"
     ),
