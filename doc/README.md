@@ -12,3 +12,7 @@ TODO
 ### Cloud Storage
 
 Each original photo will be stored in `/photos/{$ID}/original.jpg`. For each of them there will be different sizes also stored in the same folder but with different name. Example  `/photos/{$ID}/40x40.jpg`. While fetching the photo, if the right size is not present, it will be generated in real time and saved it.
+
+### Pull from Original
+
+The original source code is [Geovation/photos](https://github.com/Geovation/photos). Notes on how to [pull from original](http://bassistance.de/2010/06/25/git-fu-updating-your-github-fork/) repo.
