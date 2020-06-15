@@ -20,7 +20,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { dbFirebase, authFirebase } from "features/firebase";
 
 import SwipeTutorialPage from "./components/common/SwipeTutorialPage";
-import PhotoPage from "./components/pages/PhotoPage";
+import PhotoPage from "./components/PhotoPage";
 import ProfilePage from "./components/ProfilePage";
 import Map from "./components/MapPage/Map";
 import CustomPhotoDialog from "./components/CustomPhotoDialog";

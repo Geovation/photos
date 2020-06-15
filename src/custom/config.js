@@ -16,8 +16,8 @@ import _ from "lodash";
 import styles from "./config.scss";
 import enums from "../types/enums";
 
-import TitleTextField from "../components/pages/PhotoPage/AdminApproval/TitleTextField";
-import MultiFields from "../components/pages/PhotoPage/AdminApproval/MultiFields";
+import TitleTextField from "../components/PhotoPage/TitleTextField";
+import MultiFields from "../components/PhotoPage/MultiFields";
 
 import { data } from "./categories";
 import { CUSTOM_STRING } from "./strings.js";
@@ -138,9 +138,9 @@ export default {
     },
     number: {
       component: TitleTextField,
-      inputProps: { min: 0, step: 1 },
+      inputProps: { min: 0, step: 1, max: 10 },
       name: "number",
-      title: "Number",
+      title: "example number field ?",
       type: enums.TYPES.number,
       placeholder: "eg. 1",
       regexValidation: "^[0-9]+",
