@@ -41,7 +41,7 @@ export const CUSTOM_STRING = {
     "chart.png": welcome_chart_png,
     "croud.png": welcome_croud_png,
     camera_icon: (
-      <CameraRearTwoToneIcon style={{ fontSize: 300, margin: 40 }} />
+      <CameraRearTwoToneIcon style={{ fontSize: 200, margin: 40 }} />
     ),
   },
 };

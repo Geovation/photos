@@ -19,8 +19,7 @@ import CloseIcon from "@material-ui/icons/Close";
 
 import { dbFirebase, authFirebase } from "features/firebase";
 
-import TutorialPage from "./components/pages/TutorialPage";
-import WelcomePage from "./components/pages/WelcomePage";
+import SwipeTutorialPage from "./components/common/SwipeTutorialPage";
 import PhotoPage from "./components/pages/PhotoPage";
 import ProfilePage from "./components/ProfilePage";
 import Map from "./components/MapPage/Map";
@@ -40,6 +39,10 @@ import { gtagPageView, gtagEvent } from "./gtag.js";
 import "./App.scss";
 import FeedbackReportsSubrouter from "./components/FeedbackReports/FeedbackReportsSubrouter";
 import MapLocation from "./types/MapLocation";
+
+import tutorialSteps from "./custom/tutorialSteps";
+import welcomeSteps from "./custom/welcomeSteps";
+
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
 const styles = (theme) => ({
@@ -694,9 +697,23 @@ class App extends Component {
             <Route
               path={config.PAGES.tutorial.path}
               render={(props) => (
-                <TutorialPage
+                <SwipeTutorialPage
                   {...props}
+                  steps={tutorialSteps}
                   label={this.props.config.PAGES.tutorial.label}
+                  handleClose={history.goBack}
+                  hasLogo={true}
+                />
+              )}
+            />
+
+            <Route
+              path={config.PAGES.welcome.path}
+              render={(props) => (
+                <SwipeTutorialPage
+                  {...props}
+                  steps={welcomeSteps}
+                  label={this.props.config.PAGES.welcome.label}
                   handleClose={history.goBack}
                 />
               )}
@@ -818,12 +835,6 @@ class App extends Component {
             />
           </Switch>
 
-          {!this.state.welcomeShown &&
-            config.PAGES.embeddable.path &&
-            !this.props.history.location.pathname.includes(
-              config.PAGES.embeddable.path
-            ) && <WelcomePage handleClose={this.handleWelcomePageClose} />}
-
           <Map
             history={this.props.history}
             visible={this.props.history.location.pathname.match(
@@ -846,6 +857,24 @@ class App extends Component {
             gpsOffline={!this.state.location.online}
             gpsDisabled={!this.state.location.updated}
           />
+
+          {/* {!this.state.welcomeShown &&
+            config.PAGES.embeddable.path &&
+            !this.props.history.location.pathname.includes(
+              config.PAGES.embeddable.path
+            ) && <WelcomePage handleClose={this.handleWelcomePageClose} />} */}
+
+          {!this.state.welcomeShown &&
+            config.PAGES.embeddable.path &&
+            !this.props.history.location.pathname.includes(
+              config.PAGES.embeddable.path
+            ) && (
+              <SwipeTutorialPage
+                steps={welcomeSteps}
+                label={this.props.config.PAGES.welcome.label}
+                handleClose={this.handleWelcomePageClose}
+              />
+            )}
         </main>
 
         <Snackbar open={!this.state.geojson} message="Loading photos..." />
