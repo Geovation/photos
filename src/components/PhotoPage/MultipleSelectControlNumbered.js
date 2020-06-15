@@ -1,15 +1,14 @@
-import React from 'react';
-import SelectControlNumbered from './SelectControlNumbered';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
-import Button from '@material-ui/core/Button';
+import React from "react";
+import SelectControlNumbered from "./SelectControlNumbered";
+import AddIcon from "@material-ui/icons/Add";
+import RemoveIcon from "@material-ui/icons/Remove";
+import Button from "@material-ui/core/Button";
 
 class MultipleSelectControlNumbered extends React.Component {
-
   state = {
     components: [],
     values: [],
-  }
+  };
   index = 0;
   combinedValue = {};
 
@@ -22,13 +21,13 @@ class MultipleSelectControlNumbered extends React.Component {
 
     this.setState({
       components,
-      values
+      values,
     });
 
     this.index = this.index + 1;
 
     console.log(components);
-  }
+  };
 
   handleClickRemove = (e) => {
     this.index = this.index > 0 ? this.index - 1 : 0;
@@ -41,41 +40,47 @@ class MultipleSelectControlNumbered extends React.Component {
 
     this.setState({
       components,
-      values
+      values,
     });
-  }
+  };
 
-  handleChange = index => (value,error,b) => {
+  handleChange = (index) => (value, error, b) => {
     const values = [...this.state.values];
     values[index] = value;
 
     this.setState({
-      values
+      values,
     });
 
-    let notEmptyValues = values.filter(value => value !== null);
-    this.props.handleChange(notEmptyValues,false);
-  }
+    let notEmptyValues = values.filter((value) => value !== null);
+    this.props.handleChange(notEmptyValues, false);
+  };
 
   render() {
-    const props = {...this.props};
+    const props = { ...this.props };
     return (
       <div>
-        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',margin:15}}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            margin: 15,
+          }}
+        >
           <Button onClick={this.handleClickAdd} disabled={this.state.disabled}>
             Add Categories
-            <AddIcon/>
+            <AddIcon />
           </Button>
           <Button onClick={this.handleClickRemove}>
             Remove Categories
-            <RemoveIcon/>
+            <RemoveIcon />
           </Button>
         </div>
-        {this.state.components.map((component,index) =>{
+        {this.state.components.map((component, index) => {
           props.handleChange = this.handleChange(index);
-          return(
-            <SelectControlNumbered key={index} {...props}/>
-        )})}
+          return <SelectControlNumbered key={index} {...props} />;
+        })}
       </div>
     );
   }
