@@ -3,23 +3,23 @@ import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 
-import enums from "../../../../types/enums";
+import enums from "../../types/enums";
 
-const styles = theme => ({
+const styles = (theme) => ({
   cssUnderline: {
     "&:after": {
-      borderBottomColor: theme.palette.secondary.main
-    }
-  }
+      borderBottomColor: theme.palette.secondary.main,
+    },
+  },
 });
 class TitleTextField extends Component {
-  dataFormater = value => {
+  dataFormater = (value) => {
     return this.props.field.type === enums.TYPES.number
       ? Number(value)
       : String(value);
   };
 
-  onChangeHandler = e => {
+  onChangeHandler = (e) => {
     const valueFormated = this.dataFormater(e.target.value);
     const error = !e.target.value.match(this.props.field.regexValidation);
 
@@ -33,7 +33,7 @@ class TitleTextField extends Component {
       <TextField
         InputLabelProps={{
           shrink: true,
-          style: { color: "#000" }
+          style: { color: "#000" },
         }}
         label={field.title}
         fullWidth
@@ -47,7 +47,7 @@ class TitleTextField extends Component {
         error={fieldValue.error}
         InputProps={Object.assign(
           {
-            className: classes.cssUnderline
+            className: classes.cssUnderline,
           },
           field.inputProps
         )}

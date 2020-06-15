@@ -58,7 +58,7 @@
     "blueimp-load-image": "latest",
     "classnames": "latest",
     "dms2dec": "latest",
-    "firebase": "^7.15.0",
+    "firebase": "^7.15.1",
     "localforage": "^1.7.4",
     "lodash": "^4.17.15",
     "mapbox-gl": "^1.11.0",

@@ -3,13 +3,13 @@ import SelectControlSingleValue from "./SelectControlSingleValue";
 import RemoveIcon from "@material-ui/icons/RemoveCircleOutline";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
-import { getValueAndAncestorsFromTree } from "../../../../utils";
+import { getValueAndAncestorsFromTree } from "../../utils";
 
-const styles = theme => ({});
+const styles = (theme) => ({});
 
 class MultiFields extends React.Component {
   state = {
-    fieldValues: []
+    fieldValues: [],
   };
 
   textFieldValueError = this.props.field.subfields
@@ -21,32 +21,32 @@ class MultiFields extends React.Component {
 
   selectValue = {
     leafkey: {
-      value: ""
-    }
+      value: "",
+    },
   };
 
-  handleClickAdd = e => {
+  handleClickAdd = (e) => {
     const fieldValues = [...this.state.fieldValues];
     fieldValues.push({
       ...JSON.parse(JSON.stringify(this.textFieldValueError)),
-      ...JSON.parse(JSON.stringify(this.selectValue))
+      ...JSON.parse(JSON.stringify(this.selectValue)),
     });
 
     this.setState({
-      fieldValues
+      fieldValues,
     });
   };
 
-  handleClickRemove = index => e => {
+  handleClickRemove = (index) => (e) => {
     const length = this.state.fieldValues.length;
     if (index === 0 && length === 1) {
       this.setState({
         fieldValues: [
           {
             ...JSON.parse(JSON.stringify(this.textFieldValueError)),
-            ...JSON.parse(JSON.stringify(this.selectValue))
-          }
-        ]
+            ...JSON.parse(JSON.stringify(this.selectValue)),
+          },
+        ],
       });
       this.props.handleChange(null, false);
     } else {
@@ -54,13 +54,13 @@ class MultiFields extends React.Component {
         (fieldValue, loop_index) => loop_index !== index
       );
       this.setState({
-        fieldValues
+        fieldValues,
       });
       this.checkErrorAndPropagateResToParent(fieldValues);
     }
   };
 
-  checkErrorAndPropagateResToParent = values => {
+  checkErrorAndPropagateResToParent = (values) => {
     let res = [];
     let textFieldErrors = false;
     Object.values(values).forEach((obj, index) => {
@@ -75,12 +75,12 @@ class MultiFields extends React.Component {
     this.props.handleChange(res, textFieldErrors);
   };
 
-  handleChangeSelect = index => (value, error) => {
+  handleChangeSelect = (index) => (value, error) => {
     const fieldValues = [...this.state.fieldValues];
     fieldValues[index].leafkey.value = value;
 
     this.setState({
-      fieldValues
+      fieldValues,
     });
     this.checkErrorAndPropagateResToParent(fieldValues);
   };
@@ -91,7 +91,7 @@ class MultiFields extends React.Component {
     fieldValues[index][field.name].value = value;
 
     this.setState({
-      fieldValues
+      fieldValues,
     });
     this.checkErrorAndPropagateResToParent(fieldValues);
   };
@@ -155,7 +155,7 @@ class MultiFields extends React.Component {
                   style={{
                     marginBottom: this.props.theme.spacing(0.5),
                     display: "flex",
-                    alignItems: "flex-end"
+                    alignItems: "flex-end",
                   }}
                 >
                   <RemoveIcon onClick={this.handleClickRemove(index)} />
@@ -208,5 +208,5 @@ class MultiFields extends React.Component {
 
 export default {
   MultiFieldsWithStyles: withStyles(styles, { withTheme: true })(MultiFields),
-  MultiFieldsOriginal: MultiFields
+  MultiFieldsOriginal: MultiFields,
 };

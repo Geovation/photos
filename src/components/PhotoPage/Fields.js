@@ -3,13 +3,13 @@ import { withStyles } from "@material-ui/core/styles";
 
 import _ from "lodash";
 
-import "../style.scss";
+import "./style.scss";
 
-const styles = theme => ({
+const styles = (theme) => ({
   pictureThumbnail: {
     maxWidth: 100,
-    maxHeight: 100
-  }
+    maxHeight: 100,
+  },
 });
 
 class Fields extends Component {
@@ -18,7 +18,7 @@ class Fields extends Component {
     return a;
   }, {});
 
-  handleChangeComponent = field => (value, error) => {
+  handleChangeComponent = (field) => (value, error) => {
     this.fieldsValues[field.name].error = error;
     this.fieldsValues[field.name].value = value;
 
@@ -34,7 +34,7 @@ class Fields extends Component {
         <div
           style={{
             display: "flex",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <img
@@ -45,7 +45,7 @@ class Fields extends Component {
           <div
             style={{
               width: "100%",
-              marginLeft: this.props.theme.spacing(1.5)
+              marginLeft: this.props.theme.spacing(1.5),
             }}
           >
             <FirstField.component
@@ -56,9 +56,6 @@ class Fields extends Component {
               error={this.props.error}
             />
           </div>
-        </div>
-        <div style={{ textAlign: "center", margin: "5px" }}>
-          Identify each piece of rubbish in the photo
         </div>
         {this.props.fields.map((field, index) => {
           // skip the first field as it is displayed beside the picture

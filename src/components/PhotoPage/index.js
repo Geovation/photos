@@ -5,19 +5,23 @@ import dms2dec from "dms2dec";
 import firebase from "firebase/app";
 
 import Button from "@material-ui/core/Button";
-import Link from "@material-ui/core/Link";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import { withStyles } from "@material-ui/core/styles";
 
-import { dbFirebase } from "features/firebase";
-
-import config from "../../../custom/config";
-import { gtagEvent } from "../../../gtag.js";
-import { isIphoneWithNotchAndCordova, device } from "../../../utils";
-
-import PageWrapper from "../../PageWrapper";
-import Fields from "./Fields";
-import Dialogs from "./Dialogs";
+import config from "../../custom/config";
+import { gtagEvent } from "../../gtag.js";
 import "./style.scss";
+import dbFirebase from "../../features/firebase/dbFirebase";
+import { isIphoneWithNotchAndCordova, device } from "../../utils";
+
+import PageWrapper from "../PageWrapper";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import Fields from "./Fields";
+import Link from "@material-ui/core/Link";
+import _ from "lodash";
 
 const emptyState = {
   imgSrc: null,
@@ -31,8 +35,7 @@ const emptyState = {
   anyError: true,
   enabledUploadButton: true,
   next: false,
-  fieldsValues: [],
-  totalCount: null,
+  fieldsValues: {},
 };
 
 const styles = (theme) => ({
@@ -48,6 +51,15 @@ const styles = (theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  dialogContentProgress: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  linearProgress: {
+    width: "100%",
+    height: "100%",
   },
   link: {
     color: theme.palette.secondary.main,
@@ -112,6 +124,7 @@ class PhotoPage extends Component {
         const latRef = GPSInfo.GPSLatitudeRef;
         const lon = GPSInfo.GPSLongitude.split(",").map(Number);
         const lonRef = GPSInfo.GPSLongitudeRef;
+
         const latLon = dms2dec(lat, latRef, lon, lonRef);
         latitude = latLon[0];
         longitude = latLon[1];
@@ -160,22 +173,28 @@ class PhotoPage extends Component {
       return;
     }
 
-    const { fieldsValues, totalCount } = this.state;
+    const fieldsJustValues = _.reduce(
+      this.state.fieldsValues,
+      (a, v, k) => {
+        a[k] = v.value;
+        return a;
+      },
+      {}
+    );
 
-    const fieldValuesToSend = fieldsValues.map((value) => {
-      const {
-        values: { error, number, ...otherNonExtraneousFields },
-      } = value;
-      const numberAsNumber = Number(number);
+    let filteredFields = {};
+    Object.entries(fieldsJustValues).forEach(([key, value]) => {
+      if (value) {
+        filteredFields[key] = typeof value === "string" ? value.trim() : value;
 
-      return { number: numberAsNumber, ...otherNonExtraneousFields };
+        const fieldDefinition = config.PHOTO_FIELDS[key];
+        if (fieldDefinition.sanitize) {
+          fieldDefinition.sanitize(value);
+        }
+      }
     });
 
-    const data = {
-      ...location,
-      pieces: totalCount,
-      categories: fieldValuesToSend,
-    };
+    const data = { ...location, ...filteredFields };
 
     this.setState({
       sending: true,
@@ -189,12 +208,7 @@ class PhotoPage extends Component {
     try {
       photoRef = await dbFirebase.saveMetadata(data);
     } catch (error) {
-      console.error(error);
-
-      // debugger
-      const extraInfo =
-        error.code === "storage/canceled" ? "" : `Try again (${error.message})`;
-      this.openDialog(`Photo upload was canceled. ${extraInfo}`);
+      console.log(error);
     }
 
     this.setState({ sendingProgress: 1, enabledUploadButton: true });
@@ -223,13 +237,7 @@ class PhotoPage extends Component {
           }
         },
         (error) => {
-          // debugger
-          console.error(error);
-          const extraInfo =
-            error.code === "storage/canceled"
-              ? ""
-              : `Try again (${error.message})`;
-          this.openDialog(`Photo upload was canceled. ${extraInfo}`);
+          this.openDialog("Photo upload was canceled");
         },
         () => {
           this.openDialog(
@@ -332,18 +340,12 @@ class PhotoPage extends Component {
   };
 
   handleCancel = () => {
-    this.setState({
-      sending: false,
-      sendingProgress: 0,
-      enabledUploadButton: true,
-    });
+    this.setState({ sending: false });
 
     if (this.uploadTask) {
       this.uploadTask.cancel();
     } else {
       this.cancelClickUpload = true;
-
-      // debugger
       this.openDialog("Photo upload was canceled");
     }
   };
@@ -370,10 +372,6 @@ class PhotoPage extends Component {
     this.setState({ anyError, fieldsValues });
   };
 
-  handleTotalCountChange = (anyError, totalCount) => {
-    this.setState({ anyError, totalCount });
-  };
-
   render() {
     const { classes, label, fields } = this.props;
     return (
@@ -387,13 +385,15 @@ class PhotoPage extends Component {
           sendFile={this.sendFile}
           photoPage={true}
           label={label}
+          imgSrc={this.state.imgSrc}
           handleClose={this.props.handleClose}
         >
           {this.state.next ? (
             <div className={classes.fields}>
               <Fields
                 handleChange={this.handleChangeFields}
-                handleTotalCountChange={this.handleTotalCountChange}
+                sendFile={this.sendFile}
+                enabledUploadButton={this.state.enabledUploadButton}
                 imgSrc={this.state.imgSrc}
                 fields={fields}
                 error={this.state.anyError}
@@ -413,7 +413,6 @@ class PhotoPage extends Component {
                   variant="outlined"
                   fullWidth={true}
                   onClick={this.retakePhoto}
-                  color={"secondary"}
                 >
                   Retake
                 </Button>
@@ -421,14 +420,44 @@ class PhotoPage extends Component {
             </div>
           )}
 
-          <Dialogs
-            alertOpen={this.state.open}
-            alertMessage={this.state.message}
-            closeAlert={this.closeDialog}
-            sending={this.state.sending}
-            sendingProgress={this.state.sendingProgress}
-            handleCancelSend={this.handleCancel}
-          />
+          <Dialog
+            open={this.state.open}
+            onClose={this.closeDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {this.state.message}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.closeDialog} color="secondary">
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog open={this.state.sending}>
+            <DialogContent className={classes.dialogContentProgress}>
+              <DialogContentText id="loading-dialog-text">
+                {this.state.sendingProgress} % done. Be patient ;)
+              </DialogContentText>
+              <div className={classes.linearProgress}>
+                <br />
+                <LinearProgress
+                  variant="determinate"
+                  color="secondary"
+                  value={this.state.sendingProgress}
+                />
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={this.handleCancel} color="secondary">
+                Cancel
+              </Button>
+            </DialogActions>
+          </Dialog>
         </PageWrapper>
       </div>
     );
