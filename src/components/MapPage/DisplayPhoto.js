@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import _ from "lodash";
 
 import BackIcon from "@material-ui/icons/ArrowBack";
+import WarningIcon from "@material-ui/icons/Warning";
+
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import Card from "@material-ui/core/Card";
@@ -19,34 +21,35 @@ import Toolbar from "@material-ui/core/Toolbar";
 import withMobileDialog from "@material-ui/core/withMobileDialog";
 import { withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Chip from "@material-ui/core/Chip";
 
 import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from "../../utils";
 import CardComponent from "../CardComponent";
 
 const tweetLogo = process.env.PUBLIC_URL + "/images/twitter.svg";
 
-const styles = theme => ({
+const styles = (theme) => ({
   notchTop: {
     paddingTop: isIphoneWithNotchAndCordova()
       ? "env(safe-area-inset-top)"
       : isIphoneAndCordova
       ? theme.spacing(1.5)
-      : null
+      : null,
   },
   iconButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   main: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   tweetLogo: {
-    padding: theme.spacing(1.6)
+    padding: theme.spacing(1.6),
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova()
       ? "env(safe-area-inset-bottom)"
-      : 0
-  }
+      : 0,
+  },
 });
 
 class DisplayPhoto extends Component {
@@ -70,7 +73,7 @@ class DisplayPhoto extends Component {
       handleApproveClick,
       classes,
       fullScreen,
-      location
+      location,
     } = this.props;
 
     const photoID = _.get(feature, "properties.id", "");
@@ -86,7 +89,7 @@ class DisplayPhoto extends Component {
           <Dialog
             open
             PaperProps={{
-              style: { backgroundColor: "transparent", boxShadow: "none" }
+              style: { backgroundColor: "transparent", boxShadow: "none" },
             }}
           >
             <CircularProgress color="secondary" />
@@ -112,7 +115,7 @@ class DisplayPhoto extends Component {
             <DialogContent>
               <div style={{ textAlign: "center" }}>
                 <img
-                  onError={e => {
+                  onError={(e) => {
                     e.target.src = placeholderImage;
                   }}
                   className={"main-image"}
@@ -128,7 +131,7 @@ class DisplayPhoto extends Component {
                     <CardActionArea>
                       <CardContent>
                         {Object.keys(config.PHOTO_ZOOMED_FIELDS).map(
-                          fieldName => (
+                          (fieldName) => (
                             <Typography gutterBottom key={fieldName}>
                               <b>{_.capitalize(fieldName)}: </b>
                               {this.formatField(
@@ -137,6 +140,13 @@ class DisplayPhoto extends Component {
                               )}
                             </Typography>
                           )
+                        )}
+                        {!feature.properties.published && (
+                          <Chip
+                            icon={<WarningIcon />}
+                            label="not published yer !"
+                            color="secondary"
+                          />
                         )}
                       </CardContent>
                     </CardActionArea>

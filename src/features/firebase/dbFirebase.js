@@ -32,13 +32,14 @@ function extractPhoto(data, id) {
     photo.updated instanceof firebase.firestore.Timestamp
       ? photo.updated.toDate()
       : new Date(photo.updated);
+
   photo.moderated =
     photo.moderated instanceof firebase.firestore.Timestamp
       ? photo.moderated.toDate()
       : new Date(photo.moderated);
 
-  // when comming from json, it looses the type
   if (!(photo.location instanceof firebase.firestore.GeoPoint)) {
+    // when comming from json, it looses the type
     photo.location = new firebase.firestore.GeoPoint(
       Number(photo.location._latitude) || 0,
       Number(photo.location._longitude) || 0
@@ -48,38 +49,43 @@ function extractPhoto(data, id) {
   return photo;
 }
 
-function photosRT(addedFn, modifiedFn, removedFn, errorFn) {
-  firestore
-    .collection("photos")
-    .where("published", "==", true)
+function photosRT(user, addedFn, modifiedFn, removedFn, errorFn) {
+  const photosRef = firestore.collection("photos");
+
+  // get also the photos that belong to the current user even if not published yet.
+  if (user) {
+    photosRef.where("owner_id", "==", user.id).onSnapshot(onSnapshot, errorFn);
+  }
+
+  photosRef
     .orderBy("moderated", "desc")
     .limit(100)
-    .onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        const photo = extractPhoto(change.doc.data(), change.doc.id);
-        if (change.type === "added") {
-          addedFn(photo);
-        } else if (change.type === "modified") {
-          modifiedFn(photo);
-        } else if (change.type === "removed") {
-          removedFn(photo);
-        } else {
-          console.error(`the photo ${photo.id} as type ${change.type}`);
-        }
-      });
-    }, errorFn);
+    .where("published", "==", true)
+    .onSnapshot(onSnapshot, errorFn);
+
+  function onSnapshot(snapshot) {
+    snapshot.docChanges().forEach((change) => {
+      const photo = extractPhoto(change.doc.data(), change.doc.id);
+      if (change.type === "added") {
+        addedFn(photo);
+      } else if (change.type === "modified") {
+        modifiedFn(photo);
+      } else if (change.type === "removed") {
+        removedFn(photo);
+      } else {
+        console.error(`the photo ${photo.id} as type ${change.type}`);
+      }
+    });
+  }
 }
 
 const configObserver = (onNext, onError) => {
-  localforage
-    .getItem("config")
-    .then(onNext)
-    .catch(console.log);
+  localforage.getItem("config").then(onNext).catch(console.log);
 
   return firestore
     .collection("sys")
     .doc("config")
-    .onSnapshot(snapshot => {
+    .onSnapshot((snapshot) => {
       const config = snapshot.data();
       localforage.setItem("config", config);
       onNext(config);
@@ -88,13 +94,13 @@ const configObserver = (onNext, onError) => {
 
 async function fetchStats() {
   return fetch(firebaseConfig.apiURL + "/stats", {
-    mode: "cors"
-  }).then(response => response.json());
+    mode: "cors",
+  }).then((response) => response.json());
 }
 
 async function fetchPhotos() {
   const photosResponse = await fetch(firebaseConfig.apiURL + "/photos.json", {
-    mode: "cors"
+    mode: "cors",
   });
   const photosJson = await photosResponse.json();
   const photos = photosJson.photos;
@@ -109,13 +115,13 @@ function fetchFeedbacks(isShowAll) {
     .limit((appConfig.FEEDBACKS && appConfig.FEEDBACKS.MAX) || 50);
   return query
     .get()
-    .then(sn =>
-      sn.docs.map(doc => {
+    .then((sn) =>
+      sn.docs.map((doc) => {
         return { ...doc.data(), id: doc.id };
       })
     )
-    .then(feedbacks =>
-      feedbacks.filter(feedback => !feedback.resolved || isShowAll)
+    .then((feedbacks) =>
+      feedbacks.filter((feedback) => !feedback.resolved || isShowAll)
     );
 }
 
@@ -134,7 +140,7 @@ function saveMetadata(data) {
   data.moderated = null;
 
   let fieldsToSave = ["moderated", "updated", "location", "owner_id"];
-  _.forEach(appConfig.PHOTO_FIELDS, field => fieldsToSave.push(field.name));
+  _.forEach(appConfig.PHOTO_FIELDS, (field) => fieldsToSave.push(field.name));
 
   return firestore.collection("photos").add(_.pick(data, fieldsToSave));
 }
@@ -151,40 +157,31 @@ function savePhoto(id, base64) {
     .child(id)
     .child("original.jpg");
   return originalJpgRef.putString(base64, "base64", {
-    contentType: "image/jpeg"
+    contentType: "image/jpeg",
   });
 }
 
 async function getUser(id) {
-  const fbUser = await firestore
-    .collection("users")
-    .doc(id)
-    .get();
+  const fbUser = await firestore.collection("users").doc(id).get();
   return fbUser.exists ? fbUser.data() : null;
 }
 
 async function getFeedbackByID(id) {
-  const fbFeedback = await firestore
-    .collection("feedbacks")
-    .doc(id)
-    .get();
+  const fbFeedback = await firestore.collection("feedbacks").doc(id).get();
   return fbFeedback.exists ? { id, ...fbFeedback.data() } : null;
 }
 
 async function getPhotoByID(id) {
-  const fbPhoto = await firestore
-    .collection("photos")
-    .doc(id)
-    .get();
+  const fbPhoto = await firestore.collection("photos").doc(id).get();
   const photo = extractPhoto(fbPhoto.data(), fbPhoto.id);
   if (fbPhoto.exists) {
     return {
       type: "Feature",
       geometry: {
         type: "Point",
-        coordinates: [photo.location.longitude, photo.location.latitude]
+        coordinates: [photo.location.longitude, photo.location.latitude],
       },
-      properties: photo
+      properties: photo,
     };
   }
   return null;
@@ -206,8 +203,8 @@ function photosToModerateRT(
     .where("moderated", "==", null)
     .orderBy("updated", "desc")
     .limit(howMany)
-    .onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
+    .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
         const photo = extractPhoto(change.doc.data(), change.doc.id);
         if (change.type === "added" || change.type === "modified") {
           updatePhotoToModerate(photo);
@@ -226,14 +223,11 @@ function writeModeration(photoId, userId, published) {
   if (typeof published !== "boolean") {
     throw new Error("Only boolean pls");
   }
-  return firestore
-    .collection("photos")
-    .doc(photoId)
-    .update({
-      moderated: firebase.firestore.FieldValue.serverTimestamp(),
-      published: published,
-      moderator_id: userId
-    });
+  return firestore.collection("photos").doc(photoId).update({
+    moderated: firebase.firestore.FieldValue.serverTimestamp(),
+    published: published,
+    moderator_id: userId,
+  });
 }
 
 async function disconnect() {
@@ -270,14 +264,11 @@ async function writeFeedback(data) {
 }
 
 async function toggleUnreadFeedback(id, resolved, userId) {
-  return await firestore
-    .collection("feedbacks")
-    .doc(id)
-    .update({
-      resolved: !resolved,
-      customerSupport_id: userId,
-      updated: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  return await firestore.collection("feedbacks").doc(id).update({
+    resolved: !resolved,
+    customerSupport_id: userId,
+    updated: firebase.firestore.FieldValue.serverTimestamp(),
+  });
 }
 
 export default {
@@ -297,5 +288,5 @@ export default {
   disconnect,
   writeFeedback,
   toggleUnreadFeedback,
-  configObserver
+  configObserver,
 };

@@ -4,16 +4,8 @@
       "collectionGroup": "photos",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "moderated", "mode": "DESCENDING" },
-        { "fieldPath": "updated", "mode": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "photos",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "published", "mode": "DESCENDING" },
-        { "fieldPath": "moderated", "mode": "DESCENDING" }
+        { "fieldPath": "published", "mode": "Ascending" },
+        { "fieldPath": "moderated", "mode": "Descending" }
       ]
     }
   ]

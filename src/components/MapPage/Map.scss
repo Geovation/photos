@@ -6,18 +6,22 @@
   height: 100%;
 
   .marker {
-      display: block;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      padding: 0;
-      background-size: cover;
-      width: 40px !important;
-      height: 40px !important;
+    display: block;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    background-size: cover;
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .marker.private {
+    border: solid;
   }
 
   .marker:hover {
-  	box-shadow: inset 0 0 0 3px $secondary;
+    box-shadow: inset 0 0 0 3px $secondary;
     width: 50px !important;
     height: 50px !important;
   }
@@ -26,5 +30,4 @@
     width: 100%;
     height: 100%;
   }
-
 }

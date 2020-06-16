@@ -187,7 +187,7 @@ class App extends Component {
       // not sure if we need this if.
       if (!this.initDone) {
         this.initDone = true;
-        this.someInits(photoId);
+        this.someInits(photoId, user);
       }
 
       // lets start fresh if the user logged out
@@ -256,7 +256,7 @@ class App extends Component {
     this.delayedSaveGeojson();
   };
 
-  someInits(photoId) {
+  someInits(photoId, user) {
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(
       (online) => {
         this.setState({ online });
@@ -285,6 +285,7 @@ class App extends Component {
       gtagPageView(this.props.location.pathname);
 
       dbFirebase.photosRT(
+        user,
         this.addFeature,
         this.modifyFeature,
         this.removeFeature,
@@ -304,7 +305,10 @@ class App extends Component {
           this.geojson = geojson;
           const stats = this.props.config.getStats(geojson, this.state.dbStats);
           this.setState({ geojson, stats });
-          this.featuresDict = geojson.features;
+          this.featuresDict = geojson.features.reduce((acc, feature) => {
+            acc[feature.properties.id] = feature;
+            return acc;
+          }, {});
         } else {
           this.fetchPhotos();
         }
