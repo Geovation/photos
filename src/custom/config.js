@@ -100,7 +100,10 @@ const getStats = (geojson, dbStats) => {
   return (dbStats && dbStats.published) || 0;
 };
 
-const STATIC_CONFIG = require("./config.json");
+const STATIC_CONFIG =
+  process.env.NODE_ENV === "production"
+    ? require("./config.prod.json")
+    : require("./config.dev.json");
 
 export default {
   ...STATIC_CONFIG,

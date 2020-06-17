@@ -5,7 +5,6 @@ import * as localforage from "localforage";
 
 import appConfig from "custom/config";
 import firebaseApp from "./firebaseInit.js";
-import firebaseConfig from "./config";
 
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
@@ -93,15 +92,18 @@ const configObserver = (onNext, onError) => {
 };
 
 async function fetchStats() {
-  return fetch(firebaseConfig.apiURL + "/stats", {
+  return fetch(appConfig.FIREBASE.apiURL + "/stats", {
     mode: "cors",
   }).then((response) => response.json());
 }
 
 async function fetchPhotos() {
-  const photosResponse = await fetch(firebaseConfig.apiURL + "/photos.json", {
-    mode: "cors",
-  });
+  const photosResponse = await fetch(
+    appConfig.FIREBASE.apiURL + "/photos.json",
+    {
+      mode: "cors",
+    }
+  );
   const photosJson = await photosResponse.json();
   const photos = photosJson.photos;
 
