@@ -17,6 +17,11 @@
   }
 
   .marker.private {
+    border: dashed !important;
+    border-color: $secondary !important;
+  }
+
+  .marker.own {
     border: solid;
   }
 

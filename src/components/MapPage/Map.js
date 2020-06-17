@@ -304,8 +304,14 @@ class Map extends Component {
         el.className = "marker";
         el.id = feature.properties.id;
 
+        // unpublished photos are still displayed
         if (!feature.properties.published) {
           el.className += " private";
+        }
+
+        // own photos have a small details
+        if (_.get(this.props, "user.id") === feature.properties.owner_id) {
+          el.className += " own";
         }
 
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
