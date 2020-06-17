@@ -4,16 +4,16 @@ import "firebase/auth";
 import "firebase/database";
 import "firebase/firestore";
 import "firebase/performance";
-// import 'firebase/messaging';
+import "firebase/messaging";
 // import 'firebase/functions';
 import "firebase/storage";
 import "firebase/analytics";
 
-import config from "./config";
+import config from "custom/config";
 
 // Initialize Firebase
 const firebaseApp = !firebase.apps.length
-  ? firebase.initializeApp(config)
+  ? firebase.initializeApp(config.FIREBASE)
   : firebase.app();
 
 const firestore = firebase.firestore();
@@ -34,7 +34,7 @@ function isInIframe() {
 // iFrames may break things for security policies. We found it happens at least in safari.
 // more info in https://firebase.google.com/docs/firestore/manage-data/enable-offline
 if (!isInIframe()) {
-  firestore.enablePersistence().catch(function(err) {
+  firestore.enablePersistence().catch(function (err) {
     if (err.code === "failed-precondition") {
       console.error(
         "Multiple tabs open, persistence can only be enabled in one tab at a a time."
@@ -50,5 +50,9 @@ if (!isInIframe()) {
 } else {
   console.log("Cannot enable persistence inside an iframe");
 }
+
+// TODO: tidy the config files
+const messaging = firebase.messaging();
+messaging.usePublicVapidKey(config.FIREBASE.publicVapidKey);
 
 export default firebaseApp;

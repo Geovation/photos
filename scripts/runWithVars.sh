@@ -2,7 +2,12 @@
 
 set -x;
 
-cp src/custom/config.json functions/
+
+if [[ "$NODE_ENV" = "production" ]]; then
+  cp src/custom/config.prod.json functions/config.json
+else
+  cp src/custom/config.dev.json functions/config.json
+fi
 
 # any better way ???? it muast be inserted in the HEAD as first thing
 cp node_modules/first-input-delay/dist/first-input-delay.min.js  public/
