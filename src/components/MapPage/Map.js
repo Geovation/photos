@@ -18,18 +18,18 @@ import MapLocation from "../../types/MapLocation";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
-const styles = theme => ({
+const styles = (theme) => ({
   location: {
     position: "absolute",
     top: isIphoneWithNotchAndCordova()
       ? `calc(env(safe-area-inset-top) + ${theme.spacing(0.1)}px)`
       : theme.spacing(2),
-    right: theme.spacing(2)
+    right: theme.spacing(2),
   },
   expansionDetails: {
     padding: 0,
     "overflow-wrap": "break-word",
-    "word-wrap": "break-word"
+    "word-wrap": "break-word",
   },
   camera: {
     position: "absolute",
@@ -39,7 +39,7 @@ const styles = theme => ({
     height: "36px",
     fontSize: "0.8rem",
     padding: "0 12px",
-    width: "unset"
+    width: "unset",
   },
   burger: {
     position: "absolute",
@@ -48,8 +48,8 @@ const styles = theme => ({
       : theme.spacing(3),
     left: theme.spacing(2),
     margin: -theme.spacing(2),
-    padding: theme.spacing(2)
-  }
+    padding: theme.spacing(2),
+  },
 });
 
 const UPDATE_URL_COORDS_DELAY = 1000;
@@ -61,7 +61,7 @@ class Map extends Component {
       getCenter: () => ({ lat: 0, lng: 0 }),
       getZoom: () => 0,
       loaded: () => false,
-      flyTo: () => false
+      flyTo: () => false,
     };
     this.renderedThumbnails = {};
     this.navControl = null;
@@ -80,11 +80,11 @@ class Map extends Component {
       style: this.props.config.MAP_SOURCE,
       center: center, // starting position [lng, lat]
       zoom: zoom, // starting zoom
-      attributionControl: false
+      attributionControl: false,
     });
 
     this.navControl = new mapboxgl.NavigationControl({
-      showCompass: false
+      showCompass: false,
     });
 
     if (this.props.embeddable) {
@@ -94,7 +94,7 @@ class Map extends Component {
     this.map.addControl(
       new mapboxgl.AttributionControl({
         compact: true,
-        customAttribution: this.props.config.MAP_ATTRIBUTION
+        customAttribution: this.props.config.MAP_ATTRIBUTION,
       }),
       "bottom-left"
     );
@@ -105,11 +105,11 @@ class Map extends Component {
 
     // this.callHandlerCoordinates();
 
-    this.map.on("moveend", e => {
+    this.map.on("moveend", (e) => {
       this.callHandlerCoordinates();
     });
 
-    this.map.on("render", "unclustered-point", e => {
+    this.map.on("render", "unclustered-point", (e) => {
       this.updateRenderedThumbails(e.features);
     });
 
@@ -121,10 +121,10 @@ class Map extends Component {
       this.map.getCanvas().style.cursor = "";
     });
 
-    this.map.on("click", "clusters", e => {
+    this.map.on("click", "clusters", (e) => {
       gtagEvent("Cluster Clicked", "Map");
       const features = this.map.queryRenderedFeatures(e.point, {
-        layers: ["clusters"]
+        layers: ["clusters"],
       });
       const clusterId = features[0].properties.cluster_id;
       this.map
@@ -145,10 +145,10 @@ class Map extends Component {
     });
   }
 
-  flyTo = mapLocation => {
+  flyTo = (mapLocation) => {
     this.map.flyTo({
       center: [mapLocation.longitude, mapLocation.latitude],
-      zoom: mapLocation.zoom
+      zoom: mapLocation.zoom,
     });
   };
 
@@ -189,7 +189,7 @@ class Map extends Component {
     }
   }
 
-  addFeaturesToMap = geojson => {
+  addFeaturesToMap = (geojson) => {
     if (this.map.getLayer("clusters")) this.map.removeLayer("clusters");
     if (this.map.getLayer("cluster-count"))
       this.map.removeLayer("cluster-count");
@@ -202,7 +202,7 @@ class Map extends Component {
       data: geojson,
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
-      clusterRadius: 48 // Radius of each cluster when clustering points (defaults to 50)
+      clusterRadius: 48, // Radius of each cluster when clustering points (defaults to 50)
     });
 
     this.map.addLayer({
@@ -226,7 +226,7 @@ class Map extends Component {
           1000,
           "#E084B4",
           5000,
-          "#8097BF"
+          "#8097BF",
         ],
         "circle-radius": [
           "step",
@@ -241,9 +241,9 @@ class Map extends Component {
           1000,
           21,
           5000,
-          22
-        ]
-      }
+          22,
+        ],
+      },
     });
 
     this.map.addLayer({
@@ -254,8 +254,8 @@ class Map extends Component {
       layout: {
         "text-field": "{point_count_abbreviated}",
         "text-font": ["Source Sans Pro Bold"],
-        "text-size": 15
-      }
+        "text-size": 15,
+      },
     });
 
     this.map.addLayer({
@@ -264,8 +264,8 @@ class Map extends Component {
       source: "data",
       filter: ["!", ["has", "point_count"]],
       paint: {
-        "circle-radius": 0
-      }
+        "circle-radius": 0,
+      },
     });
   };
 
@@ -284,11 +284,11 @@ class Map extends Component {
     }, UPDATE_URL_COORDS_DELAY);
   };
 
-  updateRenderedThumbails = visibleFeatures => {
+  updateRenderedThumbails = (visibleFeatures) => {
     _.forEach(this.renderedThumbnails, (thumbnailUrl, id) => {
       const exists = !!_.find(
         visibleFeatures,
-        feature => feature.properties.id === id
+        (feature) => feature.properties.id === id
       );
       // if it !exist => remove marker object - delete key from dictionary
       if (!exists) {
@@ -297,12 +297,17 @@ class Map extends Component {
       }
     });
 
-    visibleFeatures.forEach(feature => {
+    visibleFeatures.forEach((feature) => {
       if (!this.renderedThumbnails[feature.properties.id]) {
         //create a div element - give attributes
         const el = document.createElement("div");
         el.className = "marker";
         el.id = feature.properties.id;
+
+        if (!feature.properties.published) {
+          el.className += " private";
+        }
+
         el.style.backgroundImage = `url(${feature.properties.thumbnail}), url(${placeholderImage}) `;
         el.addEventListener("click", () => {
           gtagEvent("Photo Clicked", "Map", feature.properties.id);

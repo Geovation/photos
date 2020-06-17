@@ -18,11 +18,15 @@ service cloud.firestore {
     	return resource.data.published == true
     }
 
+    function isOwner() {
+      return resource.data.owner_id == request.auth.uid 
+    }
+
     // anybody can read the photos but only admin can write
     match /photos/{photoId} {
       // allow read: if request.auth.uid != null;
       // allow read: if isModerator() || isAdmin() || resource.data.moderated != null;
-      allow read: if isPublished() || isModerator()
+      allow read: if isOwner() || isPublished() || isModerator()
 
       // allow create: if request.auth.uid != null;
 			allow create: if true;
