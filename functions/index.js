@@ -444,9 +444,42 @@ async function hostMetadata(req, res) {
   res.status(200).send(indexHTML);
 }
 
+// TODO: send a cloud message of the owner telling him that the photo has been published or rejected
+// it will read the token the user profile
+function photoPublishedChange(change, context) {
+  console.log("seb");
+  // context.params.photoId (not sure If I need this)
+  // change.after.data() == {
+  //  ...
+  //  userId: "qwerasdfasfd",
+  //  publiushed: true/false
+  //
+  //  ...
+  // }
+  // The user shouuld contain fcmToken: "asdasasd"
+
+  // console.log(change.after.data());
+  const after = change.after.data();
+  const before = change.before.data();
+
+  // console.log(before);
+  // console.log(after);
+
+  if (after.published && !before.published) {
+    // TODO: send message
+    console.log("published");
+  } else if (after.published === false && before.published !== false) {
+    // TODO: send message
+    console.log("un published");
+  }
+}
+
 module.exports = {
   api: functions.https.onRequest(app),
   hostMetadata: functions.https.onRequest(hostMetadata),
   generateThumbnail,
   updateStats,
+  photoPublishedChange: functions.firestore
+    .document("photos/{photoId}")
+    .onUpdate(photoPublishedChange),
 };
