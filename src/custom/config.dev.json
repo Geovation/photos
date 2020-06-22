@@ -20,5 +20,6 @@
     "_twDescriptionField": "description",
     "twDescription": "Nice one",
     "twTitle": "Check This Photo"
-  }
+  },
+  "env": "dev"
 }

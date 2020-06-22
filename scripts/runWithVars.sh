@@ -3,10 +3,13 @@
 set -x;
 
 
+# config used in cloud functions and service worker
 if [[ "$NODE_ENV" = "production" ]]; then
   cp src/custom/config.prod.json functions/config.json
+  cp src/custom/config.prod.json public/config.json
 else
   cp src/custom/config.dev.json functions/config.json
+  cp src/custom/config.dev.json public/config.json
 fi
 
 # any better way ???? it muast be inserted in the HEAD as first thing

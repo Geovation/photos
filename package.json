@@ -6,12 +6,10 @@
   "main": "index.js",
   "public": true,
   "scripts": {
-    "start": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
     "build": "npm run build:react",
     "test": "react-scripts test --env=jsdom --forceExit",
     "eject": "react-scripts eject",
     "backup": "./scripts/backup.sh",
-    "serve-prod": "npm run build:react && http-server build",
     "build:ios": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm ios && cordova platform add ios && cordova build ios --prod --release --device --buildConfig build.json && cd ..'",
     "build:ios:dev": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova build ios --debug --buildFlag=\"-UseModernBuildSystem=0\" && cd ..'",
     "build:android": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build android --prod --release --buildConfig build.json && cd ..'",
@@ -22,6 +20,8 @@
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "geovation-photos-update": "geovation-photos-update",
+    "start": "./scripts/runWithVars.sh 'react-scripts start'",
+    "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
     "start:prod": "npm run build:react && http-server build -S -o"
   },
   "repository": {

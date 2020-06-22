@@ -68,5 +68,7 @@ cordova-app/www
 
 .DS_Store
 
+# these files are copied at build time
 functions/config.json
 public/first-input-delay.min.js
+public/config.json
