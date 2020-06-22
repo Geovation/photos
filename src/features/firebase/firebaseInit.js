@@ -11,48 +11,101 @@ import "firebase/analytics";
 
 import config from "custom/config";
 
-// Initialize Firebase
-const firebaseApp = !firebase.apps.length
-  ? firebase.initializeApp(config.FIREBASE)
-  : firebase.app();
+let firebaseApp;
+let fcmToken;
 
-const firestore = firebase.firestore();
+let _callBackFunctionFCMTokenChange;
 
-// measuring web performance. See https://firebase.google.com/docs/perf-mon/get-started-web
-firebase.performance();
-// const perf = firebase.performance(); //don't use the reference yet
-// TODO: to measure input delay: https://github.com/GoogleChromeLabs/first-input-delay
+function firebaseInit(callBackFunctionFCMTokenChange) {
+  // Initialize Firebase
+  if (!firebaseApp) {
+    firebaseApp = !firebase.apps.length
+      ? firebase.initializeApp(config.FIREBASE)
+      : firebase.app();
 
-function isInIframe() {
-  try {
-    return window.self !== window.top;
-  } catch (e) {
-    return true;
-  }
-}
+    _callBackFunctionFCMTokenChange = (token) => {
+      fcmToken = token;
+      console.log(`FCM token changed to ${token}.`);
+      callBackFunctionFCMTokenChange && callBackFunctionFCMTokenChange(token);
+    };
 
-// iFrames may break things for security policies. We found it happens at least in safari.
-// more info in https://firebase.google.com/docs/firestore/manage-data/enable-offline
-if (!isInIframe()) {
-  firestore.enablePersistence().catch(function (err) {
-    if (err.code === "failed-precondition") {
-      console.error(
-        "Multiple tabs open, persistence can only be enabled in one tab at a a time."
-      );
-    } else if (err.code === "unimplemented") {
-      console.error(
-        "The current browser does not support all of the features required to enable persistence  ..."
-      );
-    } else {
-      console.error("Error firestore.enablePersistence(); didn't work");
+    const firestore = firebase.firestore();
+
+    // measuring web performance. See https://firebase.google.com/docs/perf-mon/get-started-web
+    firebase.performance();
+    // const perf = firebase.performance(); //don't use the reference yet
+    // TODO: to measure input delay: https://github.com/GoogleChromeLabs/first-input-delay
+
+    function isInIframe() {
+      try {
+        return window.self !== window.top;
+      } catch (e) {
+        return true;
+      }
     }
-  });
-} else {
-  console.log("Cannot enable persistence inside an iframe");
+
+    // iFrames may break things for security policies. We found it happens at least in safari.
+    // more info in https://firebase.google.com/docs/firestore/manage-data/enable-offline
+    if (!isInIframe()) {
+      firestore.enablePersistence().catch(function (err) {
+        if (err.code === "failed-precondition") {
+          console.error(
+            "Multiple tabs open, persistence can only be enabled in one tab at a a time."
+          );
+        } else if (err.code === "unimplemented") {
+          console.error(
+            "The current browser does not support all of the features required to enable persistence  ..."
+          );
+        } else {
+          console.error("Error firestore.enablePersistence(); didn't work");
+        }
+      });
+    } else {
+      console.log("Cannot enable persistence inside an iframe");
+    }
+
+    // see https://firebase.google.com/docs/cloud-messaging/js/client
+    const messaging = firebase.messaging();
+    messaging.usePublicVapidKey(config.FIREBASE.publicVapidKey);
+
+    messaging
+      .requestPermission()
+      .then(() => messaging.getToken())
+      .then(_callBackFunctionFCMTokenChange)
+      .catch((e) => {
+        console.error(e);
+        // alert("enable notifications");
+      });
+
+    // Callback fired if Instance ID token is updated.
+    messaging.onTokenRefresh(() => {
+      messaging
+        .getToken()
+        .then(_callBackFunctionFCMTokenChange)
+        .catch((err) => {
+          console.log("Unable to retrieve refreshed token ", err);
+          // debugger;
+
+          // showToken("Unable to retrieve refreshed token ", err);
+        });
+    });
+
+    messaging.onMessage((payload) => {
+      debugger;
+      console.log("Message received. ", payload);
+      // ...
+    });
+  }
+
+  return firebaseApp;
 }
 
-// TODO: tidy the config files
-const messaging = firebase.messaging();
-messaging.usePublicVapidKey(config.FIREBASE.publicVapidKey);
+function getFirebaseApp(callBackFunctionFCMTokenChange) {
+  return firebaseApp || firebaseInit(callBackFunctionFCMTokenChange);
+}
 
-export default firebaseApp;
+function getFCMToken() {
+  return fcmToken;
+}
+
+export { firebaseInit, getFirebaseApp, getFCMToken };

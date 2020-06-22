@@ -12,6 +12,7 @@ import { isIphoneAndCordova } from "./utils";
 import { gtagInit } from "./gtag.js";
 
 import { firebaseInit } from "features/firebase/firebaseInit";
+import { dbFirebase } from "features/firebase";
 
 serviceWorker.register();
 
@@ -35,7 +36,10 @@ const theme = createMuiTheme(config.THEME);
 
 const startApp = () => {
   gtagInit();
-  firebaseInit();
+
+  firebaseInit(() => {
+    dbFirebase.updateUserFCMToken();
+  });
 
   ReactDOM.render(
     <Router>
