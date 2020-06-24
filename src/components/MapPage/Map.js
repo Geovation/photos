@@ -310,7 +310,8 @@ class Map extends Component {
         }
 
         // own photos have a small details
-        if (_.get(this.props, "user.id") === feature.properties.owner_id) {
+        const ownerId = _.get(this.props, "user.id");
+        if (ownerId && ownerId === feature.properties.owner_id) {
           el.className += " own";
         }
 
