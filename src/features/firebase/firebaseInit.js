@@ -94,7 +94,7 @@ function firebaseInit(callBackFunctionFCMTokenChange) {
         // TODO
       });
     } catch (error) {
-      console.debug(error);
+      // console.debug(error);
     }
   }
 
