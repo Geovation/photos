@@ -22,29 +22,29 @@ const placeholderImage =
 const drawerWidth = "80%";
 const drawerMaxWidth = 360;
 
-const styles = theme => ({
+const styles = (theme) => ({
   drawerPaper: {
     width: drawerWidth,
-    maxWidth: drawerMaxWidth
+    maxWidth: drawerMaxWidth,
   },
   stats: {
     position: "absolute",
     bottom: theme.spacing(5),
     alignSelf: "center",
-    paddingBottom: theme.spacing(2)
+    paddingBottom: theme.spacing(2),
   },
   links: {
     position: "absolute",
     alignSelf: "center",
     bottom: theme.spacing(1),
-    fontSize: "12px"
-  }
+    fontSize: "12px",
+  },
 });
 
 const PAGES = config.PAGES;
 const links = {
   terms: utils.customiseString("termsAndConditions", "T&C link"),
-  privacy: utils.customiseString("termsAndConditions", "Privacy Policy Link")
+  privacy: utils.customiseString("termsAndConditions", "Privacy Policy Link"),
 };
 
 class DrawerContainer extends Component {
@@ -55,14 +55,15 @@ class DrawerContainer extends Component {
       online,
       leftDrawerOpen,
       stats,
-      sponsorImage
+      sponsorImage,
     } = this.props;
     const ListItemsTop = [
       PAGES.account,
       PAGES.moderator,
       PAGES.feedbackReports,
+      PAGES.ownPhotos,
       PAGES.tutorial,
-      PAGES.leaderboard
+      PAGES.leaderboard,
     ];
     const ListItemsConfigurable = config.CUSTOM_PAGES;
     const ListItemsBottom = [
@@ -72,8 +73,8 @@ class DrawerContainer extends Component {
         visible: (user, online) => online,
         icon: <ExitToAppIcon />,
         label: user ? "Logout" : "Login",
-        click: this.props.handleClickLoginLogout
-      }
+        click: this.props.handleClickLoginLogout,
+      },
     ];
     const ListItems = ListItemsTop.concat(
       ListItemsConfigurable,
@@ -92,7 +93,7 @@ class DrawerContainer extends Component {
               ? "env(safe-area-inset-top)"
               : isIphoneAndCordova
               ? this.props.theme.spacing(1.5)
-              : null
+              : null,
           }}
         />
         {user && (

@@ -49,34 +49,30 @@ function extractPhoto(data, id) {
   return photo;
 }
 
-function photosRT(user, addedFn, modifiedFn, removedFn, errorFn) {
+function photosRT(addedFn, modifiedFn, removedFn, errorFn) {
   const photosRef = firestore.collection("photos");
 
-  // get also the photos that belong to the current user even if not published yet.
-  if (user) {
-    photosRef.where("owner_id", "==", user.id).onSnapshot(onSnapshot, errorFn);
-  }
-
-  photosRef
+  let publishedRef = photosRef
     .orderBy("moderated", "desc")
     .limit(100)
-    .where("published", "==", true)
-    .onSnapshot(onSnapshot, errorFn);
+    .where("published", "==", true);
 
-  function onSnapshot(snapshot) {
-    snapshot.docChanges().forEach((change) => {
-      const photo = extractPhoto(change.doc.data(), change.doc.id);
-      if (change.type === "added") {
-        addedFn(photo);
-      } else if (change.type === "modified") {
-        modifiedFn(photo);
-      } else if (change.type === "removed") {
-        removedFn(photo);
-      } else {
-        console.error(`the photo ${photo.id} as type ${change.type}`);
-      }
-    });
+  // get also the photos that belong to the current user even if not published yet.
+
+  if (firebase.auth().currentUser) {
+    const userId = firebase.auth().currentUser.uid;
+
+    photosFromRefRT(
+      photosRef.where("owner_id", "==", userId),
+      addedFn,
+      removedFn,
+      addedFn,
+      errorFn
+    );
   }
+
+  // any published photo
+  photosFromRefRT(publishedRef, addedFn, removedFn, addedFn, errorFn);
 }
 
 const configObserver = (onNext, onError) => {
@@ -213,23 +209,53 @@ function photosToModerateRT(
   updatePhotoToModerate,
   removePhotoToModerate
 ) {
-  return firestore
+  const photosRef = firestore
     .collection("photos")
     .where("moderated", "==", null)
     .orderBy("updated", "desc")
-    .limit(howMany)
-    .onSnapshot((snapshot) => {
+    .limit(howMany);
+
+  return photosFromRefRT(
+    photosRef,
+    updatePhotoToModerate,
+    removePhotoToModerate
+  );
+}
+
+function photosFromRefRT(photosRef, onUpdate, onRemove, onAdd, onError) {
+  return photosRef.onSnapshot(
+    (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         const photo = extractPhoto(change.doc.data(), change.doc.id);
-        if (change.type === "added" || change.type === "modified") {
-          updatePhotoToModerate(photo);
+        if (change.type === "modified") {
+          onUpdate(photo);
+        } else if (change.type === "added") {
+          onAdd ? onAdd(photo) : onUpdate(photo);
         } else if (change.type === "removed") {
-          removePhotoToModerate(photo);
+          onRemove(photo);
         } else {
           console.error(`the photo ${photo.id} as type ${change.type}`);
+          onError && onError(`the photo ${photo.id} as type ${change.type}`);
         }
       });
-    });
+    },
+    (e) => onError(e) || console.error(e)
+  );
+}
+
+function ownPhotosRT(updatePhotoToModerate, removePhotoToModerate) {
+  if (firebase.auth().currentUser) {
+    const photosRef = firestore
+      .collection("photos")
+      .where("owner_id", "==", firebase.auth().currentUser.uid);
+
+    return photosFromRefRT(
+      photosRef,
+      updatePhotoToModerate,
+      removePhotoToModerate
+    );
+  }
+  return () => {};
 }
 
 function writeModeration(photoId, userId, published) {
@@ -298,6 +324,7 @@ export default {
   savePhoto,
   saveMetadata,
   photosToModerateRT,
+  ownPhotosRT,
   rejectPhoto: (photoId, userId) => writeModeration(photoId, userId, false),
   approvePhoto: (photoId, userId) => writeModeration(photoId, userId, true),
   disconnect,

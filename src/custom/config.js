@@ -5,6 +5,7 @@ import React from "react";
 
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import PhotoAlbumIcon from "@material-ui/icons/PhotoAlbum";
 import SchoolIcon from "@material-ui/icons/School";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import HelpIcon from "@material-ui/icons/Help";
@@ -43,6 +44,12 @@ const PAGES = {
     label: "Photo Approval",
     icon: <CheckCircleIcon />,
     visible: (user, online) => user && user.isModerator,
+  },
+  ownPhotos: {
+    path: "/own_photos",
+    label: "Own photos",
+    icon: <PhotoAlbumIcon />,
+    visible: (user, online) => user,
   },
   account: {
     path: "/account",
