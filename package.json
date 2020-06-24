@@ -6,12 +6,10 @@
   "main": "index.js",
   "public": true,
   "scripts": {
-    "start": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
     "build": "npm run build:react",
     "test": "react-scripts test --env=jsdom --forceExit",
     "eject": "react-scripts eject",
     "backup": "./scripts/backup.sh",
-    "serve-prod": "npm run build:react && http-server build",
     "build:ios": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm ios && cordova platform add ios && cordova build ios --prod --release --device --buildConfig build.json && cd ..'",
     "build:ios:dev": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova build ios --debug --buildFlag=\"-UseModernBuildSystem=0\" && cd ..'",
     "build:android": "#./scripts/runWithVars.sh 'mkdir -p ./cordova-app/www/ && cp -a ./build/* ./cordova-app/www/ && cd cordova-app && cordova platform rm android && cordova platform add android && cordova build android --prod --release --buildConfig build.json && cd ..'",
@@ -22,6 +20,8 @@
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "geovation-photos-update": "geovation-photos-update",
+    "start": "./scripts/runWithVars.sh 'react-scripts start'",
+    "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
     "start:prod": "npm run build:react && http-server build -S -o"
   },
   "repository": {
@@ -37,7 +37,7 @@
   "devDependencies": {
     "coveralls": "latest",
     "firebase-admin": "latest",
-    "firebase-tools": "^8.4.2",
+    "firebase-tools": "^8.4.3",
     "first-input-delay": "latest",
     "http-server": "latest",
     "husky": "latest",
@@ -55,10 +55,10 @@
     "@material-ui/core": "latest",
     "@material-ui/icons": "latest",
     "@turf/turf": "latest",
-    "blueimp-load-image": "latest",
+    "blueimp-load-image": "^5.13.0",
     "classnames": "latest",
     "dms2dec": "latest",
-    "firebase": "^7.15.1",
+    "firebase": "^7.15.4",
     "localforage": "^1.7.4",
     "lodash": "^4.17.15",
     "mapbox-gl": "^1.11.0",

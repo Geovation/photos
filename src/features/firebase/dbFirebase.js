@@ -4,8 +4,9 @@ import _ from "lodash";
 import * as localforage from "localforage";
 
 import appConfig from "custom/config";
-import firebaseApp from "./firebaseInit.js";
+import { getFirebaseApp, getFCMToken } from "./firebaseInit.js";
 
+const firebaseApp = getFirebaseApp();
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
 
@@ -168,6 +169,18 @@ async function getUser(id) {
   return fbUser.exists ? fbUser.data() : null;
 }
 
+async function updateUserFCMToken() {
+  const userID = firebase.auth().currentUser && firebase.auth().currentUser.uid;
+  const fcmToken = getFCMToken();
+
+  if (userID) {
+    return firestore
+      .collection("users")
+      .doc(userID)
+      .set({ fcmToken: fcmToken || null }, { merge: true });
+  }
+}
+
 async function getFeedbackByID(id) {
   const fbFeedback = await firestore.collection("feedbacks").doc(id).get();
   return fbFeedback.exists ? { id, ...fbFeedback.data() } : null;
@@ -291,4 +304,5 @@ export default {
   writeFeedback,
   toggleUnreadFeedback,
   configObserver,
+  updateUserFCMToken,
 };

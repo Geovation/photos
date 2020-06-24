@@ -11,6 +11,9 @@ import config from "./custom/config";
 import { isIphoneAndCordova } from "./utils";
 import { gtagInit } from "./gtag.js";
 
+import { firebaseInit } from "features/firebase/firebaseInit";
+import { dbFirebase } from "features/firebase";
+
 serviceWorker.register();
 
 if (isIphoneAndCordova) {
@@ -21,18 +24,22 @@ if (
   process.env.NODE_ENV !== "development" &&
   localStorage.getItem("debug") !== "true"
 ) {
-  console.log = console.info = console.trace = console.warn = console.error = console.debug = _ => {};
+  console.log = console.info = console.trace = console.warn = console.error = console.debug = () => {};
 }
 // it must set to fals (not enough to be absent)
 const devDissableDebugLog = localStorage.getItem("debug") === "false";
 if (devDissableDebugLog) {
-  console.debug = _ => {};
+  console.debug = () => {};
 }
 
 const theme = createMuiTheme(config.THEME);
 
 const startApp = () => {
   gtagInit();
+
+  firebaseInit(() => {
+    dbFirebase.updateUserFCMToken();
+  });
 
   ReactDOM.render(
     <Router>

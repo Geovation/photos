@@ -197,6 +197,8 @@ class App extends Component {
         this.props.history.push(this.props.config.PAGES.map.path);
         window.location.reload();
       }
+
+      // the user had logged in.
       this.setState({ user });
     });
 

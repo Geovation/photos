@@ -55,7 +55,9 @@ service cloud.firestore {
     // data written by admin
     match /users/{uid} {
     	allow read: if isAdmin() || isUser(uid);
-      allow write: if isAdmin();
+      allow write: if isUser(uid) 
+          && (!("isModerator" in request.resource.data) || request.resource.data.isModerator == resource.data.isModerator)
+          && (!("isAdmin" in request.resource.data) || request.resource.data.isAdmin == resource.data.isAdmin);
     }
 
     // Collection with system data. The Doc stats contains statistics.

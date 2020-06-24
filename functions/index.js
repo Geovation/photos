@@ -13,6 +13,8 @@ const fs = require("fs");
 const gm = require("gm").subClass({ imageMagick: true });
 const express = require("express");
 
+const photoPublishedChange = require("./on_published");
+
 const THUMB_MAX_SIZE = 50;
 const THUMB_NAME = "thumbnail.jpg";
 
@@ -30,6 +32,8 @@ const config = require("./config.json");
 admin.initializeApp();
 const firestore = admin.firestore();
 const auth = admin.auth();
+const messaging = admin.messaging();
+
 const settings = { timestampsInSnapshots: true };
 firestore.settings(settings);
 
@@ -449,4 +453,9 @@ module.exports = {
   hostMetadata: functions.https.onRequest(hostMetadata),
   generateThumbnail,
   updateStats,
+  photoPublishedChange: functions.firestore
+    .document("photos/{photoId}")
+    .onUpdate(
+      photoPublishedChange.getPhotoPublishedChange(firestore, messaging)
+    ),
 };

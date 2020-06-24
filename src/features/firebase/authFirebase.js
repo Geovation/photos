@@ -21,6 +21,9 @@ const onAuthStateChanged = (fn) => {
       gtagSetId(user.uid);
       gtagEvent("Logged in", "User", user.uid);
 
+      // when the user logs in, need to save his fcm token so that the cloud function can message him is required.
+      dbFirebase.updateUserFCMToken();
+
       // still to fix it. Sometimes (facebook) the email is null.
       const md5UserEmail = md5(user.email || "");
       const gravatarURL = "https://www.gravatar.com/" + md5UserEmail + ".json";
