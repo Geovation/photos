@@ -177,7 +177,7 @@ async function updateUserFCMToken() {
     return firestore
       .collection("users")
       .doc(userID)
-      .set({ fcmToken }, { merge: true });
+      .set({ fcmToken: fcmToken || null }, { merge: true });
   }
 }
 

@@ -6,45 +6,36 @@ importScripts(
   "https://www.gstatic.com/firebasejs/7.15.0/firebase-messaging.js"
 );
 
-let myRequest = new Request("config.json");
+// dynamically generated at building time
+importScripts("config.js");
 
-fetch(myRequest)
-  .then(function (response) {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(function (response) {
-    console.log(response);
-    debugger;
+console.log("CONFIG: ", config);
 
-    // Initialize the Firebase app in the service worker by passing in
-    // your app's Firebase config object.
-    // https://firebase.google.com/docs/web/setup#config-object
-    firebase.initializeApp(response.FIREBASE);
+// Initialize the Firebase app in the service worker by passing in
+// your app's Firebase config object.
+// https://firebase.google.com/docs/web/setup#config-object
+firebase.initializeApp(config.FIREBASE);
 
-    // Retrieve an instance of Firebase Messaging so that it can handle background
-    // messages.
-    const messaging = firebase.messaging();
+// Retrieve an instance of Firebase Messaging so that it can handle background
+// messages.
+const messaging = firebase.messaging();
 
-    // messaging.setBackgroundMessageHandler(function (payload) {
-    //   debugger;
+// messaging.setBackgroundMessageHandler(function (payload) {
+//   debugger;
 
-    //   console.log(
-    //     "[firebase-messaging-sw.js] Received background message ",
-    //     payload
-    //   );
-    //   // Customize notification here
-    //   const notificationTitle = "Background Message Title";
-    //   const notificationOptions = {
-    //     body: "Background Message body.",
-    //     icon: "/firebase-logo.png",
-    //   };
+//   console.log(
+//     "[firebase-messaging-sw.js] Received background message ",
+//     payload
+//   );
+//   // Customize notification here
+//   const notificationTitle = "Background Message Title";
+//   const notificationOptions = {
+//     body: "Background Message body.",
+//     icon: "/firebase-logo.png",
+//   };
 
-    //   return self.registration.showNotification(
-    //     notificationTitle,
-    //     notificationOptions
-    //   );
-    // });
-  });
+//   return self.registration.showNotification(
+//     notificationTitle,
+//     notificationOptions
+//   );
+// });

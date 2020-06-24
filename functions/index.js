@@ -13,6 +13,8 @@ const fs = require("fs");
 const gm = require("gm").subClass({ imageMagick: true });
 const express = require("express");
 
+const photoPublishedChange = require("./on_published");
+
 const THUMB_MAX_SIZE = 50;
 const THUMB_NAME = "thumbnail.jpg";
 
@@ -30,6 +32,8 @@ const config = require("./config.json");
 admin.initializeApp();
 const firestore = admin.firestore();
 const auth = admin.auth();
+const messaging = admin.messaging();
+
 const settings = { timestampsInSnapshots: true };
 firestore.settings(settings);
 
@@ -444,36 +448,6 @@ async function hostMetadata(req, res) {
   res.status(200).send(indexHTML);
 }
 
-// TODO: send a cloud message of the owner telling him that the photo has been published or rejected
-// it will read the token the user profile
-function photoPublishedChange(change, context) {
-  console.log("seb");
-  // context.params.photoId (not sure If I need this)
-  // change.after.data() == {
-  //  ...
-  //  userId: "qwerasdfasfd",
-  //  publiushed: true/false
-  //
-  //  ...
-  // }
-  // The user shouuld contain fcmToken: "asdasasd"
-
-  // console.log(change.after.data());
-  const after = change.after.data();
-  const before = change.before.data();
-
-  // console.log(before);
-  // console.log(after);
-
-  if (after.published && !before.published) {
-    // TODO: send message
-    console.log("published");
-  } else if (after.published === false && before.published !== false) {
-    // TODO: send message
-    console.log("un published");
-  }
-}
-
 module.exports = {
   api: functions.https.onRequest(app),
   hostMetadata: functions.https.onRequest(hostMetadata),
@@ -481,5 +455,7 @@ module.exports = {
   updateStats,
   photoPublishedChange: functions.firestore
     .document("photos/{photoId}")
-    .onUpdate(photoPublishedChange),
+    .onUpdate(
+      photoPublishedChange.getPhotoPublishedChange(firestore, messaging)
+    ),
 };

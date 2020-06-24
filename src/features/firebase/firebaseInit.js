@@ -84,16 +84,12 @@ function firebaseInit(callBackFunctionFCMTokenChange) {
         .then(_callBackFunctionFCMTokenChange)
         .catch((err) => {
           console.log("Unable to retrieve refreshed token ", err);
-          // debugger;
-
-          // showToken("Unable to retrieve refreshed token ", err);
         });
     });
 
     messaging.onMessage((payload) => {
-      debugger;
       console.log("Message received. ", payload);
-      // ...
+      // TODO
     });
   }
 
