@@ -25,6 +25,7 @@ import ProfilePage from "./components/ProfilePage";
 import Map from "./components/MapPage/Map";
 import CustomPhotoDialog from "./components/CustomPhotoDialog";
 import ModeratorPage from "./components/ModeratorPage";
+import OwnPhotosPage from "./components/OwnPhotosPage";
 import LoginFirebase from "./components/LoginFirebase";
 import Login from "./components/Login";
 import AboutPage from "./components/AboutPage";
@@ -287,7 +288,6 @@ class App extends Component {
       gtagPageView(this.props.location.pathname);
 
       dbFirebase.photosRT(
-        user,
         this.addFeature,
         this.modifyFeature,
         this.removeFeature,
@@ -350,12 +350,15 @@ class App extends Component {
       gtagPageView(this.props.location.pathname);
 
       // if it updates, then it is guaranteed that we didn't landed into the photo
-      this.setState({ photoAccessedByUrl: false });
+      this.setState({
+        photoAccessedByUrl: false,
+      });
       this.fetchPhotoIfUndefined(
         _.get(this.state, "selectedFeature.properties.id")
       );
     }
 
+    // listen to new photos to be moderated
     if (
       _.get(this.state.user, "isModerator") &&
       !this.unregisterPhotosToModerate
@@ -368,22 +371,34 @@ class App extends Component {
     }
   }
 
+  removeFromCollection(collectionName, element) {
+    console.debug(
+      `removing the element ${element.id} from the collection ${collectionName} in the view`
+    );
+
+    const collection = _.cloneDeep(this.state[collectionName]);
+    delete collection[element.id];
+
+    this.setState({ [[collectionName]]: collection });
+  }
+
   removePhotoToModerate(photo) {
-    console.debug(`removing the photo ${photo.id} from view`);
+    this.removeFromCollection("photosToModerate", photo);
+  }
 
-    const photosToModerate = _.cloneDeep(this.state.photosToModerate);
-    delete photosToModerate[photo.id];
+  updateCollection(collectionName, element) {
+    console.debug(
+      `updating the element ${element.id} from the collection ${collectionName} in the view`
+    );
 
-    this.setState({ photosToModerate });
+    const collection = _.cloneDeep(this.state[collectionName]);
+    collection[element.id] = element;
+
+    this.setState({ [[collectionName]]: collection });
   }
 
   updatePhotoToModerate(photo) {
-    console.debug(`updating the photo ${photo.id} in the view`);
-
-    const photosToModerate = _.cloneDeep(this.state.photosToModerate);
-    photosToModerate[photo.id] = photo;
-
-    this.setState({ photosToModerate });
+    this.updateCollection("photosToModerate", photo);
   }
 
   handleClickLoginLogout = () => {
@@ -654,6 +669,22 @@ class App extends Component {
     this.fetchPhotos();
   };
 
+  // from the own photos from the dict
+  getWwnPhotos() {
+    let ownPhotos = {};
+    if (this.state.user) {
+      const allPhotos = this.featuresDict;
+      ownPhotos = _.filter(
+        allPhotos,
+        (photo) => _.get(photo, "properties.owner_id") === this.state.user.id
+      ).reduce((accumulator, currentValue) => {
+        accumulator[currentValue.properties.id] = currentValue.properties;
+        return accumulator;
+      }, {});
+    }
+    return ownPhotos;
+  }
+
   render() {
     const { classes, fields, config, history } = this.props;
     return (
@@ -752,6 +783,24 @@ class App extends Component {
                     handleClose={history.goBack}
                     handleRejectClick={this.handleRejectClick}
                     handleApproveClick={this.handleApproveClick}
+                  />
+                )}
+              />
+            )}
+
+            {this.state.user && (
+              <Route
+                path={this.props.config.PAGES.ownPhotos.path}
+                render={(props) => (
+                  <OwnPhotosPage
+                    {...props}
+                    photos={this.getWwnPhotos()}
+                    config={this.props.config}
+                    label={this.props.config.PAGES.ownPhotos.label}
+                    user={this.state.user}
+                    handleClose={history.goBack}
+                    // handleRejectClick={this.handleRejectClick}
+                    // handleApproveClick={this.handleApproveClick}
                   />
                 )}
               />
