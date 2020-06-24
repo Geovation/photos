@@ -64,33 +64,38 @@ function firebaseInit(callBackFunctionFCMTokenChange) {
       console.log("Cannot enable persistence inside an iframe");
     }
 
-    // see https://firebase.google.com/docs/cloud-messaging/js/client
-    const messaging = firebase.messaging();
-    messaging.usePublicVapidKey(config.FIREBASE.publicVapidKey);
+    // just in case it is not supported by the browserß
+    try {
+      // see https://firebase.google.com/docs/cloud-messaging/js/client
+      const messaging = firebase.messaging();
+      messaging.usePublicVapidKey(config.FIREBASE.publicVapidKey);
 
-    messaging
-      .requestPermission()
-      .then(() => messaging.getToken())
-      .then(_callBackFunctionFCMTokenChange)
-      .catch((e) => {
-        console.error(e);
-        // alert("enable notifications");
+      messaging
+        .requestPermission()
+        .then(() => messaging.getToken())
+        .then(_callBackFunctionFCMTokenChange)
+        .catch((e) => {
+          console.error(e);
+          // alert("enable notifications");
+        });
+
+      // Callback fired if Instance ID token is updated.
+      messaging.onTokenRefresh(() => {
+        messaging
+          .getToken()
+          .then(_callBackFunctionFCMTokenChange)
+          .catch((err) => {
+            console.log("Unable to retrieve refreshed token ", err);
+          });
       });
 
-    // Callback fired if Instance ID token is updated.
-    messaging.onTokenRefresh(() => {
-      messaging
-        .getToken()
-        .then(_callBackFunctionFCMTokenChange)
-        .catch((err) => {
-          console.log("Unable to retrieve refreshed token ", err);
-        });
-    });
-
-    messaging.onMessage((payload) => {
-      console.log("Message received. ", payload);
-      // TODO
-    });
+      messaging.onMessage((payload) => {
+        console.log("Message received. ", payload);
+        // TODO
+      });
+    } catch (error) {
+      console.debug(error);
+    }
   }
 
   return firebaseApp;
