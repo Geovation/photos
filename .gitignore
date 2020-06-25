@@ -1,3 +1,7 @@
+# The README cannot be in src/custom but needs to be customizable
+# hence this gitignore (read and update README on github)
+README.md
+
 # Logs
 logs
 *.log
