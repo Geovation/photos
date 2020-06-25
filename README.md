@@ -15,8 +15,8 @@ You can simple copy it and then modify it as you wish with
 curl -L https://github.com/Geovation/photos/archive/master.zip | tar -xvf -
 mv photos-master myProject && cd myProject
 git init
-npm install
-npm install geovation-photos -D
+npm ci
+npm ci geovation-photos -D
 git add . && git commit -m "kick off"
 ```
 
@@ -26,12 +26,12 @@ done !. Now you can start the server with ```npm start```
 # Update it
 If you plan to keep Geovation Photos updates in your project:
 ```
-npm install geovation-photos@latest -D
+npm ci geovation-photos@latest -D
 ```
 
 Currently it implies some manual work but if you kept your changes in a a single place and with the help of a good git IDE it should not be too painful. First of all check if there is a new version with ```npm outdated```. If there is a new version you can simple run
 ```
-npm install geovation-photos@latest -D
+npm ci geovation-photos@latest -D
 npm run geovation-photos-update
 ```
 And now just merge the changes by hand. Good luck !!!
