@@ -4,47 +4,72 @@ import utils from "utils";
 
 export default [
   {
-    topImg: <img src={utils.customiseString("welcome", "logo.svg")} alt="" />,
+
+    // Landing page
+
+    topImg: (
+      <img 
+      src={utils.customiseString("welcome", "logo.svg")} 
+      alt="logo"
+      />
+    ),
 
     img: (
       <img
         src={utils.customiseString("welcome", "badge.png")}
         width="200px"
-        alt=""
+        alt="badge"
+
       />
-    )
+    ),    
+    bottomText: utils.customiseString(
+      "welcome",
+      "We predict bushfires"
+    ),
   },
   {
-    title: utils.customiseString("welcome", "Global research"),
+
+    // Second Page
+
     img: (
       <img
-        src={utils.customiseString("welcome", "chart.png")}
+        src={utils.customiseString("welcome", "home.svg")}
         width="200px"
         alt=""
       />
     ),
     bottomText: utils.customiseString(
       "welcome",
-      "Data you collect helps develop solutions for a better world"
+      "Protect you community"
     ),
   },
   {
-    title: utils.customiseString("welcome", "Be part of the solution"),
+    // Third page
+
     img: (
       <img
-        src={utils.customiseString("welcome", "croud.png")}
+        src={utils.customiseString("welcome", "tree.svg")}
         width="200px"
         alt=""
       />
     ),
-    bottomText: utils.customiseString(
-      "welcome",
-      "Photograph and document - it is simple"
+    bottomText: utils.customiseString("welcome",
+      "Upload photos of vegetation"
     ),
   },
   {
-    title: utils.customiseString("welcome", "Ready to make your mark?"),
-    img: utils.customiseString("welcome", "camera_icon"),
-    bottomText: utils.customiseString("welcome", "Get started"),
+
+    // Forth page
+
+    img: (
+    <img
+      src={utils.customiseString("welcome", "map.svg")}
+      width="200px"
+      alt="map"
+    />
+    ),
+    bottomText: utils.customiseString("welcome", 
+      "Map bushfire risk together"
+    ),
   },
 ];

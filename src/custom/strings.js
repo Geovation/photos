@@ -3,9 +3,10 @@ import React from "react";
 import CameraRearTwoToneIcon from "@material-ui/icons/CameraRearTwoTone";
 import welcome_logo_svg from "custom/assets/images/logo.svg";
 import welcome_badge_png from "custom/assets/images/badge.png";
-import welcome_globe_png from "custom/assets/images/globe.png";
-import welcome_chart_png from "custom/assets/images/chart.png";
-import welcome_croud_png from "custom/assets/images/croud.png";
+import welcome_home_svg from "custom/assets/images/home.svg";
+import welcome_map_svg from "custom/assets/images/map.svg";
+import welcome_upload_svg from "custom/assets/images/upload.svg";
+import welcome_tree_svg from "custom/assets/images/tree.svg";
 
 export const CUSTOM_STRING = {
   drawer: {
@@ -39,9 +40,10 @@ export const CUSTOM_STRING = {
   welcome: {
     "logo.svg": welcome_logo_svg,
     "badge.png": welcome_badge_png,
-    "globe.png": welcome_globe_png,
-    "chart.png": welcome_chart_png,
-    "croud.png": welcome_croud_png,
+    "home.svg": welcome_home_svg,
+    "map.svg": welcome_map_svg,
+    "upload.svg": welcome_upload_svg,
+    "tree.svg": welcome_tree_svg,
     camera_icon: (
       <CameraRearTwoToneIcon style={{ fontSize: 200, margin: 40 }} />
     ),
