@@ -1,10 +1,10 @@
 import React from "react";
 
 import CameraRearTwoToneIcon from "@material-ui/icons/CameraRearTwoTone";
-import welcome_logo_svg from "assets/images/logo.svg";
-import welcome_globe_png from "assets/images/globe.png";
-import welcome_chart_png from "assets/images/chart.png";
-import welcome_croud_png from "assets/images/croud.png";
+import welcome_logo_svg from "custom/assets/images/logo.svg";
+import welcome_globe_png from "custom/assets/images/globe.png";
+import welcome_chart_png from "custom/assets/images/chart.png";
+import welcome_croud_png from "custom/assets/images/croud.png";
 
 export const CUSTOM_STRING = {
   drawer: {
