@@ -5,18 +5,14 @@ import utils from "utils";
 export default [
   {
     topImg: <img src={utils.customiseString("welcome", "logo.svg")} alt="" />,
-    title: utils.customiseString(
-      "welcome",
-      "Welcome to the global movement to take photos around the planet"
-    ),
+
     img: (
       <img
-        src={utils.customiseString("welcome", "globe.png")}
+        src={utils.customiseString("welcome", "badge.png")}
         width="200px"
         alt=""
       />
-    ),
-    bottomText: utils.customiseString("welcome", "photos on the map"),
+    )
   },
   {
     title: utils.customiseString("welcome", "Global research"),
