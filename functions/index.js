@@ -396,7 +396,7 @@ const updateStats = functions.pubsub
   });
 
 async function hostMetadata(req, res) {
-  const BUCKET = config.FIREBASE.storageBucket;
+  const BUCKET = config.FIREBASE.config.storageBucket;
   const SERVER_URL = config.metadata.serverUrl;
   const TW_SITE = config.metadata.twSite;
   const TW_CREATOR = config.metadata.twCreator;

@@ -14,7 +14,7 @@ console.log("CONFIG: ", config);
 // Initialize the Firebase app in the service worker by passing in
 // your app's Firebase config object.
 // https://firebase.google.com/docs/web/setup#config-object
-firebase.initializeApp(config.FIREBASE);
+firebase.initializeApp(config.FIREBASE.config);
 
 // Retrieve an instance of Firebase Messaging so that it can handle background
 // messages.
