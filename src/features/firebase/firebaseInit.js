@@ -20,7 +20,7 @@ function firebaseInit(callBackFunctionFCMTokenChange) {
   // Initialize Firebase
   if (!firebaseApp) {
     firebaseApp = !firebase.apps.length
-      ? firebase.initializeApp(config.FIREBASE)
+      ? firebase.initializeApp(config.FIREBASE.config)
       : firebase.app();
 
     _callBackFunctionFCMTokenChange = (token) => {
