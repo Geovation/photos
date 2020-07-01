@@ -229,7 +229,7 @@ app.get("/photos.json", async (req, res) => {
 function convertFirebaseTimestampFieldsIntoDate(photo) {
   const newPhoto = _.cloneDeep(photo);
   _.forEach(newPhoto, (value, field) => {
-    if (value.constructor.name === "Timestamp") {
+    if (_.get(value, "constructor.name") === "Timestamp") {
       newPhoto[field] = value.toDate();
     }
   });
