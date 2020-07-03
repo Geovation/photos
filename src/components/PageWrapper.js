@@ -8,11 +8,11 @@ import CloseIcon from "@material-ui/icons/Close";
 import BackIcon from "@material-ui/icons/ArrowBack";
 import utils, {
   isIphoneWithNotchAndCordova,
-  isIphoneAndCordova
+  isIphoneAndCordova,
 } from "../utils";
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
-const styles = theme => ({
+const styles = (theme) => ({
   container: {
     display: "flex",
     flex: 1,
@@ -21,7 +21,7 @@ const styles = theme => ({
     position: "fixed",
     right: 0,
     left: 0,
-    bottom: 0
+    bottom: 0,
   },
   main: {
     marginBottom: theme.spacing(1),
@@ -29,30 +29,30 @@ const styles = theme => ({
     flexDirection: "column",
     flex: 1,
     overflowY: "auto",
-    "-webkit-overflow-scrolling": "touch"
+    "-webkit-overflow-scrolling": "touch",
   },
   iconButton: {
-    marginRight: 20
+    marginRight: 20,
   },
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   notchTop: {
     paddingTop: isIphoneWithNotchAndCordova()
       ? "env(safe-area-inset-top)"
       : isIphoneAndCordova
       ? theme.spacing(1.5)
-      : null
+      : null,
   },
   notchBottom: {
     paddingBottom: isIphoneWithNotchAndCordova()
       ? "env(safe-area-inset-bottom)"
-      : 0
+      : 0,
   },
   logo: {
     height: "80px",
-    margin: theme.spacing(2)
-  }
+    margin: theme.spacing(2),
+  },
 });
 
 class PageWrapper extends React.Component {
@@ -98,7 +98,7 @@ class PageWrapper extends React.Component {
       hasLogo,
       error,
       nextClicked,
-      photoPage
+      photoPage,
     } = this.props;
     return (
       <div className={classes.container}>
