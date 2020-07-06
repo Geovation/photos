@@ -389,7 +389,7 @@ class PhotoPage extends Component {
       <div className="geovation-photos">
         <PageWrapper
           handlePrev={this.handlePrev}
-          handleNext={this.handleNext}
+          handleNext={this.props.fields[0] ? this.handleNext : null}
           enableNext={!!this.state.imgLocation}
           nextClicked={this.state.next}
           error={this.state.anyError || !this.state.enabledUploadButton}

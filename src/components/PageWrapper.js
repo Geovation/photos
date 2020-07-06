@@ -56,18 +56,6 @@ const styles = (theme) => ({
 });
 
 class PageWrapper extends React.Component {
-  handleClose = () => {
-    this.props.handleClose();
-  };
-
-  handleNext = () => {
-    this.props.handleNext();
-  };
-
-  handlePrev = () => {
-    this.props.handlePrev();
-  };
-
   changeStatusBarColorToDefault = () => {
     const palette = this.props.theme.palette;
     if (isIphoneAndCordova && palette.primary.main === palette.common.black) {
@@ -99,22 +87,34 @@ class PageWrapper extends React.Component {
       error,
       nextClicked,
       photoPage,
+      handleClose,
+      handleNext,
+      handlePrev,
     } = this.props;
+
+    const hasNext = !!handleNext;
+
+    let backButton;
+
+    if (photoPage && !hasNext) {
+      backButton = (
+        <CloseIcon className={classes.iconButton} onClick={handleClose} />
+      );
+    } else if (photoPage && nextClicked) {
+      backButton = (
+        <BackIcon className={classes.iconButton} onClick={handlePrev} />
+      );
+    } else {
+      backButton = (
+        <CloseIcon className={classes.iconButton} onClick={handleClose} />
+      );
+    }
+
     return (
       <div className={classes.container}>
         <AppBar position="static" className={classes.notchTop}>
           <Toolbar>
-            {photoPage && nextClicked ? (
-              <BackIcon
-                className={classes.iconButton}
-                onClick={this.handlePrev}
-              />
-            ) : (
-              <CloseIcon
-                className={classes.iconButton}
-                onClick={this.handleClose}
-              />
-            )}
+            {backButton}
             <Typography className={classes.grow} variant="h6" color="inherit">
               {label}
             </Typography>
@@ -122,7 +122,7 @@ class PageWrapper extends React.Component {
               <Button
                 disabled={!this.props.enableNext}
                 color="secondary"
-                onClick={this.handleNext}
+                onClick={handleNext}
               >
                 Next
               </Button>
