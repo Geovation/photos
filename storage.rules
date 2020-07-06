@@ -17,3 +17,6 @@ service firebase.storage {
     }
   }
 }
+
+    // TODO: stop user for reading images not published unless that the user is moderator. 
+    // Read it from custom claim
