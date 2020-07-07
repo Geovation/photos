@@ -2,7 +2,12 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
-      allow read: if true;
+      allow read: if true
+
+      // need to run more tests and add the "published" metadata to the live photos firsts.
+      // allow read: if request.auth.token.isModerator == true 
+      //             || request.auth.token.isAdmin == true
+      //             || resource.metadata.published == true
     }
 
     match /photos {
@@ -13,10 +18,12 @@ service firebase.storage {
           							&& request.resource.size < 2 * 1024 * 1024
                     		&& request.resource.contentType.matches('image/.*')
         }
+
+        match /{allFiles=**} {
+          allow update: if request.auth.token.isModerator == true 
+                        || request.auth.token.isAdmin == true
+        }
       }
     }
   }
 }
-
-    // TODO: stop user for reading images not published unless that the user is moderator. 
-    // Read it from custom claim

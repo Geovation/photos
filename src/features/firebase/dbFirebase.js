@@ -11,8 +11,26 @@ const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
 
 // TODO: add caching
-
+// TODO: for adding security see https://firebase.google.com/docs/storage/web/download-files. Need to use getDownloadURL
+// TODO: convert it to async (ass need to create an URL)
 function extractPhoto(data, id) {
+  debugger;
+
+  // TODO: deleteme
+  // const photoIdFolderRed = storageRef.child("photos").child(id);
+  // photoIdFolderRed
+  //   .child("1024.jpg")
+  //   .getDownloadURL()
+  //   .then((url) => {
+  //     console.log("dowload url:", url);
+  //   });
+  // photoIdFolderRed
+  //   .child("thumbnail.jpg")
+  //   .getDownloadURL()
+  //   .then((url) => {
+  //     console.log("dowload url:", url);
+  //   });
+
   const prefix = `https://storage.googleapis.com/${storageRef.location.bucket}/photos/${id}`;
 
   // some data from Firebase cannot be stringified into json, so we need to convert it into other format first.
@@ -264,11 +282,33 @@ function writeModeration(photoId, userId, published) {
   if (typeof published !== "boolean") {
     throw new Error("Only boolean pls");
   }
-  return firestore.collection("photos").doc(photoId).update({
-    moderated: firebase.firestore.FieldValue.serverTimestamp(),
-    published: published,
-    moderator_id: userId,
-  });
+  const newMetadata = { customMetadata: { published } };
+  const photoIdFolderRef = storageRef.child("photos").child(photoId);
+
+  // TODO: delete this test
+  // photoIdFolderRef
+  //   .child("thumbnail.jpg")
+  //   .getMetadata()
+  //   .then((md) => {
+  //     console.log("XXXXX ", md);
+  //     debugger;
+  //   });
+
+  // TODO: make it more robust (?). What if it fails ? rollback ?
+  return Promise.all([
+    // save it in the firestore
+    firestore.collection("photos").doc(photoId).update({
+      moderated: firebase.firestore.FieldValue.serverTimestamp(),
+      published,
+      moderator_id: userId,
+    }),
+
+    // but also as metadata of thumbnail.jpg
+    photoIdFolderRef.child("thumbnail.jpg").updateMetadata(newMetadata),
+
+    // and also as metadata of thumbnail.jpg
+    photoIdFolderRef.child("1024.jpg").updateMetadata(newMetadata),
+  ]);
 }
 
 async function disconnect() {

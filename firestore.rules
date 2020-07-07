@@ -2,14 +2,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // TODO: instead of quering the DB, just read it from the custom claim
-
     function isAdmin() {
-    	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
+      return request.auth.token.isAdmin == true
     }
 
     function isModerator() {
-    	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isModerator == true
+      return request.auth.token.isModerator == true
     }
 
     function isUser(uid) {
