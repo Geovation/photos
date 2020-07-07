@@ -1,0 +1,16 @@
+[x] claims: isModerator / isAdmin
+[x] metadata: published (very likly not required)
+[x] creeate two storages: LIVE and MODERATION
+[x] LIVE is public, read only
+[x] MODERATION is private
+[x] name the two storages
+  -) LIVE => firebase target:apply storage live photos-demo-d4b14.appspot.com
+  -) MODERATION => firebase target:apply storage moderation photos-demo-d4b14
+[x] security rules for MODERATION
+[x] security rules for LIVE 
+[ ] new files are uploaded to MODERATION
+[ ] clound function to create thumbnail only on MODERATION.
+[ ] when published, move files from MODERATION to LIVE
+[ ] when unpublished, move files from LIVE to MODERATION
+[ ] to show unpublish files on the map, need to retrieve the URLS of the files are are still in MODERATIONM (consider to do not show them in the mao ?)
+[ ] document it as the initial setup is not trivial

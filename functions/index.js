@@ -464,7 +464,3 @@ module.exports = {
     .document("users/{userId}")
     .onWrite(customClaims.isItAdminOrModerator(auth)),
 };
-
-// TODO: add a cloud function that update user claims when a user promoted moderator or admin.
-// It is usefull as it can be used in the security rules. Particularly important for securing filestorage.
-// see https://firebase.google.com/docs/auth/admin/custom-claims

@@ -14,6 +14,14 @@
         "md": [
           "photos-demo-d4b14-md"
         ]
+      },
+      "storage": {
+        "live": [
+          "photos-demo-d4b14.appspot.com"
+        ],
+        "moderation": [
+          "photos-demo-d4b14"
+        ]
       }
     }
   }

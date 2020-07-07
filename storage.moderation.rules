@@ -1,0 +1,23 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+
+    match /photos {
+    	match /{photoId} {
+      	match /original.jpg { 
+        	allow create: if resource == null
+                        && request.auth != null 
+          							&& request.resource.size < 2 * 1024 * 1024
+                    		&& request.resource.contentType.matches('image/.*')
+        }
+
+        match /{allFiles=**} {
+          allow write, read: if request.auth.token.isModerator == true 
+                        || request.auth.token.isAdmin == true 
+                        || resource.metadata.ownerId == request.auth.uid // TODO verify
+        }
+      }
+    }
+  }
+}
