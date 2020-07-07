@@ -298,7 +298,13 @@ class PhotoPage extends Component {
           imgLocation = this.getLocationFromExifMetadata(imgExif);
         }
 
-        this.setState({ imgSrc, imgExif, imgIptc, imgLocation });
+        this.setState({
+          imgSrc,
+          imgExif,
+          imgIptc,
+          imgLocation,
+          anyError: !!this.props.fields[0],
+        });
 
         if (!imgLocation) {
           this.openDialog(
@@ -363,6 +369,11 @@ class PhotoPage extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    // cannot have errors if there are not fields
+    if (!this.props.fields[0] && !this.state.next) {
+      this.setState({ next: true });
+    }
+
     if (prevProps.file !== this.props.file) {
       this.loadImage();
     }
@@ -378,7 +389,7 @@ class PhotoPage extends Component {
       <div className="geovation-photos">
         <PageWrapper
           handlePrev={this.handlePrev}
-          handleNext={this.handleNext}
+          handleNext={this.props.fields[0] ? this.handleNext : null}
           enableNext={!!this.state.imgLocation}
           nextClicked={this.state.next}
           error={this.state.anyError || !this.state.enabledUploadButton}
@@ -388,12 +399,10 @@ class PhotoPage extends Component {
           imgSrc={this.state.imgSrc}
           handleClose={this.props.handleClose}
         >
-          {this.state.next ? (
+          {this.state.next && fields[0] ? (
             <div className={classes.fields}>
               <Fields
                 handleChange={this.handleChangeFields}
-                sendFile={this.sendFile}
-                enabledUploadButton={this.state.enabledUploadButton}
                 imgSrc={this.state.imgSrc}
                 fields={fields}
                 error={this.state.anyError}
