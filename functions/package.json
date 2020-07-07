@@ -13,7 +13,7 @@
     "@google-cloud/pubsub": "^2.1.0",
     "cors": "latest",
     "express": "latest",
-    "firebase-admin": "latest",
+    "firebase-admin": "^8.13.0",
     "firebase-functions": "latest",
     "gm": "latest",
     "json2csv": "latest",
@@ -21,7 +21,7 @@
     "mkdirp": "^1.0.4"
   },
   "devDependencies": {
-    "eslint": "^7.3.1",
+    "eslint": "^7.4.0",
     "eslint-plugin-promise": "latest",
     "firebase-functions-test": "latest"
   },

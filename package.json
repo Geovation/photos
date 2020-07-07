@@ -36,7 +36,7 @@
   "homepage": "./",
   "devDependencies": {
     "coveralls": "latest",
-    "firebase-admin": "latest",
+    "firebase-admin": "^8.13.0",
     "firebase-tools": "^8.4.3",
     "first-input-delay": "latest",
     "http-server": "latest",
@@ -52,13 +52,13 @@
     "workbox-cli": "latest"
   },
   "dependencies": {
-    "@material-ui/core": "latest",
+    "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "latest",
     "@turf/turf": "latest",
     "blueimp-load-image": "^5.13.0",
     "classnames": "latest",
     "dms2dec": "latest",
-    "firebase": "^7.15.4",
+    "firebase": "^7.15.5",
     "localforage": "^1.7.4",
     "lodash": "^4.17.15",
     "mapbox-gl": "^1.11.0",
