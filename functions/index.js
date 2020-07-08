@@ -2,7 +2,8 @@
 
 const _ = require("lodash");
 const json2csv = require("json2csv");
-const functions = require("firebase-functions");
+// https://firebase.google.com/docs/functions/locations
+const functions = require("firebase-functions").region("europe-west2");
 const mkdirp = require("mkdirp");
 const admin = require("firebase-admin");
 const cors = require("cors")({ origin: true });
