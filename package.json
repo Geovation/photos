@@ -41,7 +41,7 @@
     "first-input-delay": "latest",
     "http-server": "latest",
     "husky": "latest",
-    "jimp": "^0.13.0",
+    "jimp": "^0.14.0",
     "ncp": "latest",
     "node-sass": "latest",
     "precise-commits": "latest",
