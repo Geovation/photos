@@ -5,53 +5,73 @@
  * eventually delete them.
  * Run it from this folder.
  */
-const admin = require('firebase-admin');
-const randomLocation = require('random-location');
-const Jimp = require('jimp');
+const admin = require("firebase-admin");
+const randomLocation = require("random-location");
+const Jimp = require("jimp");
+const serviceAccount = require("./serviceAccountKey.json");
+const storageBucket = require("../public/config.json").FIREBASE.config
+  .storageBucket;
+const argv = require("yargs")
+  .usage("Usage: $0 [options]")
+  .describe("n", "Number of photos")
+  .alias("n", "number")
+  .demandOption(["n"])
+  .number("n")
+  .describe("s", "Storage")
+  .alias("s", "storage")
+  .default("s", storageBucket)
+  .example("$0 -n 100", `Upload 100 photos to ${storageBucket}`)
+  .help("h")
+  .alias("h", "help").argv;
 
-const serviceAccount = require('./serviceAccountKey.json');
 const LONDON_COORDS = {
   latitude: 51.509865,
-  longitude: -0.118092
+  longitude: -0.118092,
 };
 const R = 50 * 1000;
 
 let image;
 let font;
-const fileNameGeovation = 'geovation.jpg';
+const fileNameGeovation = "geovation.jpg";
 let bucket;
 let db;
 
 async function addMetaDataSync(id) {
-
-  const moderated = Math.random() > 0.5 ? true: null;
+  const moderated = Math.random() > 0.5 ? true : null;
 
   const rndLocation = randomLocation.randomCirclePoint(LONDON_COORDS, R);
-  const location = new admin.firestore.GeoPoint(rndLocation.latitude, rndLocation.longitude);
+  const location = new admin.firestore.GeoPoint(
+    rndLocation.latitude,
+    rndLocation.longitude
+  );
   const data = {
     updated: admin.firestore.FieldValue.serverTimestamp(),
     location: location,
     description: `${id} some text here`,
     moderated: moderated ? admin.firestore.FieldValue.serverTimestamp() : null,
-    published: moderated
+    published: moderated,
   };
 
   console.log(`Adding ${id} with data:`, data);
 
-  return await db.collection('photos').doc(id).set(data);
+  return await db.collection("photos").doc(id).set(data);
 }
 
 async function addPhotoSync(id) {
   console.log(`Uploading ${id}`);
 
   // upload it as "original"
-  return await bucket.upload('tmp.jpg', { destination: `photos/${id}/original.jpg` });
+  return await bucket.upload("tmp.jpg", {
+    destination: `photos/${id}/original.jpg`,
+  });
 }
 
-async function run(num) {
+async function run(num, storage) {
+  console.log(`Will upload ${num} photos to ${storage}`);
+
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: "photos-demo-d4b14.appspot.com"
+    storageBucket: storage,
   });
   bucket = admin.storage().bucket();
   db = admin.firestore();
@@ -59,23 +79,25 @@ async function run(num) {
   image = await Jimp.read(fileNameGeovation);
   font = await Jimp.loadFont(Jimp.FONT_SANS_128_BLACK);
 
-  for (let i=0; i< num; i++) {
+  for (let i = 0; i < num; i++) {
+    console.log(`processing photo ${i}/${num}`);
+
     const id = `test_${i}`;
     // watermark it with id
 
-    image.print(font, 0, 0, id).write('tmp.jpg');
+    image.print(font, 0, 0, id).write("tmp.jpg");
 
     await addPhotoSync(id);
     await addMetaDataSync(id);
   }
 }
 
-run(100)
-  .then(_ => {
-    console.log("END");
+run(argv.number, argv.storage)
+  .then(() => {
+    console.log("The End ;)");
     process.exit(0);
   })
-  .catch( e => {
+  .catch((e) => {
     console.error(e);
     process.exit(1);
   });

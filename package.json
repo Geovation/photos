@@ -49,7 +49,8 @@
     "random-location": "latest",
     "react-scripts": "latest",
     "rimraf": "latest",
-    "workbox-cli": "latest"
+    "workbox-cli": "latest",
+    "yargs": "^15.4.0"
   },
   "dependencies": {
     "@material-ui/core": "latest",
@@ -60,7 +61,7 @@
     "dms2dec": "latest",
     "firebase": "^7.15.4",
     "localforage": "^1.7.4",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.17",
     "mapbox-gl": "^1.11.0",
     "md5": "latest",
     "prop-types": "^15.7.2",
