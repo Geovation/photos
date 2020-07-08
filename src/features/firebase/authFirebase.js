@@ -71,6 +71,23 @@ const onAuthStateChanged = (fn) => {
         currentUser.isModerator = fbUser ? fbUser.isModerator : false;
         fn(currentUser);
       });
+
+      // using token it would be like this. The downside if that it requires to relogin.
+      // firebase
+      //   .auth()
+      //   .currentUser.getIdTokenResult()
+      //   .then((idTokenResult) => {
+      //     console.log(idTokenResult);
+
+      //     // this fields are set by a the cloud function: isItAdminOrModerator
+      //     currentUser.isModerator = idTokenResult.claims.isModerator;
+      //     currentUser.isAdmin = idTokenResult.claims.isAdmin;
+
+      //     fn(currentUser);
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
     }
     fn(currentUser);
   };

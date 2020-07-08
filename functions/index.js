@@ -15,6 +15,7 @@ const gm = require("gm").subClass({ imageMagick: true });
 const express = require("express");
 
 const photoPublishedChange = require("./on_published");
+const customClaims = require("./on_user");
 
 const THUMB_MAX_SIZE = 50;
 const THUMB_NAME = "thumbnail.jpg";
@@ -459,4 +460,7 @@ module.exports = {
     .onUpdate(
       photoPublishedChange.getPhotoPublishedChange(firestore, messaging)
     ),
+  customClaims: functions.firestore
+    .document("users/{userId}")
+    .onWrite(customClaims.isItAdminOrModerator(auth)),
 };
