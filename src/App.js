@@ -319,11 +319,15 @@ class App extends Component {
   }
 
   fetchPhotos() {
-    dbFirebase.fetchPhotos().then((photos) => {
-      _.forEach(photos, (photo) => {
-        this.addFeature(photo);
-      });
-    });
+    dbFirebase
+      .fetchPhotos()
+      .then((photos) => {
+        _.forEach(photos, (photo) => {
+          this.addFeature(photo);
+        });
+        this.delayedSaveGeojson();
+      })
+      .catch(console.error);
   }
 
   async componentWillUnmount() {
@@ -670,7 +674,7 @@ class App extends Component {
   };
 
   // from the own photos from the dict
-  getWwnPhotos() {
+  getOwnPhotos() {
     let ownPhotos = {};
     if (this.state.user) {
       const allPhotos = this.featuresDict;
@@ -678,7 +682,7 @@ class App extends Component {
         allPhotos,
         (photo) => _.get(photo, "properties.owner_id") === this.state.user.id
       ).reduce((accumulator, currentValue) => {
-        accumulator[currentValue.properties.id] = currentValue.properties;
+        accumulator[currentValue.properties.id] = currentValue;
         return accumulator;
       }, {});
     }
@@ -794,11 +798,12 @@ class App extends Component {
                 render={(props) => (
                   <OwnPhotosPage
                     {...props}
-                    photos={this.getWwnPhotos()}
+                    photos={this.getOwnPhotos()}
                     config={this.props.config}
                     label={this.props.config.PAGES.ownPhotos.label}
                     user={this.state.user}
                     handleClose={history.goBack}
+                    handlePhotoClick={this.handlePhotoClick}
                     // handleRejectClick={this.handleRejectClick}
                     // handleApproveClick={this.handleApproveClick}
                   />

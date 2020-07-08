@@ -7,6 +7,10 @@ import _ from "lodash";
 
 import { Link } from "react-router-dom";
 
+import { Icon } from "@material-ui/core";
+import CheckIcon from "@material-ui/icons/Check";
+import ClearIcon from "@material-ui/icons/Clear";
+import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
@@ -57,12 +61,14 @@ class Profile extends React.Component {
       geojson &&
       geojson.features.filter((f) => f.properties.owner_id === user.id);
     const myLastPhotos = _.reverse(
-      _.sortBy(myPhotos, (o) => o.properties.moderated)
+      _.sortBy(myPhotos, (o) => o.properties.updated)
     ).slice(0, 20);
 
     console.log(myLastPhotos);
 
     const numPieces = _.sumBy(myPhotos, (o) => o.properties.pieces);
+
+    console.log(user);
 
     return (
       <PageWrapper
@@ -101,7 +107,7 @@ class Profile extends React.Component {
           {myLastPhotos.length && (
             <div>
               <Typography variant="h6" className={classes.centered}>
-                Last {myLastPhotos.length} approved
+                Last {myLastPhotos.length} uploaded
               </Typography>
 
               {_.map(myLastPhotos, (photo) => (
@@ -116,8 +122,21 @@ class Profile extends React.Component {
                       to={this.calcUrl(photo)}
                       onClick={() => handlePhotoClick(photo)}
                     >
-                      {photo.properties.moderated.toDateString()}
+                      {photo.properties.updated.toDateString()}
                     </Link>
+
+                    <Icon>
+                      {photo.properties.published === true && (
+                        <CheckIcon color="secondary" />
+                      )}
+                      {photo.properties.published === false && (
+                        <ClearIcon color="error" />
+                      )}
+                      {photo.properties.published !== false &&
+                        photo.properties.published !== true && (
+                          <HourglassEmptyIcon olor="action" />
+                        )}
+                    </Icon>
                   </Typography>
                 </div>
               ))}

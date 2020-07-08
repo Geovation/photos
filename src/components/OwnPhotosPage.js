@@ -33,10 +33,6 @@ export default class OwnPhotosPage extends Component {
     };
   }
 
-  handlePhotoClick = (photoSelected) => {
-    this.setState({ zoomDialogOpen: true, photoSelected });
-  };
-
   handleZoomDialogClose = () => {
     this.setState({ zoomDialogOpen: false });
   };
@@ -53,9 +49,9 @@ export default class OwnPhotosPage extends Component {
         <List dense={false}>
           {_.map(photos, (photo) => (
             <ListItem
-              key={photo.id}
+              key={photo.properties.id}
               button
-              onClick={() => this.handlePhotoClick(photo)}
+              onClick={() => this.props.handlePhotoClick(photo)}
             >
               <ListItemAvatar>
                 <Avatar
@@ -64,19 +60,26 @@ export default class OwnPhotosPage extends Component {
                       e.target.src = placeholderImage;
                     },
                   }}
-                  src={photo.thumbnail}
+                  src={photo.properties.thumbnail}
                 />
               </ListItemAvatar>
               <ListItemText
-                primary={config.PHOTO_ZOOMED_FIELDS.updated(photo.updated)}
+                primary={config.PHOTO_ZOOMED_FIELDS.updated(
+                  photo.properties.updated
+                )}
               />
               <ListItemSecondaryAction>
                 <Icon>
-                  {photo.published === true && <CheckIcon color="secondary" />}
-                  {photo.published === false && <ClearIcon color="error" />}
-                  {photo.published !== false && photo.published !== true && (
-                    <HourglassEmptyIcon olor="action" />
+                  {photo.properties.published === true && (
+                    <CheckIcon color="secondary" />
                   )}
+                  {photo.properties.published === false && (
+                    <ClearIcon color="error" />
+                  )}
+                  {photo.properties.published !== false &&
+                    photo.properties.published !== true && (
+                      <HourglassEmptyIcon olor="action" />
+                    )}
                 </Icon>
               </ListItemSecondaryAction>
             </ListItem>
