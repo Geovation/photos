@@ -22,7 +22,8 @@
     "geovation-photos-update": "geovation-photos-update",
     "start": "./scripts/runWithVars.sh 'react-scripts start'",
     "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
-    "start:prod": "npm run build:react && http-server build -S -o"
+    "start:prod": "npm run build:react && http-server build -S -o",
+    "deploy": "firestore deploy"
   },
   "repository": {
     "type": "git",

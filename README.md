@@ -6,37 +6,48 @@
 [![npm version](https://badge.fury.io/js/geovation-photos.svg)](https://badge.fury.io/js/geovation-photos)
 
 # Geovation photos
+
 Many people in our [Geovation Hub](https://geovation.uk/hub) are asking for a simple tool to upload images into a map. It must be free, and easy to extend and white label. It also must work as mobile app as well as web app. An example of this is [Plastic Patrol](https://www.plasticpatrol.co.uk/). They needed an app to capture plastic pollution around UK.
 The idea of Geovation Photos is to be a skeleton for those types of apps.
 
 # Getting started
-You can simple copy it and then modify it as you wish with
+
+## Firebase
+
+- install node
+- create a project with Blaze account
+- create a Cloud Firestore and a Realtime Database
+- create a storage
+- in google cloude console, make htat storage public readable.
+
+## Code
+
+- Clone it `git clone git@github.com:Geovation/photos.git`
+- Install dependencies
+
 ```
-curl -L https://github.com/Geovation/photos/archive/master.zip | tar -xvf -
-mv photos-master myProject && cd myProject
-git init
 npm ci
-npm ci geovation-photos -D
-git add . && git commit -m "kick off"
+cd functions
+npm ci
+cd ..
 ```
 
-done !. Now you can start the server with ```npm start```
+- update the file `.firebaserc` with your project information.
+- update the files `src/custom/config.dev.json` with your project information.
+- update the files `src/custom/config.prod.json` with your project information.
+- build it `npm run build`
+- deploy it: `npm run deploy`
 
+done !. Hopefully it is running. If not, let me know as we'd may need to update the documentation.
+
+- start the server locally: `npm start`
 
 # Update it
-If you plan to keep Geovation Photos updates in your project:
-```
-npm ci geovation-photos@latest -D
-```
 
-Currently it implies some manual work but if you kept your changes in a a single place and with the help of a good git IDE it should not be too painful. First of all check if there is a new version with ```npm outdated```. If there is a new version you can simple run
-```
-npm ci geovation-photos@latest -D
-npm run geovation-photos-update
-```
-And now just merge the changes by hand. Good luck !!!
+just pull from upstream. Be carefull to do not overwrite the `custom` folders
 
 # Demo
+
 Demo PWA/Mobile app done from Geovation Photos. See a [PWA demo live](https://photos-demo-d4b14.web.app)
 
 See more (Documentation)[doc/]
