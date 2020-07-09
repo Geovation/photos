@@ -38,7 +38,7 @@
   "devDependencies": {
     "coveralls": "latest",
     "firebase-admin": "latest",
-    "firebase-tools": "^8.4.3",
+    "firebase-tools": "^8.5.0",
     "first-input-delay": "latest",
     "http-server": "latest",
     "husky": "latest",
@@ -62,7 +62,7 @@
     "dms2dec": "latest",
     "firebase": "^7.15.4",
     "localforage": "^1.7.4",
-    "lodash": "^4.17.17",
+    "lodash": "^4.17.19",
     "mapbox-gl": "^1.11.0",
     "md5": "latest",
     "prop-types": "^15.7.2",
