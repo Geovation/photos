@@ -12,9 +12,9 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -162,15 +162,15 @@ class DisplayPhoto extends Component {
                     <div>
                       <Divider />
                       <div>
-                        <ExpansionPanel>
-                          <ExpansionPanelSummary
+                        <Accordion>
+                          <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                           >
                             <Typography className={classes.heading}>
                               Moderator Details
                             </Typography>
-                          </ExpansionPanelSummary>
-                          <ExpansionPanelDetails
+                          </AccordionSummary>
+                          <AccordionDetails
                             classes={{ root: classes.expansionDetails }}
                           >
                             <CardComponent
@@ -182,8 +182,8 @@ class DisplayPhoto extends Component {
                                 handleApproveClick(feature.properties)
                               }
                             />
-                          </ExpansionPanelDetails>
-                        </ExpansionPanel>
+                          </AccordionDetails>
+                        </Accordion>
                       </div>
                     </div>
                   )}
