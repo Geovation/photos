@@ -15,5 +15,15 @@ service firebase.storage {
         }
       }
     }
+
+    match /users {
+      match /{uid} {
+        match /avatar.jpg {
+          allow write: if request.auth.uid == uid
+                       && request.resource.size < 100 * 1024
+                       && request.resource.contentType.matches('image/.*')
+        }
+      }
+    }
   }
 }

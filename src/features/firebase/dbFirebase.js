@@ -13,8 +13,7 @@ const storageRef = firebase.storage().ref();
 // TODO: add caching
 
 function extractPhoto(data, id) {
-  const prefix = `https://storage.googleapis.com/${storageRef.location.bucket}/photos/${id}`;
-
+  
   // some data from Firebase cannot be stringified into json, so we need to convert it into other format first.
   const photo = _.mapValues(data, (fieldValue, fieldKey, doc) => {
     if (fieldValue instanceof firebase.firestore.DocumentReference) {
@@ -24,8 +23,8 @@ function extractPhoto(data, id) {
     }
   });
 
-  photo.thumbnail = `${prefix}/thumbnail.jpg`;
-  photo.main = `${prefix}/1024.jpg`;
+  photo.thumbnail = buildStorageUrl(`photos/${id}/thumbnail.jpg`);
+  photo.main = buildStorageUrl(`photos/${id}/1024.jpg`);
   photo.id = id;
 
   photo.updated =
@@ -158,6 +157,21 @@ function savePhoto(id, base64) {
   return originalJpgRef.putString(base64, "base64", {
     contentType: "image/jpeg",
   });
+}
+
+async function saveProfilePhoto(uid, base64) {
+  const originalJpgRef = storageRef
+    .child("users")
+    .child(uid)
+    .child("avatar.jpg");
+
+  const uploadTask = await originalJpgRef.putString(base64, "base64", {
+    contentType: "image/jpeg",
+  });
+
+  await firestore.collection("users").doc(uid).update({ hasAvatar: true });
+  const AvatarUrl = buildStorageUrl(uploadTask.ref.location.path)
+  return AvatarUrl;
 }
 
 async function getUser(id) {
@@ -312,6 +326,12 @@ async function toggleUnreadFeedback(id, resolved, userId) {
   });
 }
 
+function buildStorageUrl(path) {
+  // see https://firebase.google.com/docs/storage/web/download-files
+  const PREFIX = `${appConfig.FIREBASE.storageApiURL}/b/${appConfig.FIREBASE.config.storageBucket}/o/`;
+  return `${PREFIX}${encodeURIComponent(path)}?alt=media`;
+}
+
 export default {
   onConnectionStateChanged,
   photosRT,
@@ -322,6 +342,7 @@ export default {
   getFeedbackByID,
   getPhotoByID,
   savePhoto,
+  saveProfilePhoto,
   saveMetadata,
   photosToModerateRT,
   ownPhotosRT,
@@ -332,4 +353,5 @@ export default {
   toggleUnreadFeedback,
   configObserver,
   updateUserFCMToken,
+  buildStorageUrl,
 };

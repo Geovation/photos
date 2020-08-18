@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import md5 from "md5";
+import _ from "lodash";
 
 import config from "custom/config";
 import User from "types/User";
@@ -13,8 +14,10 @@ import dbFirebase from "./dbFirebase";
  */
 
 let currentUser;
+let onUserChangeCallBackFn;
 
 const onAuthStateChanged = (fn) => {
+  onUserChangeCallBackFn = fn;
   const firebaseStatusChange = (user) => {
     currentUser = user;
     if (config.USER.ENABLE_GRAVATAR_PROFILES && currentUser) {
@@ -69,6 +72,9 @@ const onAuthStateChanged = (fn) => {
 
       dbFirebase.getUser(user.uid).then((fbUser) => {
         currentUser.isModerator = fbUser ? fbUser.isModerator : false;
+
+        const avatarUrl = dbFirebase.buildStorageUrl(`users/${user.uid}/avatar.jpg`);
+        currentUser.photoURL = fbUser.hasAvatar ? avatarUrl : currentUser.photoURL;
         fn(currentUser);
       });
 
@@ -125,9 +131,15 @@ const reloadUser = async () => {
   return firebase.auth().currentUser;
 };
 
+const updateCurrentUser = (newInfo) => {
+  _.extend(currentUser, newInfo);
+  onUserChangeCallBackFn(currentUser);
+}
+
 export default {
   onAuthStateChanged,
   signOut,
   sendEmailVerification,
   reloadUser,
+  updateCurrentUser,
 };

@@ -419,7 +419,9 @@ async function hostMetadata(req, res) {
       ? photo.data()[config.metadata.twDescriptionField]
       : config.metadata.twDescription;
     const TW_TITLE = config.metadata.twTitle;
-    const TW_IMAGE = `https://storage.googleapis.com/${BUCKET}/photos/${photoId}/1024.jpg`;
+    
+    const PHOTO_PATH = encodeURIComponent(`photos/${photoId}/1024.jpg`);
+    const TW_IMAGE = `${config.FIREBASE.storageApiURL}/b/${BUCKET}/o/${PHOTO_PATH}?alt=media`;
     const TW_IMAGE_ALT = TW_DESCRIPTION;
 
     indexHTML = `
