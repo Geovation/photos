@@ -13,7 +13,6 @@ const storageRef = firebase.storage().ref();
 // TODO: add caching
 
 function extractPhoto(data, id) {
-  
   // some data from Firebase cannot be stringified into json, so we need to convert it into other format first.
   const photo = _.mapValues(data, (fieldValue, fieldKey, doc) => {
     if (fieldValue instanceof firebase.firestore.DocumentReference) {
@@ -28,14 +27,10 @@ function extractPhoto(data, id) {
   photo.id = id;
 
   photo.updated =
-    photo.updated instanceof firebase.firestore.Timestamp
-      ? photo.updated.toDate()
-      : new Date(photo.updated);
+    photo.updated instanceof firebase.firestore.Timestamp ? photo.updated.toDate() : new Date(photo.updated);
 
   photo.moderated =
-    photo.moderated instanceof firebase.firestore.Timestamp
-      ? photo.moderated.toDate()
-      : new Date(photo.moderated);
+    photo.moderated instanceof firebase.firestore.Timestamp ? photo.moderated.toDate() : new Date(photo.moderated);
 
   if (!(photo.location instanceof firebase.firestore.GeoPoint)) {
     // when comming from json, it looses the type
@@ -51,23 +46,14 @@ function extractPhoto(data, id) {
 function photosRT(addedFn, modifiedFn, removedFn, errorFn) {
   const photosRef = firestore.collection("photos");
 
-  let publishedRef = photosRef
-    .orderBy("moderated", "desc")
-    .limit(100)
-    .where("published", "==", true);
+  let publishedRef = photosRef.orderBy("moderated", "desc").limit(100).where("published", "==", true);
 
   // get also the photos that belong to the current user even if not published yet.
 
   if (firebase.auth().currentUser) {
     const userId = firebase.auth().currentUser.uid;
 
-    photosFromRefRT(
-      photosRef.where("owner_id", "==", userId),
-      addedFn,
-      removedFn,
-      addedFn,
-      errorFn
-    );
+    photosFromRefRT(photosRef.where("owner_id", "==", userId), addedFn, removedFn, addedFn, errorFn);
   }
 
   // any published photo
@@ -94,12 +80,9 @@ async function fetchStats() {
 }
 
 async function fetchPhotos() {
-  const photosResponse = await fetch(
-    appConfig.FIREBASE.apiURL + "/photos.json",
-    {
-      mode: "cors",
-    }
-  );
+  const photosResponse = await fetch(appConfig.FIREBASE.apiURL + "/photos.json", {
+    mode: "cors",
+  });
   const photosJson = await photosResponse.json();
   const photos = photosJson.photos;
 
@@ -118,16 +101,11 @@ function fetchFeedbacks(isShowAll) {
         return { ...doc.data(), id: doc.id };
       })
     )
-    .then((feedbacks) =>
-      feedbacks.filter((feedback) => !feedback.resolved || isShowAll)
-    );
+    .then((feedbacks) => feedbacks.filter((feedback) => !feedback.resolved || isShowAll));
 }
 
 function saveMetadata(data) {
-  data.location = new firebase.firestore.GeoPoint(
-    Number(data.latitude) || 0,
-    Number(data.longitude) || 0
-  );
+  data.location = new firebase.firestore.GeoPoint(Number(data.latitude) || 0, Number(data.longitude) || 0);
   delete data.latitude;
   delete data.longitude;
 
@@ -150,28 +128,30 @@ function saveMetadata(data) {
  * @returns {firebase.storage.UploadTask}
  */
 function savePhoto(id, base64) {
-  const originalJpgRef = storageRef
-    .child("photos")
-    .child(id)
-    .child("original.jpg");
+  const originalJpgRef = storageRef.child("photos").child(id).child("original.jpg");
   return originalJpgRef.putString(base64, "base64", {
     contentType: "image/jpeg",
   });
 }
 
-async function saveProfilePhoto(uid, base64) {
-  const originalJpgRef = storageRef
-    .child("users")
-    .child(uid)
-    .child("avatar.jpg");
+async function saveProfileAvatar(base64) {
+  const userID = firebase.auth().currentUser && firebase.auth().currentUser.uid;
+
+  const originalJpgRef = storageRef.child("users").child(userID).child("avatar.jpg");
 
   const uploadTask = await originalJpgRef.putString(base64, "base64", {
     contentType: "image/jpeg",
   });
 
-  await firestore.collection("users").doc(uid).update({ hasAvatar: true });
-  const AvatarUrl = buildStorageUrl(uploadTask.ref.location.path)
+  await firestore.collection("users").doc(userID).update({ hasAvatar: true });
+  const AvatarUrl = buildStorageUrl(uploadTask.ref.location.path);
   return AvatarUrl;
+}
+
+async function updateProfile(fields) {
+  const userID = firebase.auth().currentUser && firebase.auth().currentUser.uid;
+
+  await firestore.collection("users").doc(userID).set(fields, { merge: true });
 }
 
 async function getUser(id) {
@@ -218,22 +198,14 @@ async function getPhotoByID(id) {
  * @param photos object to keep up to date
  * @returns {() => void}
  */
-function photosToModerateRT(
-  howMany,
-  updatePhotoToModerate,
-  removePhotoToModerate
-) {
+function photosToModerateRT(howMany, updatePhotoToModerate, removePhotoToModerate) {
   const photosRef = firestore
     .collection("photos")
     .where("moderated", "==", null)
     .orderBy("updated", "desc")
     .limit(howMany);
 
-  return photosFromRefRT(
-    photosRef,
-    updatePhotoToModerate,
-    removePhotoToModerate
-  );
+  return photosFromRefRT(photosRef, updatePhotoToModerate, removePhotoToModerate);
 }
 
 function photosFromRefRT(photosRef, onUpdate, onRemove, onAdd, onError) {
@@ -259,15 +231,9 @@ function photosFromRefRT(photosRef, onUpdate, onRemove, onAdd, onError) {
 
 function ownPhotosRT(updatePhotoToModerate, removePhotoToModerate) {
   if (firebase.auth().currentUser) {
-    const photosRef = firestore
-      .collection("photos")
-      .where("owner_id", "==", firebase.auth().currentUser.uid);
+    const photosRef = firestore.collection("photos").where("owner_id", "==", firebase.auth().currentUser.uid);
 
-    return photosFromRefRT(
-      photosRef,
-      updatePhotoToModerate,
-      removePhotoToModerate
-    );
+    return photosFromRefRT(photosRef, updatePhotoToModerate, removePhotoToModerate);
   }
   return () => {};
 }
@@ -306,10 +272,7 @@ async function writeFeedback(data) {
   }
   data.updated = firebase.firestore.FieldValue.serverTimestamp();
   if (data.latitude && data.longitude) {
-    data.location = new firebase.firestore.GeoPoint(
-      Number(data.latitude) || 0,
-      Number(data.longitude) || 0
-    );
+    data.location = new firebase.firestore.GeoPoint(Number(data.latitude) || 0, Number(data.longitude) || 0);
   }
 
   delete data.latitude;
@@ -342,7 +305,8 @@ export default {
   getFeedbackByID,
   getPhotoByID,
   savePhoto,
-  saveProfilePhoto,
+  saveProfileAvatar,
+  updateProfile,
   saveMetadata,
   photosToModerateRT,
   ownPhotosRT,
