@@ -135,23 +135,37 @@ function savePhoto(id, base64) {
 }
 
 async function saveProfileAvatar(base64) {
-  const userID = firebase.auth().currentUser && firebase.auth().currentUser.uid;
-
-  const originalJpgRef = storageRef.child("users").child(userID).child("avatar.jpg");
+  const user = firebase.auth().currentUser;
+  const originalJpgRef = storageRef.child("users").child(user.uid).child("avatar.jpg");
 
   const uploadTask = await originalJpgRef.putString(base64, "base64", {
     contentType: "image/jpeg",
   });
-
-  await firestore.collection("users").doc(userID).update({ hasAvatar: true });
   const AvatarUrl = buildStorageUrl(uploadTask.ref.location.path);
+  await updateProfile({ photoURL: AvatarUrl });
   return AvatarUrl;
 }
 
+/**
+ * // TODO: move it to authFirebase ???
+ * // TODO: dissable cache
+ * It store the user profile in firebase if possible. Otherwise in firestore.
+ *
+ * @param {*} fields an object with the fields and values to be updated
+ */
 async function updateProfile(fields) {
-  const userID = firebase.auth().currentUser && firebase.auth().currentUser.uid;
+  const supportedFields = ["photoURL", "displayName"];
+  const user = firebase.auth().currentUser;
 
-  await firestore.collection("users").doc(userID).set(fields, { merge: true });
+  // pick those supported by firebase
+  const fieldsSupported = _.pick(fields, supportedFields);
+  const updatingProfile = user.updateProfile(fieldsSupported);
+
+  // those not supported will be saved in firestore
+  const fieldsNotSupported = _.omit(fields, supportedFields);
+  const updatingFirestore = firestore.collection("users").doc(user.uid).set(fieldsNotSupported, { merge: true });
+
+  return await Promise.all([updatingFirestore, updatingProfile]);
 }
 
 async function getUser(id) {

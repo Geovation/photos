@@ -81,8 +81,8 @@ const styles = (theme) => ({
 });
 
 const ProfileTextField = withStyles(styles)(function (props) {
-  const { user, className, fieldName, classes, maxLength } = props;
-  const originalFieldValue = user[fieldName];
+  const { user, className, fieldName, classes, maxLength, placeholder } = props;
+  const originalFieldValue = user[fieldName] || "";
 
   const [updating, setUpdating] = useState(false);
   const [fieldValue, setFieldValue] = useState(originalFieldValue);
@@ -119,7 +119,7 @@ const ProfileTextField = withStyles(styles)(function (props) {
       <InputBase
         disabled={updating}
         value={fieldValue}
-        // placeholder="placeholder"
+        placeholder={placeholder}
         className={className}
         inputProps={{ style: { textAlign: "center" }, maxLength: maxLength }}
         onChange={onChange}
@@ -175,7 +175,6 @@ class Profile extends React.Component {
         });
         const base64 = imgSrc.split(",")[1];
         const avatarUrl = await dbFirebase.saveProfileAvatar(base64);
-
         await authFirebase.updateCurrentUser({ photoURL: avatarUrl });
       } catch (e) {
         this.setState({
@@ -228,10 +227,11 @@ class Profile extends React.Component {
             fieldName="displayName"
             className={classes.name}
             maxLength={User.DISPLAY_NAME_MAXLENGTH}
+            placeholder="My name"
           />
 
           <Typography gutterBottom variant="h5">
-            {user.displayName} {user.phoneNumber && ` ph: ${user.phoneNumber}`}
+            {user.phoneNumber && ` ph: ${user.phoneNumber}`}
           </Typography>
           <Typography component="p">{user.email}</Typography>
           <Typography>{user.location}</Typography>

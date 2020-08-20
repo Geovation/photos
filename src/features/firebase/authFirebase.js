@@ -68,10 +68,6 @@ const onAuthStateChanged = (fn) => {
 
       dbFirebase.getUser(user.uid).then((fbUser) => {
         currentUser.isModerator = _.get(fbUser, "isModerator", false);
-        currentUser.displayName = _.get(fbUser, "displayName", currentUser.displayName);
-
-        const avatarUrl = dbFirebase.buildStorageUrl(`users/${user.uid}/avatar.jpg`);
-        currentUser.photoURL = fbUser.hasAvatar ? avatarUrl : currentUser.photoURL;
 
         fn(currentUser);
       });
