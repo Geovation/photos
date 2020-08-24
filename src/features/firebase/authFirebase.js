@@ -30,15 +30,13 @@ const onAuthStateChanged = (fn) => {
       // still to fix it. Sometimes (facebook) the email is null.
       const md5UserEmail = md5(user.email || "");
       const gravatarURL = "https://www.gravatar.com/" + md5UserEmail + ".json";
-      const photoURL =
-        user.photoURL || "https://www.gravatar.com/avatar/" + md5UserEmail;
+      const photoURL = user.photoURL || "https://www.gravatar.com/avatar/" + md5UserEmail;
 
       const emailVerified =
         user.emailVerified ||
         (user.providerData &&
           user.providerData[0] &&
-          user.providerData[0].providerId !==
-            firebase.auth.EmailAuthProvider.PROVIDER_ID);
+          user.providerData[0].providerId !== firebase.auth.EmailAuthProvider.PROVIDER_ID);
 
       currentUser = new User(
         user.uid,
@@ -60,9 +58,7 @@ const onAuthStateChanged = (fn) => {
         currentUser.description = info.aboutMe;
         currentUser.location = info.currentLocation;
         currentUser.profileURL = info.profileUrl;
-        currentUser.displayName = info.name
-          ? info.name.formatted
-          : currentUser.displayName;
+        currentUser.displayName = info.name ? info.name.formatted : currentUser.displayName;
       };
 
       // add a script node to the dom. The browser will run it but we don't know when.
@@ -71,10 +67,8 @@ const onAuthStateChanged = (fn) => {
       document.head.append(script);
 
       dbFirebase.getUser(user.uid).then((fbUser) => {
-        currentUser.isModerator = fbUser ? fbUser.isModerator : false;
+        currentUser.isModerator = _.get(fbUser, "isModerator", false);
 
-        const avatarUrl = dbFirebase.buildStorageUrl(`users/${user.uid}/avatar.jpg`);
-        currentUser.photoURL = fbUser.hasAvatar ? avatarUrl : currentUser.photoURL;
         fn(currentUser);
       });
 
@@ -111,9 +105,7 @@ const sendEmailVerification = () => {
     .then(() => {
       const message = {
         title: "Notification",
-        body:
-          "A verification link has been sent to email account: " +
-          firebase.auth().currentUser.email,
+        body: "A verification link has been sent to email account: " + firebase.auth().currentUser.email,
       };
       return message;
     })
@@ -134,7 +126,7 @@ const reloadUser = async () => {
 const updateCurrentUser = (newInfo) => {
   _.extend(currentUser, newInfo);
   onUserChangeCallBackFn(currentUser);
-}
+};
 
 export default {
   onAuthStateChanged,

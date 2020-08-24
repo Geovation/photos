@@ -1,4 +1,5 @@
 class User {
+  static DISPLAY_NAME_MAXLENGTH = 18;
   constructor(
     id,
     displayName,
