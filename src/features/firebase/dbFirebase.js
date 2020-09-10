@@ -6,6 +6,8 @@ import * as localforage from "localforage";
 import appConfig from "custom/config";
 import { getFirebaseApp, getFCMToken } from "./firebaseInit.js";
 
+import * as axios from "axios";
+
 const firebaseApp = getFirebaseApp();
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
@@ -80,11 +82,8 @@ async function fetchStats() {
 }
 
 async function fetchPhotos() {
-  const photosResponse = await fetch(appConfig.FIREBASE.apiURL + "/photos.json", {
-    mode: "cors",
-  });
-  const photosJson = await photosResponse.json();
-  const photos = photosJson.photos;
+  const photosResponse = await axios.get(appConfig.FIREBASE.apiURL + "/photos.json");
+  const photos = photosResponse.data.photos;
 
   return _.map(photos, (data, id) => extractPhoto(data, id));
 }
