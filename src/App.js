@@ -210,33 +210,34 @@ class App extends Component {
     );
   }
 
-  // Saving means also to update the state which means also tro re display the maop which is very slow.
-  // Wait 100 miliseconds before saving. That allows to enque few changes before actually saving it.
+  // Saving means also to update the state which with the current implementation also means to re display the map which is very slow.
+  // As a workaround, It won't update the state more than once very 10 seconds.
   delayedSaveGeojson = () => {
-    if (this.settingGeojson) {
-      clearTimeout(this.settingGeojson);
-      delete this.settingGeojson;
+    if (!this.settingGeojson) {
+      this.settingGeojson = setTimeout(() => {
+        delete this.settingGeojson;
+
+        let geojson = _.cloneDeep(this.state.geojson);
+
+        if (!geojson) {
+          geojson = {
+            type: "FeatureCollection",
+            features: [],
+          };
+        }
+
+        geojson.features = _.map(this.featuresDict, (f) => f);
+
+        // save only if different
+        if (!_.isEqual(this.state.geojson, geojson)) {
+          this.setState({ geojson });
+          // after the first time, wait for a bit before updating.
+          localforage.setItem("cachedGeoJson", geojson);
+        }
+
+        console.debug("Geo Json updated");
+      }, 10 * 1000);
     }
-
-    this.settingGeojson = setTimeout(() => {
-      let geojson = _.cloneDeep(this.state.geojson);
-
-      if (!geojson) {
-        geojson = {
-          type: "FeatureCollection",
-          features: [],
-        };
-      }
-
-      geojson.features = _.map(this.featuresDict, (f) => f);
-
-      // save only if different
-      if (!_.isEqual(this.state.geojson, geojson)) {
-        this.setState({ geojson });
-        // after the first time, wait for a bit before updating.
-        localforage.setItem("cachedGeoJson", geojson);
-      }
-    }, 100);
   };
 
   modifyFeature = (photo) => {
