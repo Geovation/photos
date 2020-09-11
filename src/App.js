@@ -718,6 +718,8 @@ class App extends Component {
                         {...props}
                         handleClose={history.goBack}
                         label={CustomPage.label}
+                        geojson={this.state.geojson}
+                        config={this.props.config}
                       />
                     )}
                   />

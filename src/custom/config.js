@@ -11,6 +11,7 @@ import DashboardIcon from "@material-ui/icons/Dashboard";
 import HelpIcon from "@material-ui/icons/Help";
 import FeedbackIcon from "@material-ui/icons/Feedback";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
+import AssessmentIcon from "@material-ui/icons/Assessment";
 
 import _ from "lodash";
 
@@ -22,6 +23,7 @@ import MultiFields from "../components/PhotoPage/MultiFields";
 
 import { data } from "./categories";
 import { CUSTOM_STRING } from "./strings.js";
+import ReportsPage from "./components/ReportsPage";
 
 const primaryColor = styles.primary;
 const secondaryColor = styles.secondary;
@@ -155,10 +157,10 @@ export default {
       placeholder: "eg. 1",
       regexValidation: "^[0-9]+",
     },
-    multicategories: {
+    categories: {
       component: MultiFields.MultiFieldsWithStyles,
       nakedComponent: MultiFields.MultiFieldsOriginal,
-      name: "multicategories",
+      name: "categories",
       placeholder: "Add photo categories",
       data: data,
       noOptionsMessage: "No more categories",
@@ -193,7 +195,15 @@ export default {
     },
   },
   PAGES,
-  CUSTOM_PAGES: [],
+  CUSTOM_PAGES: [
+    {
+      path: "/reports",
+      page: ReportsPage,
+      label: "Reports",
+      icon: <AssessmentIcon />,
+      visible: (user, online) => true,
+    },
+  ],
   getStats,
   SECURITY: {
     UPLOAD_REQUIRES_LOGIN: true,
