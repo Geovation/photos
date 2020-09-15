@@ -190,83 +190,82 @@ class Map extends Component {
   }
 
   addFeaturesToMap = (geojson) => {
-    if (this.map.getLayer("clusters")) this.map.removeLayer("clusters");
-    if (this.map.getLayer("cluster-count"))
-      this.map.removeLayer("cluster-count");
-    if (this.map.getLayer("unclustered-point"))
-      this.map.removeLayer("unclustered-point");
-    if (this.map.getSource("data")) this.map.removeSource("data");
+    const dataSource = this.map.getSource("data");
 
-    this.map.addSource("data", {
-      type: "geojson",
-      data: geojson,
-      cluster: true,
-      clusterMaxZoom: 14, // Max zoom to cluster points on
-      clusterRadius: 48, // Radius of each cluster when clustering points (defaults to 50)
-    });
+    if (dataSource) {
+      dataSource.setData(geojson);
+    } else {
+      this.map.addSource("data", {
+        type: "geojson",
+        data: geojson,
+        cluster: true,
+        clusterMaxZoom: 14, // Max zoom to cluster points on
+        clusterRadius: 48, // Radius of each cluster when clustering points (defaults to 50)
+      });
 
-    this.map.addLayer({
-      id: "clusters",
-      type: "circle",
-      source: "data",
-      filter: ["has", "point_count"],
-      paint: {
-        // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
-        // with six steps to implement six types of circles:
-        "circle-color": [
-          "step",
-          ["get", "point_count"],
-          "#89b685",
-          50,
-          "#E8DB52",
-          100,
-          "#FEB460",
-          300,
-          "#FF928B",
-          1000,
-          "#E084B4",
-          5000,
-          "#8097BF",
-        ],
-        "circle-radius": [
-          "step",
-          ["get", "point_count"],
-          17,
-          50,
-          18,
-          100,
-          19,
-          300,
-          20,
-          1000,
-          21,
-          5000,
-          22,
-        ],
-      },
-    });
+      this.map.addLayer({
+        id: "clusters",
+        type: "circle",
+        source: "data",
+        filter: ["has", "point_count"],
+        paint: {
+          // Use step expressions (https://www.mapbox.com/mapbox-gl-js/style-spec/#expressions-step)
+          // with six steps to implement six types of circles:
+          "circle-color": [
+            "step",
+            ["get", "point_count"],
+            "#89b685",
+            50,
+            "#E8DB52",
+            100,
+            "#FEB460",
+            300,
+            "#FF928B",
+            1000,
+            "#E084B4",
+            5000,
+            "#8097BF",
+          ],
+          "circle-radius": [
+            "step",
+            ["get", "point_count"],
+            17,
+            50,
+            18,
+            100,
+            19,
+            300,
+            20,
+            1000,
+            21,
+            5000,
+            22,
+          ],
+        },
+      });
 
-    this.map.addLayer({
-      id: "cluster-count",
-      type: "symbol",
-      source: "data",
-      filter: ["has", "point_count"],
-      layout: {
-        "text-field": "{point_count_abbreviated}",
-        "text-font": ["Source Sans Pro Bold"],
-        "text-size": 15,
-      },
-    });
+      this.map.addLayer({
+        id: "cluster-count",
+        type: "symbol",
+        source: "data",
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": "{point_count_abbreviated}",
+          "text-font": ["Source Sans Pro Bold"],
+          "text-size": 15,
+        },
+      });
 
-    this.map.addLayer({
-      id: "unclustered-point",
-      type: "circle",
-      source: "data",
-      filter: ["!", ["has", "point_count"]],
-      paint: {
-        "circle-radius": 0,
-      },
-    });
+      this.map.addLayer({
+        id: "unclustered-point",
+        type: "circle",
+        source: "data",
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+          "circle-radius": 0,
+        },
+      });
+    }
   };
 
   callLocationChangeHandler = () => {
