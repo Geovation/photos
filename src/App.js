@@ -288,7 +288,7 @@ class App extends Component {
 
       gtagPageView(this.props.location.pathname);
 
-      dbFirebase.photosRT(
+      this.unregisterPublishedPhotosRT = dbFirebase.publishedPhotosRT(
         this.addFeature,
         this.modifyFeature,
         this.removeFeature,
@@ -319,14 +319,35 @@ class App extends Component {
       .catch(console.error);
   }
 
-  fetchPhotos() {
+  fetchPhotos(fromAPI = true) {
     dbFirebase
-      .fetchPhotos()
-      .then((photos) => {
+      .fetchPhotos(fromAPI)
+      .then(async (photos) => {
+        let lastUpdated = new Date(null);
         _.forEach(photos, (photo) => {
           this.addFeature(photo);
+          if (photo.updated > lastUpdated) {
+            lastUpdated = photo.updated;
+          }
         });
         this.delayedSaveGeojson();
+        // at this point we retrieve ALL the photos and we have the date of the last photo comming from the cache.
+        // So we listen for changes since then
+
+        if (this.unregisterPublishedPhotosRT) {
+          await this.unregisterPublishedPhotosRT();
+        }
+        this.unregisterPublishedPhotosRT = dbFirebase.publishedPhotosRT(
+          this.addFeature,
+          this.modifyFeature,
+          this.removeFeature,
+          (error) => {
+            console.log(error);
+            alert(error);
+            window.location.reload();
+          },
+          lastUpdated
+        );
       })
       .catch(console.error);
   }
@@ -372,6 +393,19 @@ class App extends Component {
         this.props.config.MODERATING_PHOTOS,
         (photo) => this.updatePhotoToModerate(photo),
         (photo) => this.removePhotoToModerate(photo)
+      );
+    }
+    // if there is a user
+    if (this.state.user && !this.unregisterOwnPhotos) {
+      this.unregisterOwnPhotos = dbFirebase.ownPhotosRT(
+        this.addFeature,
+        this.modifyFeature,
+        this.removeFeature,
+        (error) => {
+          console.log(error);
+          alert(error);
+          window.location.reload();
+        }
       );
     }
   }
@@ -566,20 +600,7 @@ class App extends Component {
       if (_.get(selectedFeature, "properties.id") === photo.id) {
         selectedFeature.properties.published = isApproved;
         this.setState({ selectedFeature });
-
-        // const updatedFeatures = this.state.geojson.features.filter(feature => feature.properties.id !== photo.id);
-        // const geojson = {
-        //   "type": "FeatureCollection",
-        //   "features": updatedFeatures
-        // };
-        // // update localStorage
-        // localforage.setItem("cachedGeoJson", geojson);
-        //
-        // // remove thumbnail from the map
-        // this.setState({ geojson }); //update state for next updatedFeatures
       }
-
-      // alert(`Photo with ID ${photo.id} ${isApproved ? 'published' : 'unpublished'}`)
     } catch (e) {
       console.error(e);
 
@@ -671,7 +692,7 @@ class App extends Component {
 
     // it will open the "loading photos" message
     this.setState({ geojson: null });
-    this.fetchPhotos();
+    this.fetchPhotos(false);
   };
 
   // from the own photos from the dict

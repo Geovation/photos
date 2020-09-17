@@ -12,8 +12,6 @@ const firebaseApp = getFirebaseApp();
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
 
-// TODO: add caching
-
 function extractPhoto(data, id) {
   // some data from Firebase cannot be stringified into json, so we need to convert it into other format first.
   const photo = _.mapValues(data, (fieldValue, fieldKey, doc) => {
@@ -29,10 +27,14 @@ function extractPhoto(data, id) {
   photo.id = id;
 
   photo.updated =
-    photo.updated instanceof firebase.firestore.Timestamp ? photo.updated.toDate() : new Date(photo.updated);
+    photo.updated instanceof firebase.firestore.Timestamp
+      ? photo.updated.toDate()
+      : new Date(photo.updated);
 
   photo.moderated =
-    photo.moderated instanceof firebase.firestore.Timestamp ? photo.moderated.toDate() : new Date(photo.moderated);
+    photo.moderated instanceof firebase.firestore.Timestamp
+      ? photo.moderated.toDate()
+      : new Date(photo.moderated);
 
   if (!(photo.location instanceof firebase.firestore.GeoPoint)) {
     // when comming from json, it looses the type
@@ -45,21 +47,40 @@ function extractPhoto(data, id) {
   return photo;
 }
 
-function photosRT(addedFn, modifiedFn, removedFn, errorFn) {
-  const photosRef = firestore.collection("photos");
-
-  let publishedRef = photosRef.orderBy("moderated", "desc").limit(100).where("published", "==", true);
-
-  // get also the photos that belong to the current user even if not published yet.
-
-  if (firebase.auth().currentUser) {
-    const userId = firebase.auth().currentUser.uid;
-
-    photosFromRefRT(photosRef.where("owner_id", "==", userId), addedFn, removedFn, addedFn, errorFn);
+/**
+ * Get the last photos in real time from the given date. If fromDate is not given, then it get the newest 100 photos.
+ *
+ * @param {*} addedFn
+ * @param {*} modifiedFn
+ * @param {*} removedFn
+ * @param {*} errorFn
+ * @param {*} fromDate
+ */
+function publishedPhotosRT(addedFn, modifiedFn, removedFn, errorFn, fromDate) {
+  const publishedPhotosRef = firestore
+    .collection("photos")
+    .orderBy("moderated", "desc")
+    .where("published", "==", true);
+  let newPublishedRef;
+  if (fromDate) {
+    newPublishedRef = publishedPhotosRef.where(
+      "moderated",
+      ">",
+      firebase.firestore.Timestamp.fromDate(fromDate)
+    );
+  } else {
+    // to date defined. Get le latest 100 so the map will not be empoty.
+    newPublishedRef = publishedPhotosRef.limit(100);
   }
 
   // any published photo
-  photosFromRefRT(publishedRef, addedFn, removedFn, addedFn, errorFn);
+  return photosFromRefRT(
+    newPublishedRef,
+    addedFn,
+    modifiedFn,
+    removedFn,
+    errorFn
+  );
 }
 
 const configObserver = (onNext, onError) => {
@@ -81,11 +102,41 @@ async function fetchStats() {
   }).then((response) => response.json());
 }
 
-async function fetchPhotos() {
-  const photosResponse = await axios.get(appConfig.FIREBASE.apiURL + "/photos.json");
-  const photos = photosResponse.data.photos;
+/**
+ * Open reload all the photos using the REST API. In this way it will laverage CDN caching saving firestore quota.
+ *
+ * @param {*} fromAPI if true it will get it from the API which is very usefull for caching.
+ */
+async function fetchPhotos(fromAPI = true) {
+  let photos = {};
+  if (fromAPI) {
+    const photosResponse = await axios.get(
+      appConfig.FIREBASE.apiURL + "/photos.json"
+    );
+    photos = photosResponse.data.photos;
+  } else {
+    // Without caching:
+    const querySnapshot = await firestore
+      .collection("photos")
+      .where("published", "==", true)
+      .get();
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      photos[doc.id] = convertFirebaseTimestampFieldsIntoDate(doc.data());
+    });
+  }
 
   return _.map(photos, (data, id) => extractPhoto(data, id));
+}
+
+function convertFirebaseTimestampFieldsIntoDate(photo) {
+  const newPhoto = _.cloneDeep(photo);
+  _.forEach(newPhoto, (value, field) => {
+    if (value.toDate) {
+      newPhoto[field] = value.toDate();
+    }
+  });
+  return newPhoto;
 }
 
 function fetchFeedbacks(isShowAll) {
@@ -100,11 +151,16 @@ function fetchFeedbacks(isShowAll) {
         return { ...doc.data(), id: doc.id };
       })
     )
-    .then((feedbacks) => feedbacks.filter((feedback) => !feedback.resolved || isShowAll));
+    .then((feedbacks) =>
+      feedbacks.filter((feedback) => !feedback.resolved || isShowAll)
+    );
 }
 
 function saveMetadata(data) {
-  data.location = new firebase.firestore.GeoPoint(Number(data.latitude) || 0, Number(data.longitude) || 0);
+  data.location = new firebase.firestore.GeoPoint(
+    Number(data.latitude) || 0,
+    Number(data.longitude) || 0
+  );
   delete data.latitude;
   delete data.longitude;
 
@@ -127,7 +183,10 @@ function saveMetadata(data) {
  * @returns {firebase.storage.UploadTask}
  */
 function savePhoto(id, base64) {
-  const originalJpgRef = storageRef.child("photos").child(id).child("original.jpg");
+  const originalJpgRef = storageRef
+    .child("photos")
+    .child(id)
+    .child("original.jpg");
   return originalJpgRef.putString(base64, "base64", {
     contentType: "image/jpeg",
   });
@@ -135,7 +194,10 @@ function savePhoto(id, base64) {
 
 async function saveProfileAvatar(base64) {
   const user = firebase.auth().currentUser;
-  const originalJpgRef = storageRef.child("users").child(user.uid).child("avatar.jpg");
+  const originalJpgRef = storageRef
+    .child("users")
+    .child(user.uid)
+    .child("avatar.jpg");
 
   const uploadTask = await originalJpgRef.putString(base64, "base64", {
     contentType: "image/jpeg",
@@ -147,7 +209,6 @@ async function saveProfileAvatar(base64) {
 
 /**
  * // TODO: move it to authFirebase ???
- * // TODO: dissable cache
  * It store the user profile in firebase if possible. Otherwise in firestore.
  *
  * @param {*} fields an object with the fields and values to be updated
@@ -162,7 +223,10 @@ async function updateProfile(fields) {
 
   // those not supported will be saved in firestore
   const fieldsNotSupported = _.omit(fields, supportedFields);
-  const updatingFirestore = firestore.collection("users").doc(user.uid).set(fieldsNotSupported, { merge: true });
+  const updatingFirestore = firestore
+    .collection("users")
+    .doc(user.uid)
+    .set(fieldsNotSupported, { merge: true });
 
   return await Promise.all([updatingFirestore, updatingProfile]);
 }
@@ -211,17 +275,32 @@ async function getPhotoByID(id) {
  * @param photos object to keep up to date
  * @returns {() => void}
  */
-function photosToModerateRT(howMany, updatePhotoToModerate, removePhotoToModerate) {
+function photosToModerateRT(
+  howMany,
+  updatePhotoToModerate,
+  removePhotoToModerate
+) {
   const photosRef = firestore
     .collection("photos")
     .where("moderated", "==", null)
     .orderBy("updated", "desc")
     .limit(howMany);
 
-  return photosFromRefRT(photosRef, updatePhotoToModerate, removePhotoToModerate);
+  return photosFromRefRT(
+    photosRef,
+    updatePhotoToModerate,
+    updatePhotoToModerate,
+    removePhotoToModerate
+  );
 }
 
-function photosFromRefRT(photosRef, onUpdate, onRemove, onAdd, onError) {
+function photosFromRefRT(
+  photosRef,
+  onAdd,
+  onUpdate,
+  onRemove,
+  onError = console.error
+) {
   return photosRef.onSnapshot(
     (snapshot) => {
       snapshot.docChanges().forEach((change) => {
@@ -242,12 +321,23 @@ function photosFromRefRT(photosRef, onUpdate, onRemove, onAdd, onError) {
   );
 }
 
-function ownPhotosRT(updatePhotoToModerate, removePhotoToModerate) {
+function ownPhotosRT(addedFn, modifiedFn, removedFn, errorFn) {
   if (firebase.auth().currentUser) {
-    const photosRef = firestore.collection("photos").where("owner_id", "==", firebase.auth().currentUser.uid);
+    // get also the photos that belong to the current user even if not published yet.
+    const photosRef = firestore.collection("photos");
+    const userId = firebase.auth().currentUser.uid;
+    const ownPhotosRef = photosRef.where("owner_id", "==", userId);
 
-    return photosFromRefRT(photosRef, updatePhotoToModerate, removePhotoToModerate);
+    return photosFromRefRT(
+      ownPhotosRef,
+      addedFn,
+      modifiedFn,
+      removedFn,
+      errorFn
+    );
   }
+
+  // if the user is not legged in, then return an emtpy function
   return () => {};
 }
 
@@ -285,7 +375,10 @@ async function writeFeedback(data) {
   }
   data.updated = firebase.firestore.FieldValue.serverTimestamp();
   if (data.latitude && data.longitude) {
-    data.location = new firebase.firestore.GeoPoint(Number(data.latitude) || 0, Number(data.longitude) || 0);
+    data.location = new firebase.firestore.GeoPoint(
+      Number(data.latitude) || 0,
+      Number(data.longitude) || 0
+    );
   }
 
   delete data.latitude;
@@ -310,7 +403,7 @@ function buildStorageUrl(path) {
 
 export default {
   onConnectionStateChanged,
-  photosRT,
+  publishedPhotosRT,
   fetchStats,
   fetchFeedbacks,
   fetchPhotos,
