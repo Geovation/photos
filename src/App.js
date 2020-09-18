@@ -287,23 +287,13 @@ class App extends Component {
       });
 
       gtagPageView(this.props.location.pathname);
-
-      this.unregisterPublishedPhotosRT = dbFirebase.publishedPhotosRT(
-        this.addFeature,
-        this.modifyFeature,
-        this.removeFeature,
-        (error) => {
-          console.log(error);
-          alert(error);
-          window.location.reload();
-        }
-      );
     });
 
     // use the locals one if we have them: faster boot.
     localforage
       .getItem("cachedGeoJson")
       .then((geojson) => {
+        debugger;
         if (geojson) {
           this.geojson = geojson;
           const stats = this.props.config.getStats(geojson, this.state.dbStats);
@@ -312,7 +302,27 @@ class App extends Component {
             acc[feature.properties.id] = feature;
             return acc;
           }, {});
+
+          // listen for changes since the last photo in the cache.
+          const latestPhoto = _.maxBy(geojson.features, (photo) => {
+            return photo.properties.updated;
+          });
+
+          const lastUpdated = _.get(latestPhoto, "properties.updated");
+          this.unregisterPublishedPhotosRT = dbFirebase.publishedPhotosRT(
+            this.addFeature,
+            this.modifyFeature,
+            this.removeFeature,
+            (error) => {
+              console.log(error);
+              alert(error);
+              window.location.reload();
+            },
+            lastUpdated
+          );
         } else {
+          // ??? TODO ????: fetch at least 100 photos, just to show something in the map.... otherwise it will show "LOADING PHOTOS"
+          // ...
           this.fetchPhotos();
         }
       })
