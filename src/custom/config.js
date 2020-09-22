@@ -105,9 +105,10 @@ const PAGES = {
   },
 };
 
-const getStats = (geojson, dbStats) => {
-  return (dbStats && dbStats.published) || 0;
-};
+const getStats = (geojson, dbStats) =>
+  _.countBy(_.get(geojson, "features"), (f) => {
+    return f.properties.published;
+  }).true || 0;
 
 const STATIC_CONFIG =
   process.env.NODE_ENV === "production"

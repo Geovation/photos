@@ -293,7 +293,6 @@ class App extends Component {
     localforage
       .getItem("cachedGeoJson")
       .then((geojson) => {
-        debugger;
         if (geojson) {
           this.geojson = geojson;
           const stats = this.props.config.getStats(geojson, this.state.dbStats);
