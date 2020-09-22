@@ -37,7 +37,7 @@
   "homepage": "./",
   "devDependencies": {
     "coveralls": "latest",
-    "firebase-admin": "^9.1.1",
+    "firebase-admin": "^9.2.0",
     "firebase-tools": "^8.10.0",
     "first-input-delay": "latest",
     "http-server": "latest",
@@ -46,7 +46,7 @@
     "ncp": "latest",
     "node-sass": "latest",
     "precise-commits": "latest",
-    "prettier": "^2.1.1",
+    "prettier": "^2.1.2",
     "random-location": "latest",
     "react-scripts": "3.4.3",
     "rimraf": "latest",

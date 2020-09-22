@@ -231,7 +231,7 @@ app.get("/photos.json", async (req, res) => {
 function convertFirebaseTimestampFieldsIntoDate(photo) {
   const newPhoto = _.cloneDeep(photo);
   _.forEach(newPhoto, (value, field) => {
-    if (_.get(value, "constructor.name") === "Timestamp") {
+    if (value.toDate) {
       newPhoto[field] = value.toDate();
     }
   });
@@ -419,7 +419,7 @@ async function hostMetadata(req, res) {
       ? photo.data()[config.metadata.twDescriptionField]
       : config.metadata.twDescription;
     const TW_TITLE = config.metadata.twTitle;
-    
+
     const PHOTO_PATH = encodeURIComponent(`photos/${photoId}/1024.jpg`);
     const TW_IMAGE = `${config.FIREBASE.storageApiURL}/b/${BUCKET}/o/${PHOTO_PATH}?alt=media`;
     const TW_IMAGE_ALT = TW_DESCRIPTION;
