@@ -10,20 +10,20 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "@google-cloud/pubsub": "^2.1.0",
+    "@google-cloud/pubsub": "^2.5.0",
     "cors": "latest",
     "express": "latest",
     "firebase-admin": "latest",
-    "firebase-functions": "latest",
+    "firebase-functions": "^3.11.0",
     "gm": "latest",
     "json2csv": "latest",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "mkdirp": "^1.0.4"
   },
   "devDependencies": {
-    "eslint": "^7.3.1",
+    "eslint": "^7.9.0",
     "eslint-plugin-promise": "latest",
-    "firebase-functions-test": "latest"
+    "firebase-functions-test": "^0.2.2"
   },
   "engines": {
     "node": "10"
