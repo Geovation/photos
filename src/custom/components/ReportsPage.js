@@ -204,7 +204,7 @@ class Reports extends Component {
   }
 
   render() {
-    const { classes, label, handleClose } = this.props;
+    const { label, handleClose } = this.props;
 
     return (
       <PageWrapper label={label} handleClose={handleClose} hasLogo={false}>

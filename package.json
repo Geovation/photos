@@ -39,7 +39,7 @@
     "coveralls": "latest",
     "firebase-admin": "^9.3.0",
     "firebase-tools": "^8.14.1",
-    "first-input-delay": "latest",
+    "first-input-delay": "^0.1.3",
     "http-server": "latest",
     "husky": "^4.3.0",
     "jimp": "^0.16.1",
