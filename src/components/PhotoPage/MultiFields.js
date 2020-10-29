@@ -206,7 +206,9 @@ class MultiFields extends React.Component {
   }
 }
 
-export default {
+const rtn = {
   MultiFieldsWithStyles: withStyles(styles, { withTheme: true })(MultiFields),
   MultiFieldsOriginal: MultiFields,
 };
+ 
+export default rtn;

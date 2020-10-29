@@ -128,10 +128,12 @@ const updateCurrentUser = (newInfo) => {
   onUserChangeCallBackFn(currentUser);
 };
 
-export default {
+const rtn = {
   onAuthStateChanged,
   signOut,
   sendEmailVerification,
   reloadUser,
   updateCurrentUser,
 };
+
+export default rtn;

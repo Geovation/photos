@@ -127,9 +127,10 @@ export function customiseString(page, key) {
   return _.get(config.CUSTOM_STRING, `${page}["${key}"]`, key);
 }
 
-export default {
+const rtn = {
   customiseString,
 };
+export default rtn;
 
 export const sortArrayByObjectKey = (array, keyName) => {
   return array.sort((a, b) => {

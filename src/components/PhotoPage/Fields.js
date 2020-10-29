@@ -48,6 +48,7 @@ class Fields extends Component {
               marginLeft: this.props.theme.spacing(1.5),
             }}
           >
+            {/* eslint-disable-next-line react/jsx-pascal-case */}
             <FirstField.component
               key={0}
               field={FirstField}

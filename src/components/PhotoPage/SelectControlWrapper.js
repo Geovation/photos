@@ -3,7 +3,6 @@ import SelectControlSingleValue from "./SelectControlSingleValue";
 
 class SelectControlWrapper extends Component {
   handleChangeSelect = (value) => {
-    const name = this.props.field.name;
     this.props.handleChange(value, false);
   };
 

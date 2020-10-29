@@ -14,6 +14,8 @@ import { gtagInit } from "./gtag.js";
 import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
 
+import reportWebVitals from './reportWebVitals';
+
 serviceWorker.register();
 
 if (isIphoneAndCordova) {
@@ -56,3 +58,8 @@ if (!window.cordova) {
 } else {
   document.addEventListener("deviceready", startApp, false);
 }
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();

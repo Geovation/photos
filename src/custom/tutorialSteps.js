@@ -6,7 +6,7 @@ import CloudUpload from "@material-ui/icons/CloudUpload";
 
 import utils from "utils";
 
-export default [
+const rtn = [
   {
     topImg: <CameraAlt />,
     title: "Step 1",
@@ -32,3 +32,5 @@ export default [
     ),
   },
 ];
+
+export default rtn;

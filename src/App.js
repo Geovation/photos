@@ -744,6 +744,7 @@ class App extends Component {
                     key={index}
                     path={CustomPage.path}
                     render={(props) => (
+                      // eslint-disable-next-line react/jsx-pascal-case
                       <CustomPage.page
                         {...props}
                         handleClose={history.goBack}
