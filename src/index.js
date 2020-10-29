@@ -14,7 +14,7 @@ import { gtagInit } from "./gtag.js";
 import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
 
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from "./reportWebVitals";
 
 serviceWorker.register();
 

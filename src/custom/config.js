@@ -15,7 +15,7 @@ import AssessmentIcon from "@material-ui/icons/Assessment";
 
 import _ from "lodash";
 
-import styles from "./config.module.scss"
+import styles from "./config.module.scss";
 import enums from "../types/enums";
 
 import TitleTextField from "../components/PhotoPage/TitleTextField";

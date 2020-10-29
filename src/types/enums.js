@@ -1,5 +1,5 @@
 const rtn = {
-  TYPES: { string: "string", number: "number" }
+  TYPES: { string: "string", number: "number" },
 };
 
 export default rtn;
