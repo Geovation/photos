@@ -8,20 +8,26 @@ import "firebase/messaging";
 // import 'firebase/functions';
 import "firebase/storage";
 import "firebase/analytics";
+import "firebase/performance";
 
 import config from "custom/config";
 
 let firebaseApp;
 let fcmToken;
+let perf;
 
 let _callBackFunctionFCMTokenChange;
 
 function firebaseInit(callBackFunctionFCMTokenChange) {
   // Initialize Firebase
   if (!firebaseApp) {
+    console.debug(config.FIREBASE.config);
     firebaseApp = !firebase.apps.length
       ? firebase.initializeApp(config.FIREBASE.config)
       : firebase.app();
+    
+    perf = firebase.performance();
+    console.debug(perf);
 
     _callBackFunctionFCMTokenChange = (token) => {
       fcmToken = token;
