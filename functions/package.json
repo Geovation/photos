@@ -17,7 +17,7 @@
     "firebase-functions": "^3.11.0",
     "gm": "latest",
     "json2csv": "latest",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "mkdirp": "^1.0.4"
   },
   "devDependencies": {
