@@ -15,7 +15,6 @@ import { withStyles } from "@material-ui/core/styles";
 import config from "../custom/config";
 import utils from "../utils";
 import "./DrawerContainer.scss";
-import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from "../utils";
 
 const placeholderImage =
   process.env.PUBLIC_URL + "/images/geovation-banner.svg";
@@ -89,11 +88,7 @@ class DrawerContainer extends Component {
       >
         <div
           style={{
-            paddingTop: isIphoneWithNotchAndCordova()
-              ? "env(safe-area-inset-top)"
-              : isIphoneAndCordova
-              ? this.props.theme.spacing(1.5)
-              : null,
+            paddingTop: null,
           }}
         />
         {user && (

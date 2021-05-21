@@ -16,8 +16,6 @@ import { withStyles } from "@material-ui/core/styles";
 
 import { authFirebase } from "features/firebase";
 
-import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from "../utils";
-
 const styles = (theme) => ({
   typography: {
     ...theme.mixins.gutters(),
@@ -39,16 +37,10 @@ const styles = (theme) => ({
     margin: theme.spacing(1.5),
   },
   notchTop: {
-    paddingTop: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-top)"
-      : isIphoneAndCordova
-      ? theme.spacing(1.5)
-      : null,
+    paddingTop: null,
   },
   notchBottom: {
-    paddingBottom: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-bottom)"
-      : 0,
+    paddingBottom: 0,
   },
 });
 

@@ -12,7 +12,6 @@ import Dehaze from "@material-ui/icons/Dehaze";
 import { withStyles } from "@material-ui/core/styles";
 
 import { gtagEvent } from "../../gtag.js";
-import { isIphoneWithNotchAndCordova } from "../../utils";
 import "./Map.scss";
 import MapLocation from "../../types/MapLocation";
 
@@ -21,9 +20,7 @@ const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 const styles = (theme) => ({
   location: {
     position: "absolute",
-    top: isIphoneWithNotchAndCordova()
-      ? `calc(env(safe-area-inset-top) + ${theme.spacing(0.1)}px)`
-      : theme.spacing(2),
+    top: theme.spacing(2),
     right: theme.spacing(2),
   },
   expansionDetails: {
@@ -43,9 +40,7 @@ const styles = (theme) => ({
   },
   burger: {
     position: "absolute",
-    top: isIphoneWithNotchAndCordova()
-      ? `calc(env(safe-area-inset-top) + ${theme.spacing(1)}px)`
-      : theme.spacing(3),
+    top: theme.spacing(3),
     left: theme.spacing(2),
     margin: -theme.spacing(2),
     padding: theme.spacing(2),

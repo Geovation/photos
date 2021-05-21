@@ -64,7 +64,6 @@ typings/
 build
 serviceAccountKey.json
 scripts/tmp.jpg
-cordova-app/www
 
 .DS_Store
 

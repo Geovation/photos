@@ -23,7 +23,6 @@ import SwipeTutorialPage from "./components/common/SwipeTutorialPage";
 import PhotoPage from "./components/PhotoPage";
 import ProfilePage from "./components/ProfilePage";
 import Map from "./components/MapPage/Map";
-import CustomPhotoDialog from "./components/CustomPhotoDialog";
 import ModeratorPage from "./components/ModeratorPage";
 import OwnPhotosPage from "./components/OwnPhotosPage";
 import LoginFirebase from "./components/LoginFirebase";
@@ -71,7 +70,6 @@ class App extends Component {
       geojson: null,
       stats: null,
       srcType: null,
-      cordovaMetadata: {},
       dialogOpen: false,
       confirmDialogOpen: false,
       usersLeaderboard: [],
@@ -473,51 +471,14 @@ class App extends Component {
           "Before adding photos, you must be logged into your account.",
       });
     } else {
-      if (window.cordova) {
-        console.log("Opening cordova dialog");
-        this.setState({ openPhotoDialog: true });
-      } else {
-        console.log("Clicking on photo");
-        this.domRefInput.current.click();
-      }
+      console.log("Clicking on photo");
+      this.domRefInput.current.click();
     }
   };
 
   openFile = (e) => {
     if (e.target.files[0]) {
       this.openPhotoPage(e.target.files[0]);
-    }
-  };
-
-  handlePhotoDialogClose = (dialogSelectedValue) => {
-    this.setState({ openPhotoDialog: false });
-    if (dialogSelectedValue) {
-      const Camera = navigator.camera;
-      const srcType =
-        dialogSelectedValue === "CAMERA"
-          ? Camera.PictureSourceType.CAMERA
-          : Camera.PictureSourceType.PHOTOLIBRARY;
-
-      this.setState({
-        srcType: dialogSelectedValue === "CAMERA" ? "camera" : "filesystem",
-      });
-      Camera.getPicture(
-        (imageUri) => {
-          const file = JSON.parse(imageUri);
-          const cordovaMetadata = JSON.parse(file.json_metadata);
-          this.setState({ cordovaMetadata });
-          this.openPhotoPage(file.filename);
-        },
-        (message) => {
-          console.log("Failed because: ", message);
-        },
-        {
-          quality: 50,
-          destinationType: Camera.DestinationType.FILE_URI,
-          sourceType: srcType,
-          correctOrientation: true,
-        }
-      );
     }
   };
 
@@ -870,7 +831,6 @@ class App extends Component {
                   gpsLocation={this.state.location}
                   online={this.state.online}
                   srcType={this.state.srcType}
-                  cordovaMetadata={this.state.cordovaMetadata}
                   fields={fields}
                   handleClose={history.goBack}
                   handleRetakeClick={this.handleCameraClick}
@@ -977,23 +937,17 @@ class App extends Component {
           message="Connecting to our servers..."
         />
 
-        {window.cordova ? (
-          <CustomPhotoDialog
-            open={this.state.openPhotoDialog}
-            onClose={this.handlePhotoDialogClose}
+        <RootRef rootRef={this.domRefInput}>
+          <input
+            className="hidden"
+            type="file"
+            accept="image/*"
+            id={"fileInput"}
+            onChange={this.openFile}
+            onClick={(e) => (e.target.value = null)}
           />
-        ) : (
-          <RootRef rootRef={this.domRefInput}>
-            <input
-              className="hidden"
-              type="file"
-              accept="image/*"
-              id={"fileInput"}
-              onChange={this.openFile}
-              onClick={(e) => (e.target.value = null)}
-            />
-          </RootRef>
-        )}
+        </RootRef>
+        
 
         <Login
           open={this.state.loginLogoutDialogOpen && !this.state.user}

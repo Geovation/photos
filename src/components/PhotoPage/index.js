@@ -15,7 +15,6 @@ import config from "../../custom/config";
 import { gtagEvent } from "../../gtag.js";
 import "./style.scss";
 import dbFirebase from "../../features/firebase/dbFirebase";
-import { isIphoneWithNotchAndCordova, device } from "../../utils";
 
 import PageWrapper from "../PageWrapper";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -65,12 +64,10 @@ const styles = (theme) => ({
     color: theme.palette.secondary.main,
   },
   notchTop: {
-    paddingTop: isIphoneWithNotchAndCordova() ? "env(safe-area-inset-top)" : 0,
+    paddingTop: 0,
   },
   notchBottom: {
-    paddingBottom: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-bottom)"
-      : 0,
+    paddingBottom: 0,
   },
   fields: {
     margin: theme.spacing(1.5),
@@ -117,37 +114,16 @@ class PhotoPage extends Component {
   getLocationFromExifMetadata = (imgExif) => {
     let location, latitude, longitude;
     try {
-      if (!window.cordova) {
-        // https://www.npmjs.com/package/dms2dec
-        const GPSInfo = imgExif.GPSInfo;
-        const lat = GPSInfo.GPSLatitude.split(",").map(Number);
-        const latRef = GPSInfo.GPSLatitudeRef;
-        const lon = GPSInfo.GPSLongitude.split(",").map(Number);
-        const lonRef = GPSInfo.GPSLongitudeRef;
+      // https://www.npmjs.com/package/dms2dec
+      const GPSInfo = imgExif.GPSInfo;
+      const lat = GPSInfo.GPSLatitude.split(",").map(Number);
+      const latRef = GPSInfo.GPSLatitudeRef;
+      const lon = GPSInfo.GPSLongitude.split(",").map(Number);
+      const lonRef = GPSInfo.GPSLongitudeRef;
 
-        const latLon = dms2dec(lat, latRef, lon, lonRef);
-        latitude = latLon[0];
-        longitude = latLon[1];
-      } else {
-        if (device() === "iOS") {
-          const iosGPSMetadata = this.props.cordovaMetadata.GPS;
-          const latRef = iosGPSMetadata.LatitudeRef;
-          const lonRef = iosGPSMetadata.LongitudeRef;
-          latitude = iosGPSMetadata.Latitude;
-          longitude = iosGPSMetadata.Longitude;
-          latitude = latRef === "N" ? latitude : -latitude;
-          longitude = lonRef === "E" ? longitude : -longitude;
-        } else if (device() === "Android") {
-          const androidMetadata = this.props.cordovaMetadata;
-          const lat = androidMetadata.gpsLatitude;
-          const latRef = androidMetadata.gpsLatitudeRef;
-          const lon = androidMetadata.gpsLongitude;
-          const lonRef = androidMetadata.gpsLongitudeRef;
-          const latLon = dms2dec(lat, latRef, lon, lonRef);
-          latitude = latLon[0];
-          longitude = latLon[1];
-        }
-      }
+      const latLon = dms2dec(lat, latRef, lon, lonRef);
+      latitude = latLon[0];
+      longitude = latLon[1];
       location = { latitude, longitude };
     } catch (e) {
       console.debug(`Error extracting GPS from file; ${e}`);
@@ -255,36 +231,29 @@ class PhotoPage extends Component {
     let imgLocation = null;
 
     // https://github.com/blueimp/JavaScript-Load-Image#meta-data-parsing
-    if (!window.cordova) {
-      loadImage.parseMetaData(
-        this.props.file,
-        (data) => {
-          imgExif = data.exif ? data.exif.getAll() : imgExif;
-          imgIptc = data.iptc ? data.iptc.getAll() : imgIptc;
-        },
-        {
-          maxMetaDataSize: 262144,
-          disableImageHead: false,
-        }
-      );
-    }
+    loadImage.parseMetaData(
+      this.props.file,
+      (data) => {
+        imgExif = data.exif ? data.exif.getAll() : imgExif;
+        imgIptc = data.iptc ? data.iptc.getAll() : imgIptc;
+      },
+      {
+        maxMetaDataSize: 262144,
+        disableImageHead: false,
+      }
+    );
+    
 
     loadImage(
       this.props.file,
       (img) => {
         let imgFromCamera;
         const imgSrc = img.toDataURL("image/jpeg");
-        if (window.cordova) {
-          if (this.props.srcType === "camera") {
-            imgFromCamera = true;
-          } else {
-            imgFromCamera = false;
-          }
-        } else {
-          const fileDate = this.props.file.lastModified;
-          const ageInMinutes = (new Date().getTime() - fileDate) / 1000 / 60;
-          imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 0.5;
-        }
+
+        const fileDate = this.props.file.lastModified;
+        const ageInMinutes = (new Date().getTime() - fileDate) / 1000 / 60;
+        imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 0.5;
+        
 
         if (imgFromCamera) {
           imgLocation = this.props.gpsLocation;

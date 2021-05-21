@@ -3,25 +3,12 @@ import firebase from "firebase/app";
 let analytics;
 
 export const gtagInit = () => {
-  if (
-    window.cordova &&
-    window.cordova.plugins &&
-    window.cordova.plugins.firebase
-  ) {
-    analytics = window.cordova.plugins.firebase.analytics;
-    analytics.logEvent("type", {
-      event_category: "Tech",
-      event_label: "mobile",
-      non_interaction: true
-    });
-  } else {
-    analytics = firebase.analytics();
-    analytics.logEvent("type", {
-      event_category: "Tech",
-      event_label: "web",
-      non_interaction: true
-    });
-  }
+  analytics = firebase.analytics();
+  analytics.logEvent("type", {
+    event_category: "Tech",
+    event_label: "web",
+    non_interaction: true
+  });
 
   analytics.setCurrentScreen("/#");
 
