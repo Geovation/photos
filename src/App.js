@@ -947,7 +947,6 @@ class App extends Component {
             onClick={(e) => (e.target.value = null)}
           />
         </RootRef>
-        
 
         <Login
           open={this.state.loginLogoutDialogOpen && !this.state.user}

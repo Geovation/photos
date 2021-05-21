@@ -7,6 +7,8 @@ import { withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import BackIcon from "@material-ui/icons/ArrowBack";
 
+import utils from "../utils";
+
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
 const styles = (theme) => ({

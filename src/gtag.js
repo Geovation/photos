@@ -7,7 +7,7 @@ export const gtagInit = () => {
   analytics.logEvent("type", {
     event_category: "Tech",
     event_label: "web",
-    non_interaction: true
+    non_interaction: true,
   });
 
   analytics.setCurrentScreen("/#");

@@ -6,7 +6,7 @@
   "main": "index.js",
   "public": true,
   "scripts": {
-    "build": "npm run build:react",
+    "build": "yarn build:react",
     "test": "react-scripts test --env=jsdom --forceExit",
     "eject": "react-scripts eject",
     "backup": "./scripts/backup.sh",
@@ -16,7 +16,7 @@
     "geovation-photos-update": "geovation-photos-update",
     "start": "./scripts/runWithVars.sh 'react-scripts start'",
     "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
-    "start:prod": "npm run build:react && http-server build -S -o",
+    "start:prod": "yarn run build:react && http-server build -S -o",
     "deploy": "firestore deploy"
   },
   "repository": {
@@ -41,7 +41,7 @@
     "husky": "^4.3.0",
     "jimp": "^0.16.1",
     "ncp": "latest",
-    "node-sass": "latest",
+    "node-sass": "^4.0",
     "precise-commits": "latest",
     "prettier": "^2.1.2",
     "random-location": "latest",

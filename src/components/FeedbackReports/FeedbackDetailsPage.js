@@ -16,22 +16,22 @@ import { dbFirebase } from "features/firebase";
 
 import config from "../../custom/config";
 
-const styles = theme => ({
+const styles = (theme) => ({
   notchTop: {
-    paddingTop: null
+    paddingTop: null,
   },
   iconButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   main: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   button: {
-    margin: theme.spacing(1.5)
+    margin: theme.spacing(1.5),
   },
   notchBottom: {
-    paddingBottom: 0
-  }
+    paddingBottom: 0,
+  },
 });
 
 const page = config.PAGES.feedbackDetails;
