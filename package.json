@@ -1,13 +1,13 @@
 {
   "name": "geovation-photos",
   "title": "Geovation Photos",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "Simple Reactjs PWA that allows you to upload photos into a map.",
   "main": "index.js",
   "public": true,
   "scripts": {
-    "build": "yarn build:react",
-    "test": "react-scripts test --env=jsdom --forceExit",
+    "build": "npm run build:react",
+    "test": "react-scripts test --env=jsdom --forceExit --watchAll=false",
     "eject": "react-scripts eject",
     "backup": "./scripts/backup.sh",
     "build:react": "./scripts/runWithVars.sh 'react-scripts build'",
@@ -16,7 +16,7 @@
     "geovation-photos-update": "geovation-photos-update",
     "start": "./scripts/runWithVars.sh 'react-scripts start'",
     "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
-    "start:prod": "yarn run build:react && http-server build -S -o",
+    "start:prod": "npm run build:react && http-server build -S -o",
     "deploy": "firestore deploy"
   },
   "repository": {
