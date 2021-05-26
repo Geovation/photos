@@ -2,7 +2,7 @@ import React from "react";
 
 import utils from "utils";
 
-export default [
+const rtn = [
   {
     topImg: <img src={utils.customiseString("welcome", "logo.svg")} alt="" />,
     title: utils.customiseString(
@@ -52,3 +52,5 @@ export default [
     bottomText: utils.customiseString("welcome", "Get started"),
   },
 ];
+
+export default rtn;

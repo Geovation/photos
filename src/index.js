@@ -8,17 +8,14 @@ import "./index.scss";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import config from "./custom/config";
-import { isIphoneAndCordova } from "./utils";
 import { gtagInit } from "./gtag.js";
 
 import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
 
-serviceWorker.register();
+import reportWebVitals from "./reportWebVitals";
 
-if (isIphoneAndCordova) {
-  window.StatusBar.styleDefault();
-}
+serviceWorker.register();
 
 if (
   process.env.NODE_ENV !== "development" &&
@@ -51,8 +48,10 @@ const startApp = () => {
   );
 };
 
-if (!window.cordova) {
-  startApp();
-} else {
-  document.addEventListener("deviceready", startApp, false);
-}
+startApp();
+
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();

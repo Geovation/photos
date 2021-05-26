@@ -23,18 +23,13 @@ import { withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Chip from "@material-ui/core/Chip";
 
-import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from "../../utils";
 import CardComponent from "../CardComponent";
 
 const tweetLogo = process.env.PUBLIC_URL + "/images/twitter.svg";
 
 const styles = (theme) => ({
   notchTop: {
-    paddingTop: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-top)"
-      : isIphoneAndCordova
-      ? theme.spacing(1.5)
-      : null,
+    paddingTop: null,
   },
   iconButton: {
     marginRight: theme.spacing(2),
@@ -46,9 +41,7 @@ const styles = (theme) => ({
     padding: theme.spacing(1.6),
   },
   notchBottom: {
-    paddingBottom: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-bottom)"
-      : 0,
+    paddingBottom: 0,
   },
 });
 

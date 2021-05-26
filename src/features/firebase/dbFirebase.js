@@ -401,7 +401,7 @@ function buildStorageUrl(path) {
   return `${PREFIX}${encodeURIComponent(path)}?alt=media`;
 }
 
-export default {
+const rtn = {
   onConnectionStateChanged,
   publishedPhotosRT,
   fetchStats,
@@ -425,3 +425,5 @@ export default {
   updateUserFCMToken,
   buildStorageUrl,
 };
+
+export default rtn;

@@ -15,7 +15,7 @@ import AssessmentIcon from "@material-ui/icons/Assessment";
 
 import _ from "lodash";
 
-import styles from "./config.scss";
+import styles from "./config.module.scss";
 import enums from "../types/enums";
 
 import TitleTextField from "../components/PhotoPage/TitleTextField";
@@ -115,7 +115,7 @@ const STATIC_CONFIG =
     ? require("./config.prod.json")
     : require("./config.dev.json");
 
-export default {
+const rtn = {
   ...STATIC_CONFIG,
   CUSTOM_STRING,
   MAX_IMAGE_SIZE: 2048,
@@ -225,3 +225,5 @@ export default {
     ENABLE_GRAVATAR_PROFILES: true, //To update user-profile from Gravatar, value: true or false.
   },
 };
+
+export default rtn;

@@ -6,10 +6,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import { withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import BackIcon from "@material-ui/icons/ArrowBack";
-import utils, {
-  isIphoneWithNotchAndCordova,
-  isIphoneAndCordova,
-} from "../utils";
+
+import utils from "../utils";
+
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
 
 const styles = (theme) => ({
@@ -38,16 +37,10 @@ const styles = (theme) => ({
     flexGrow: 1,
   },
   notchTop: {
-    paddingTop: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-top)"
-      : isIphoneAndCordova
-      ? theme.spacing(1.5)
-      : null,
+    paddingTop: null,
   },
   notchBottom: {
-    paddingBottom: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-bottom)"
-      : 0,
+    paddingBottom: 0,
   },
   logo: {
     height: "80px",
@@ -56,27 +49,6 @@ const styles = (theme) => ({
 });
 
 class PageWrapper extends React.Component {
-  changeStatusBarColorToDefault = () => {
-    const palette = this.props.theme.palette;
-    if (isIphoneAndCordova && palette.primary.main === palette.common.black) {
-      window.StatusBar.styleDefault();
-    }
-  };
-
-  changeStatusBarColorToLight = () => {
-    const palette = this.props.theme.palette;
-    if (isIphoneAndCordova && palette.primary.main === palette.common.black) {
-      window.StatusBar.styleLightContent();
-    }
-  };
-
-  componentDidMount() {
-    this.changeStatusBarColorToLight();
-  }
-
-  componentWillUnmount() {
-    this.changeStatusBarColorToDefault();
-  }
 
   render() {
     const {

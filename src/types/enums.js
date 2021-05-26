@@ -1,3 +1,5 @@
-export default {
-  TYPES: { string: "string", number: "number" }
+const rtn = {
+  TYPES: { string: "string", number: "number" },
 };
+
+export default rtn;

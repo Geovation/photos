@@ -14,31 +14,24 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { dbFirebase } from "features/firebase";
 
-import { isIphoneWithNotchAndCordova, isIphoneAndCordova } from "../../utils";
 import config from "../../custom/config";
 
-const styles = theme => ({
+const styles = (theme) => ({
   notchTop: {
-    paddingTop: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-top)"
-      : isIphoneAndCordova
-      ? theme.spacing(1.5)
-      : null
+    paddingTop: null,
   },
   iconButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   main: {
-    marginTop: theme.spacing(2)
+    marginTop: theme.spacing(2),
   },
   button: {
-    margin: theme.spacing(1.5)
+    margin: theme.spacing(1.5),
   },
   notchBottom: {
-    paddingBottom: isIphoneWithNotchAndCordova()
-      ? "env(safe-area-inset-bottom)"
-      : 0
-  }
+    paddingBottom: 0,
+  },
 });
 
 const page = config.PAGES.feedbackDetails;

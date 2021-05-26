@@ -1,17 +1,16 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-
 import { HashRouter } from "react-router-dom";
 import config from "./custom/config";
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
-  ReactDOM.render(
+import { render, screen } from "@testing-library/react";
+import App from "./App";
+
+test.skip("renders without crashing", () => {
+  render(
     <HashRouter>
       <App config={config} />
-    </HashRouter>,
-    div
+    </HashRouter>
   );
-  ReactDOM.unmountComponentAtNode(div);
+  const linkElement = screen.getByText(/learn react/i);
+  console.log(linkElement);
+  // expect(linkElement).toBeInTheDocument();
 });
