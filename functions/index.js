@@ -1,5 +1,3 @@
-"use strict";
-
 const _ = require("lodash");
 const json2csv = require("json2csv");
 // https://firebase.google.com/docs/functions/locations
@@ -35,9 +33,6 @@ admin.initializeApp();
 const firestore = admin.firestore();
 const auth = admin.auth();
 const messaging = admin.messaging();
-
-const settings = { timestampsInSnapshots: true };
-firestore.settings(settings);
 
 const pubsub = new PubSub();
 const app = express();
@@ -292,7 +287,7 @@ app.get("/photos.csv", async (req, res) => {
   res.setHeader("Content-Type", "text/csv");
   res.setHeader(
     "Content-Disposition",
-    'attachment; filename="' + "photos-" + Date.now() + '.csv"'
+    'attachment; filename="photos-' + Date.now() + '.csv"'
   );
   res.status(200).send(csv);
   return true;
