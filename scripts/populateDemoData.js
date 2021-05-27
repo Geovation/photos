@@ -63,13 +63,19 @@ async function addMetaDataSync(id, locationName) {
     location = new admin.firestore.GeoPoint(longLat[1], longLat[0]);
   }
 
+  const lastYear = new Date();
+  lastYear.setMonth(lastYear.getMonth() - 12);
+  const now = new Date();
+  const rndDate = new Date(lastYear.getTime() + Math.random() * (now.getTime() - lastYear.getTime()));
+
   const data = {
-    updated: admin.firestore.FieldValue.serverTimestamp(),
+    updated: rndDate,
     location,
     description: `${id} some text here ${locationName}`,
-    moderated: published ? admin.firestore.FieldValue.serverTimestamp() : null,
+    moderated: published ? rndDate : null,
     published,
     test: true,
+    number: Math.round(Math.random()*10)
   };
 
   console.log(`Adding ${id} with data:`, data);
@@ -122,7 +128,9 @@ async function run(num, storage, location) {
     newImage.print(fontBlack, 0, 0, text, maxWidth, maxHeight);
     await newImage.writeAsync("tmp.jpg");
 
-    await Promise.all([addPhotoSync(id), addMetaDataSync(id, location)]);
+    await addMetaDataSync(id, location);
+    await addPhotoSync(id);
+    // await Promise.all([addPhotoSync(id), addMetaDataSync(id, location)]);
   }
 }
 

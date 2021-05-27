@@ -16,75 +16,38 @@ class Reports extends Component {
   constructor(props) {
     super(props);
     this.graphRef = React.createRef();
-    this.brandsRef = React.createRef();
-    this.categoryRef = React.createRef();
+    this.numberBarRef = React.createRef();
+    this.numberRef = React.createRef();
   }
 
-  findCategoryLabel(branch, key) {
-    if (!branch) {
-      return null;
-    }
-    if (branch[key]) {
-      return branch[key].label;
-    } else {
-      let label = null;
-      _.find(branch, (child) => {
-        label = this.findCategoryLabel(child.children, key);
-        return !!label;
-      });
-
-      return label;
-    }
-  }
 
   componentDidMount(months, ctx) {
-    const { geojson, config } = this.props;
+    const { geojson } = this.props;
 
     if (geojson) {
-      const withCategories = _.filter(
-        geojson.features,
-        (f) => f.properties.categories
-      );
-
-      const brands = {};
-      const categories = {};
+      const withNumber = _.filter(geojson.features, (f) => f.properties.number);
       const days = {};
       const months = {};
       const years = {};
+      const numbers = {};
 
       // reformat the info
-      _.forEach(withCategories, (entry) => {
+      _.forEach(withNumber, (entry) => {
         const liveDate = entry.properties.moderated;
-        // const datePeriod = moment(liveDate).format("YYYYMMDD");
+        const number = Number(entry.properties.number);
         const day = moment(liveDate).startOf("day").toDate();
         const month = moment(liveDate).startOf("month").toDate();
         const year = moment(liveDate).startOf("year").toDate();
-
-        _.forEach(entry.properties.categories, (category) => {
-          const number = Number(category.number);
-
-          brands[category.brand] = brands[category.brand]
-            ? brands[category.brand] + number
-            : number;
-
-          const catLabel = this.findCategoryLabel(
-            config.PHOTO_FIELDS.categories.data,
-            category.leafkey
-          );
-          categories[catLabel] = categories[catLabel]
-            ? categories[catLabel] + number
-            : number;
-
-          days[day] = days[day] ? days[day] + number : number;
-          months[month] = months[month] ? months[month] + number : number;
-          years[year] = years[year] ? years[year] + number : number;
-        });
+        days[day] = days[day] ? days[day] + number : number;
+        months[month] = months[month] ? months[month] + number : number;
+        years[year] = years[year] ? years[year] + number : number;
+        numbers[number] = numbers[number] ? numbers[number] + 1 : 1;
       });
 
       // draw by month
       drawByMonth(months, this.graphRef.current);
-      drawByBrand(brands, this.brandsRef.current);
-      drawByCategory(categories, this.categoryRef.current);
+      drawBarByNumber(numbers, this.numberBarRef.current);
+      drawByNumber(numbers, this.numberRef.current);
     }
 
     // local functions
@@ -97,24 +60,24 @@ class Reports extends Component {
       });
       sortedMonths = _.sortBy(sortedMonths, "date");
 
+      const datasets = [
+        {
+          label: "# of Pieces",
+          data: _.map(sortedMonths, (month) => ({
+            t: month.date,
+            y: month.amount,
+          })),
+          borderWidth: 1,
+          backgroundColor: _.map(sortedMonths, randomColor),
+        },
+      ];
       new Chart(ctx, {
         type: "line",
         data: {
           labels: _.map(sortedMonths, (month) =>
             moment(month.date).format("YYYY-MM")
           ),
-          datasets: [
-            {
-              label: "# of Pieces",
-              // data: _.map(sortedMonths, (month) => month.amount),
-              data: _.map(sortedMonths, (month) => ({
-                t: month.date,
-                y: month.amount,
-              })),
-              borderWidth: 1,
-              backgroundColor: _.map(sortedMonths, randomColor),
-            },
-          ],
+          datasets,
           options: {
             scales: {
               xAxes: [
@@ -132,64 +95,43 @@ class Reports extends Component {
       });
     } // drawByMonth
 
-    function drawByBrand(brands, ctx) {
-      let sortedBrands = _.map(brands, (amount, brand) => {
-        return {
-          brand,
-          amount,
-        };
-      });
-      sortedBrands = _.sortBy(sortedBrands, "amount");
-      sortedBrands = _.reverse(sortedBrands);
-      const allTheRest = _.sumBy(
-        _.slice(sortedBrands, 10, sortedBrands.length),
-        "amount"
-      );
-      sortedBrands = _.slice(sortedBrands, 0, 10);
-      sortedBrands.push({ brand: "the others", amount: allTheRest });
+    function drawBarByNumber(numbers, ctx) {
+      const data = _.map(numbers, (amount, number) => amount);
+      const backgroundColor = _.map(numbers, randomColor);
+      const labels = _.map(numbers, (amount, number) => number);
+      const datasets = [
+        {
+          data,
+          backgroundColor,
+          label: "Numbers",
+          borderWidth: 1,
+        },
+      ];
 
       new Chart(ctx, {
         type: "bar",
         data: {
-          labels: _.map(sortedBrands, (brand) => brand.brand),
-          datasets: [
-            {
-              label: "Worst brands",
-              data: _.map(sortedBrands, (brand) => brand.amount),
-              borderWidth: 1,
-              backgroundColor: _.map(sortedBrands, randomColor),
-            },
-          ],
+          labels,
+          datasets,
         },
       });
     } // drawByMonth
 
-    function drawByCategory(categories, ctx) {
-      let sortedCategpries = _.map(categories, (amount, category) => {
-        return {
-          category,
-          amount,
-        };
-      });
-      sortedCategpries = _.sortBy(sortedCategpries, "amount");
-      sortedCategpries = _.reverse(sortedCategpries);
-      const allTheRest = _.sumBy(
-        _.slice(sortedCategpries, 8, sortedCategpries.length),
-        "amount"
-      );
-      sortedCategpries = _.slice(sortedCategpries, 0, 8);
-      sortedCategpries.push({ category: "the others", amount: allTheRest });
-
+    function drawByNumber(numbers, ctx) {
+      const data = _.map(numbers, (amount, number) => amount);
+      const backgroundColor = _.map(numbers, randomColor);
+      const labels = _.map(numbers, (amount, number) => number);
+      const datasets = [
+        {
+          data,
+          backgroundColor,
+        },
+      ];
       new Chart(ctx, {
         type: "pie",
         data: {
-          datasets: [
-            {
-              data: _.map(sortedCategpries, (category) => category.amount),
-              backgroundColor: _.map(sortedCategpries, randomColor),
-            },
-          ],
-          labels: _.map(sortedCategpries, (category) => category.category),
+          datasets,
+          labels,
         },
         options: {},
       });
@@ -209,8 +151,8 @@ class Reports extends Component {
     return (
       <PageWrapper label={label} handleClose={handleClose} hasLogo={false}>
         <canvas ref={this.graphRef} />
-        <canvas ref={this.brandsRef} />
-        <canvas ref={this.categoryRef} />
+        <canvas ref={this.numberBarRef} />
+        <canvas ref={this.numberRef} />
       </PageWrapper>
     );
   }
