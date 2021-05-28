@@ -126,10 +126,9 @@ const rtn = {
     },
     spacing: 10,
   },
-  MAP_SOURCE:
-    "https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json",
-  MAP_ATTRIBUTION:
-    "Contains OS data &copy; Crown copyright and database rights 2018",
+  // MAP_SOURCE: "https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json",
+  MAP_SOURCE: "mapbox://styles/mapbox/streets-v11",
+  // MAP_ATTRIBUTION: "Contains OS data &copy; Crown copyright and database rights 2018",
   MAPBOX_TOKEN:
     "pk.eyJ1Ijoic2ViYXN0aWFub3ZpZGVnZW92YXRpb251ayIsImEiOiJjanA4ZWwwbTkxdDNxM2twZTgyMGdqOXB5In0.MrWFt3rABCo7n7MBbVRaNw",
   PHOTO_ZOOMED_FIELDS: {

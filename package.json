@@ -33,6 +33,7 @@
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^13.1.9",
+    "@turf/turf": "^6.3.0",
     "coveralls": "latest",
     "firebase-admin": "^9.3.0",
     "firebase-tools": "^9.11.0",
@@ -53,7 +54,6 @@
   "dependencies": {
     "@material-ui/core": "latest",
     "@material-ui/icons": "latest",
-    "@turf/turf": "latest",
     "axios": "^0.21.0",
     "blueimp-load-image": "^5.14.0",
     "chart.js": "^2.9.4",
