@@ -26,6 +26,11 @@ export REACT_APP_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER:-"0"}
 export REACT_APP_VERSION="$VERSION_MAYOR.$VERSION_MINOR.$REACT_APP_BUILD_NUMBER"
 export REACT_APP_TITLE=$npm_package_title
 
+# TODO:
+# need to copy the pollifill from the library
+#  node_modules/web-vitals/dist/polyfill.js
+# sed  's/<script id="web-vitals">/,/<\/script>/\<\/bla>/g;' public/index.html > public/index.html
+
 eval $@
 set +x;
 ls public
