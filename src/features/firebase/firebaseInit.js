@@ -37,9 +37,6 @@ function firebaseInit(callBackFunctionFCMTokenChange) {
 
     const firestore = firebase.firestore();
 
-    // measuring web performance. See https://firebase.google.com/docs/perf-mon/get-started-web
-    firebase.performance();
-
     function isInIframe() {
       try {
         return window.self !== window.top;
