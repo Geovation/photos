@@ -42,7 +42,7 @@
     "husky": "^6.0.0",
     "jimp": "^0.16.1",
     "ncp": "latest",
-    "node-sass": "^4.0",
+    "node-sass": "^6.0.0",
     "precise-commits": "latest",
     "prettier": "^2.1.2",
     "random-location": "latest",
