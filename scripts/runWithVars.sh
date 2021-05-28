@@ -19,9 +19,6 @@ configText=`cat public/config.json`
 
 echo "const config = $configText;" > public/config.js
 
-# any better way ???? it muast be inserted in the HEAD as first thing
-cp node_modules/first-input-delay/dist/first-input-delay.min.js  public/
-
 VERSION_MAYOR=$(echo $npm_package_version| cut -d'.' -f 1)
 VERSION_MINOR=$(echo $npm_package_version| cut -d'.' -f 2)
 
