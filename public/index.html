@@ -20,11 +20,12 @@
 <html>
 
 <head>
-    <!-- // TODO: need to copy this automatically as poart of the build
-    // https://github.com/GoogleChrome/web-vitals#overview
-    // Inline code from `node_modules/web-vitals/dist/polyfill.js` here -->        <!-- web-vitals  1.1.2 -->
-    <!-- web-vitals  1.1.2 -->
-    <script id="web-vitals">!function () { var e, t, n, i, r = { passive: !0, capture: !0 }, a = new Date, o = function () { i = [], t = -1, e = null, f(addEventListener) }, c = function (i, r) { e || (e = r, t = i, n = new Date, f(removeEventListener), u()) }, u = function () { if (t >= 0 && t < n - a) { var r = { entryType: "first-input", name: e.type, target: e.target, cancelable: e.cancelable, startTime: e.timeStamp, processingStart: e.timeStamp + t }; i.forEach((function (e) { e(r) })), i = [] } }, s = function (e) { if (e.cancelable) { var t = (e.timeStamp > 1e12 ? new Date : performance.now()) - e.timeStamp; "pointerdown" == e.type ? function (e, t) { var n = function () { c(e, t), a() }, i = function () { a() }, a = function () { removeEventListener("pointerup", n, r), removeEventListener("pointercancel", i, r) }; addEventListener("pointerup", n, r), addEventListener("pointercancel", i, r) }(t, e) : c(t, e) } }, f = function (e) { ["mousedown", "keydown", "touchstart", "pointerdown"].forEach((function (t) { return e(t, s, r) })) }, p = "hidden" === document.visibilityState ? 0 : 1 / 0; addEventListener("visibilitychange", (function e(t) { "hidden" === document.visibilityState && (p = t.timeStamp, removeEventListener("visibilitychange", e, !0)) }), !0); o(), self.webVitals = { firstInputPolyfill: function (e) { i.push(e), u() }, resetFirstInputPolyfill: o, get firstHiddenTime() { return p } } }();</script>
+    <!-- https://firebase.google.com/docs/perf-mon/get-started-web#add-first-input-delay-polyfill
+        https://github.com/GoogleChrome/web-vitals#load-the-library
+        To measure the first input delay metric, the polyfill library is needed.
+        The polyfill is now part of the web-vitals library,
+        so we inline code from `node_modules/web-vitals/dist/polyfill.js` here. -->
+    <script id="web-vitals"></script>
 
     <meta http-equiv="Content-Security-Policy" content="
         default-src * blob: data: gap://ready https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline' file://* blob:;
