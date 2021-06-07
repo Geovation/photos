@@ -36,7 +36,7 @@
     "@turf/turf": "^6.3.0",
     "coveralls": "latest",
     "firebase-admin": "^9.3.0",
-    "firebase-tools": "^9.11.0",
+    "firebase-tools": "^9.12.1",
     "http-server": "latest",
     "husky": "^6.0.0",
     "jimp": "^0.16.1",

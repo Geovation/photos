@@ -146,13 +146,13 @@ const generateThumbnail = functions.storage
         destination: thumbFilePath,
         metadata: metadata,
       })
-      .then((_) => bucket.makePublic());
+      .then((_) => _[0].makePublic());
     const uploadMain = bucket
       .upload(tempLocalMainFile, {
         destination: mainFilePath,
         metadata: metadata,
       })
-      .then((_) => bucket.makePublic());
+      .then((_) => _[0].makePublic());
 
     await Promise.all([uploadMain, uploadThumb]);
     console.info("Thumbnail uploaded to Storage at", thumbFilePath);
