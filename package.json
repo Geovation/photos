@@ -47,7 +47,7 @@
     "random-location": "latest",
     "react-scripts": "^4.0.3",
     "rimraf": "latest",
-    "web-vitals": "^1.1.2",
+    "web-vitals": "^2.0.1",
     "workbox-cli": "^5.1.4",
     "yargs": "^17.0.1"
   },
