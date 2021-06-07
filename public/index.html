@@ -20,7 +20,11 @@
 <html>
 
 <head>
-    <!-- Inline code from `node_modules/web-vitals/dist/polyfill.js` here -->
+    <!-- https://firebase.google.com/docs/perf-mon/get-started-web#add-first-input-delay-polyfill
+        https://github.com/GoogleChrome/web-vitals#load-the-library
+        To measure the first input delay metric, the polyfill library is needed.
+        The polyfill is now part of the web-vitals library,
+        so we inline code from `node_modules/web-vitals/dist/polyfill.js` here. -->
     <script id="web-vitals"></script>
 
     <meta http-equiv="Content-Security-Policy" content="
