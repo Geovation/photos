@@ -29,7 +29,7 @@ export REACT_APP_TITLE=$npm_package_title
 # Copy web-vitals polyfill script from node_modules/web-vitals/dist/polyfill.js to public/index.html
 SCRIPT=`cat node_modules/web-vitals/dist/polyfill.js`
 SCRIPT=$(echo "$SCRIPT" | sed -e 's/&/\\\&/g' )
-sed -i "" "s#<script id=\"web-vitals\">#<script id=\"web-vitals\">$SCRIPT#" public/index.html
+sed -i "" "s#<script id=\"web-vitals\">.*</script>#<script id=\"web-vitals\">$SCRIPT</script>#" public/index.html
 
 eval $@
 set +x;
