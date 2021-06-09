@@ -17,7 +17,8 @@
     "start": "./scripts/runWithVars.sh 'react-scripts start'",
     "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
     "start:prod": "npm run build:react && http-server build -S -o",
-    "deploy": "firestore deploy"
+    "deploy": "firestore deploy",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -62,7 +63,7 @@
     "firebase": "^8.6.2",
     "localforage": "^1.9.0",
     "lodash": "^4.17.20",
-    "mapbox-gl": "^1.12.0",
+    "mapbox-gl": "^2.3.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",
