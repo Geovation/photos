@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import _ from "lodash";
 import moment from "moment";
-import Chart from "chart.js";
+import Chart from 'chart.js/auto';
 
 import { withStyles } from "@material-ui/core/styles";
 

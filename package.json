@@ -56,7 +56,7 @@
     "@material-ui/icons": "latest",
     "axios": "^0.21.0",
     "blueimp-load-image": "^5.14.0",
-    "chart.js": "^2.9.4",
+    "chart.js": "^3.3.2",
     "classnames": "latest",
     "dms2dec": "latest",
     "firebase": "^8.6.2",
