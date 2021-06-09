@@ -49,7 +49,6 @@
     "react-scripts": "^4.0.3",
     "rimraf": "latest",
     "web-vitals": "^2.0.1",
-    "workbox-cli": "^5.1.4",
     "yargs": "^17.0.1"
   },
   "dependencies": {
