@@ -1,16 +1,16 @@
-import { HashRouter } from "react-router-dom";
-import config from "./custom/config";
+// import { HashRouter } from "react-router-dom";
+// import config from "./custom/config";
 
-import { render, screen } from "@testing-library/react";
-import App from "./App";
+// import { render, screen } from "@testing-library/react";
+// import App from "./App";
 
 test.skip("renders without crashing", () => {
-  render(
-    <HashRouter>
-      <App config={config} />
-    </HashRouter>
-  );
-  const linkElement = screen.getByText(/learn react/i);
-  console.log(linkElement);
-  // expect(linkElement).toBeInTheDocument();
+//   render(
+//     <HashRouter>
+//       <App config={config} />
+//     </HashRouter>
+//   );
+//   const linkElement = screen.getByText(/learn react/i);
+//   console.log(linkElement);
+//   // expect(linkElement).toBeInTheDocument();
 });
