@@ -13,6 +13,11 @@ const storageBucket = require("../public/config.json").FIREBASE.config.storageBu
 const path = require('path');
 const _ = require('lodash');
 const turf = require('@turf/turf');
+const Queue = require('queue-promise');
+
+const fs = require('fs');
+const os = require('os');
+const fsPromises = fs.promises;
 
 const LOCATIONS = {
   "Global": {},
@@ -78,17 +83,16 @@ async function addMetaDataSync(id, locationName) {
     number: Math.round(Math.random()*10)
   };
 
-  console.log(`Adding ${id} with data:`, data);
-  return await db.collection("photos").doc(id).set(data);
+  const rtn = await db.collection("photos").doc(id).set(data);
+  console.log(`Added ${id} with data:`, data);
+  return rtn;
 }
 
-async function addPhotoSync(id) {
-  console.log(`Uploading ${id}`);
-
+async function addPhotoSync(id, filePath) {
   // upload it as "original"
-  return await bucket.upload("tmp.jpg", {
-    destination: `photos/${id}/original.jpg`,
-  });
+  const rtn = await bucket.upload(filePath, { destination: `photos/${id}/original.jpg`, });
+  console.log(`Uploaded ${filePath}`);
+  return rtn;
 }
 
 async function run(num, storage, location) {
@@ -109,15 +113,35 @@ async function run(num, storage, location) {
   const maxWidth = image.getWidth();
   const digits = 12;
 
+  const queue = new Queue({
+    concurrent: 100,
+    interval: 10
+  });
+  
+  queue.on("end", () => console.log("The end"));
+  queue.on("resolve", data => console.log(`Resolved ${data}`));
+  queue.on("reject", error => console.error(error));
+  const tempDir = os.tmpdir();
+
   for (let i = 0; i < num; i++) {
-    console.log(`processing photo ${i + 1}/${num}`);
+    console.log(`Enqueuing photo ${i + 1}/${num}`);
 
     const id = `test_${(Math.floor(Math.random() * 10 ** digits) + "").padStart(
       digits,
       "0"
     )}`;
+    const tmpFilePath = path.join(tempDir, `${id}.jpg`);
 
-    // watermark it with id
+    queue.enqueue(() => uploadPhoto(image, tmpFilePath, id, location, i, num, fontWhite, fontBlack, maxWidth, maxHeight)); 
+  }
+  // await Promise.all(queue);
+  while (queue.shouldRun) {
+    const data = await queue.dequeue();
+  }
+}
+
+async function uploadPhoto(image, tmpFilePath, id, location, i, num, fontWhite, fontBlack, maxWidth, maxHeight) {
+        // watermark it with id
     const text = {
       text: id,
       alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
@@ -126,13 +150,13 @@ async function run(num, storage, location) {
     const newImage = image.clone();
     newImage.print(fontWhite, 5, 0, text, maxWidth, maxHeight);
     newImage.print(fontBlack, 0, 0, text, maxWidth, maxHeight);
-    await newImage.writeAsync("tmp.jpg");
-
+  
+    await newImage.writeAsync(tmpFilePath);
     await addMetaDataSync(id, location);
-    await addPhotoSync(id);
-    // await Promise.all([addPhotoSync(id), addMetaDataSync(id, location)]);
-  }
-}
+    await addPhotoSync(id, tmpFilePath);
+    await fsPromises.unlink(tmpFilePath);
+    console.log(`Completed photo ${i + 1}/${num}`);
+};
 
 run(argv.number, argv.storage, argv.location)
   .then(() => {
