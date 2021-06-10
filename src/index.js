@@ -6,14 +6,14 @@ import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 import "./index.scss";
 import App from "./App";
-import * as serviceWorker from "./serviceWorker";
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import config from "./custom/config";
 import { gtagInit } from "./gtag.js";
 
 import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
 
-serviceWorker.register();
+serviceWorkerRegistration.register();
 
 if (
   process.env.NODE_ENV !== "development" &&
@@ -37,11 +37,13 @@ const startApp = () => {
   });
 
   ReactDOM.render(
-    <Router>
-      <MuiThemeProvider theme={theme}>
-        <App fields={Object.values(config.PHOTO_FIELDS)} config={config} />
-      </MuiThemeProvider>
-    </Router>,
+    <React.StrictMode>
+      <Router>
+        <MuiThemeProvider theme={theme}>
+          <App fields={Object.values(config.PHOTO_FIELDS)} config={config} />
+        </MuiThemeProvider>
+      </Router>
+    </React.StrictMode>,
     document.getElementById("root")
   );
 };
