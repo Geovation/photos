@@ -10,17 +10,15 @@
   "main": "index.js",
   "public": true,
   "scripts": {
-    "build": "npm run build:react",
+    "build": "./scripts/runWithVars.sh 'react-scripts build'",
     "test": "react-scripts test --env=jsdom --forceExit --watchAll=false",
     "eject": "react-scripts eject",
     "backup": "./scripts/backup.sh",
-    "build:react": "./scripts/runWithVars.sh 'react-scripts build'",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
-    "geovation-photos-update": "geovation-photos-update",
     "start": "./scripts/runWithVars.sh 'react-scripts start'",
     "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
-    "start:prod": "npm run build:react && http-server build -S -o",
+    "start:prod": "firebase emulators:start --only hosting",
     "deploy": "firestore deploy",
     "prepare": "husky install"
   },
@@ -42,7 +40,6 @@
     "coveralls": "latest",
     "firebase-admin": "^9.3.0",
     "firebase-tools": "^9.12.1",
-    "http-server": "latest",
     "husky": "^6.0.0",
     "jimp": "^0.16.1",
     "ncp": "latest",
@@ -76,9 +73,6 @@
     "react-router-dom": "latest",
     "react-select": "latest",
     "react-swipe": "latest"
-  },
-  "bin": {
-    "geovation-photos-update": "./bin/geovation-photos-update.js"
   },
   "browserslist": {
     "production": [
