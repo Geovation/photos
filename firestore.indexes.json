@@ -15,6 +15,14 @@
         { "fieldPath": "moderated", "mode": "ASCENDING" },
         { "fieldPath": "updated", "mode": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "photos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "published", "mode": "ASCENDING" },
+        { "fieldPath": "updated", "mode": "DESCENDING" }
+      ]
     }
   ]
 }

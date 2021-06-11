@@ -114,7 +114,7 @@ async function run(num, storage, location) {
   const digits = 12;
 
   const queue = new Queue({
-    concurrent: 100,
+    concurrent: 10,
     interval: 10
   });
   
