@@ -316,7 +316,6 @@ class App extends Component {
   }
 
   async registerPublishedPhotosRT() {
-    debugger
     if (this.unregisterPublishedPhotosRT) {
       await this.unregisterPublishedPhotosRT();
     }

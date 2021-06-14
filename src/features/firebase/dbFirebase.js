@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import _ from "lodash";
-
+ 
 import * as localforage from "localforage";
 
 import appConfig from "custom/config";
@@ -67,9 +67,6 @@ function publishedPhotosRT(addedFn, modifiedFn, removedFn, errorFn, fromDate) {
       ">",
       firebase.firestore.Timestamp.fromDate(fromDate)
     );
-  } else {
-    // to date defined. Get le latest 100 so the map will not be empoty.
-    newPublishedRef = publishedPhotosRef.limit(100);
   }
 
   // any published photo
