@@ -63,7 +63,6 @@ typings/
 .firebase
 build
 serviceAccountKey.json
-scripts/tmp.jpg
 
 .DS_Store
 
@@ -71,4 +70,3 @@ scripts/tmp.jpg
 functions/config.json
 public/config.json
 public/config.js
-tmp.jpg

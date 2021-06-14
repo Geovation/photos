@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import _ from "lodash";
-
+ 
 import * as localforage from "localforage";
 
 import appConfig from "custom/config";
@@ -59,18 +59,14 @@ function extractPhoto(data, id) {
 function publishedPhotosRT(addedFn, modifiedFn, removedFn, errorFn, fromDate) {
   const publishedPhotosRef = firestore
     .collection("photos")
-    .orderBy("moderated", "desc")
     .where("published", "==", true);
   let newPublishedRef;
   if (fromDate) {
     newPublishedRef = publishedPhotosRef.where(
-      "moderated",
+      "updated",
       ">",
       firebase.firestore.Timestamp.fromDate(fromDate)
     );
-  } else {
-    // to date defined. Get le latest 100 so the map will not be empoty.
-    newPublishedRef = publishedPhotosRef.limit(100);
   }
 
   // any published photo
@@ -107,7 +103,7 @@ async function fetchStats() {
  *
  * @param {*} fromAPI if true it will get it from the API which is very usefull for caching.
  */
-async function fetchPhotos(fromAPI = true) {
+async function fetchPhotos(fromAPI = true, sinceDate = new Date(null)) {
   let photos = {};
   if (fromAPI) {
     const photosResponse = await axios.get(
@@ -119,14 +115,17 @@ async function fetchPhotos(fromAPI = true) {
     const querySnapshot = await firestore
       .collection("photos")
       .where("published", "==", true)
+      .where("updated", ">", sinceDate)
       .get();
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
       photos[doc.id] = convertFirebaseTimestampFieldsIntoDate(doc.data());
     });
   }
 
-  return _.map(photos, (data, id) => extractPhoto(data, id));
+  const rtnPhotos = _.map(photos, (data, id) => extractPhoto(data, id));
+  console.debug(`New photos: ${JSON.stringify(rtnPhotos)}`);
+
+  return rtnPhotos;
 }
 
 function convertFirebaseTimestampFieldsIntoDate(photo) {

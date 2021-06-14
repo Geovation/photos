@@ -137,7 +137,7 @@ class DisplayPhoto extends Component {
                         {!feature.properties.published && (
                           <Chip
                             icon={<WarningIcon />}
-                            label="not published yer !"
+                            label="not published yet !"
                             color="secondary"
                           />
                         )}

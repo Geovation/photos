@@ -181,14 +181,13 @@ class App extends Component {
     let { photoId, mapLocation } = this.extractPathnameParams();
     this.setState({ photoId, mapLocation });
 
-    this.unregisterAuthObserver = authFirebase.onAuthStateChanged((user) => {
-      // will do this after the user has been loaded. It should speed up the users login.
-      // not sure if we need this if.
-      if (!this.initDone) {
-        this.initDone = true;
-        this.someInits(photoId, user);
-      }
+    // TODO: test it. Does it slow down starting up ?
+    if (!this.initDone) {
+      this.initDone = true;
+      this.someInits(photoId);
+    }
 
+    this.unregisterAuthObserver = authFirebase.onAuthStateChanged((user) => {
       // lets start fresh if the user logged out
       if (this.state.user && !user) {
         gtagEvent("Signed out", "User");
@@ -225,12 +224,19 @@ class App extends Component {
         }
 
         geojson.features = _.map(this.featuresDict, (f) => f);
-
         // save only if different
         if (!_.isEqual(this.state.geojson, geojson)) {
-          this.setState({ geojson });
           // after the first time, wait for a bit before updating.
           localforage.setItem("cachedGeoJson", geojson);
+
+          const stats = this.props.config.getStats(geojson, this.state.dbStats);
+          this.setState({ geojson, stats });
+
+          this.featuresDict = geojson.features.reduce((acc, feature) => {
+            acc[feature.properties.id] = feature;
+            return acc;
+          }, {});
+
         }
 
         console.debug("Geo Json updated");
@@ -239,6 +245,7 @@ class App extends Component {
   };
 
   modifyFeature = (photo) => {
+    console.debug(`modifying ${JSON.stringify(photo)}`)
     this.featuresDict[photo.id] = {
       type: "Feature",
       geometry: {
@@ -251,110 +258,103 @@ class App extends Component {
     this.delayedSaveGeojson();
   };
 
-  addFeature = (photo) => this.modifyFeature(photo);
+  addFeature = (photo) => {
+    console.debug(`adding -->`)
+    this.modifyFeature(photo);
+  }
 
   removeFeature = (photo) => {
+    console.debug(`removing $${JSON.stringify(photo)}`)
     delete this.featuresDict[photo.id];
     this.delayedSaveGeojson();
   };
 
-  someInits(photoId, user) {
+  async someInits(photoId) {
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(
       (online) => {
         this.setState({ online });
       }
     );
 
+    dbFirebase.fetchStats().then((dbStats) => {
+      console.log(dbStats);
+      this.setState({
+        usersLeaderboard: dbStats.users,
+        dbStats,
+        stats: this.props.config.getStats(
+          this.state.geojson,
+          this.state.dbStats
+        ),
+      });
+
+      return dbStats;
+    });
+
+    // when photoId is defined (when acceding the app with photoid query string), need to get the photo info.
     this.fetchPhotoIfUndefined(photoId).then(async () => {
       // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
       // into the photoId.
       this.setState({ photoAccessedByUrl: !!this.state.selectedFeature });
 
-      dbFirebase.fetchStats().then((dbStats) => {
-        console.log(dbStats);
-        this.setState({
-          usersLeaderboard: dbStats.users,
-          dbStats,
-          stats: this.props.config.getStats(
-            this.state.geojson,
-            this.state.dbStats
-          ),
-        });
-
-        return dbStats;
-      });
-
       gtagPageView(this.props.location.pathname);
     });
 
-    // use the locals one if we have them: faster boot.
-    localforage
-      .getItem("cachedGeoJson")
-      .then((geojson) => {
-        if (geojson) {
-          this.geojson = geojson;
-          const stats = this.props.config.getStats(geojson, this.state.dbStats);
-          this.setState({ geojson, stats });
-          this.featuresDict = geojson.features.reduce((acc, feature) => {
-            acc[feature.properties.id] = feature;
-            return acc;
-          }, {});
-
-          // listen for changes since the last photo in the cache.
-          const latestPhoto = _.maxBy(geojson.features, (photo) => {
-            return photo.properties.updated;
-          });
-
-          const lastUpdated = _.get(latestPhoto, "properties.updated");
-          this.unregisterPublishedPhotosRT = dbFirebase.publishedPhotosRT(
-            this.addFeature,
-            this.modifyFeature,
-            this.removeFeature,
-            (error) => {
-              console.log(error);
-              alert(error);
-              window.location.reload();
-            },
-            lastUpdated
-          );
-        } else {
-          // ??? TODO ????: fetch at least 100 photos, just to show something in the map.... otherwise it will show "LOADING PHOTOS"
-          // ...
-          this.fetchPhotos();
-        }
-      })
-      .catch(console.error);
+    // Get the photos from the cache first.
+    const geojson = await localforage.getItem("cachedGeoJson");
+    
+    if (geojson) {
+      // populate featuresDict from the geojson stored in the localForge.
+      this.setState({ geojson });
+      this.featuresDict = geojson.features.reduce((acc, feature) => {
+        acc[feature.properties.id] = feature;
+        return acc;
+      }, {});
+    } else {
+      await this.fetchPhotos();
+    }
+  
+    this.registerPublishedPhotosRT();     
   }
 
-  fetchPhotos(fromAPI = true) {
-    dbFirebase
-      .fetchPhotos(fromAPI)
-      .then(async (photos) => {
-        let lastUpdated = new Date(null);
+  async registerPublishedPhotosRT() {
+    if (this.unregisterPublishedPhotosRT) {
+      await this.unregisterPublishedPhotosRT();
+    }
+
+    // The following line should speedup things. It reads all the photos until before trigger the RT listener
+    await this.fetchPhotos(false, this.calculateLastUpdate());
+
+    this.unregisterPublishedPhotosRT = dbFirebase.publishedPhotosRT(
+      this.addFeature,
+      this.modifyFeature,
+      this.removeFeature,
+      (error) => {
+        console.log(error);
+        alert(error);
+        window.location.reload();
+      },
+      this.calculateLastUpdate()
+    );
+  }
+
+  calculateLastUpdate() {
+    let lastUpdated = new Date(null);
+    if (this.state.geojson) {
+      const latestPhoto = _.maxBy(this.state.geojson.features, (photo) => {
+        return photo.properties.updated;
+      });
+      lastUpdated = _.get(latestPhoto, "properties.updated");
+    }
+    return lastUpdated;
+  }
+
+  async fetchPhotos(fromAPI = true, lastUpdate = new Date(null)) {
+    return dbFirebase
+      .fetchPhotos(fromAPI, lastUpdate)
+      .then((photos) => {
         _.forEach(photos, (photo) => {
           this.addFeature(photo);
-          if (photo.updated > lastUpdated) {
-            lastUpdated = photo.updated;
-          }
         });
-        this.delayedSaveGeojson();
-        // at this point we retrieve ALL the photos and we have the date of the last photo comming from the cache.
-        // So we listen for changes since then
-
-        if (this.unregisterPublishedPhotosRT) {
-          await this.unregisterPublishedPhotosRT();
-        }
-        this.unregisterPublishedPhotosRT = dbFirebase.publishedPhotosRT(
-          this.addFeature,
-          this.modifyFeature,
-          this.removeFeature,
-          (error) => {
-            console.log(error);
-            alert(error);
-            window.location.reload();
-          },
-          lastUpdated
-        );
       })
       .catch(console.error);
   }
@@ -662,6 +662,8 @@ class App extends Component {
 
     // it will open the "loading photos" message
     this.setState({ geojson: null });
+
+    // fetch all the photos from firestore instead than from the CDN
     this.fetchPhotos(false);
   };
 
