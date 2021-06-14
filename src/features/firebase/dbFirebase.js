@@ -59,12 +59,11 @@ function extractPhoto(data, id) {
 function publishedPhotosRT(addedFn, modifiedFn, removedFn, errorFn, fromDate) {
   const publishedPhotosRef = firestore
     .collection("photos")
-    .orderBy("moderated", "desc")
     .where("published", "==", true);
   let newPublishedRef;
   if (fromDate) {
     newPublishedRef = publishedPhotosRef.where(
-      "moderated",
+      "updated",
       ">",
       firebase.firestore.Timestamp.fromDate(fromDate)
     );

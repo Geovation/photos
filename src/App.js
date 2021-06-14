@@ -245,6 +245,7 @@ class App extends Component {
   };
 
   modifyFeature = (photo) => {
+    console.debug(`modifying ${JSON.stringify(photo)}`)
     this.featuresDict[photo.id] = {
       type: "Feature",
       geometry: {
@@ -257,9 +258,13 @@ class App extends Component {
     this.delayedSaveGeojson();
   };
 
-  addFeature = (photo) => this.modifyFeature(photo);
+  addFeature = (photo) => {
+    console.debug(`adding -->`)
+    this.modifyFeature(photo);
+  }
 
   removeFeature = (photo) => {
+    console.debug(`removing $${JSON.stringify(photo)}`)
     delete this.featuresDict[photo.id];
     this.delayedSaveGeojson();
   };
@@ -311,6 +316,7 @@ class App extends Component {
   }
 
   async registerPublishedPhotosRT() {
+    debugger
     if (this.unregisterPublishedPhotosRT) {
       await this.unregisterPublishedPhotosRT();
     }
