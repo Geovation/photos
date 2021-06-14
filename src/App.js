@@ -303,6 +303,7 @@ class App extends Component {
     const geojson = await localforage.getItem("cachedGeoJson");
     
     if (geojson) {
+      // populate featuresDict from the geojson stored in the localForge.
       this.setState({ geojson });
       this.featuresDict = geojson.features.reduce((acc, feature) => {
         acc[feature.properties.id] = feature;
