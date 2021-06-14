@@ -271,6 +271,20 @@ class App extends Component {
       }
     );
 
+    dbFirebase.fetchStats().then((dbStats) => {
+      console.log(dbStats);
+      this.setState({
+        usersLeaderboard: dbStats.users,
+        dbStats,
+        stats: this.props.config.getStats(
+          this.state.geojson,
+          this.state.dbStats
+        ),
+      });
+
+      return dbStats;
+    });
+
     // when photoId is defined (when acceding the app with photoid query string), need to get the photo info.
     this.fetchPhotoIfUndefined(photoId).then(async () => {
       // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed

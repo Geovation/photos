@@ -33,7 +33,7 @@
   },
   "homepage": "./",
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.14.0",
+    "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^13.1.9",
     "@turf/turf": "^6.3.0",

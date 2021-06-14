@@ -96,6 +96,12 @@ const configObserver = (onNext, onError) => {
     }, onError);
 };
 
+async function fetchStats() {
+  return fetch(appConfig.FIREBASE.apiURL + "/stats", {
+    mode: "cors",
+  }).then((response) => response.json());
+}
+
 /**
  * Open reload all the photos using the REST API. In this way it will laverage CDN caching saving firestore quota.
  *
@@ -401,6 +407,7 @@ function buildStorageUrl(path) {
 const rtn = {
   onConnectionStateChanged,
   publishedPhotosRT,
+  fetchStats,
   fetchFeedbacks,
   fetchPhotos,
   getUser,

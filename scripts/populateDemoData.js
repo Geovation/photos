@@ -74,7 +74,7 @@ async function addMetaDataSync(id, locationName) {
   const rndDate = new Date(lastYear.getTime() + Math.random() * (now.getTime() - lastYear.getTime()));
 
   const data = {
-    updated: rndDate,
+    updated: admin.firestore.FieldValue.serverTimestamp(),
     location,
     description: `${id} some text here ${locationName}`,
     moderated: published ? rndDate : null,
