@@ -83,6 +83,7 @@ class App extends Component {
 
     this.geoid = null;
     this.domRefInput = {};
+    // It contains the photos in feature format. It is used to generate a geojson state that will be passed as parameter to the Map.
     this.featuresDict = {};
     this.VISIBILITY_REGEX = new RegExp(
       "(^/@|^/$|^" +
@@ -128,7 +129,7 @@ class App extends Component {
       );
     }
 
-    return () => {
+    return async () => {
       if (this.geoid && navigator.geolocation) {
         navigator.geolocation.clearWatch(this.geoid);
       }
@@ -209,38 +210,29 @@ class App extends Component {
 
   // Saving means also to update the state which with the current implementation also means to re display the map which is very slow.
   // As a workaround, It won't update the state more than once very 10 seconds.
+  saveGeojson = () => {
+    this.settingGeojson = clearTimeout(this.settingGeojson);
+
+    localforage.setItem("featuresDict", this.featuresDict);
+
+    const geojson = {
+      type: "FeatureCollection",
+      features: _.map(this.featuresDict, f => f),
+    };
+    const stats = this.props.config.getStats(geojson, this.state.dbStats);
+    this.setState({ geojson, stats });
+    console.debug("GeoJson updated");
+  };
+  
+  // Wait 10 seconds before saving it again.
   delayedSaveGeojson = () => {
+    // only if a save has not be already scheduled
     if (!this.settingGeojson) {
-      this.settingGeojson = setTimeout(() => {
-        delete this.settingGeojson;
-
-        let geojson = _.cloneDeep(this.state.geojson);
-
-        if (!geojson) {
-          geojson = {
-            type: "FeatureCollection",
-            features: [],
-          };
-        }
-
-        geojson.features = _.map(this.featuresDict, (f) => f);
-        // save only if different
-        if (!_.isEqual(this.state.geojson, geojson)) {
-          // after the first time, wait for a bit before updating.
-          localforage.setItem("cachedGeoJson", geojson);
-
-          const stats = this.props.config.getStats(geojson, this.state.dbStats);
-          this.setState({ geojson, stats });
-
-          this.featuresDict = geojson.features.reduce((acc, feature) => {
-            acc[feature.properties.id] = feature;
-            return acc;
-          }, {});
-
-        }
-
-        console.debug("Geo Json updated");
-      }, 10 * 1000);
+      // do not wait the first time
+      if (!this.state.geojson) this.saveGeojson();
+      else this.settingGeojson = setTimeout(this.saveGeojson, 10 * 1000);
+    } else {
+      console.debug("not saving geojson as it has alreaby been scheduled")
     }
   };
 
@@ -264,7 +256,7 @@ class App extends Component {
   }
 
   removeFeature = (photo) => {
-    console.debug(`removing $(photo.id)}`)
+    console.debug(`removing ${photo.id}`)
     delete this.featuresDict[photo.id];
     this.delayedSaveGeojson();
   };
@@ -300,15 +292,10 @@ class App extends Component {
     });
 
     // Get the photos from the cache first.
-    const geojson = await localforage.getItem("cachedGeoJson");
+    this.featuresDict = await localforage.getItem("featuresDict") || {};
     
-    if (geojson) {
-      // populate featuresDict from the geojson stored in the localForge.
-      this.setState({ geojson });
-      this.featuresDict = geojson.features.reduce((acc, feature) => {
-        acc[feature.properties.id] = feature;
-        return acc;
-      }, {});
+    if (!_.isEmpty(this.featuresDict)) {
+      this.delayedSaveGeojson();
     } else {
       await this.fetchPhotos();
     }

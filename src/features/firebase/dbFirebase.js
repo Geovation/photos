@@ -365,7 +365,7 @@ function onConnectionStateChanged(fn) {
   }
   conRef.on("value", connectedCallBack);
 
-  return () => conRef.off("value", connectedCallBack);
+  return async () => conRef.off("value", connectedCallBack);
 }
 
 async function writeFeedback(data) {
