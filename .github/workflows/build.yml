@@ -64,7 +64,7 @@ jobs:
         if: steps.cache-modules.outputs.cache-hit != 'true'
         run: npm ci
       - run: npm test -- --coverage
-        
+        #  - npm run coveralls # remember to st COVERALLS_REPO_TOKEN
       # upload react build
       - uses: actions/upload-artifact@v2
         with:
