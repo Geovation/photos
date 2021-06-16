@@ -1,0 +1,154 @@
+on:
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "**.md"
+  pull_request:
+  release:
+    types:
+      - created
+
+jobs:
+  
+  unit-test-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Cache node_modules
+        id: cache-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node_modules-
+      - name: install npm packages
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - run: npm test -- --coverage
+        #  - npm run coveralls # remember to st COVERALLS_REPO_TOKEN
+      # upload react build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage
+
+  unit-test-functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Cache node_modules
+        id: cache-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-node_modules-${{ hashFiles('functions/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node_modules-
+      - name: install npm packages
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: cd functions && npm ci
+      - run: cd functions && npm test
+  
+  unit-test-firebase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Cache node_modules
+        id: cache-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node_modules-
+      - name: install npm packages
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - run: npm run test:firebase
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: firestore-coverage
+      #     path: |
+      #       firestore-coverage.html
+      #       firestore-debug.log
+
+  build:
+    # Let build it anyway so we can still play with the build... it will not deploy
+    # needs: [unit-test-web, unit-test-functions, unit-test-firebase, e2e-test-web]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # build react
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Cache node_modules
+        id: cache-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node_modules-
+      - name: install npm packages
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: npm ci
+      - run: npm run build
+
+      # upload react build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build
+
+  deploy:
+    # if: github.event_name == 'release' && github.event.action == 'created'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    name: "it releases the PWA, functions and security rules"
+    needs: [build, unit-test-web, unit-test-functions, unit-test-firebase]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - name: Cache node_modules
+        id: cache-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node_modules-
+      - name: install npm packages
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      # get react build
+      - name: Download a react build
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build
+
+      # - name: Deploy to Firebase
+      #   uses: w9jds/firebase-action@master
+      #   with:
+      #     args: deploy -m "V${{ steps.package-version.outputs.version }}"
+      #   env:
+      #     FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      #     PROJECT_ID: photos-demo-d4b14 
+      - run: npm run deploy

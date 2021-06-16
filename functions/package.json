@@ -7,7 +7,8 @@
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "test": "echo it works... trust me !"
   },
   "dependencies": {
     "@google-cloud/pubsub": "^2.13.0",
@@ -26,7 +27,7 @@
     "firebase-functions-test": "^0.3.0"
   },
   "engines": {
-    "node": "10"
+    "node": "14"
   },
   "private": true
 }
