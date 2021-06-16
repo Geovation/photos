@@ -15,7 +15,7 @@
     "test:firebase": "echo it works... trust me !",
     "eject": "react-scripts eject",
     "backup": "./scripts/backup.sh",
-    "coverage": "react-scripts test --env=jsdom --coverage",
+    "coverage": "react-scripts test --env=jsdom --coverage --forceExit --watchAll=false",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "start": "./scripts/runWithVars.sh 'react-scripts start'",
     "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
