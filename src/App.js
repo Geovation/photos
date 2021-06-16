@@ -128,7 +128,7 @@ class App extends Component {
       );
     }
 
-    return async () => {
+    return () => {
       if (this.geoid && navigator.geolocation) {
         navigator.geolocation.clearWatch(this.geoid);
       }
@@ -245,7 +245,7 @@ class App extends Component {
   };
 
   modifyFeature = (photo) => {
-    console.debug(`modifying ${JSON.stringify(photo)}`)
+    console.debug(`modifying ${photo.id}`)
     this.featuresDict[photo.id] = {
       type: "Feature",
       geometry: {
@@ -259,12 +259,12 @@ class App extends Component {
   };
 
   addFeature = (photo) => {
-    console.debug(`adding -->`)
+    console.debug(`adding ${photo.id} --v`);
     this.modifyFeature(photo);
   }
 
   removeFeature = (photo) => {
-    console.debug(`removing $${JSON.stringify(photo)}`)
+    console.debug(`removing $(photo.id)}`)
     delete this.featuresDict[photo.id];
     this.delayedSaveGeojson();
   };
@@ -360,13 +360,13 @@ class App extends Component {
   }
 
   async componentWillUnmount() {
-    // Terrible hack !!! it will be fixed with redux
-    this.setState = console.log;
-
-    await this.unregisterAuthObserver();
-    await this.unregisterLocationObserver();
-    await this.unregisterConnectionObserver();
-    await this.unregisterConfigObserver();
+    this.unregisterAuthObserver();
+    this.unregisterLocationObserver();
+    this.unregisterConnectionObserver();
+    this.unregisterConfigObserver();
+    this.unregisterPhotosToModerate && this.unregisterPhotosToModerate();
+    this.unregisterOwnPhotos && this.unregisterOwnPhotos();
+    this.unregisterPublishedPhotosRT && this.unregisterPublishedPhotosRT();
     await dbFirebase.disconnect();
   }
 

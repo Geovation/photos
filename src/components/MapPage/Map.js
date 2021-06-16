@@ -95,6 +95,7 @@ class Map extends Component {
     );
 
     this.map.on("load", () => {
+      // TODO: inform parent that the map has been loaded
       this.addFeaturesToMap(this.props.geojson);
     });
 
