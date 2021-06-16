@@ -20,7 +20,7 @@
     "start": "./scripts/runWithVars.sh 'react-scripts start'",
     "start:secure": "./scripts/runWithVars.sh 'HTTPS=true react-scripts start'",
     "start:prod": "firebase emulators:start --only hosting",
-    "deploy": "firebase deploy",
+    "deploy": "firebase deploy --token \"$FIREBASE_TOKEN\"",
     "prepare": "husky install"
   },
   "repository": {
