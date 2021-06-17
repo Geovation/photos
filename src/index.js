@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { HashRouter as Router } from "react-router-dom";
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
@@ -28,6 +30,12 @@ if (devDissableDebugLog) {
 }
 
 const theme = createMuiTheme(config.THEME);
+function reducer() {
+  return {
+    config
+  }
+}
+const store = createStore(reducer);
 
 const startApp = () => {
   gtagInit();
@@ -38,11 +46,13 @@ const startApp = () => {
 
   ReactDOM.render(
     <React.StrictMode>
-      <Router>
-        <MuiThemeProvider theme={theme}>
-          <App fields={Object.values(config.PHOTO_FIELDS)} config={config} />
-        </MuiThemeProvider>
-      </Router>
+      <Provider store={store}>
+        <Router>
+          <MuiThemeProvider theme={theme}>
+            <App fields={Object.values(config.PHOTO_FIELDS)}/>
+          </MuiThemeProvider>
+        </Router>
+      </Provider>
     </React.StrictMode>,
     document.getElementById("root")
   );

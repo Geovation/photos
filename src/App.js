@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
 
 import * as localforage from "localforage";
 import _ from "lodash";
@@ -1000,4 +1001,8 @@ class App extends Component {
   }
 }
 
-export default withRouter(withStyles(styles, { withTheme: true })(App));
+const mapStateToProps = state => ({
+  config: state.config
+});
+
+export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
