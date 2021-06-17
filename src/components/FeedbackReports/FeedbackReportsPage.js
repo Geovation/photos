@@ -17,7 +17,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { dbFirebase } from "features/firebase";
 
 import PageWrapper from "../PageWrapper";
-import config from "../../custom/config";
+import config from "custom/config";
 import "../ModeratorPage.scss";
 
 const styles = theme => ({

@@ -14,7 +14,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { dbFirebase } from "features/firebase";
 
-import config from "../../custom/config";
+import config from "custom/config";
 
 const styles = (theme) => ({
   notchTop: {

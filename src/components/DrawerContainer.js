@@ -12,8 +12,8 @@ import Typography from "@material-ui/core/Typography";
 
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
-import config from "../custom/config";
-import utils from "../utils";
+import config from "custom/config";
+import utils from "utils";
 import "./DrawerContainer.scss";
 
 const placeholderImage =

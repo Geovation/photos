@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -10,8 +11,8 @@ import StarsIcon from "@material-ui/icons/Stars";
 
 import { sortArrayByObjectKey } from "utils";
 
-import PageWrapper from "../../components/PageWrapper";
-import config from "../../custom/config";
+import PageWrapper from "components/PageWrapper";
+import config from "custom/config";
 
 const styles = theme => ({
   th: {
@@ -40,7 +41,7 @@ const styles = theme => ({
 
 class Leaderboard extends Component {
   renderTableBody() {
-    const { usersLeaderboard, classes, config, user } = this.props;
+    const { usersLeaderboard, classes, user } = this.props;
     const userId = user && user.id;
     sortArrayByObjectKey(
       usersLeaderboard,
@@ -90,7 +91,7 @@ class Leaderboard extends Component {
   }
 
   render() {
-    const { classes, label, handleClose, config } = this.props;
+    const { classes, label, handleClose } = this.props;
 
     return (
       <PageWrapper label={label} handleClose={handleClose} hasLogo={false}>
@@ -125,4 +126,8 @@ class Leaderboard extends Component {
   }
 }
 
-export default withStyles(styles)(Leaderboard);
+const mapStateToProps = state => ({
+  config: state.config
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(Leaderboard));

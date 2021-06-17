@@ -24,6 +24,7 @@ import MapLocation from "../types/MapLocation";
 import { dbFirebase, authFirebase } from "features/firebase";
 import User from "types/User";
 
+import config from "custom/config";
 // TODO: split the file
 
 const AVATAR_SIZE = 100;
@@ -145,10 +146,10 @@ class Profile extends React.Component {
     const mapLocation = new MapLocation(
       feature.geometry.coordinates[1],
       feature.geometry.coordinates[0],
-      this.props.config.ZOOM_FLYTO
+      config.ZOOM_FLYTO
     );
     const urlFormated = mapLocation.urlFormated();
-    return `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}@${urlFormated}`;
+    return `${config.PAGES.displayPhoto.path}/${feature.properties.id}@${urlFormated}`;
   }
 
   handleAvatarClick = (e) => {

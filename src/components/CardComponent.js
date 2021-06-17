@@ -8,7 +8,7 @@ import IconButton from "@material-ui/core/IconButton";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import { withStyles } from "@material-ui/core/styles";
-import config from ".././custom/config";
+import config from "custom/config";
 
 const styles = theme => ({
   card: {

@@ -17,7 +17,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import PageWrapper from "./PageWrapper";
 import CardComponent from "./CardComponent";
 import "./ModeratorPage.scss";
-import config from "../custom/config";
+import config from "custom/config";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 

@@ -11,12 +11,12 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import { withStyles } from "@material-ui/core/styles";
 
-import config from "../../custom/config";
-import { gtagEvent } from "../../gtag.js";
+import config from "custom/config";
+import { gtagEvent } from "gtag.js";
 import "./style.scss";
-import dbFirebase from "../../features/firebase/dbFirebase";
+import dbFirebase from "features/firebase/dbFirebase";
 
-import PageWrapper from "../PageWrapper";
+import PageWrapper from  "components/PageWrapper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
 import Link from "@material-ui/core/Link";

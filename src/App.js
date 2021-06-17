@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 
 import * as localforage from "localforage";
 import _ from "lodash";
@@ -35,6 +35,7 @@ import DrawerContainer from "./components/DrawerContainer";
 import TermsDialog from "./components/TermsDialog";
 import EmailVerifiedDialog from "./components/EmailVerifiedDialog";
 import DisplayPhoto from "./components/MapPage/DisplayPhoto";
+import config from "custom/config";
 
 import { gtagPageView, gtagEvent } from "./gtag.js";
 import "./App.scss";
@@ -88,9 +89,9 @@ class App extends Component {
     this.featuresDict = {};
     this.VISIBILITY_REGEX = new RegExp(
       "(^/@|^/$|^" +
-        this.props.config.PAGES.displayPhoto.path +
+        config.PAGES.displayPhoto.path +
         "/|^" +
-        this.props.config.PAGES.embeddable.path +
+        config.PAGES.embeddable.path +
         ")",
       "g"
     );
@@ -101,7 +102,7 @@ class App extends Component {
       file,
     });
 
-    this.props.history.push(this.props.config.PAGES.photos.path);
+    this.props.history.push(config.PAGES.photos.path);
   };
 
   setLocationWatcher() {
@@ -154,7 +155,7 @@ class App extends Component {
   extractPathnameParams() {
     // extracts photoID
     const regexPhotoIDMatch = this.props.location.pathname.match(
-      new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)`)
+      new RegExp(`${config.PAGES.displayPhoto.path}\\/(\\w+)`)
     );
 
     const photoId = regexPhotoIDMatch && regexPhotoIDMatch[1];
@@ -173,7 +174,7 @@ class App extends Component {
         )) ||
       new MapLocation();
     if (!regexMapLocationMatch) {
-      mapLocation.zoom = this.props.config.ZOOM;
+      mapLocation.zoom = config.ZOOM;
     }
 
     return { photoId, mapLocation };
@@ -194,7 +195,7 @@ class App extends Component {
       if (this.state.user && !user) {
         gtagEvent("Signed out", "User");
 
-        this.props.history.push(this.props.config.PAGES.map.path);
+        this.props.history.push(config.PAGES.map.path);
         window.location.reload();
       }
 
@@ -220,7 +221,7 @@ class App extends Component {
       type: "FeatureCollection",
       features: _.map(this.featuresDict, f => f),
     };
-    const stats = this.props.config.getStats(geojson, this.state.dbStats);
+    const stats = config.getStats(geojson, this.state.dbStats);
     this.setState({ geojson, stats });
     console.debug("GeoJson updated");
   };
@@ -274,7 +275,7 @@ class App extends Component {
       this.setState({
         usersLeaderboard: dbStats.users,
         dbStats,
-        stats: this.props.config.getStats(
+        stats: config.getStats(
           this.state.geojson,
           this.state.dbStats
         ),
@@ -359,7 +360,7 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const stats = this.props.config.getStats(
+    const stats = config.getStats(
       this.state.geojson,
       this.state.dbStats
     );
@@ -385,7 +386,7 @@ class App extends Component {
       !this.unregisterPhotosToModerate
     ) {
       this.unregisterPhotosToModerate = dbFirebase.photosToModerateRT(
-        this.props.config.MODERATING_PHOTOS,
+        config.MODERATING_PHOTOS,
         (photo) => this.updatePhotoToModerate(photo),
         (photo) => this.removePhotoToModerate(photo)
       );
@@ -451,7 +452,7 @@ class App extends Component {
   };
 
   handleCameraClick = () => {
-    if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
+    if (config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
       this.setState({
         dialogOpen: true,
         dialogTitle: "Please login to add a photo",
@@ -601,7 +602,7 @@ class App extends Component {
   };
 
   handlePhotoPageClose = () => {
-    const PAGES = this.props.config.PAGES;
+    const PAGES = config.PAGES;
     const photoPath = this.props.location.pathname;
     const coords = photoPath.split("@")[1];
     const mapPath = this.props.location.pathname.startsWith(
@@ -621,7 +622,7 @@ class App extends Component {
   handlePhotoClick = (feature) => {
     this.setState({ selectedFeature: feature });
 
-    let pathname = `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`;
+    let pathname = `${config.PAGES.displayPhoto.path}/${feature.properties.id}`;
     const currentPath = this.props.history.location.pathname;
 
     const coordsUrl =
@@ -629,10 +630,10 @@ class App extends Component {
       new MapLocation(
         feature.geometry.coordinates[1],
         feature.geometry.coordinates[0],
-        this.props.config.ZOOM_FLYTO
+        config.ZOOM_FLYTO
       ).urlFormated();
     pathname =
-      currentPath === this.props.config.PAGES.embeddable.path
+      currentPath === config.PAGES.embeddable.path
         ? currentPath + pathname
         : pathname;
 
@@ -672,12 +673,13 @@ class App extends Component {
   }
 
   render() {
-    const { classes, fields, config, history } = this.props;
+    const { classes, history } = this.props;
+    const fields = Object.values(config.PHOTO_FIELDS);
     return (
       <div className="geovation-app">
         {!this.state.termsAccepted &&
           !this.props.history.location.pathname.startsWith(
-            this.props.config.PAGES.embeddable.path
+            config.PAGES.embeddable.path
           ) && <TermsDialog handleClose={this.handleTermsPageClose} />}
 
         <EmailVerifiedDialog
@@ -701,7 +703,6 @@ class App extends Component {
                         handleClose={history.goBack}
                         label={CustomPage.label}
                         geojson={this.state.geojson}
-                        config={this.props.config}
                       />
                     )}
                   />
@@ -713,7 +714,7 @@ class App extends Component {
               render={(props) => (
                 <AboutPage
                   {...props}
-                  label={this.props.config.PAGES.about.label}
+                  label={config.PAGES.about.label}
                   handleClose={history.goBack}
                   reloadPhotos={this.reloadPhotos}
                 />
@@ -726,7 +727,7 @@ class App extends Component {
                 <SwipeTutorialPage
                   {...props}
                   steps={tutorialSteps}
-                  label={this.props.config.PAGES.tutorial.label}
+                  label={config.PAGES.tutorial.label}
                   handleClose={history.goBack}
                   hasLogo={true}
                 />
@@ -739,7 +740,7 @@ class App extends Component {
                 <SwipeTutorialPage
                   {...props}
                   steps={welcomeSteps}
-                  label={this.props.config.PAGES.welcome.label}
+                  label={config.PAGES.welcome.label}
                   handleClose={history.goBack}
                 />
               )}
@@ -750,8 +751,7 @@ class App extends Component {
               render={(props) => (
                 <LeaderboardPage
                   {...props}
-                  config={this.props.config}
-                  label={this.props.config.PAGES.leaderboard.label}
+                  label={config.PAGES.leaderboard.label}
                   usersLeaderboard={this.state.usersLeaderboard}
                   handleClose={history.goBack}
                   user={this.state.user}
@@ -761,13 +761,12 @@ class App extends Component {
 
             {this.state.user && this.state.user.isModerator && (
               <Route
-                path={this.props.config.PAGES.moderator.path}
+                path={config.PAGES.moderator.path}
                 render={(props) => (
                   <ModeratorPage
                     {...props}
                     photos={this.state.photosToModerate}
-                    config={this.props.config}
-                    label={this.props.config.PAGES.moderator.label}
+                    label={config.PAGES.moderator.label}
                     user={this.state.user}
                     handleClose={history.goBack}
                     handleRejectClick={this.handleRejectClick}
@@ -779,13 +778,12 @@ class App extends Component {
 
             {this.state.user && (
               <Route
-                path={this.props.config.PAGES.ownPhotos.path}
+                path={config.PAGES.ownPhotos.path}
                 render={(props) => (
                   <OwnPhotosPage
                     {...props}
                     photos={this.getOwnPhotos()}
-                    config={this.props.config}
-                    label={this.props.config.PAGES.ownPhotos.label}
+                    label={config.PAGES.ownPhotos.label}
                     user={this.state.user}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
@@ -798,12 +796,11 @@ class App extends Component {
 
             {this.state.user && this.state.user.isModerator && (
               <Route
-                path={this.props.config.PAGES.feedbackReports.path}
+                path={config.PAGES.feedbackReports.path}
                 render={(props) => (
                   <FeedbackReportsSubrouter
                     {...props}
-                    config={this.props.config}
-                    label={this.props.config.PAGES.feedbackReports.label}
+                    label={config.PAGES.feedbackReports.label}
                     user={this.state.user}
                     handleClose={this.props.history.goBack}
                   />
@@ -816,7 +813,7 @@ class App extends Component {
               render={(props) => (
                 <PhotoPage
                   {...props}
-                  label={this.props.config.PAGES.photos.label}
+                  label={config.PAGES.photos.label}
                   file={this.state.file}
                   gpsLocation={this.state.location}
                   online={this.state.online}
@@ -830,12 +827,11 @@ class App extends Component {
 
             {this.state.user && (
               <Route
-                path={this.props.config.PAGES.account.path}
+                path={config.PAGES.account.path}
                 render={(props) => (
                   <ProfilePage
                     {...props}
-                    config={this.props.config}
-                    label={this.props.config.PAGES.account.label}
+                    label={config.PAGES.account.label}
                     user={this.state.user}
                     geojson={this.state.geojson}
                     handleClose={history.goBack}
@@ -850,7 +846,7 @@ class App extends Component {
               render={(props) => (
                 <WriteFeedbackPage
                   {...props}
-                  label={this.props.config.PAGES.writeFeedback.label}
+                  label={config.PAGES.writeFeedback.label}
                   user={this.state.user}
                   location={this.state.location}
                   online={this.state.online}
@@ -869,7 +865,6 @@ class App extends Component {
                   {...props}
                   user={this.state.user}
                   placeholderImage={placeholderImage}
-                  config={config}
                   handleRejectClick={this.handleRejectClick}
                   handleApproveClick={this.handleApproveClick}
                   handleClose={this.handlePhotoPageClose}
@@ -886,7 +881,6 @@ class App extends Component {
             )}
             geojson={this.state.geojson}
             user={this.state.user}
-            config={config}
             embeddable={this.props.history.location.pathname.match(
               new RegExp(config.PAGES.embeddable.path, "g")
             )}
@@ -915,7 +909,7 @@ class App extends Component {
             ) && (
               <SwipeTutorialPage
                 steps={welcomeSteps}
-                label={this.props.config.PAGES.welcome.label}
+                label={config.PAGES.welcome.label}
                 handleClose={this.handleWelcomePageClose}
               />
             )}
@@ -1001,8 +995,9 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  config: state.config
-});
+// const mapStateToProps = state => ({
+//   config: state.config
+// });
 
-export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
+// export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
+export default withRouter(withStyles(styles, { withTheme: true })(App));
