@@ -167,6 +167,7 @@ class DrawerContainer extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  online: state.online
 });
 export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(DrawerContainer));

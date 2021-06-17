@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
+
 import PropTypes from "prop-types";
 import loadImage from "blueimp-load-image";
 import dms2dec from "dms2dec";
@@ -450,4 +452,7 @@ PhotoPage.propTypes = {
   handleRetakeClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(PhotoPage);
+const mapStateToProps = state => ({
+  online: state.online
+});
+export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(PhotoPage));

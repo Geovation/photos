@@ -233,6 +233,7 @@ class WriteFeedbackPage extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  online: state.online
 });
 export default connect(mapStateToProps)(withStyles(styles)(WriteFeedbackPage));

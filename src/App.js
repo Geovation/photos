@@ -62,7 +62,6 @@ class App extends Component {
     this.state = {
       file: null,
       location: new MapLocation(), // from GPS
-      online: false,
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false,
@@ -199,7 +198,7 @@ class App extends Component {
       }
 
       // the user had logged in.
-      this.props.dispatch({ type: "user/set", payload: user });
+      this.props.dispatch({ type: "user", payload: user });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
@@ -264,9 +263,7 @@ class App extends Component {
 
   async someInits(photoId) {
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(
-      (online) => {
-        this.setState({ online });
-      }
+      (online) => this.dispatch({ type: "online", payload: online })
     );
 
     dbFirebase.fetchStats().then((dbStats) => {
@@ -495,7 +492,7 @@ class App extends Component {
   handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
-      this.props.dispatch({ type: "user/set", payload: { ...this.props.user, emailVerified: user.emailVerified } });
+      this.props.dispatch({ type: "user", payload: { ...this.props.user, emailVerified: user.emailVerified } });
 
       let message = {
         title: "Confirmation",
@@ -809,7 +806,6 @@ class App extends Component {
                   label={config.PAGES.photos.label}
                   file={this.state.file}
                   gpsLocation={this.state.location}
-                  online={this.state.online}
                   srcType={this.state.srcType}
                   fields={fields}
                   handleClose={history.goBack}
@@ -840,7 +836,6 @@ class App extends Component {
                   {...props}
                   label={config.PAGES.writeFeedback.label}
                   location={this.state.location}
-                  online={this.state.online}
                   handleClose={history.goBack}
                 />
               )}
@@ -906,7 +901,7 @@ class App extends Component {
 
         <Snackbar open={!this.state.geojson} message="Loading photos..." />
         <Snackbar
-          open={this.state.welcomeShown && !this.state.online}
+          open={this.state.welcomeShown && !this.props.online}
           message="Connecting to our servers..."
         />
 
@@ -928,7 +923,6 @@ class App extends Component {
         />
 
         <DrawerContainer
-          online={this.state.online}
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen}
           toggleLeftDrawer={this.toggleLeftDrawer}

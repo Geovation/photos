@@ -32,15 +32,21 @@ if (devDissableDebugLog) {
 const theme = createMuiTheme(config.THEME);
 
 const initialState = {
-  user: null
+  user: null,
+  online: false
 };
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case 'user/set':
+    case 'user':
       return {
         ...state,
         user: action.payload
+      }
+    case 'online':
+      return {
+        ...state,
+        online: Boolean(action.payload)
       }
     default:
       return state;
