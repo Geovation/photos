@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
-// import { connect } from 'react-redux';
+import { connect } from 'react-redux';
 
 import * as localforage from "localforage";
 import _ from "lodash";
@@ -62,7 +62,6 @@ class App extends Component {
     this.state = {
       file: null,
       location: new MapLocation(), // from GPS
-      user: null,
       online: false,
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
@@ -192,7 +191,7 @@ class App extends Component {
 
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged((user) => {
       // lets start fresh if the user logged out
-      if (this.state.user && !user) {
+      if (this.props.user && !user) {
         gtagEvent("Signed out", "User");
 
         this.props.history.push(config.PAGES.map.path);
@@ -200,7 +199,7 @@ class App extends Component {
       }
 
       // the user had logged in.
-      this.setState({ user });
+      this.props.dispatch({ type: "user/set", payload: user });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
@@ -382,7 +381,7 @@ class App extends Component {
 
     // listen to new photos to be moderated
     if (
-      _.get(this.state.user, "isModerator") &&
+      _.get(this.props.user, "isModerator") &&
       !this.unregisterPhotosToModerate
     ) {
       this.unregisterPhotosToModerate = dbFirebase.photosToModerateRT(
@@ -392,7 +391,7 @@ class App extends Component {
       );
     }
     // if there is a user
-    if (this.state.user && !this.unregisterOwnPhotos) {
+    if (this.props.user && !this.unregisterOwnPhotos) {
       this.unregisterOwnPhotos = dbFirebase.ownPhotosRT(
         this.addFeature,
         this.modifyFeature,
@@ -439,7 +438,7 @@ class App extends Component {
   handleClickLoginLogout = () => {
     let loginLogoutDialogOpen = true;
 
-    if (this.state.user) {
+    if (this.props.user) {
       authFirebase.signOut();
       loginLogoutDialogOpen = false;
     }
@@ -452,7 +451,7 @@ class App extends Component {
   };
 
   handleCameraClick = () => {
-    if (config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
+    if (config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.props.user) {
       this.setState({
         dialogOpen: true,
         dialogTitle: "Please login to add a photo",
@@ -496,9 +495,8 @@ class App extends Component {
   handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
-      this.setState({
-        user: { ...this.state.user, emailVerified: user.emailVerified },
-      });
+      this.props.dispatch({ type: "user/set", payload: { ...this.props.user, emailVerified: user.emailVerified } });
+
       let message = {
         title: "Confirmation",
         body: "Thank you for verifying your email.",
@@ -543,12 +541,12 @@ class App extends Component {
       if (isApproved) {
         await dbFirebase.approvePhoto(
           photo.id,
-          this.state.user ? this.state.user.id : null
+          this.props.user ? this.props.user.id : null
         );
       } else {
         await dbFirebase.rejectPhoto(
           photo.id,
-          this.state.user ? this.state.user.id : null
+          this.props.user ? this.props.user.id : null
         );
       }
 
@@ -659,11 +657,11 @@ class App extends Component {
   // from the own photos from the dict
   getOwnPhotos() {
     let ownPhotos = {};
-    if (this.state.user) {
+    if (this.props.user) {
       const allPhotos = this.featuresDict;
       ownPhotos = _.filter(
         allPhotos,
-        (photo) => _.get(photo, "properties.owner_id") === this.state.user.id
+        (photo) => _.get(photo, "properties.owner_id") === this.props.user.id
       ).reduce((accumulator, currentValue) => {
         accumulator[currentValue.properties.id] = currentValue;
         return accumulator;
@@ -683,8 +681,8 @@ class App extends Component {
           ) && <TermsDialog handleClose={this.handleTermsPageClose} />}
 
         <EmailVerifiedDialog
-          user={this.state.user}
-          open={!!(this.state.user && !this.state.user.emailVerified)}
+          user={this.props.user}
+          open={!!(this.props.user && !this.props.user.emailVerified)}
           handleNextClick={this.handleNextClick}
         />
 
@@ -754,12 +752,12 @@ class App extends Component {
                   label={config.PAGES.leaderboard.label}
                   usersLeaderboard={this.state.usersLeaderboard}
                   handleClose={history.goBack}
-                  user={this.state.user}
+                  user={this.props.user}
                 />
               )}
             />
 
-            {this.state.user && this.state.user.isModerator && (
+            {this.props.user && this.props.user.isModerator && (
               <Route
                 path={config.PAGES.moderator.path}
                 render={(props) => (
@@ -767,7 +765,7 @@ class App extends Component {
                     {...props}
                     photos={this.state.photosToModerate}
                     label={config.PAGES.moderator.label}
-                    user={this.state.user}
+                    user={this.props.user}
                     handleClose={history.goBack}
                     handleRejectClick={this.handleRejectClick}
                     handleApproveClick={this.handleApproveClick}
@@ -776,7 +774,7 @@ class App extends Component {
               />
             )}
 
-            {this.state.user && (
+            {this.props.user && (
               <Route
                 path={config.PAGES.ownPhotos.path}
                 render={(props) => (
@@ -784,7 +782,7 @@ class App extends Component {
                     {...props}
                     photos={this.getOwnPhotos()}
                     label={config.PAGES.ownPhotos.label}
-                    user={this.state.user}
+                    user={this.props.user}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
                     // handleRejectClick={this.handleRejectClick}
@@ -794,14 +792,14 @@ class App extends Component {
               />
             )}
 
-            {this.state.user && this.state.user.isModerator && (
+            {this.props.user && this.props.user.isModerator && (
               <Route
                 path={config.PAGES.feedbackReports.path}
                 render={(props) => (
                   <FeedbackReportsSubrouter
                     {...props}
                     label={config.PAGES.feedbackReports.label}
-                    user={this.state.user}
+                    user={this.props.user}
                     handleClose={this.props.history.goBack}
                   />
                 )}
@@ -825,14 +823,14 @@ class App extends Component {
               )}
             />
 
-            {this.state.user && (
+            {this.props.user && (
               <Route
                 path={config.PAGES.account.path}
                 render={(props) => (
                   <ProfilePage
                     {...props}
                     label={config.PAGES.account.label}
-                    user={this.state.user}
+                    user={this.props.user}
                     geojson={this.state.geojson}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
@@ -847,7 +845,7 @@ class App extends Component {
                 <WriteFeedbackPage
                   {...props}
                   label={config.PAGES.writeFeedback.label}
-                  user={this.state.user}
+                  user={this.props.user}
                   location={this.state.location}
                   online={this.state.online}
                   handleClose={history.goBack}
@@ -863,7 +861,7 @@ class App extends Component {
               render={(props) => (
                 <DisplayPhoto
                   {...props}
-                  user={this.state.user}
+                  user={this.props.user}
                   placeholderImage={placeholderImage}
                   handleRejectClick={this.handleRejectClick}
                   handleApproveClick={this.handleApproveClick}
@@ -880,7 +878,7 @@ class App extends Component {
               this.VISIBILITY_REGEX
             )}
             geojson={this.state.geojson}
-            user={this.state.user}
+            user={this.props.user}
             embeddable={this.props.history.location.pathname.match(
               new RegExp(config.PAGES.embeddable.path, "g")
             )}
@@ -933,13 +931,13 @@ class App extends Component {
         </RootRef>
 
         <Login
-          open={this.state.loginLogoutDialogOpen && !this.state.user}
+          open={this.state.loginLogoutDialogOpen && !this.props.user}
           handleClose={this.handleLoginClose}
           loginComponent={LoginFirebase}
         />
 
         <DrawerContainer
-          user={this.state.user}
+          user={this.props.user}
           online={this.state.online}
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen}
@@ -995,9 +993,12 @@ class App extends Component {
   }
 }
 
-// const mapStateToProps = state => ({
-//   config: state.config
-// });
+const mapStateToProps = state => ({
+  user: state.user
+});
 
-// export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
-export default withRouter(withStyles(styles, { withTheme: true })(App));
+// const mapDispatchToProps = (dispatch) => {
+
+// }
+// export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
+export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));

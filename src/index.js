@@ -31,10 +31,20 @@ if (devDissableDebugLog) {
 
 const theme = createMuiTheme(config.THEME);
 
-// TODO
-function reducer() {
-  return {
-  }
+const initialState = {
+  user: null
+};
+
+function reducer(state = initialState, action) {
+  switch (action.type) {
+    case 'user/set':
+      return {
+        ...state,
+        user: action.payload
+      }
+    default:
+      return state;
+  } 
 }
 const store = createStore(reducer);
 
