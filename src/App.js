@@ -681,7 +681,6 @@ class App extends Component {
           ) && <TermsDialog handleClose={this.handleTermsPageClose} />}
 
         <EmailVerifiedDialog
-          user={this.props.user}
           open={!!(this.props.user && !this.props.user.emailVerified)}
           handleNextClick={this.handleNextClick}
         />
@@ -752,7 +751,6 @@ class App extends Component {
                   label={config.PAGES.leaderboard.label}
                   usersLeaderboard={this.state.usersLeaderboard}
                   handleClose={history.goBack}
-                  user={this.props.user}
                 />
               )}
             />
@@ -765,7 +763,6 @@ class App extends Component {
                     {...props}
                     photos={this.state.photosToModerate}
                     label={config.PAGES.moderator.label}
-                    user={this.props.user}
                     handleClose={history.goBack}
                     handleRejectClick={this.handleRejectClick}
                     handleApproveClick={this.handleApproveClick}
@@ -782,7 +779,6 @@ class App extends Component {
                     {...props}
                     photos={this.getOwnPhotos()}
                     label={config.PAGES.ownPhotos.label}
-                    user={this.props.user}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
                     // handleRejectClick={this.handleRejectClick}
@@ -799,7 +795,6 @@ class App extends Component {
                   <FeedbackReportsSubrouter
                     {...props}
                     label={config.PAGES.feedbackReports.label}
-                    user={this.props.user}
                     handleClose={this.props.history.goBack}
                   />
                 )}
@@ -830,7 +825,6 @@ class App extends Component {
                   <ProfilePage
                     {...props}
                     label={config.PAGES.account.label}
-                    user={this.props.user}
                     geojson={this.state.geojson}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
@@ -845,7 +839,6 @@ class App extends Component {
                 <WriteFeedbackPage
                   {...props}
                   label={config.PAGES.writeFeedback.label}
-                  user={this.props.user}
                   location={this.state.location}
                   online={this.state.online}
                   handleClose={history.goBack}
@@ -861,7 +854,6 @@ class App extends Component {
               render={(props) => (
                 <DisplayPhoto
                   {...props}
-                  user={this.props.user}
                   placeholderImage={placeholderImage}
                   handleRejectClick={this.handleRejectClick}
                   handleApproveClick={this.handleApproveClick}
@@ -878,7 +870,6 @@ class App extends Component {
               this.VISIBILITY_REGEX
             )}
             geojson={this.state.geojson}
-            user={this.props.user}
             embeddable={this.props.history.location.pathname.match(
               new RegExp(config.PAGES.embeddable.path, "g")
             )}
@@ -937,7 +928,6 @@ class App extends Component {
         />
 
         <DrawerContainer
-          user={this.props.user}
           online={this.state.online}
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen}
@@ -997,8 +987,4 @@ const mapStateToProps = state => ({
   user: state.user
 });
 
-// const mapDispatchToProps = (dispatch) => {
-
-// }
-// export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
 export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));

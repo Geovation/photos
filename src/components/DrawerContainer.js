@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
@@ -164,4 +165,8 @@ class DrawerContainer extends Component {
     );
   }
 }
-export default withStyles(styles, { withTheme: true })(DrawerContainer);
+
+const mapStateToProps = state => ({
+  user: state.user
+});
+export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(DrawerContainer));

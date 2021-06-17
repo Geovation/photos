@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 
 import _ from "lodash";
 
@@ -191,4 +192,7 @@ class DisplayPhoto extends Component {
   }
 }
 
-export default withMobileDialog()(withStyles(styles)(DisplayPhoto));
+const mapStateToProps = state => ({
+  user: state.user
+});
+export default connect(mapStateToProps)(withMobileDialog()(withStyles(styles)(DisplayPhoto)));

@@ -127,7 +127,6 @@ class Leaderboard extends Component {
 }
 
 const mapStateToProps = state => ({
-  config: state.config
+  user: state.user
 });
-
 export default connect(mapStateToProps)(withStyles(styles)(Leaderboard));

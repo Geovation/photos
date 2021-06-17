@@ -1,6 +1,8 @@
 // let the user write a feedback.
 
 import React from "react";
+import { connect } from 'react-redux';
+
 import firebase from "firebase/app";
 
 import Button from "@material-ui/core/Button";
@@ -230,4 +232,7 @@ class WriteFeedbackPage extends React.Component {
   }
 }
 
-export default withStyles(styles)(WriteFeedbackPage);
+const mapStateToProps = state => ({
+  user: state.user
+});
+export default connect(mapStateToProps)(withStyles(styles)(WriteFeedbackPage));

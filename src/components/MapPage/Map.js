@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
+
 import _ from "lodash";
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -380,4 +382,7 @@ class Map extends Component {
   }
 }
 
-export default withStyles(styles)(Map);
+const mapStateToProps = state => ({
+  user: state.user
+});
+export default connect(mapStateToProps)(withStyles(styles)(Map));

@@ -1,6 +1,7 @@
 // Profile page to display user details.
 
 import React, { useState } from "react";
+import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -81,7 +82,11 @@ const styles = (theme) => ({
   },
 });
 
-const ProfileTextField = withStyles(styles)(function (props) {
+const mapStateToProps = state => ({
+  user: state.user
+});
+
+const ProfileTextField = connect(mapStateToProps)(withStyles(styles)(function (props) {
   const { user, className, fieldName, classes, maxLength, placeholder } = props;
   const originalFieldValue = user[fieldName] || "";
 
@@ -129,7 +134,7 @@ const ProfileTextField = withStyles(styles)(function (props) {
       {updating && <CircularProgress size={20} className={classes.textProgress} />}
     </span>
   );
-});
+}));
 
 class Profile extends React.Component {
   constructor(props) {
@@ -224,7 +229,6 @@ class Profile extends React.Component {
           </RootRef>
 
           <ProfileTextField
-            user={user}
             fieldName="displayName"
             className={classes.name}
             maxLength={User.DISPLAY_NAME_MAXLENGTH}
@@ -293,4 +297,4 @@ Profile.propTypes = {
   user: PropTypes.object,
 };
 
-export default withStyles(styles)(Profile);
+export default connect(mapStateToProps)(withStyles(styles)(Profile));
