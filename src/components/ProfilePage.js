@@ -83,7 +83,8 @@ const styles = (theme) => ({
 });
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  geojson: StaticRange.geojson
 });
 
 const ProfileTextField = connect(mapStateToProps)(withStyles(styles)(function (props) {

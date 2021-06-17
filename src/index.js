@@ -33,11 +33,11 @@ const theme = createMuiTheme(config.THEME);
 
 const initialState = {
   user: null,
-  online: false
+  online: false,
+  geojson: null
 };
 
 function reducer(state = initialState, action) {
-  debugger
   switch (action.type) {
     case 'user':
       return {
@@ -48,6 +48,11 @@ function reducer(state = initialState, action) {
       return {
         ...state,
         online: Boolean(action.payload)
+      }
+    case "geojson":
+      return {
+        ...state,
+        geojson: action.payload
       }
     default:
       return state;

@@ -67,7 +67,6 @@ class App extends Component {
       leftDrawerOpen: false,
       welcomeShown: !!localStorage.getItem("welcomeShown"),
       termsAccepted: !!localStorage.getItem("termsAccepted"),
-      geojson: null,
       stats: null,
       srcType: null,
       dialogOpen: false,
@@ -220,7 +219,9 @@ class App extends Component {
       features: _.map(this.featuresDict, f => f),
     };
     const stats = config.getStats(geojson, this.state.dbStats);
-    this.setState({ geojson, stats });
+    this.setState({ stats });
+    this.props.dispatch({ type: "geojson", payload: geojson });
+
     console.debug("GeoJson updated");
   };
   
@@ -229,7 +230,7 @@ class App extends Component {
     // only if a save has not be already scheduled
     if (!this.settingGeojson) {
       // do not wait the first time
-      if (!this.state.geojson) this.saveGeojson();
+      if (!this.props.geojson) this.saveGeojson();
       else this.settingGeojson = setTimeout(this.saveGeojson, 10 * 1000);
     } else {
       console.debug("not saving geojson as it has alreaby been scheduled")
@@ -272,7 +273,7 @@ class App extends Component {
         usersLeaderboard: dbStats.users,
         dbStats,
         stats: config.getStats(
-          this.state.geojson,
+          this.props.geojson,
           this.state.dbStats
         ),
       });
@@ -324,8 +325,8 @@ class App extends Component {
 
   calculateLastUpdate() {
     let lastUpdated = new Date(null);
-    if (this.state.geojson) {
-      const latestPhoto = _.maxBy(this.state.geojson.features, (photo) => {
+    if (this.props.geojson) {
+      const latestPhoto = _.maxBy(this.props.geojson.features, (photo) => {
         return photo.properties.updated;
       });
       lastUpdated = _.get(latestPhoto, "properties.updated");
@@ -357,7 +358,7 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const stats = config.getStats(
-      this.state.geojson,
+      this.props.geojson,
       this.state.dbStats
     );
     if (!_.isEqual(this.state.stats, stats)) {
@@ -645,7 +646,7 @@ class App extends Component {
     this.featuresDict = {};
 
     // it will open the "loading photos" message
-    this.setState({ geojson: null });
+    this.props.dispatch({ type: "geojson", payload: null });
 
     // fetch all the photos from firestore instead than from the CDN
     this.fetchPhotos(false);
@@ -695,7 +696,6 @@ class App extends Component {
                       <CustomPage.page
                         {...props}
                         handleClose={history.goBack}
-                        geojson={this.state.geojson}
                       />
                     )}
                   />
@@ -813,7 +813,6 @@ class App extends Component {
                 render={(props) => (
                   <ProfilePage
                     {...props}
-                    geojson={this.state.geojson}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
                   />
@@ -855,7 +854,6 @@ class App extends Component {
             visible={this.props.history.location.pathname.match(
               this.VISIBILITY_REGEX
             )}
-            geojson={this.state.geojson}
             embeddable={this.props.history.location.pathname.match(
               new RegExp(config.PAGES.embeddable.path, "g")
             )}
@@ -890,7 +888,7 @@ class App extends Component {
             )}
         </main>
 
-        <Snackbar open={!this.state.geojson} message="Loading photos..." />
+        <Snackbar open={!this.props.geojson} message="Loading photos..." />
         <Snackbar
           open={this.state.welcomeShown && !this.props.online}
           message="Connecting to our servers..."
@@ -970,7 +968,8 @@ class App extends Component {
 
 const mapStateToProps = state => ({
   user: state.user,
-  online: state.online
+  online: state.online,
+  geojson: state.geojson
 });
 
 export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));

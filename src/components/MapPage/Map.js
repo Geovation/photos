@@ -383,6 +383,7 @@ class Map extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  geojson: state.geojson
 });
 export default connect(mapStateToProps)(withStyles(styles)(Map));
