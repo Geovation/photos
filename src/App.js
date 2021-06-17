@@ -81,8 +81,6 @@ class App extends Component {
 
     this.geoid = null;
     this.domRefInput = {};
-    // It contains the photos in feature format. It is used to generate a geojson state that will be passed as parameter to the Map.
-    this.featuresDict = {};
     this.VISIBILITY_REGEX = new RegExp(
       "(^/@|^/$|^" +
         config.PAGES.displayPhoto.path +
@@ -213,16 +211,7 @@ class App extends Component {
   
   modifyFeature = (photo) => {
     console.debug(`modifying ${photo.id}`)
-    this.featuresDict[photo.id] = {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [photo.location.longitude, photo.location.latitude],
-      },
-      properties: photo,
-    };
-
-    this.props.dispatch({ type: "geojson/async", payload: { featuresDict: this.featuresDict } });
+    this.props.dispatch({ type: "featuresDict/modify", payload: { photo } });
   };
 
   addFeature = (photo) => {
@@ -232,8 +221,7 @@ class App extends Component {
 
   removeFeature = (photo) => {
     console.debug(`removing ${photo.id}`)
-    delete this.featuresDict[photo.id];
-    this.props.dispatch({ type: "geojson/async", payload: { featuresDict: this.featuresDict } });
+    this.props.dispatch({ type: "featuresDict/delete", payload: { photo } });
   };
 
   async someInits(photoId) {
@@ -261,10 +249,9 @@ class App extends Component {
     });
 
     // Get the photos from the cache first.
-    this.featuresDict = await localforage.getItem("featuresDict") || {};
-    
-    if (!_.isEmpty(this.featuresDict)) {
-      this.props.dispatch({ type: "geojson/async", payload: { featuresDict: this.featuresDict } });
+    const featuresDict = await localforage.getItem("featuresDict") || {};
+    if (!_.isEmpty(featuresDict)) {
+      this.props.dispatch({ type: "featuresDict/set", payload: { featuresDict } });
     } else {
       await this.fetchPhotos();
     }
@@ -307,11 +294,7 @@ class App extends Component {
   async fetchPhotos(fromAPI = true, lastUpdate = new Date(null)) {
     return dbFirebase
       .fetchPhotos(fromAPI, lastUpdate)
-      .then((photos) => {
-        _.forEach(photos, (photo) => {
-          this.addFeature(photo);
-        });
-      })
+      .then((photos) => _.forEach(photos, (photo) => this.addFeature(photo)))
       .catch(console.error);
   }
 
@@ -614,10 +597,7 @@ class App extends Component {
 
   reloadPhotos = () => {
     // delete photos.
-    this.featuresDict = {};
-
-    // it will open the "loading photos" message
-    this.props.dispatch({ type: "geojson", payload: { geojson: null } });
+    this.props.dispatch({ type: "featuresDict/set", payload: { featuresDict: {} } });
 
     // fetch all the photos from firestore instead than from the CDN
     this.fetchPhotos(false);
@@ -627,7 +607,7 @@ class App extends Component {
   getOwnPhotos() {
     let ownPhotos = {};
     if (this.props.user) {
-      const allPhotos = this.featuresDict;
+      const allPhotos = _.get(this.props, "geojson.features");
       ownPhotos = _.filter(
         allPhotos,
         (photo) => _.get(photo, "properties.owner_id") === this.props.user.id
