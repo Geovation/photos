@@ -2,7 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { HashRouter as Router } from "react-router-dom";
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga'
+import rootSaga from 'sagas'
 
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
@@ -42,23 +44,25 @@ function reducer(state = initialState, action) {
     case 'user':
       return {
         ...state,
-        user: action.payload
+        user: action.payload.user
       }
     case 'online':
       return {
         ...state,
-        online: Boolean(action.payload)
+        online: Boolean(action.payload.online)
       }
     case "geojson":
       return {
         ...state,
-        geojson: action.payload
+        geojson: action.payload.geojson
       }
     default:
       return state;
   } 
 }
-const store = createStore(reducer);
+const sagaMiddleware = createSagaMiddleware()
+const store = createStore(reducer, applyMiddleware(sagaMiddleware));
+sagaMiddleware.run(rootSaga)
 
 const startApp = () => {
   gtagInit();

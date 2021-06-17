@@ -67,7 +67,6 @@ class App extends Component {
       leftDrawerOpen: false,
       welcomeShown: !!localStorage.getItem("welcomeShown"),
       termsAccepted: !!localStorage.getItem("termsAccepted"),
-      stats: null,
       srcType: null,
       dialogOpen: false,
       confirmDialogOpen: false,
@@ -178,6 +177,11 @@ class App extends Component {
   }
 
   async componentDidMount() {
+    this.stats = config.getStats(
+      this.props.geojson,
+      this.state.dbStats
+    );
+
     let { photoId, mapLocation } = this.extractPathnameParams();
     this.setState({ photoId, mapLocation });
 
@@ -197,7 +201,7 @@ class App extends Component {
       }
 
       // the user had logged in.
-      this.props.dispatch({ type: "user", payload: user });
+      this.props.dispatch({ type: "user", payload: { user } });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
@@ -206,37 +210,7 @@ class App extends Component {
       console.error
     );
   }
-
-  // Saving means also to update the state which with the current implementation also means to re display the map which is very slow.
-  // As a workaround, It won't update the state more than once very 10 seconds.
-  saveGeojson = () => {
-    this.settingGeojson = clearTimeout(this.settingGeojson);
-
-    localforage.setItem("featuresDict", this.featuresDict);
-
-    const geojson = {
-      type: "FeatureCollection",
-      features: _.map(this.featuresDict, f => f),
-    };
-    const stats = config.getStats(geojson, this.state.dbStats);
-    this.setState({ stats });
-    this.props.dispatch({ type: "geojson", payload: geojson });
-
-    console.debug("GeoJson updated");
-  };
   
-  // Wait 10 seconds before saving it again.
-  delayedSaveGeojson = () => {
-    // only if a save has not be already scheduled
-    if (!this.settingGeojson) {
-      // do not wait the first time
-      if (!this.props.geojson) this.saveGeojson();
-      else this.settingGeojson = setTimeout(this.saveGeojson, 10 * 1000);
-    } else {
-      console.debug("not saving geojson as it has alreaby been scheduled")
-    }
-  };
-
   modifyFeature = (photo) => {
     console.debug(`modifying ${photo.id}`)
     this.featuresDict[photo.id] = {
@@ -248,7 +222,7 @@ class App extends Component {
       properties: photo,
     };
 
-    this.delayedSaveGeojson();
+    this.props.dispatch({ type: "geojson/async", payload: { featuresDict: this.featuresDict } });
   };
 
   addFeature = (photo) => {
@@ -259,23 +233,19 @@ class App extends Component {
   removeFeature = (photo) => {
     console.debug(`removing ${photo.id}`)
     delete this.featuresDict[photo.id];
-    this.delayedSaveGeojson();
+    this.props.dispatch({ type: "geojson/async", payload: { featuresDict: this.featuresDict } });
   };
 
   async someInits(photoId) {
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(
-      (online) => this.props.dispatch({ type: "online", payload: online })
+      (online) => this.props.dispatch({ type: "online", payload: { online } })
     );
 
     dbFirebase.fetchStats().then((dbStats) => {
       console.log(dbStats);
       this.setState({
         usersLeaderboard: dbStats.users,
-        dbStats,
-        stats: config.getStats(
-          this.props.geojson,
-          this.state.dbStats
-        ),
+        dbStats
       });
 
       return dbStats;
@@ -294,7 +264,7 @@ class App extends Component {
     this.featuresDict = await localforage.getItem("featuresDict") || {};
     
     if (!_.isEmpty(this.featuresDict)) {
-      this.delayedSaveGeojson();
+      this.props.dispatch({ type: "geojson/async", payload: { featuresDict: this.featuresDict } });
     } else {
       await this.fetchPhotos();
     }
@@ -357,13 +327,10 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const stats = config.getStats(
+    this.stats = config.getStats(
       this.props.geojson,
       this.state.dbStats
     );
-    if (!_.isEqual(this.state.stats, stats)) {
-      this.setState({ stats });
-    }
 
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
@@ -493,7 +460,11 @@ class App extends Component {
   handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
-      this.props.dispatch({ type: "user", payload: { ...this.props.user, emailVerified: user.emailVerified } });
+      this.props.dispatch({
+        type: "user", payload: {
+          user: { ...this.props.user, emailVerified: user.emailVerified }
+        }
+      });
 
       let message = {
         title: "Confirmation",
@@ -646,7 +617,7 @@ class App extends Component {
     this.featuresDict = {};
 
     // it will open the "loading photos" message
-    this.props.dispatch({ type: "geojson", payload: null });
+    this.props.dispatch({ type: "geojson", payload: { geojson: null } });
 
     // fetch all the photos from firestore instead than from the CDN
     this.fetchPhotos(false);
@@ -915,7 +886,7 @@ class App extends Component {
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen}
           toggleLeftDrawer={this.toggleLeftDrawer}
-          stats={this.state.stats}
+          stats={this.stats}
           sponsorImage={this.state.sponsorImage}
         />
 
