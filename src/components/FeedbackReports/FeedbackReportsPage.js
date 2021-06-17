@@ -66,7 +66,8 @@ class FeedbackReportsPage extends Component {
   };
 
   render() {
-    const { label, handleClose, classes } = this.props;
+    const { handleClose, classes } = this.props;
+    const label = config.PAGES.feedbackReports.label;
 
     return (
       <PageWrapper label={label} handleClose={handleClose}>

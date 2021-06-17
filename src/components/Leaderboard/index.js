@@ -91,8 +91,8 @@ class Leaderboard extends Component {
   }
 
   render() {
-    const { classes, label, handleClose } = this.props;
-
+    const { classes, handleClose } = this.props;
+    const label = config.PAGES.leaderboard.label;
     return (
       <PageWrapper label={label} handleClose={handleClose} hasLogo={false}>
         <Table>

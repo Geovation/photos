@@ -42,7 +42,8 @@ export default class OwnPhotosPage extends Component {
   };
 
   render() {
-    const { label, handleClose, photos } = this.props;
+    const { handleClose, photos } = this.props;
+    const label = config.PAGES.ownPhotos.label;
 
     return (
       <PageWrapper label={label} handleClose={handleClose} hasHeader={false}>

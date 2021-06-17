@@ -355,7 +355,8 @@ class PhotoPage extends Component {
   };
 
   render() {
-    const { classes, label, fields } = this.props;
+    const { classes, fields } = this.props;
+
     return (
       <div className="geovation-photos">
         <PageWrapper
@@ -366,7 +367,7 @@ class PhotoPage extends Component {
           error={this.state.anyError || !this.state.enabledUploadButton}
           sendFile={this.sendFile}
           photoPage={true}
-          label={label}
+          label={config.PAGES.photos.label}
           imgSrc={this.state.imgSrc}
           handleClose={this.props.handleClose}
         >

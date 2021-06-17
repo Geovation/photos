@@ -16,7 +16,8 @@ import { withStyles } from "@material-ui/core/styles";
 
 import { dbFirebase } from "features/firebase";
 
-import utils, { device } from "../utils";
+import utils, { device } from "utils";
+import config from "custom/config";
 import PageWrapper from "./PageWrapper";
 
 const styles = theme => ({
@@ -128,10 +129,10 @@ class WriteFeedbackPage extends React.Component {
   };
 
   render() {
-    const { classes, label } = this.props;
+    const { classes } = this.props;
 
     return (
-      <PageWrapper label={label} handleClose={this.props.handleClose}>
+      <PageWrapper label={config.PAGES.writeFeedback.label} handleClose={this.props.handleClose}>
         <div className={classes.content}>
           <TextField
             fullWidth

@@ -195,7 +195,7 @@ class Profile extends React.Component {
   };
 
   render() {
-    const { user, classes, label, geojson, handlePhotoClick, handleClose } = this.props;
+    const { user, classes, geojson, handlePhotoClick, handleClose } = this.props;
 
     const myPhotos = geojson && geojson.features.filter((f) => f.properties.owner_id === user.id);
     const myLastPhotos = _.reverse(_.sortBy(myPhotos, (o) => o.properties.updated)).slice(0, 20);
@@ -207,7 +207,7 @@ class Profile extends React.Component {
     console.log(user);
 
     return (
-      <PageWrapper label={label} handleClose={handleClose} header={false}>
+      <PageWrapper label={config.PAGES.account.label} handleClose={handleClose} header={false}>
         <div className={classes.profileInfo}>
           <div className={classes.wrapper}>
             <IconButton onClick={this.handleAvatarClick} disabled={this.state.updatingPhoto}>

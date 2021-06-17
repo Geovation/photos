@@ -45,7 +45,8 @@ class ModeratorPage extends Component {
   };
 
   render() {
-    const { label, handleClose, photos } = this.props;
+    const { handleClose, photos } = this.props;
+    const label = config.PAGES.moderator.label;
 
     return (
       <PageWrapper label={label} handleClose={handleClose} hasHeader={false}>

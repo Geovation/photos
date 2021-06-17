@@ -263,7 +263,7 @@ class App extends Component {
 
   async someInits(photoId) {
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(
-      (online) => this.dispatch({ type: "online", payload: online })
+      (online) => this.props.dispatch({ type: "online", payload: online })
     );
 
     dbFirebase.fetchStats().then((dbStats) => {
@@ -695,7 +695,6 @@ class App extends Component {
                       <CustomPage.page
                         {...props}
                         handleClose={history.goBack}
-                        label={CustomPage.label}
                         geojson={this.state.geojson}
                       />
                     )}
@@ -708,7 +707,6 @@ class App extends Component {
               render={(props) => (
                 <AboutPage
                   {...props}
-                  label={config.PAGES.about.label}
                   handleClose={history.goBack}
                   reloadPhotos={this.reloadPhotos}
                 />
@@ -745,7 +743,6 @@ class App extends Component {
               render={(props) => (
                 <LeaderboardPage
                   {...props}
-                  label={config.PAGES.leaderboard.label}
                   usersLeaderboard={this.state.usersLeaderboard}
                   handleClose={history.goBack}
                 />
@@ -759,7 +756,6 @@ class App extends Component {
                   <ModeratorPage
                     {...props}
                     photos={this.state.photosToModerate}
-                    label={config.PAGES.moderator.label}
                     handleClose={history.goBack}
                     handleRejectClick={this.handleRejectClick}
                     handleApproveClick={this.handleApproveClick}
@@ -775,7 +771,6 @@ class App extends Component {
                   <OwnPhotosPage
                     {...props}
                     photos={this.getOwnPhotos()}
-                    label={config.PAGES.ownPhotos.label}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
                     // handleRejectClick={this.handleRejectClick}
@@ -791,7 +786,6 @@ class App extends Component {
                 render={(props) => (
                   <FeedbackReportsSubrouter
                     {...props}
-                    label={config.PAGES.feedbackReports.label}
                     handleClose={this.props.history.goBack}
                   />
                 )}
@@ -803,7 +797,6 @@ class App extends Component {
               render={(props) => (
                 <PhotoPage
                   {...props}
-                  label={config.PAGES.photos.label}
                   file={this.state.file}
                   gpsLocation={this.state.location}
                   srcType={this.state.srcType}
@@ -820,7 +813,6 @@ class App extends Component {
                 render={(props) => (
                   <ProfilePage
                     {...props}
-                    label={config.PAGES.account.label}
                     geojson={this.state.geojson}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
@@ -834,7 +826,6 @@ class App extends Component {
               render={(props) => (
                 <WriteFeedbackPage
                   {...props}
-                  label={config.PAGES.writeFeedback.label}
                   location={this.state.location}
                   handleClose={history.goBack}
                 />
@@ -978,7 +969,8 @@ class App extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user
+  user: state.user,
+  online: state.online
 });
 
 export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
