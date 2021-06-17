@@ -151,4 +151,7 @@ jobs:
       #   env:
       #     FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       #     PROJECT_ID: photos-demo-d4b14 
-      - run: npm run deploy
+      - name: Deploy to Firebase 
+        run: npm run deploy
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
