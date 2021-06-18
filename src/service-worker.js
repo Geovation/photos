@@ -12,7 +12,7 @@ import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
-import { StaleWhileRevalidate } from 'workbox-strategies';
+import { StaleWhileRevalidate, CacheFirst } from 'workbox-strategies';
 
 // declare const self: ServiceWorkerGlobalScope;
 
@@ -79,3 +79,8 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
+
+// GEOVATION
+registerRoute(/.*pbf.*/, new CacheFirst({ "cacheName":"firebasestorage", plugins: [new ExpirationPlugin({"maxAgeSeconds":30*24*60*60,"purgeOnQuotaError":true})] }));
+registerRoute(/.*firebasestorage.*/, new StaleWhileRevalidate({ "cacheName":"firebasestorage", plugins: [new ExpirationPlugin({"purgeOnQuotaError":true})] }), "GET");
+registerRoute(/.*/, new StaleWhileRevalidate({ "cacheName":"all"}), "GET");
