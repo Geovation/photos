@@ -199,7 +199,7 @@ class App extends Component {
       }
 
       // the user had logged in.
-      this.props.dispatch({ type: "user", payload: { user } });
+      this.props.dispatch({ type: "SET_USER", payload: { user } });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
@@ -211,7 +211,7 @@ class App extends Component {
   
   modifyFeature = (photo) => {
     console.debug(`modifying ${photo.id}`)
-    this.props.dispatch({ type: "featuresDict/modify", payload: { photo } });
+    this.props.dispatch({ type: "UPDATE_FEATURE", payload: { photo } });
   };
 
   addFeature = (photo) => {
@@ -221,12 +221,12 @@ class App extends Component {
 
   removeFeature = (photo) => {
     console.debug(`removing ${photo.id}`)
-    this.props.dispatch({ type: "featuresDict/delete", payload: { photo } });
+    this.props.dispatch({ type: "DELETE_FEATURE", payload: { photo } });
   };
 
   async someInits(photoId) {
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(
-      (online) => this.props.dispatch({ type: "online", payload: { online } })
+      (online) => this.props.dispatch({ type: "SET_ONLINE", payload: { online } })
     );
 
     dbFirebase.fetchStats().then((dbStats) => {
@@ -251,7 +251,7 @@ class App extends Component {
     // Get the photos from the cache first.
     const featuresDict = await localforage.getItem("featuresDict") || {};
     if (!_.isEmpty(featuresDict)) {
-      this.props.dispatch({ type: "featuresDict/set", payload: { featuresDict } });
+      this.props.dispatch({ type: "SET_FEATURES", payload: { featuresDict } });
     } else {
       await this.fetchPhotos();
     }
@@ -444,7 +444,7 @@ class App extends Component {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
       this.props.dispatch({
-        type: "user", payload: {
+        type: "SET_USER", payload: {
           user: { ...this.props.user, emailVerified: user.emailVerified }
         }
       });
@@ -597,7 +597,7 @@ class App extends Component {
 
   reloadPhotos = () => {
     // delete photos.
-    this.props.dispatch({ type: "featuresDict/set", payload: { featuresDict: {} } });
+    this.props.dispatch({ type: "SET_FEATURES", payload: { featuresDict: {} } });
 
     // fetch all the photos from firestore instead than from the CDN
     this.fetchPhotos(false);

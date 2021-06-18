@@ -23,11 +23,11 @@ function* saveGeojsonAsync(action) {
     };
   }
 
-  yield put({ type: 'geojson', payload: { geojson } })
+  yield put({ type: "SET_GEOJSON", payload: { geojson } })
 }
 
 function* watchSaveGeojsonAsync() {
-  yield takeLatest('geojson/async', saveGeojsonAsync)
+  yield takeLatest("SET_GEOJSON_ASYNC", saveGeojsonAsync)
 }
 
 
@@ -44,31 +44,31 @@ function* modifyFeature(action) {
   };
 
   featuresDict[photo.id]=feature
-  yield put({ type: 'geojson/async' })
+  yield put({ type: "SET_GEOJSON_ASYNC" })
 }
 
 function* deleteFeature(action) {
   const photo = action.payload.photo;
 
   delete featuresDict[photo.id]
-  yield put({ type: 'geojson/async' })
+  yield put({ type: "SET_GEOJSON_ASYNC" })
 }
 
 function* setFeatures(action) {
   featuresDict = action.payload.featuresDict
-  yield put({ type: 'geojson/async' })
+  yield put({ type: "SET_GEOJSON_ASYNC" })
 }
 
 function* watchModifyFeature() {
-  yield takeEvery('featuresDict/modify', modifyFeature)
+  yield takeEvery("UPDATE_FEATURE", modifyFeature)
 }
 
 function* watchDeleteFeature() {
-  yield takeEvery('featuresDict/delete', deleteFeature)
+  yield takeEvery("DELETE_FEATURE", deleteFeature)
 }
 
 function* watchSetFeature() {
-  yield takeEvery('featuresDict/set', setFeatures)
+  yield takeEvery("SET_FEATURES", setFeatures)
 }
 
 export default function* rootSaga() {

@@ -41,17 +41,17 @@ const initialState = {
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case 'user':
+    case "SET_USER":
       return {
         ...state,
         user: action.payload.user
       }
-    case 'online':
+    case "SET_ONLINE":
       return {
         ...state,
         online: Boolean(action.payload.online)
       }
-    case "geojson":
+    case "SET_GEOJSON":
       return {
         ...state,
         geojson: action.payload.geojson
