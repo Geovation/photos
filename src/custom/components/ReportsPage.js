@@ -150,7 +150,7 @@ class Reports extends Component {
     const { handleClose } = this.props;
 
     return (
-      <PageWrapper label="Some repports" handleClose={handleClose} hasLogo={false}>
+      <PageWrapper label="Some reports" handleClose={handleClose} hasLogo={false}>
         <canvas ref={this.graphRef} />
         <canvas ref={this.numberBarRef} />
         <canvas ref={this.numberRef} />
