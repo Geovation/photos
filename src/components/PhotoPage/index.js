@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
+
 import PropTypes from "prop-types";
 import loadImage from "blueimp-load-image";
 import dms2dec from "dms2dec";
@@ -11,12 +13,12 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import { withStyles } from "@material-ui/core/styles";
 
-import config from "../../custom/config";
-import { gtagEvent } from "../../gtag.js";
+import config from "custom/config";
+import { gtagEvent } from "gtag.js";
 import "./style.scss";
-import dbFirebase from "../../features/firebase/dbFirebase";
+import dbFirebase from "features/firebase/dbFirebase";
 
-import PageWrapper from "../PageWrapper";
+import PageWrapper from  "components/PageWrapper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
 import Link from "@material-ui/core/Link";
@@ -353,7 +355,8 @@ class PhotoPage extends Component {
   };
 
   render() {
-    const { classes, label, fields } = this.props;
+    const { classes, fields } = this.props;
+
     return (
       <div className="geovation-photos">
         <PageWrapper
@@ -364,7 +367,7 @@ class PhotoPage extends Component {
           error={this.state.anyError || !this.state.enabledUploadButton}
           sendFile={this.sendFile}
           photoPage={true}
-          label={label}
+          label={config.PAGES.photos.label}
           imgSrc={this.state.imgSrc}
           handleClose={this.props.handleClose}
         >
@@ -450,4 +453,7 @@ PhotoPage.propTypes = {
   handleRetakeClick: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(PhotoPage);
+const mapStateToProps = state => ({
+  online: state.online
+});
+export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(PhotoPage));

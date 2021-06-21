@@ -3,7 +3,7 @@ import _ from "lodash";
  
 import * as localforage from "localforage";
 
-import appConfig from "custom/config";
+import config from "custom/config";
 import { getFirebaseApp, getFCMToken } from "./firebaseInit.js";
 
 import * as axios from "axios";
@@ -93,7 +93,7 @@ const configObserver = (onNext, onError) => {
 };
 
 async function fetchStats() {
-  return fetch(appConfig.FIREBASE.apiURL + "/stats", {
+  return fetch(config.FIREBASE.apiURL + "/stats", {
     mode: "cors",
   }).then((response) => response.json());
 }
@@ -107,7 +107,7 @@ async function fetchPhotos(fromAPI = true, sinceDate = new Date(null)) {
   let photos = {};
   if (fromAPI) {
     const photosResponse = await axios.get(
-      appConfig.FIREBASE.apiURL + "/photos.json"
+      config.FIREBASE.apiURL + "/photos.json"
     );
     photos = photosResponse.data.photos;
   } else {
@@ -142,7 +142,7 @@ function fetchFeedbacks(isShowAll) {
   let query = firestore
     .collection("feedbacks")
     .orderBy("updated", "desc")
-    .limit((appConfig.FEEDBACKS && appConfig.FEEDBACKS.MAX) || 50);
+    .limit((config.FEEDBACKS && config.FEEDBACKS.MAX) || 50);
   return query
     .get()
     .then((sn) =>
@@ -170,7 +170,7 @@ function saveMetadata(data) {
   data.moderated = null;
 
   let fieldsToSave = ["moderated", "updated", "location", "owner_id"];
-  _.forEach(appConfig.PHOTO_FIELDS, (field) => fieldsToSave.push(field.name));
+  _.forEach(config.PHOTO_FIELDS, (field) => fieldsToSave.push(field.name));
 
   return firestore.collection("photos").add(_.pick(data, fieldsToSave));
 }
@@ -396,7 +396,7 @@ async function toggleUnreadFeedback(id, resolved, userId) {
 
 function buildStorageUrl(path) {
   // see https://firebase.google.com/docs/storage/web/download-files
-  const PREFIX = `${appConfig.FIREBASE.storageApiURL}/b/${appConfig.FIREBASE.config.storageBucket}/o/`;
+  const PREFIX = `${config.FIREBASE.storageApiURL}/b/${config.FIREBASE.config.storageBucket}/o/`;
   return `${PREFIX}${encodeURIComponent(path)}?alt=media`;
 }
 

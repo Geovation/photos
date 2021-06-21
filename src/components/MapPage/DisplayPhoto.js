@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 
 import _ from "lodash";
 
@@ -23,8 +24,10 @@ import { withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Chip from "@material-ui/core/Chip";
 
-import CardComponent from "../CardComponent";
+import CardComponent from "components/CardComponent";
 
+import config from "custom/config";
+  
 const tweetLogo = process.env.PUBLIC_URL + "/images/twitter.svg";
 
 const styles = (theme) => ({
@@ -47,7 +50,7 @@ const styles = (theme) => ({
 
 class DisplayPhoto extends Component {
   formatField(value, fieldName) {
-    const formater = this.props.config.PHOTO_ZOOMED_FIELDS[fieldName];
+    const formater = config.PHOTO_ZOOMED_FIELDS[fieldName];
     if (value) {
       return formater(value);
     }
@@ -58,7 +61,6 @@ class DisplayPhoto extends Component {
   render() {
     const {
       user,
-      config,
       placeholderImage,
       feature,
       handleClose,
@@ -190,4 +192,7 @@ class DisplayPhoto extends Component {
   }
 }
 
-export default withMobileDialog()(withStyles(styles)(DisplayPhoto));
+const mapStateToProps = state => ({
+  user: state.user
+});
+export default connect(mapStateToProps)(withMobileDialog()(withStyles(styles)(DisplayPhoto)));

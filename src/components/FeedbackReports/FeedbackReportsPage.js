@@ -17,7 +17,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { dbFirebase } from "features/firebase";
 
 import PageWrapper from "../PageWrapper";
-import config from "../../custom/config";
+import config from "custom/config";
 import "../ModeratorPage.scss";
 
 const styles = theme => ({
@@ -66,7 +66,8 @@ class FeedbackReportsPage extends Component {
   };
 
   render() {
-    const { label, handleClose, classes } = this.props;
+    const { handleClose, classes } = this.props;
+    const label = config.PAGES.feedbackReports.label;
 
     return (
       <PageWrapper label={label} handleClose={handleClose}>

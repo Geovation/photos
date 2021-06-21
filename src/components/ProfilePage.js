@@ -1,6 +1,7 @@
 // Profile page to display user details.
 
 import React, { useState } from "react";
+import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -24,6 +25,7 @@ import MapLocation from "../types/MapLocation";
 import { dbFirebase, authFirebase } from "features/firebase";
 import User from "types/User";
 
+import config from "custom/config";
 // TODO: split the file
 
 const AVATAR_SIZE = 100;
@@ -80,7 +82,12 @@ const styles = (theme) => ({
   },
 });
 
-const ProfileTextField = withStyles(styles)(function (props) {
+const mapStateToProps = state => ({
+  user: state.user,
+  geojson: state.geojson
+});
+
+const ProfileTextField = connect(mapStateToProps)(withStyles(styles)(function (props) {
   const { user, className, fieldName, classes, maxLength, placeholder } = props;
   const originalFieldValue = user[fieldName] || "";
 
@@ -128,7 +135,7 @@ const ProfileTextField = withStyles(styles)(function (props) {
       {updating && <CircularProgress size={20} className={classes.textProgress} />}
     </span>
   );
-});
+}));
 
 class Profile extends React.Component {
   constructor(props) {
@@ -145,10 +152,10 @@ class Profile extends React.Component {
     const mapLocation = new MapLocation(
       feature.geometry.coordinates[1],
       feature.geometry.coordinates[0],
-      this.props.config.ZOOM_FLYTO
+      config.ZOOM_FLYTO
     );
     const urlFormated = mapLocation.urlFormated();
-    return `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}@${urlFormated}`;
+    return `${config.PAGES.displayPhoto.path}/${feature.properties.id}@${urlFormated}`;
   }
 
   handleAvatarClick = (e) => {
@@ -189,7 +196,7 @@ class Profile extends React.Component {
   };
 
   render() {
-    const { user, classes, label, geojson, handlePhotoClick, handleClose } = this.props;
+    const { user, classes, geojson, handlePhotoClick, handleClose } = this.props;
 
     const myPhotos = geojson && geojson.features.filter((f) => f.properties.owner_id === user.id);
     const myLastPhotos = _.reverse(_.sortBy(myPhotos, (o) => o.properties.updated)).slice(0, 20);
@@ -201,7 +208,7 @@ class Profile extends React.Component {
     console.log(user);
 
     return (
-      <PageWrapper label={label} handleClose={handleClose} header={false}>
+      <PageWrapper label={config.PAGES.account.label} handleClose={handleClose} header={false}>
         <div className={classes.profileInfo}>
           <div className={classes.wrapper}>
             <IconButton onClick={this.handleAvatarClick} disabled={this.state.updatingPhoto}>
@@ -223,7 +230,6 @@ class Profile extends React.Component {
           </RootRef>
 
           <ProfileTextField
-            user={user}
             fieldName="displayName"
             className={classes.name}
             maxLength={User.DISPLAY_NAME_MAXLENGTH}
@@ -292,4 +298,4 @@ Profile.propTypes = {
   user: PropTypes.object,
 };
 
-export default withStyles(styles)(Profile);
+export default connect(mapStateToProps)(withStyles(styles)(Profile));

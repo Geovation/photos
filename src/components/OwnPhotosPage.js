@@ -17,7 +17,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 
 import PageWrapper from "./PageWrapper";
 import CardComponent from "./CardComponent";
-import config from "../custom/config";
+import config from "custom/config";
 import { Icon } from "@material-ui/core";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
@@ -42,7 +42,8 @@ export default class OwnPhotosPage extends Component {
   };
 
   render() {
-    const { label, handleClose, photos } = this.props;
+    const { handleClose, photos } = this.props;
+    const label = config.PAGES.ownPhotos.label;
 
     return (
       <PageWrapper label={label} handleClose={handleClose} hasHeader={false}>

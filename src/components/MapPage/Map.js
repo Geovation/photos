@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
+
 import _ from "lodash";
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -11,9 +13,11 @@ import Dehaze from "@material-ui/icons/Dehaze";
 
 import { withStyles } from "@material-ui/core/styles";
 
-import { gtagEvent } from "../../gtag.js";
+import { gtagEvent } from "gtag.js";
 import "./Map.scss";
-import MapLocation from "../../types/MapLocation";
+import MapLocation from "types/MapLocation";
+
+import config from "custom/config";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -64,7 +68,7 @@ class Map extends Component {
   }
 
   async componentDidMount() {
-    mapboxgl.accessToken = this.props.config.MAPBOX_TOKEN;
+    mapboxgl.accessToken = config.MAPBOX_TOKEN;
 
     const mapLocation = this.props.mapLocation;
     const zoom = mapLocation.zoom;
@@ -72,7 +76,7 @@ class Map extends Component {
 
     this.map = new mapboxgl.Map({
       container: "map", // container id
-      style: this.props.config.MAP_SOURCE,
+      style: config.MAP_SOURCE,
       center: center, // starting position [lng, lat]
       zoom: zoom, // starting zoom
       attributionControl: false,
@@ -89,7 +93,7 @@ class Map extends Component {
     this.map.addControl(
       new mapboxgl.AttributionControl({
         compact: true,
-        customAttribution: this.props.config.MAP_ATTRIBUTION,
+        customAttribution: config.MAP_ATTRIBUTION,
       }),
       "bottom-left"
     );
@@ -378,4 +382,8 @@ class Map extends Component {
   }
 }
 
-export default withStyles(styles)(Map);
+const mapStateToProps = state => ({
+  user: state.user,
+  geojson: state.geojson
+});
+export default connect(mapStateToProps)(withStyles(styles)(Map));

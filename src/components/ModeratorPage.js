@@ -17,7 +17,7 @@ import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import PageWrapper from "./PageWrapper";
 import CardComponent from "./CardComponent";
 import "./ModeratorPage.scss";
-import config from "../custom/config";
+import config from "custom/config";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -45,7 +45,8 @@ class ModeratorPage extends Component {
   };
 
   render() {
-    const { label, handleClose, photos } = this.props;
+    const { handleClose, photos } = this.props;
+    const label = config.PAGES.moderator.label;
 
     return (
       <PageWrapper label={label} handleClose={handleClose} hasHeader={false}>

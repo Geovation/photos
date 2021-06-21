@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
@@ -12,8 +13,8 @@ import Typography from "@material-ui/core/Typography";
 
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
-import config from "../custom/config";
-import utils from "../utils";
+import config from "custom/config";
+import utils from "utils";
 import "./DrawerContainer.scss";
 
 const placeholderImage =
@@ -164,4 +165,9 @@ class DrawerContainer extends Component {
     );
   }
 }
-export default withStyles(styles, { withTheme: true })(DrawerContainer);
+
+const mapStateToProps = state => ({
+  user: state.user,
+  online: state.online
+});
+export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(DrawerContainer));

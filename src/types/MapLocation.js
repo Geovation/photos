@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-import config from "../custom/config";
+import config from "custom/config";
 
 class MapLocation {
   constructor(latitude, longitude, zoom) {

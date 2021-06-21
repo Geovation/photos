@@ -5,7 +5,8 @@ import CachedIcon from "@material-ui/icons/Cached";
 import { withStyles } from "@material-ui/core/styles";
 
 import PageWrapper from "./PageWrapper";
-import utils from "../utils";
+import utils from "utils";
+import config from "custom/config";
 
 const styles = theme => ({
   typography: {
@@ -16,7 +17,8 @@ const styles = theme => ({
 
 class AboutPage extends React.Component {
   render() {
-    const { classes, label, reloadPhotos } = this.props;
+    const { classes, reloadPhotos } = this.props;
+    const label = config.PAGES.about.label;
     return (
       <PageWrapper
         label={label}

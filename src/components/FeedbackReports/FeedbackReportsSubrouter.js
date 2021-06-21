@@ -4,6 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import FeedbackReportsPage from "./FeedbackReportsPage";
 import FeedbackDetailsPage from "./FeedbackDetailsPage";
 
+import config from "custom/config";
 class FeedbackReportsSubrouter extends Component {
   constructor(props) {
     super(props);
@@ -22,7 +23,7 @@ class FeedbackReportsSubrouter extends Component {
       <Switch>
         <Route
           exact
-          path={this.props.config.PAGES.feedbackReports.path}
+          path={config.PAGES.feedbackReports.path}
           render={props => (
             <FeedbackReportsPage
               {...this.props}
@@ -34,7 +35,7 @@ class FeedbackReportsSubrouter extends Component {
         />
 
         <Route
-          path={`${this.props.config.PAGES.feedbackReports.path}/:id`}
+          path={`${config.PAGES.feedbackReports.path}/:id`}
           render={props => <FeedbackDetailsPage {...this.props} {...props} />}
         />
       </Switch>

@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { connect } from 'react-redux';
 
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -197,4 +198,7 @@ EmailVerifiedDialog.propTypes = {
   fullScreen: PropTypes.bool.isRequired,
 };
 
-export default withMobileDialog()(withStyles(styles)(EmailVerifiedDialog));
+const mapStateToProps = state => ({
+  user: state.user
+});
+export default connect(mapStateToProps)(withMobileDialog()(withStyles(styles)(EmailVerifiedDialog)));

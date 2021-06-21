@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 
 import _ from "lodash";
 import moment from "moment";
@@ -146,10 +147,10 @@ class Reports extends Component {
   }
 
   render() {
-    const { label, handleClose } = this.props;
+    const { handleClose } = this.props;
 
     return (
-      <PageWrapper label={label} handleClose={handleClose} hasLogo={false}>
+      <PageWrapper label="Some reports" handleClose={handleClose} hasLogo={false}>
         <canvas ref={this.graphRef} />
         <canvas ref={this.numberBarRef} />
         <canvas ref={this.numberRef} />
@@ -158,4 +159,8 @@ class Reports extends Component {
   }
 }
 
-export default withStyles(styles)(Reports);
+const mapStateToProps = state => ({
+  geojson: state.geojson
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(Reports));

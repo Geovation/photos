@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
 
 import * as localforage from "localforage";
 import _ from "lodash";
@@ -34,6 +35,7 @@ import DrawerContainer from "./components/DrawerContainer";
 import TermsDialog from "./components/TermsDialog";
 import EmailVerifiedDialog from "./components/EmailVerifiedDialog";
 import DisplayPhoto from "./components/MapPage/DisplayPhoto";
+import config from "custom/config";
 
 import { gtagPageView, gtagEvent } from "./gtag.js";
 import "./App.scss";
@@ -60,15 +62,11 @@ class App extends Component {
     this.state = {
       file: null,
       location: new MapLocation(), // from GPS
-      user: null,
-      online: false,
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false,
       welcomeShown: !!localStorage.getItem("welcomeShown"),
       termsAccepted: !!localStorage.getItem("termsAccepted"),
-      geojson: null,
-      stats: null,
       srcType: null,
       dialogOpen: false,
       confirmDialogOpen: false,
@@ -83,13 +81,11 @@ class App extends Component {
 
     this.geoid = null;
     this.domRefInput = {};
-    // It contains the photos in feature format. It is used to generate a geojson state that will be passed as parameter to the Map.
-    this.featuresDict = {};
     this.VISIBILITY_REGEX = new RegExp(
       "(^/@|^/$|^" +
-        this.props.config.PAGES.displayPhoto.path +
+        config.PAGES.displayPhoto.path +
         "/|^" +
-        this.props.config.PAGES.embeddable.path +
+        config.PAGES.embeddable.path +
         ")",
       "g"
     );
@@ -100,7 +96,7 @@ class App extends Component {
       file,
     });
 
-    this.props.history.push(this.props.config.PAGES.photos.path);
+    this.props.history.push(config.PAGES.photos.path);
   };
 
   setLocationWatcher() {
@@ -153,7 +149,7 @@ class App extends Component {
   extractPathnameParams() {
     // extracts photoID
     const regexPhotoIDMatch = this.props.location.pathname.match(
-      new RegExp(`${this.props.config.PAGES.displayPhoto.path}\\/(\\w+)`)
+      new RegExp(`${config.PAGES.displayPhoto.path}\\/(\\w+)`)
     );
 
     const photoId = regexPhotoIDMatch && regexPhotoIDMatch[1];
@@ -172,13 +168,18 @@ class App extends Component {
         )) ||
       new MapLocation();
     if (!regexMapLocationMatch) {
-      mapLocation.zoom = this.props.config.ZOOM;
+      mapLocation.zoom = config.ZOOM;
     }
 
     return { photoId, mapLocation };
   }
 
   async componentDidMount() {
+    this.stats = config.getStats(
+      this.props.geojson,
+      this.state.dbStats
+    );
+
     let { photoId, mapLocation } = this.extractPathnameParams();
     this.setState({ photoId, mapLocation });
 
@@ -190,15 +191,15 @@ class App extends Component {
 
     this.unregisterAuthObserver = authFirebase.onAuthStateChanged((user) => {
       // lets start fresh if the user logged out
-      if (this.state.user && !user) {
+      if (this.props.user && !user) {
         gtagEvent("Signed out", "User");
 
-        this.props.history.push(this.props.config.PAGES.map.path);
+        this.props.history.push(config.PAGES.map.path);
         window.location.reload();
       }
 
       // the user had logged in.
-      this.setState({ user });
+      this.props.dispatch({ type: "SET_USER", payload: { user } });
     });
 
     this.unregisterLocationObserver = this.setLocationWatcher();
@@ -207,47 +208,10 @@ class App extends Component {
       console.error
     );
   }
-
-  // Saving means also to update the state which with the current implementation also means to re display the map which is very slow.
-  // As a workaround, It won't update the state more than once very 10 seconds.
-  saveGeojson = () => {
-    this.settingGeojson = clearTimeout(this.settingGeojson);
-
-    localforage.setItem("featuresDict", this.featuresDict);
-
-    const geojson = {
-      type: "FeatureCollection",
-      features: _.map(this.featuresDict, f => f),
-    };
-    const stats = this.props.config.getStats(geojson, this.state.dbStats);
-    this.setState({ geojson, stats });
-    console.debug("GeoJson updated");
-  };
   
-  // Wait 10 seconds before saving it again.
-  delayedSaveGeojson = () => {
-    // only if a save has not be already scheduled
-    if (!this.settingGeojson) {
-      // do not wait the first time
-      if (!this.state.geojson) this.saveGeojson();
-      else this.settingGeojson = setTimeout(this.saveGeojson, 10 * 1000);
-    } else {
-      console.debug("not saving geojson as it has alreaby been scheduled")
-    }
-  };
-
   modifyFeature = (photo) => {
     console.debug(`modifying ${photo.id}`)
-    this.featuresDict[photo.id] = {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [photo.location.longitude, photo.location.latitude],
-      },
-      properties: photo,
-    };
-
-    this.delayedSaveGeojson();
+    this.props.dispatch({ type: "UPDATE_FEATURE", payload: { photo } });
   };
 
   addFeature = (photo) => {
@@ -257,26 +221,19 @@ class App extends Component {
 
   removeFeature = (photo) => {
     console.debug(`removing ${photo.id}`)
-    delete this.featuresDict[photo.id];
-    this.delayedSaveGeojson();
+    this.props.dispatch({ type: "DELETE_FEATURE", payload: { photo } });
   };
 
   async someInits(photoId) {
     this.unregisterConnectionObserver = dbFirebase.onConnectionStateChanged(
-      (online) => {
-        this.setState({ online });
-      }
+      (online) => this.props.dispatch({ type: "SET_ONLINE", payload: { online } })
     );
 
     dbFirebase.fetchStats().then((dbStats) => {
       console.log(dbStats);
       this.setState({
         usersLeaderboard: dbStats.users,
-        dbStats,
-        stats: this.props.config.getStats(
-          this.state.geojson,
-          this.state.dbStats
-        ),
+        dbStats
       });
 
       return dbStats;
@@ -292,10 +249,9 @@ class App extends Component {
     });
 
     // Get the photos from the cache first.
-    this.featuresDict = await localforage.getItem("featuresDict") || {};
-    
-    if (!_.isEmpty(this.featuresDict)) {
-      this.delayedSaveGeojson();
+    const featuresDict = await localforage.getItem("featuresDict") || {};
+    if (!_.isEmpty(featuresDict)) {
+      this.props.dispatch({ type: "SET_FEATURES", payload: { featuresDict } });
     } else {
       await this.fetchPhotos();
     }
@@ -326,8 +282,8 @@ class App extends Component {
 
   calculateLastUpdate() {
     let lastUpdated = new Date(null);
-    if (this.state.geojson) {
-      const latestPhoto = _.maxBy(this.state.geojson.features, (photo) => {
+    if (this.props.geojson) {
+      const latestPhoto = _.maxBy(this.props.geojson.features, (photo) => {
         return photo.properties.updated;
       });
       lastUpdated = _.get(latestPhoto, "properties.updated");
@@ -338,11 +294,7 @@ class App extends Component {
   async fetchPhotos(fromAPI = true, lastUpdate = new Date(null)) {
     return dbFirebase
       .fetchPhotos(fromAPI, lastUpdate)
-      .then((photos) => {
-        _.forEach(photos, (photo) => {
-          this.addFeature(photo);
-        });
-      })
+      .then((photos) => _.forEach(photos, (photo) => this.addFeature(photo)))
       .catch(console.error);
   }
 
@@ -358,13 +310,10 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const stats = this.props.config.getStats(
-      this.state.geojson,
+    this.stats = config.getStats(
+      this.props.geojson,
       this.state.dbStats
     );
-    if (!_.isEqual(this.state.stats, stats)) {
-      this.setState({ stats });
-    }
 
     if (prevProps.location !== this.props.location) {
       gtagPageView(this.props.location.pathname);
@@ -380,17 +329,17 @@ class App extends Component {
 
     // listen to new photos to be moderated
     if (
-      _.get(this.state.user, "isModerator") &&
+      _.get(this.props.user, "isModerator") &&
       !this.unregisterPhotosToModerate
     ) {
       this.unregisterPhotosToModerate = dbFirebase.photosToModerateRT(
-        this.props.config.MODERATING_PHOTOS,
+        config.MODERATING_PHOTOS,
         (photo) => this.updatePhotoToModerate(photo),
         (photo) => this.removePhotoToModerate(photo)
       );
     }
     // if there is a user
-    if (this.state.user && !this.unregisterOwnPhotos) {
+    if (this.props.user && !this.unregisterOwnPhotos) {
       this.unregisterOwnPhotos = dbFirebase.ownPhotosRT(
         this.addFeature,
         this.modifyFeature,
@@ -437,7 +386,7 @@ class App extends Component {
   handleClickLoginLogout = () => {
     let loginLogoutDialogOpen = true;
 
-    if (this.state.user) {
+    if (this.props.user) {
       authFirebase.signOut();
       loginLogoutDialogOpen = false;
     }
@@ -450,7 +399,7 @@ class App extends Component {
   };
 
   handleCameraClick = () => {
-    if (this.props.config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.state.user) {
+    if (config.SECURITY.UPLOAD_REQUIRES_LOGIN && !this.props.user) {
       this.setState({
         dialogOpen: true,
         dialogTitle: "Please login to add a photo",
@@ -494,9 +443,12 @@ class App extends Component {
   handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
-      this.setState({
-        user: { ...this.state.user, emailVerified: user.emailVerified },
+      this.props.dispatch({
+        type: "SET_USER", payload: {
+          user: { ...this.props.user, emailVerified: user.emailVerified }
+        }
       });
+
       let message = {
         title: "Confirmation",
         body: "Thank you for verifying your email.",
@@ -541,12 +493,12 @@ class App extends Component {
       if (isApproved) {
         await dbFirebase.approvePhoto(
           photo.id,
-          this.state.user ? this.state.user.id : null
+          this.props.user ? this.props.user.id : null
         );
       } else {
         await dbFirebase.rejectPhoto(
           photo.id,
-          this.state.user ? this.state.user.id : null
+          this.props.user ? this.props.user.id : null
         );
       }
 
@@ -600,7 +552,7 @@ class App extends Component {
   };
 
   handlePhotoPageClose = () => {
-    const PAGES = this.props.config.PAGES;
+    const PAGES = config.PAGES;
     const photoPath = this.props.location.pathname;
     const coords = photoPath.split("@")[1];
     const mapPath = this.props.location.pathname.startsWith(
@@ -620,7 +572,7 @@ class App extends Component {
   handlePhotoClick = (feature) => {
     this.setState({ selectedFeature: feature });
 
-    let pathname = `${this.props.config.PAGES.displayPhoto.path}/${feature.properties.id}`;
+    let pathname = `${config.PAGES.displayPhoto.path}/${feature.properties.id}`;
     const currentPath = this.props.history.location.pathname;
 
     const coordsUrl =
@@ -628,10 +580,10 @@ class App extends Component {
       new MapLocation(
         feature.geometry.coordinates[1],
         feature.geometry.coordinates[0],
-        this.props.config.ZOOM_FLYTO
+        config.ZOOM_FLYTO
       ).urlFormated();
     pathname =
-      currentPath === this.props.config.PAGES.embeddable.path
+      currentPath === config.PAGES.embeddable.path
         ? currentPath + pathname
         : pathname;
 
@@ -645,10 +597,7 @@ class App extends Component {
 
   reloadPhotos = () => {
     // delete photos.
-    this.featuresDict = {};
-
-    // it will open the "loading photos" message
-    this.setState({ geojson: null });
+    this.props.dispatch({ type: "SET_FEATURES", payload: { featuresDict: {} } });
 
     // fetch all the photos from firestore instead than from the CDN
     this.fetchPhotos(false);
@@ -657,11 +606,11 @@ class App extends Component {
   // from the own photos from the dict
   getOwnPhotos() {
     let ownPhotos = {};
-    if (this.state.user) {
-      const allPhotos = this.featuresDict;
+    if (this.props.user) {
+      const allPhotos = _.get(this.props, "geojson.features");
       ownPhotos = _.filter(
         allPhotos,
-        (photo) => _.get(photo, "properties.owner_id") === this.state.user.id
+        (photo) => _.get(photo, "properties.owner_id") === this.props.user.id
       ).reduce((accumulator, currentValue) => {
         accumulator[currentValue.properties.id] = currentValue;
         return accumulator;
@@ -671,17 +620,17 @@ class App extends Component {
   }
 
   render() {
-    const { classes, fields, config, history } = this.props;
+    const { classes, history } = this.props;
+    const fields = Object.values(config.PHOTO_FIELDS);
     return (
       <div className="geovation-app">
         {!this.state.termsAccepted &&
           !this.props.history.location.pathname.startsWith(
-            this.props.config.PAGES.embeddable.path
+            config.PAGES.embeddable.path
           ) && <TermsDialog handleClose={this.handleTermsPageClose} />}
 
         <EmailVerifiedDialog
-          user={this.state.user}
-          open={!!(this.state.user && !this.state.user.emailVerified)}
+          open={!!(this.props.user && !this.props.user.emailVerified)}
           handleNextClick={this.handleNextClick}
         />
 
@@ -698,9 +647,6 @@ class App extends Component {
                       <CustomPage.page
                         {...props}
                         handleClose={history.goBack}
-                        label={CustomPage.label}
-                        geojson={this.state.geojson}
-                        config={this.props.config}
                       />
                     )}
                   />
@@ -712,7 +658,6 @@ class App extends Component {
               render={(props) => (
                 <AboutPage
                   {...props}
-                  label={this.props.config.PAGES.about.label}
                   handleClose={history.goBack}
                   reloadPhotos={this.reloadPhotos}
                 />
@@ -725,7 +670,7 @@ class App extends Component {
                 <SwipeTutorialPage
                   {...props}
                   steps={tutorialSteps}
-                  label={this.props.config.PAGES.tutorial.label}
+                  label={config.PAGES.tutorial.label}
                   handleClose={history.goBack}
                   hasLogo={true}
                 />
@@ -738,7 +683,7 @@ class App extends Component {
                 <SwipeTutorialPage
                   {...props}
                   steps={welcomeSteps}
-                  label={this.props.config.PAGES.welcome.label}
+                  label={config.PAGES.welcome.label}
                   handleClose={history.goBack}
                 />
               )}
@@ -749,25 +694,19 @@ class App extends Component {
               render={(props) => (
                 <LeaderboardPage
                   {...props}
-                  config={this.props.config}
-                  label={this.props.config.PAGES.leaderboard.label}
                   usersLeaderboard={this.state.usersLeaderboard}
                   handleClose={history.goBack}
-                  user={this.state.user}
                 />
               )}
             />
 
-            {this.state.user && this.state.user.isModerator && (
+            {this.props.user && this.props.user.isModerator && (
               <Route
-                path={this.props.config.PAGES.moderator.path}
+                path={config.PAGES.moderator.path}
                 render={(props) => (
                   <ModeratorPage
                     {...props}
                     photos={this.state.photosToModerate}
-                    config={this.props.config}
-                    label={this.props.config.PAGES.moderator.label}
-                    user={this.state.user}
                     handleClose={history.goBack}
                     handleRejectClick={this.handleRejectClick}
                     handleApproveClick={this.handleApproveClick}
@@ -776,16 +715,13 @@ class App extends Component {
               />
             )}
 
-            {this.state.user && (
+            {this.props.user && (
               <Route
-                path={this.props.config.PAGES.ownPhotos.path}
+                path={config.PAGES.ownPhotos.path}
                 render={(props) => (
                   <OwnPhotosPage
                     {...props}
                     photos={this.getOwnPhotos()}
-                    config={this.props.config}
-                    label={this.props.config.PAGES.ownPhotos.label}
-                    user={this.state.user}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
                     // handleRejectClick={this.handleRejectClick}
@@ -795,15 +731,12 @@ class App extends Component {
               />
             )}
 
-            {this.state.user && this.state.user.isModerator && (
+            {this.props.user && this.props.user.isModerator && (
               <Route
-                path={this.props.config.PAGES.feedbackReports.path}
+                path={config.PAGES.feedbackReports.path}
                 render={(props) => (
                   <FeedbackReportsSubrouter
                     {...props}
-                    config={this.props.config}
-                    label={this.props.config.PAGES.feedbackReports.label}
-                    user={this.state.user}
                     handleClose={this.props.history.goBack}
                   />
                 )}
@@ -815,10 +748,8 @@ class App extends Component {
               render={(props) => (
                 <PhotoPage
                   {...props}
-                  label={this.props.config.PAGES.photos.label}
                   file={this.state.file}
                   gpsLocation={this.state.location}
-                  online={this.state.online}
                   srcType={this.state.srcType}
                   fields={fields}
                   handleClose={history.goBack}
@@ -827,16 +758,12 @@ class App extends Component {
               )}
             />
 
-            {this.state.user && (
+            {this.props.user && (
               <Route
-                path={this.props.config.PAGES.account.path}
+                path={config.PAGES.account.path}
                 render={(props) => (
                   <ProfilePage
                     {...props}
-                    config={this.props.config}
-                    label={this.props.config.PAGES.account.label}
-                    user={this.state.user}
-                    geojson={this.state.geojson}
                     handleClose={history.goBack}
                     handlePhotoClick={this.handlePhotoClick}
                   />
@@ -849,10 +776,7 @@ class App extends Component {
               render={(props) => (
                 <WriteFeedbackPage
                   {...props}
-                  label={this.props.config.PAGES.writeFeedback.label}
-                  user={this.state.user}
                   location={this.state.location}
-                  online={this.state.online}
                   handleClose={history.goBack}
                 />
               )}
@@ -866,9 +790,7 @@ class App extends Component {
               render={(props) => (
                 <DisplayPhoto
                   {...props}
-                  user={this.state.user}
                   placeholderImage={placeholderImage}
-                  config={config}
                   handleRejectClick={this.handleRejectClick}
                   handleApproveClick={this.handleApproveClick}
                   handleClose={this.handlePhotoPageClose}
@@ -883,9 +805,6 @@ class App extends Component {
             visible={this.props.history.location.pathname.match(
               this.VISIBILITY_REGEX
             )}
-            geojson={this.state.geojson}
-            user={this.state.user}
-            config={config}
             embeddable={this.props.history.location.pathname.match(
               new RegExp(config.PAGES.embeddable.path, "g")
             )}
@@ -914,15 +833,15 @@ class App extends Component {
             ) && (
               <SwipeTutorialPage
                 steps={welcomeSteps}
-                label={this.props.config.PAGES.welcome.label}
+                label={config.PAGES.welcome.label}
                 handleClose={this.handleWelcomePageClose}
               />
             )}
         </main>
 
-        <Snackbar open={!this.state.geojson} message="Loading photos..." />
+        <Snackbar open={!this.props.geojson} message="Loading photos..." />
         <Snackbar
-          open={this.state.welcomeShown && !this.state.online}
+          open={this.state.welcomeShown && !this.props.online}
           message="Connecting to our servers..."
         />
 
@@ -938,18 +857,16 @@ class App extends Component {
         </RootRef>
 
         <Login
-          open={this.state.loginLogoutDialogOpen && !this.state.user}
+          open={this.state.loginLogoutDialogOpen && !this.props.user}
           handleClose={this.handleLoginClose}
           loginComponent={LoginFirebase}
         />
 
         <DrawerContainer
-          user={this.state.user}
-          online={this.state.online}
           handleClickLoginLogout={this.handleClickLoginLogout}
           leftDrawerOpen={this.state.leftDrawerOpen}
           toggleLeftDrawer={this.toggleLeftDrawer}
-          stats={this.state.stats}
+          stats={this.stats}
           sponsorImage={this.state.sponsorImage}
         />
 
@@ -1000,4 +917,10 @@ class App extends Component {
   }
 }
 
-export default withRouter(withStyles(styles, { withTheme: true })(App));
+const mapStateToProps = state => ({
+  user: state.user,
+  online: state.online,
+  geojson: state.geojson
+});
+
+export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
