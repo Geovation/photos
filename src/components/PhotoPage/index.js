@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
 import PropTypes from "prop-types";
 import loadImage from "blueimp-load-image";
@@ -18,7 +18,7 @@ import { gtagEvent } from "gtag.js";
 import "./style.scss";
 import dbFirebase from "features/firebase/dbFirebase";
 
-import PageWrapper from  "components/PageWrapper";
+import PageWrapper from "components/PageWrapper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
 import _ from "lodash";
@@ -242,7 +242,6 @@ class PhotoPage extends Component {
         disableImageHead: false,
       }
     );
-    
 
     loadImage(
       this.props.file,
@@ -372,9 +371,12 @@ class PhotoPage extends Component {
           <GeoTag
             open={this.state.openGeotag}
             imgLocation={this.state.imgLocation}
-            handleClose={(imgLocation) => this.setState({ imgLocation, openGeotag: false })}
+            handleNext={this.handleNext}
+            handleClose={(imgLocation) =>
+              this.setState({ imgLocation, openGeotag: false })
+            }
           />
-          
+
           <Dialog
             open={this.state.open}
             onClose={this.closeDialog}
@@ -427,7 +429,9 @@ PhotoPage.propTypes = {
   handleRetakeClick: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  online: state.online
+const mapStateToProps = (state) => ({
+  online: state.online,
 });
-export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(PhotoPage));
+export default connect(mapStateToProps)(
+  withStyles(styles, { withTheme: true })(PhotoPage)
+);
