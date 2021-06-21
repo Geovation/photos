@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
 import PropTypes from "prop-types";
 import loadImage from "blueimp-load-image";
@@ -18,16 +18,14 @@ import { gtagEvent } from "gtag.js";
 import "./style.scss";
 import dbFirebase from "features/firebase/dbFirebase";
 
-import PageWrapper from  "components/PageWrapper";
+import PageWrapper from "components/PageWrapper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
-import Link from "@material-ui/core/Link";
 import _ from "lodash";
+import GeoTag from "./Geotag";
 
 const emptyState = {
   imgSrc: null,
-  imgExif: null,
-  imgIptc: null,
   imgLocation: null,
   open: false,
   message: "",
@@ -244,57 +242,26 @@ class PhotoPage extends Component {
         disableImageHead: false,
       }
     );
-    
 
     loadImage(
       this.props.file,
       (img) => {
-        let imgFromCamera;
+        // let imgFromCamera;
         const imgSrc = img.toDataURL("image/jpeg");
 
-        const fileDate = this.props.file.lastModified;
-        const ageInMinutes = (new Date().getTime() - fileDate) / 1000 / 60;
-        imgFromCamera = isNaN(ageInMinutes) || ageInMinutes < 0.5;
-        
-
-        if (imgFromCamera) {
-          imgLocation = this.props.gpsLocation;
-          if (!this.props.gpsLocation.online) {
-            this.openDialog(
-              "We couldn't find your location so you won't be able to upload an image right now. Enable GPS on your phone and retake the photo to upload it."
-            );
-            return;
-          }
-        } else {
-          imgLocation = this.getLocationFromExifMetadata(imgExif);
-        }
+        // Get location from the image first
+        imgLocation = this.getLocationFromExifMetadata(imgExif);
+        // If undefined, get it from the GPS
+        imgLocation = imgLocation ? imgLocation : this.props.gpsLocation;
 
         this.setState({
           imgSrc,
-          imgExif,
-          imgIptc,
           imgLocation,
           anyError: !!this.props.fields[0],
         });
 
-        if (!imgLocation) {
-          this.openDialog(
-            <span style={{ fontWeight: 500 }}>
-              Your photo isn't geo-tagged so it can't be uploaded. To fix this
-              manually, you can geo-tag it online with a tool like&nbsp;
-              <Link
-                href={"https://tool.geoimgr.com/"}
-                className={this.props.classes.link}
-              >
-                Geoimgr
-              </Link>
-              . In future, make sure GPS is enabled and your camera has access
-              to it.
-            </span>
-          );
-
-          this.setState({ next: false, anyError: true });
-        }
+        // Let the user confirm the location
+        this.setState({ openGeotag: true });
       },
       {
         canvas: true,
@@ -401,6 +368,15 @@ class PhotoPage extends Component {
             </div>
           )}
 
+          <GeoTag
+            open={this.state.openGeotag}
+            imgLocation={this.state.imgLocation}
+            handleNext={this.handleNext}
+            handleClose={(imgLocation) =>
+              this.setState({ imgLocation, openGeotag: false })
+            }
+          />
+
           <Dialog
             open={this.state.open}
             onClose={this.closeDialog}
@@ -453,7 +429,9 @@ PhotoPage.propTypes = {
   handleRetakeClick: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  online: state.online
+const mapStateToProps = (state) => ({
+  online: state.online,
 });
-export default connect(mapStateToProps)(withStyles(styles, { withTheme: true })(PhotoPage));
+export default connect(mapStateToProps)(
+  withStyles(styles, { withTheme: true })(PhotoPage)
+);
