@@ -22,7 +22,7 @@ import PageWrapper from "components/PageWrapper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
 import _ from "lodash";
-import GeoTag from "./Geptag";
+import GeoTag from "./Geotag";
 
 const emptyState = {
   imgSrc: null,
