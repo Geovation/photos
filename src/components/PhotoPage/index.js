@@ -23,6 +23,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
 import _ from "lodash";
 import GeoTag from "./Geotag";
+import MapLocation from "types/MapLocation";
 
 const emptyState = {
   imgSrc: null,
@@ -124,7 +125,7 @@ class PhotoPage extends Component {
       const latLon = dms2dec(lat, latRef, lon, lonRef);
       latitude = latLon[0];
       longitude = latLon[1];
-      location = { latitude, longitude };
+      location = new MapLocation( latitude, longitude );
     } catch (e) {
       console.debug(`Error extracting GPS from file; ${e}`);
     }

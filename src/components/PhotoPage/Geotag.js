@@ -46,10 +46,11 @@ export default function GeoTag({ open=false, imgLocation, handleNext, handleClos
         .addTo(map.current);
       
       map.current.on("move", () => {
-        imgLocation.latitude = map.current.getCenter().lat;
-        imgLocation.longitude = map.current.getCenter().lng;
+        const center = map.current.getCenter();
+        imgLocation.latitude = center.lat;
+        imgLocation.longitude = center.lng;
 
-        marker.current.setLngLat(map.current.getCenter());
+        marker.current.setLngLat(center);
       });
     });
 
