@@ -316,8 +316,11 @@ class Map extends Component {
           this.props.handlePhotoClick(feature);
         });
         //create marker
+        // for whatever reason it is different thatn `feature.geometry.coordinates`
+        const loc = JSON.parse(feature.properties.location);
+        const coordinates = [loc._long, loc._lat];
         const marker = new mapboxgl.Marker(el)
-          .setLngLat(feature.geometry.coordinates)
+          .setLngLat(coordinates)
           .addTo(this.map);
         //save the marker object to the renderedThumbnails dictionary
         this.renderedThumbnails[feature.properties.id] = marker;
