@@ -4,11 +4,7 @@ set -x;
 
 
 # config used in cloud functions and service worker
-CONFIG_FILE="src/custom/config.dev.json"
-if [ '$NODE_ENV' == 'production' ]; 
-then
-  CONFIG_FILE="src/custom/config.prod.json"
-fi
+CONFIG_FILE=${CONFIG_FILE:-"src/custom/config.dev.json"}
 
 # the service worker need to import the config without using fetch
 echo $CONFIG_FILE
