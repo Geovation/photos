@@ -22,7 +22,8 @@ import PageWrapper from "components/PageWrapper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
 import _ from "lodash";
-import GeoTag from "./Geotag";
+import GeoTag from "./GeoTag";
+import MapLocation from "types/MapLocation";
 
 const emptyState = {
   imgSrc: null,
@@ -46,11 +47,11 @@ const styles = (theme) => ({
   progress: {
     margin: theme.spacing(2),
   },
-  button: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  // button: {
+  //   display: "flex",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
   dialogContentProgress: {
     display: "flex",
     flexDirection: "column",
@@ -124,7 +125,7 @@ class PhotoPage extends Component {
       const latLon = dms2dec(lat, latRef, lon, lonRef);
       latitude = latLon[0];
       longitude = latLon[1];
-      location = { latitude, longitude };
+      location = new MapLocation( latitude, longitude );
     } catch (e) {
       console.debug(`Error extracting GPS from file; ${e}`);
     }
@@ -324,6 +325,8 @@ class PhotoPage extends Component {
   render() {
     const { classes, fields } = this.props;
 
+    const imageVisible = this.state.openGeotag ? "hidden" : "visible";
+
     return (
       <div className="geovation-photos">
         <PageWrapper
@@ -353,18 +356,17 @@ class PhotoPage extends Component {
               className={classes.photo}
             >
               <div className="picture">
-                <img src={this.state.imgSrc} alt={""} />
+                  <img src={this.state.imgSrc} alt={""} style={{ visibility: imageVisible }} />
               </div>
 
-              <div className={classes.button}>
-                <Button
-                  variant="outlined"
-                  fullWidth={true}
-                  onClick={this.retakePhoto}
-                >
-                  Retake
-                </Button>
-              </div>
+              <Button
+                variant="contained"
+                color="secondary"
+                fullWidth={true}
+                onClick={this.retakePhoto}
+              >
+                Retake
+              </Button>
             </div>
           )}
 
