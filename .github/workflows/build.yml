@@ -9,6 +9,9 @@ on:
     types:
       - created
 
+env:
+  NODE_ENV: development
+
 jobs:
   
   unit-test-web:
