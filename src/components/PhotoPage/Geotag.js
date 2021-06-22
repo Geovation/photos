@@ -13,17 +13,13 @@ export default function GeoTag({ open=false, imgLocation, handleNext, handleClos
 
   // See https://stackoverflow.com/questions/63498374/cant-show-mapbox-on-dialog-material-ui
   const MapboxWrapper = () => {
-    const useStyles = makeStyles(() => ({
-      mapContainer: {
-        position: "relative",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-        width: "100%",
-      },
-      map: { height: "100%", width: "100%", position: "absolute" },
-      confirmBtn: { margin: "25px" },
+    const useStyles = makeStyles((theme) => ({
+      map: { top: 0, bottom: 0, height: "100%", width: "100%", position: "absolute" },
+      space: { height: "100%" },
+      button: {
+        margin: theme.spacing(1.5),
+        marginBottom: theme.spacing(4),
+      }
     }));
     const map = useRef(null);
     const marker = useRef(null);
@@ -56,20 +52,22 @@ export default function GeoTag({ open=false, imgLocation, handleNext, handleClos
 
     return (
       <>
-        <div className={styles.mapContainer}>
-          <div ref={mapContainer} className={styles.map} />
+        <div ref={mapContainer} className={styles.map} />
+
+        <div className={styles.space}/>
+        <div className={styles.button}>
+          <Button
+            fullWidth
+            color="secondary"
+            variant="contained"
+            onClick={() => {
+              handleNext();
+              handleClose(imgLocation);
+            }}
+          >
+            Confirm
+          </Button>
         </div>
-        <Button
-          className={styles.confirmBtn}
-          color="secondary"
-          variant="contained"
-          onClick={() => {
-            handleNext();
-            handleClose(imgLocation);
-          }}
-        >
-          Confirm
-        </Button>
       </>
     );
   };
