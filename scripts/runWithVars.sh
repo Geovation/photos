@@ -4,7 +4,7 @@ set -x;
 
 
 # config used in cloud functions and service worker
-if [[ "$NODE_ENV" = "production" ]]; then
+if [ "$NODE_ENV" == "production" ]; then
   CONFIG_FILE="src/custom/config.prod.json"
 else
   CONFIG_FILE="src/custom/config.dev.json"
