@@ -32,5 +32,15 @@ SCRIPT=$(echo "$SCRIPT" | sed -e 's/&/\\\&/g' )
 sed -i "" "s#<script id=\"web-vitals\">.*</script>#<script id=\"web-vitals\">$SCRIPT</script>#" public/index.html
 
 eval $@
+EXIT_CODE=$?
 set +x;
-ls public
+# ls public
+
+if [ $EXIT_CODE -eq 0 ]
+then
+  echo "Successfully built"
+  exit $EXIT_CODE
+else
+  echo "The build failed"
+  exit $EXIT_CODE
+fi
