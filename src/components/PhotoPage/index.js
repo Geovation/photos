@@ -47,11 +47,11 @@ const styles = (theme) => ({
   progress: {
     margin: theme.spacing(2),
   },
-  button: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  // button: {
+  //   display: "flex",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  // },
   dialogContentProgress: {
     display: "flex",
     flexDirection: "column",
@@ -359,15 +359,14 @@ class PhotoPage extends Component {
                   <img src={this.state.imgSrc} alt={""} style={{ visibility: imageVisible }} />
               </div>
 
-              <div className={classes.button}>
-                <Button
-                  variant="outlined"
-                  fullWidth={true}
-                  onClick={this.retakePhoto}
-                >
-                  Retake
-                </Button>
-              </div>
+              <Button
+                variant="contained"
+                color="secondary"
+                fullWidth={true}
+                onClick={this.retakePhoto}
+              >
+                Retake
+              </Button>
             </div>
           )}
 
