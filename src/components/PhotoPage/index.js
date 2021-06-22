@@ -22,7 +22,7 @@ import PageWrapper from "components/PageWrapper";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
 import _ from "lodash";
-import GeoTag from "./Geotag";
+import GeoTag from "./GeoTag";
 import MapLocation from "types/MapLocation";
 
 const emptyState = {
@@ -325,6 +325,8 @@ class PhotoPage extends Component {
   render() {
     const { classes, fields } = this.props;
 
+    const imageVisible = this.state.openGeotag ? "hidden" : "visible";
+
     return (
       <div className="geovation-photos">
         <PageWrapper
@@ -354,7 +356,7 @@ class PhotoPage extends Component {
               className={classes.photo}
             >
               <div className="picture">
-                <img src={this.state.imgSrc} alt={""} />
+                  <img src={this.state.imgSrc} alt={""} style={{ visibility: imageVisible }} />
               </div>
 
               <div className={classes.button}>
