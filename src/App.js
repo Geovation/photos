@@ -256,7 +256,11 @@ class App extends Component {
       await this.fetchPhotos();
     }
   
-    this.registerPublishedPhotosRT();     
+    this.registerPublishedPhotosRT();
+    
+    if (!this.state.welcomeShown) {
+      this.props.history.push(config.PAGES.welcome.path);
+    }
   }
 
   async registerPublishedPhotosRT() {
@@ -421,6 +425,7 @@ class App extends Component {
   handleWelcomePageClose = () => {
     this.setState({ welcomeShown: true });
     localStorage.setItem("welcomeShown", true);
+    this.props.history.goBack();
   };
 
   handleTermsPageClose = (e) => {
@@ -684,7 +689,7 @@ class App extends Component {
                   {...props}
                   steps={welcomeSteps}
                   label={config.PAGES.welcome.label}
-                  handleClose={history.goBack}
+                  handleClose={this.handleWelcomePageClose}
                 />
               )}
             />
@@ -820,23 +825,6 @@ class App extends Component {
             gpsDisabled={!this.state.location.updated}
           />
 
-          {/* {!this.state.welcomeShown &&
-            config.PAGES.embeddable.path &&
-            !this.props.history.location.pathname.includes(
-              config.PAGES.embeddable.path
-            ) && <WelcomePage handleClose={this.handleWelcomePageClose} />} */}
-
-          {!this.state.welcomeShown &&
-            config.PAGES.embeddable.path &&
-            !this.props.history.location.pathname.includes(
-              config.PAGES.embeddable.path
-            ) && (
-              <SwipeTutorialPage
-                steps={welcomeSteps}
-                label={config.PAGES.welcome.label}
-                handleClose={this.handleWelcomePageClose}
-              />
-            )}
         </main>
 
         <Snackbar open={!this.props.geojson} message="Loading photos..." />
