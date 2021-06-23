@@ -44,6 +44,7 @@ import MapLocation from "./types/MapLocation";
 
 import tutorialSteps from "./custom/tutorialSteps";
 import welcomeSteps from "./custom/welcomeSteps";
+import { LocationContext } from "store/LocationContext";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -56,12 +57,13 @@ const styles = (theme) => ({
 });
 
 class App extends Component {
+  static contextType = LocationContext;
+
   constructor(props) {
     super(props);
 
     this.state = {
       file: null,
-      location: new MapLocation(), // from GPS
       loginLogoutDialogOpen: false,
       openPhotoDialog: false,
       leftDrawerOpen: false,
@@ -98,39 +100,6 @@ class App extends Component {
 
     this.props.history.push(config.PAGES.photos.path);
   };
-
-  setLocationWatcher() {
-    if (navigator && navigator.geolocation) {
-      this.geoid = navigator.geolocation.watchPosition(
-        (position) => {
-          const location = Object.assign(this.state.location, {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            online: true,
-            updated: new Date(position.timestamp), // it indicate the freshness of the location.
-          });
-
-          this.setState({
-            location,
-          });
-        },
-        (error) => {
-          console.log("Error: ", error.message);
-          const location = this.state.location;
-          location.online = false;
-          this.setState({
-            location,
-          });
-        }
-      );
-    }
-
-    return async () => {
-      if (this.geoid && navigator.geolocation) {
-        navigator.geolocation.clearWatch(this.geoid);
-      }
-    };
-  }
 
   handleDialogClose = () => {
     this.setState({ dialogOpen: false });
@@ -202,7 +171,6 @@ class App extends Component {
       this.props.dispatch({ type: "SET_USER", payload: { user } });
     });
 
-    this.unregisterLocationObserver = this.setLocationWatcher();
     this.unregisterConfigObserver = dbFirebase.configObserver(
       (config) => this.setState(config),
       console.error
@@ -304,7 +272,6 @@ class App extends Component {
 
   async componentWillUnmount() {
     this.unregisterAuthObserver();
-    this.unregisterLocationObserver();
     this.unregisterConnectionObserver();
     this.unregisterConfigObserver();
     this.unregisterPhotosToModerate && this.unregisterPhotosToModerate();
@@ -553,7 +520,7 @@ class App extends Component {
 
   handleLocationClick = () => {
     gtagEvent("Location FAB clicked", "Map");
-    this.setState({ mapLocation: this.state.location });
+    this.setState({ mapLocation: this.context.location });
   };
 
   handlePhotoPageClose = () => {
@@ -627,6 +594,7 @@ class App extends Component {
   render() {
     const { classes, history } = this.props;
     const fields = Object.values(config.PHOTO_FIELDS);
+    console.debugger(this.context.location);
     return (
       <div className="geovation-app">
         {!this.state.termsAccepted &&
@@ -754,7 +722,7 @@ class App extends Component {
                 <PhotoPage
                   {...props}
                   file={this.state.file}
-                  gpsLocation={this.state.location}
+                  gpsLocation={this.context.location}
                   srcType={this.state.srcType}
                   fields={fields}
                   handleClose={history.goBack}
@@ -781,7 +749,7 @@ class App extends Component {
               render={(props) => (
                 <WriteFeedbackPage
                   {...props}
-                  location={this.state.location}
+                  location={this.context.location}
                   handleClose={history.goBack}
                 />
               )}
@@ -821,8 +789,8 @@ class App extends Component {
               this.handleMapLocationChange(newMapLocation)
             }
             handleLocationClick={this.handleLocationClick}
-            gpsOffline={!this.state.location.online}
-            gpsDisabled={!this.state.location.updated}
+            gpsOffline={!this.context.location.online}
+            gpsDisabled={!this.context.location.updated}
           />
 
         </main>
