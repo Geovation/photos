@@ -173,6 +173,60 @@ function saveMetadata(data) {
   _.forEach(config.PHOTO_FIELDS, (field) => fieldsToSave.push(field.name));
 
   return firestore.collection("photos").add(_.pick(data, fieldsToSave));
+
+}
+
+/**
+ * It upload the metadata and the image itself. It returns an observable so that to beable to track the progress
+ * 
+ * @param {*} data data to be saved
+ * @param {*} imgSrc the image in string format
+ * @param {*} onProgress A function that will be called with a a number indicating the progress
+ * 
+ * @returns an object which contains a promise promise that resolves when completed
+ */
+function uploadPhoto(data, imgSrc, onProgress) {
+  const rtn = {};
+  let canceled = false;
+  let uploadTask;
+  let resolve;
+  let reject;
+  let photoRef;
+
+  rtn.promise = new Promise(async (res, rej) => {
+    resolve = res;
+    reject = rej;
+    onProgress(0);
+    photoRef = await saveMetadata(data);
+    onProgress(1);
+    if (!canceled) {
+      const base64 = imgSrc.split(",")[1];
+      uploadTask = savePhoto(photoRef.id, base64);
+
+      uploadTask.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        (snapshot) => {
+          const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
+          onProgress(sendingProgress);
+          console.log(snapshot.state);
+        }
+      );
+
+      await uploadTask;
+      resolve();
+    }
+  });
+
+  rtn.cancel = () => {
+    canceled = true;
+    if (uploadTask) {
+      uploadTask.cancel();
+    }
+    photoRef.delete();
+    reject();
+  };
+
+  return rtn;
 }
 
 /**
@@ -409,10 +463,8 @@ const rtn = {
   getUser,
   getFeedbackByID,
   getPhotoByID,
-  savePhoto,
   saveProfileAvatar,
   updateProfile,
-  saveMetadata,
   photosToModerateRT,
   ownPhotosRT,
   rejectPhoto: (photoId, userId) => writeModeration(photoId, userId, false),
@@ -423,6 +475,7 @@ const rtn = {
   configObserver,
   updateUserFCMToken,
   buildStorageUrl,
+  uploadPhoto,
 };
 
 export default rtn;
