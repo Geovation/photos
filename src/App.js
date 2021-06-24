@@ -130,11 +130,11 @@ class App extends Component {
 
     const mapLocation =
       (regexMapLocationMatch &&
-        new MapLocation(
-          regexMapLocationMatch[1],
-          regexMapLocationMatch[2],
-          regexMapLocationMatch[3]
-        )) ||
+        new MapLocation({
+          latitude: regexMapLocationMatch[1],
+          longitude: regexMapLocationMatch[2],
+          zoom: regexMapLocationMatch[3]
+        })) ||
       new MapLocation();
     if (!regexMapLocationMatch) {
       mapLocation.zoom = config.ZOOM;

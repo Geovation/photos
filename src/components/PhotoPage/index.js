@@ -127,7 +127,7 @@ class PhotoPage extends Component {
       const latLon = dms2dec(lat, latRef, lon, lonRef);
       latitude = latLon[0];
       longitude = latLon[1];
-      location = new MapLocation( latitude, longitude );
+      location = new MapLocation({ latitude, longitude });
     } catch (e) {
       console.debug(`Error extracting GPS from file; ${e}`);
     }

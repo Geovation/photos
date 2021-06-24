@@ -136,11 +136,11 @@ class Map extends Component {
             return;
           } else {
             this.flyTo(
-              new MapLocation(
-                features[0].geometry.coordinates[1],
-                features[0].geometry.coordinates[0],
+              new MapLocation({
+                latitude: features[0].geometry.coordinates[1],
+                longitude: features[0].geometry.coordinates[0],
                 zoom
-              )
+              })
             );
           }
         });
@@ -155,11 +155,11 @@ class Map extends Component {
   };
 
   calcMapLocation = () =>
-    new MapLocation(
-      this.map.getCenter().lat,
-      this.map.getCenter().lng,
-      this.map.getZoom()
-    );
+    new MapLocation({
+      latitude: this.map.getCenter().lat,
+      longitude: this.map.getCenter().lng,
+      zoom: this.map.getZoom()
+    });
 
   componentDidUpdate(prevProps) {
     const mapLocation = this.props.mapLocation;

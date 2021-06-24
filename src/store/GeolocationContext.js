@@ -14,23 +14,23 @@ const GeolocationContextProvider = (props) => {
     if (!locationWatherId.current) {
       locationWatherId.current = navigator.geolocation.watchPosition(
         (position) => {
-          setGeolocation(new MapLocation(
-            position.coords.latitude,
-            position.coords.longitude,
-            geolocation.zoom,
-            true,
-            new Date(position.timestamp)
-          ));
+          setGeolocation(new MapLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            zoom: geolocation.zoom,
+            online: true,
+            updted: position.timestamp
+          }));
         },
         (error) => {
           console.error("Error: ", error.message);
-          setGeolocation(new MapLocation(
-            geolocation.latitude,
-            geolocation.longitude,
-            geolocation.zoom,
-            false,
-            geolocation.updated
-          ));
+          setGeolocation(new MapLocation({
+            latitude: geolocation.latitude,
+            longitude: geolocation.longitude,
+            zoom: geolocation.zoom,
+            online: false,
+            updated: geolocation.updated
+          }));
         },
         { maximumAge: 1 * 60 * 1000 }
       );
