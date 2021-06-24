@@ -160,11 +160,6 @@ class Map extends Component {
     );
 
   componentDidUpdate(prevProps) {
-    // ignore it if it is not visible
-    if (!this.props.visible) {
-      return;
-    }
-
     const mapLocation = this.props.mapLocation;
     const prevMapLocation = prevProps.mapLocation;
 

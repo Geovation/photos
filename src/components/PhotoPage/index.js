@@ -181,12 +181,7 @@ class PhotoPage extends Component {
     this.uploadTask = null;
     this.cancelClickUpload = false;
 
-    let photoRef;
-    try {
-      photoRef = await dbFirebase.saveMetadata(data);
-    } catch (error) {
-      console.log(error);
-    }
+    const photoRef = await dbFirebase.saveMetadata(data);
 
     this.setState({ sendingProgress: 1, enabledUploadButton: true });
 
@@ -195,33 +190,19 @@ class PhotoPage extends Component {
       this.uploadTask = dbFirebase.savePhoto(photoRef.id, base64);
 
       this.uploadTask.on(
-        "state_changed",
+        firebase.storage.TaskEvent.STATE_CHANGED,
         (snapshot) => {
-          const sendingProgress = Math.ceil(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1
-          );
+          const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
           this.setState({ sendingProgress });
+          console.log(snapshot.state);
+        },
+        (error) => this.openDialog("Photo upload was canceled")
+      );
 
-          switch (snapshot.state) {
-            case firebase.storage.TaskState.PAUSED: // or 'paused'
-              console.log("Upload is paused");
-              break;
-            case firebase.storage.TaskState.RUNNING: // or 'running'
-              console.log("Upload is running");
-              break;
-            default:
-              console.log(snapshot.state);
-          }
-        },
-        (error) => {
-          this.openDialog("Photo upload was canceled");
-        },
-        () => {
-          this.openDialog(
-            "Photo was uploaded successfully. It will be reviewed by our moderation team.",
-            this.handleClosePhotoPage
-          );
-        }
+      await this.uploadTask;
+      this.openDialog(
+        "Photo was uploaded successfully. It will be reviewed by our moderation team.",
+        this.handleClosePhotoPage
       );
     }
   };
