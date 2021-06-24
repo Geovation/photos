@@ -18,6 +18,7 @@ import "./Map.scss";
 import MapLocation from "types/MapLocation";
 
 import config from "custom/config";
+import { GeolocationContext } from "store/GeolocationContext";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -54,6 +55,7 @@ const styles = (theme) => ({
 const UPDATE_URL_COORDS_DELAY = 1000;
 
 class Map extends Component {
+  static contextType = GeolocationContext;
   constructor(props) {
     super(props);
     this.map = {
@@ -345,7 +347,9 @@ class Map extends Component {
   }
 
   render() {
-    const { gpsOffline, gpsDisabled, classes } = this.props;
+    const { classes } = this.props;
+    const gpsOffline = !this.context.geolocation.online;
+    const gpsDisabled = !this.context.geolocation.updated;
 
     return (
       <div

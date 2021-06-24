@@ -787,8 +787,6 @@ class App extends Component {
               this.handleMapLocationChange(newMapLocation)
             }
             handleLocationClick={this.handleLocationClick}
-            gpsOffline={!this.context.geolocation.online}
-            gpsDisabled={!this.context.geolocation.updated}
           />
 
         </main>
