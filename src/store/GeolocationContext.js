@@ -1,35 +1,35 @@
 import React, { useState, useEffect, createContext, useRef } from 'react';
 import MapLocation from "types/MapLocation";
 
-const LocationContext = createContext({
-  location: new MapLocation(),
-  setLocation: () => {}
+const GeolocationContext = createContext({
+  geolocation: new MapLocation(),
+  setGeolocation: () => {}
 });
 
-const LocationContextProvider = (props) => {
-  const [location, setLocation] = useState(new MapLocation());
+const GeolocationContextProvider = (props) => {
+  const [geolocation, setGeolocation] = useState(new MapLocation());
   const locationWatherId = useRef(null);
   
   useEffect(() => {
     if (!locationWatherId.current) {
       locationWatherId.current = navigator.geolocation.watchPosition(
         (position) => {
-          setLocation(new MapLocation(
+          setGeolocation(new MapLocation(
             position.coords.latitude,
             position.coords.longitude,
-            location.zoom,
+            geolocation.zoom,
             true,
             new Date(position.timestamp)
           ));
         },
         (error) => {
           console.error("Error: ", error.message);
-          setLocation(new MapLocation(
-            location.latitude,
-            location.longitude,
-            location.zoom,
+          setGeolocation(new MapLocation(
+            geolocation.latitude,
+            geolocation.longitude,
+            geolocation.zoom,
             false,
-            location.updated
+            geolocation.updated
           ));
         },
         { maximumAge: 1 * 60 * 1000 }
@@ -40,10 +40,10 @@ const LocationContextProvider = (props) => {
   });
 
   return (
-    <LocationContext.Provider value={{location}}>
+    <GeolocationContext.Provider value={{geolocation: geolocation}}>
       {props.children}
-    </LocationContext.Provider>
+    </GeolocationContext.Provider>
   );
 }
 
-export { LocationContext,  LocationContextProvider};
+export { GeolocationContext,  GeolocationContextProvider};

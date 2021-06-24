@@ -44,7 +44,7 @@ import MapLocation from "./types/MapLocation";
 
 import tutorialSteps from "./custom/tutorialSteps";
 import welcomeSteps from "./custom/welcomeSteps";
-import { LocationContext } from "store/LocationContext";
+import { GeolocationContext } from "store/GeolocationContext";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -57,7 +57,7 @@ const styles = (theme) => ({
 });
 
 class App extends Component {
-  static contextType = LocationContext;
+  static contextType = GeolocationContext;
 
   constructor(props) {
     super(props);
@@ -520,7 +520,7 @@ class App extends Component {
 
   handleLocationClick = () => {
     gtagEvent("Location FAB clicked", "Map");
-    this.setState({ mapLocation: this.context.location });
+    this.setState({ mapLocation: this.context.geolocation });
   };
 
   handlePhotoPageClose = () => {
@@ -594,7 +594,7 @@ class App extends Component {
   render() {
     const { classes, history } = this.props;
     const fields = Object.values(config.PHOTO_FIELDS);
-    console.debugger(this.context.location);
+    console.debug(this.context.geolocation);
     return (
       <div className="geovation-app">
         {!this.state.termsAccepted &&
@@ -722,7 +722,6 @@ class App extends Component {
                 <PhotoPage
                   {...props}
                   file={this.state.file}
-                  gpsLocation={this.context.location}
                   srcType={this.state.srcType}
                   fields={fields}
                   handleClose={history.goBack}
@@ -749,7 +748,7 @@ class App extends Component {
               render={(props) => (
                 <WriteFeedbackPage
                   {...props}
-                  location={this.context.location}
+                  location={this.context.geolocation}
                   handleClose={history.goBack}
                 />
               )}
@@ -789,8 +788,8 @@ class App extends Component {
               this.handleMapLocationChange(newMapLocation)
             }
             handleLocationClick={this.handleLocationClick}
-            gpsOffline={!this.context.location.online}
-            gpsDisabled={!this.context.location.updated}
+            gpsOffline={!this.context.geolocation.online}
+            gpsDisabled={!this.context.geolocation.updated}
           />
 
         </main>
