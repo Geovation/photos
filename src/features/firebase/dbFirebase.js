@@ -197,7 +197,11 @@ function uploadPhoto(data, imgSrc, onProgress) {
     resolve = res;
     reject = rej;
     onProgress(0);
-    photoRef = await saveMetadata(data);
+    try {
+      photoRef = await saveMetadata(data);
+    } catch (error) {
+      reject(); 
+    }
     onProgress(1);
     if (!canceled) {
       const base64 = imgSrc.split(",")[1];
@@ -212,17 +216,26 @@ function uploadPhoto(data, imgSrc, onProgress) {
         }
       );
 
-      await uploadTask;
+      try {
+        await uploadTask;
+      } catch (error) {
+        reject(); 
+      }
+      
       resolve();
+    } else {
+      photoRef.delete();
+      reject(); // not necessary but explicit.
     }
   });
 
   rtn.cancel = () => {
     canceled = true;
+    // If there is an uploadTask, that means that the image upload is in progress and therefore the metadata is already in the DB 
     if (uploadTask) {
       uploadTask.cancel();
+      photoRef.delete();
     }
-    photoRef.delete();
     reject();
   };
 
