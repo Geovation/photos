@@ -748,7 +748,6 @@ class App extends Component {
               render={(props) => (
                 <WriteFeedbackPage
                   {...props}
-                  location={this.context.geolocation}
                   handleClose={history.goBack}
                 />
               )}
