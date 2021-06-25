@@ -291,7 +291,10 @@ class Map extends Component {
       }
     });
 
-    visibleFeatures.forEach((feature) => {
+    visibleFeatures.forEach((_feature) => {
+      // for some reason, mapbox cluster changes the properties.
+      const feature = _.find(this.props.geojson.features, (f) => f.properties.id === _feature.properties.id);
+
       if (!this.renderedThumbnails[feature.properties.id]) {
         //create a div element - give attributes
         const el = document.createElement("div");
@@ -316,9 +319,10 @@ class Map extends Component {
           this.props.handlePhotoClick(feature);
         });
         //create marker
-        // for whatever reason it is different thatn `feature.geometry.coordinates`
-        const loc = JSON.parse(feature.properties.location);
-        const coordinates = [loc._long, loc._lat];
+        const latitude = feature.properties.location._lat;
+        const longitude = feature.properties.location._long;
+        const coordinates = [longitude, latitude];
+
         const marker = new mapboxgl.Marker(el)
           .setLngLat(coordinates)
           .addTo(this.map);
