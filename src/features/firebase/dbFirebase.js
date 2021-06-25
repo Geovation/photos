@@ -173,6 +173,84 @@ function saveMetadata(data) {
   _.forEach(config.PHOTO_FIELDS, (field) => fieldsToSave.push(field.name));
 
   return firestore.collection("photos").add(_.pick(data, fieldsToSave));
+
+}
+
+/**
+ * It upload the metadata and the image itself. It returns an observable so that to beable to track the progress
+ * 
+ * @param {*} data data to be saved
+ * @param {*} imgSrc the image in string format
+ * @param {*} onProgress A function that will be called with a number indicating the progress
+ * 
+ * @returns an object which contains a promise and a cancel function. The
+ *  promise will resolves when completed and fails if there are any errors or the cancel function is called. 
+ *  if the function cancel is called, the upload will be cancelled, the metadate will be deleted,
+ *  and the promise will be rejected.
+ */
+function uploadPhoto(data, imgSrc, onProgress) {
+  const rtn = {};
+  let canceled = false;
+  let uploadTask;
+  let resolve;
+  let reject;
+  let photoRef;
+
+  rtn.promise = new Promise(async (res, rej) => {
+    resolve = res;
+    reject = rej;
+    onProgress(0);
+    try {
+      photoRef = await saveMetadata(data);
+    } catch (error) {
+      reject();
+
+      // exit
+      return;
+    }
+    onProgress(1);
+    // upload the image only if the upload has not been cancelled
+    if (!canceled) {
+      const base64 = imgSrc.split(",")[1];
+      uploadTask = savePhoto(photoRef.id, base64);
+
+      uploadTask.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        (snapshot) => {
+          const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
+          onProgress(sendingProgress);
+          console.log(snapshot.state);
+        }
+      );
+
+      try {
+        await uploadTask;
+      } catch (error) {
+        reject(); 
+      }
+      
+      resolve();
+    } else {
+      // the user has cancelled it but the metadata upload has succeded. Therefore we need to delete it.
+      photoRef.delete();
+      reject(); // not necessary but explicit.
+
+      // exit
+      return;
+    }
+  });
+
+  rtn.cancel = () => {
+    canceled = true;
+    // If there is an uploadTask, that means that the image upload is in progress and therefore the metadata is already in the DB 
+    if (uploadTask) {
+      uploadTask.cancel();
+      photoRef.delete();
+    }
+    reject();
+  };
+
+  return rtn;
 }
 
 /**
@@ -409,10 +487,8 @@ const rtn = {
   getUser,
   getFeedbackByID,
   getPhotoByID,
-  savePhoto,
   saveProfileAvatar,
   updateProfile,
-  saveMetadata,
   photosToModerateRT,
   ownPhotosRT,
   rejectPhoto: (photoId, userId) => writeModeration(photoId, userId, false),
@@ -423,6 +499,7 @@ const rtn = {
   configObserver,
   updateUserFCMToken,
   buildStorageUrl,
+  uploadPhoto,
 };
 
 export default rtn;

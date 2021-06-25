@@ -33,6 +33,7 @@ service cloud.firestore {
 
       allow update: if isModerator();
 
+      allow delete: if isOwner();
       // allow update: if resource.data.owner_id == request.auth.uid && resource.data.moderated=null
 
       allow write: if isAdmin();
