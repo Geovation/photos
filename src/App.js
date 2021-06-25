@@ -17,6 +17,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import CloseIcon from "@material-ui/icons/Close";
+import MuiAlert from '@material-ui/lab/Alert';
+import CachedIcon from '@material-ui/icons/Cached';
 
 import { dbFirebase, authFirebase } from "features/firebase";
 
@@ -82,6 +84,8 @@ const App = (props) => {
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogContentText, setDialogContentText] = useState("");
   const [confirmDialogTitle, setConfirmDialogTitle] = useState("");
+  const [newVersionAvailable, setNewVersionAvailable] = useState(false);
+  const [ignoreUpdate, setIgnoreUpdate] = useState(false);
 
   const geolocationContext = useContext(GeolocationContext);
 
@@ -149,13 +153,13 @@ const App = (props) => {
     return { photoId, mapLocation };
   };
 
-  //  TODO: why useRef?
   const prevLocationRef = useRef();
   useEffect(() => {
     // didMount
     // TODO: test it. Does it slow down starting up ?
     if (!initDone.current) {
       initDone.current = true;
+      props.newVersionAvailable.then(() => setNewVersionAvailable(true));
       prevLocationRef.current = props.location;
 
       stats.current = config.getStats(props.geojson, dbStats);
@@ -758,6 +762,25 @@ const App = (props) => {
         />
       </main>
 
+      <Snackbar open={newVersionAvailable && !ignoreUpdate}
+        key="topcenter"
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <MuiAlert elevation={6} variant="filled"
+          severity="success"
+          action={<>
+            <IconButton color="primary" size="small" onClick={() => window.location.reload()}>
+              <CachedIcon />
+            </IconButton>
+            <IconButton color="primary" size="small" onClick={() =>  setIgnoreUpdate(true)}>
+              <CloseIcon />
+            </IconButton>
+          </>}
+        >
+          New verison available !
+        </MuiAlert>
+      </Snackbar>
+      
       <Snackbar open={!props.geojson} message="Loading photos..." />
       <Snackbar
         open={welcomeShown && !props.online}

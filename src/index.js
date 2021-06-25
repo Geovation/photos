@@ -18,7 +18,31 @@ import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
 import { GeolocationContextProvider } from "store/GeolocationContext";
 
-serviceWorkerRegistration.register();
+let resolveNewVersionAvailable = () => { };
+const newVersionAvailable = new Promise((resolve) => {
+  resolveNewVersionAvailable = resolve;
+});
+
+function onSuccess(registration) {
+  // TODO: needed ?
+}
+function onUpdate(registration) {
+  const waitingServiceWorker = registration.waiting;
+
+  if (waitingServiceWorker) {
+    waitingServiceWorker.addEventListener("statechange", (event) => {
+      if (event.target.state === "activated") {
+        // TODO: pass it to react
+        // if (window.confirm("There is a new version of the app ready. Please reload to update.")) {
+        //   window.location.reload();
+        // }
+        resolveNewVersionAvailable();
+      }
+    });
+    waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+  }
+}
+serviceWorkerRegistration.register({onSuccess, onUpdate});
 
 if (
   process.env.NODE_ENV !== "development" &&
@@ -78,7 +102,7 @@ const startApp = () => {
         <Router>
           <MuiThemeProvider theme={theme}>
             <GeolocationContextProvider>
-              <App />
+              <App newVersionAvailable={ newVersionAvailable }/>
             </GeolocationContextProvider>
           </MuiThemeProvider>
         </Router>
