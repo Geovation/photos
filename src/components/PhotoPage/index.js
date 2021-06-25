@@ -84,7 +84,7 @@ class PhotoPage extends Component {
     super(props);
     this.state = { ...emptyState };
     this.dialogCloseCallback = null;
-    this.cancelUploadTask = () => { };
+    this.cancelUpload = () => { };
   }
 
   resetState = () => {
@@ -180,7 +180,7 @@ class PhotoPage extends Component {
 
     const onProgress = (sendingProgress) => this.setState({ sendingProgress, enabledUploadButton: true });
     const { cancel, promise } = dbFirebase.uploadPhoto(data, this.state.imgSrc, onProgress);
-    this.cancelUploadTask = cancel;
+    this.cancelUpload = cancel;
 
     promise
       .then(() => this.openDialog(
@@ -250,7 +250,7 @@ class PhotoPage extends Component {
 
   handleCancel = () => {
     this.setState({ sending: false });
-    this.cancelUploadTask();
+    this.cancelUpload();
   };
 
   handleNext = () => {

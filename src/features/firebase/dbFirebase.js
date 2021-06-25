@@ -181,9 +181,12 @@ function saveMetadata(data) {
  * 
  * @param {*} data data to be saved
  * @param {*} imgSrc the image in string format
- * @param {*} onProgress A function that will be called with a a number indicating the progress
+ * @param {*} onProgress A function that will be called with a number indicating the progress
  * 
- * @returns an object which contains a promise promise that resolves when completed
+ * @returns an object which contains a promise and a cancel function. The
+ *  promise will resolves when completed and fails if there are any errors or the cancel function is called. 
+ *  if the function cancel is called, the upload will be cancelled, the metadate will be deleted,
+ *  and the promise will be rejected.
  */
 function uploadPhoto(data, imgSrc, onProgress) {
   const rtn = {};
@@ -200,9 +203,13 @@ function uploadPhoto(data, imgSrc, onProgress) {
     try {
       photoRef = await saveMetadata(data);
     } catch (error) {
-      reject(); 
+      reject();
+
+      // exit
+      return;
     }
     onProgress(1);
+    // upload the image only if the upload has not been cancelled
     if (!canceled) {
       const base64 = imgSrc.split(",")[1];
       uploadTask = savePhoto(photoRef.id, base64);
@@ -224,8 +231,12 @@ function uploadPhoto(data, imgSrc, onProgress) {
       
       resolve();
     } else {
+      // the user has cancelled it but the metadata upload has succeded. Therefore we need to delete it.
       photoRef.delete();
       reject(); // not necessary but explicit.
+
+      // exit
+      return;
     }
   });
 
