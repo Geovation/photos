@@ -3,8 +3,13 @@ import _ from "lodash";
 import config from "custom/config";
 
 class MapLocation {
-  constructor({ latitude = config.CENTER[1], longitude = config.CENTER[0], zoom = config.ZOOM_FLYTO, online = false, updated = new Date() } = {}) {
-    debugger
+  constructor({
+    latitude = config.CENTER[1],
+    longitude = config.CENTER[0],
+    zoom = config.ZOOM_FLYTO,
+    online = false,
+    updated = new Date(),
+  } = {}) {
     this.latitude = Number(latitude);
     this.longitude = Number(longitude);
     this.zoom = Number(zoom);
@@ -16,7 +21,7 @@ class MapLocation {
     return {
       latitude: this.latitude.toFixed(7),
       longitude: this.longitude.toFixed(7),
-      zoom: this.zoom.toFixed(2)
+      zoom: this.zoom.toFixed(2),
     };
   }
 

@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
 import * as localforage from "localforage";
 import _ from "lodash";
@@ -63,8 +63,12 @@ const App = (props) => {
   const [file, setFile] = useState(null);
   const [loginLogoutDialogOpen, setLoginLogoutDialogOpen] = useState(false);
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
-  const [welcomeShown, setWelcomeShown] = useState(!!localStorage.getItem("welcomeShown"));
-  const [termsAccepted, setTermsAccepted] = useState(!!localStorage.getItem("termsAccepted"));
+  const [welcomeShown, setWelcomeShown] = useState(
+    !!localStorage.getItem("welcomeShown")
+  );
+  const [termsAccepted, setTermsAccepted] = useState(
+    !!localStorage.getItem("termsAccepted")
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [usersLeaderboard, setUsersLeaderboard] = useState([]);
@@ -75,11 +79,11 @@ const App = (props) => {
   const [mapLocation, setMapLocation] = useState(new MapLocation());
   const [dbStats, setDbStats] = useState();
   const [firebaseConfig, setFirebaseConfig] = useState();
-  const [dialogTitle, setDialogTitle] = useState();
-  const [dialogContentText, setDialogContentText] = useState();
-  const [confirmDialogTitle, setConfirmDialogTitle] = useState();
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogContentText, setDialogContentText] = useState("");
+  const [confirmDialogTitle, setConfirmDialogTitle] = useState("");
 
-  const geolocation = useContext(GeolocationContext);
+  const geolocationContext = useContext(GeolocationContext);
 
   let unregisterAuthObserver = useRef();
   let unregisterConfigObserver = useRef();
@@ -115,7 +119,7 @@ const App = (props) => {
         .then((selectedFeature) => setSelectedFeature(selectedFeature))
         .catch((e) => setSelectedFeature(null));
     }
-  }
+  };
 
   const extractPathnameParams = () => {
     // extracts photoID
@@ -135,7 +139,7 @@ const App = (props) => {
         new MapLocation({
           latitude: regexMapLocationMatch[1],
           longitude: regexMapLocationMatch[2],
-          zoom: regexMapLocationMatch[3]
+          zoom: regexMapLocationMatch[3],
         })) ||
       new MapLocation();
     if (!regexMapLocationMatch) {
@@ -143,7 +147,7 @@ const App = (props) => {
     }
 
     return { photoId, mapLocation };
-  }
+  };
 
   //  TODO: why useRef?
   const prevLocationRef = useRef();
@@ -154,39 +158,34 @@ const App = (props) => {
       initDone.current = true;
       prevLocationRef.current = props.location;
 
-      stats.current = config.getStats(
-        props.geojson,
-        dbStats
-      );
+      stats.current = config.getStats(props.geojson, dbStats);
 
       let { photoId, mapLocation } = extractPathnameParams();
       setMapLocation(mapLocation);
       someInits(photoId);
 
-      unregisterAuthObserver.current = authFirebase.onAuthStateChanged((user) => {
-        // lets start fresh if the user logged out
-        if (props.user && !user) {
-          gtagEvent("Signed out", "User");
+      unregisterAuthObserver.current = authFirebase.onAuthStateChanged(
+        (user) => {
+          // lets start fresh if the user logged out
+          if (props.user && !user) {
+            gtagEvent("Signed out", "User");
 
-          props.history.push(config.PAGES.map.path);
-          window.location.reload();
+            props.history.push(config.PAGES.map.path);
+            window.location.reload();
+          }
+
+          // the user had logged in.
+          props.dispatch({ type: "SET_USER", payload: { user } });
         }
-
-        // the user had logged in.
-        props.dispatch({ type: "SET_USER", payload: { user } });
-      });
+      );
 
       unregisterConfigObserver.current = dbFirebase.configObserver(
         (config) => setFirebaseConfig(config),
         console.error
       );
-
     } else {
       // didUpdate
-      stats.current = config.getStats(
-        props.geojson,
-        dbStats
-      );
+      stats.current = config.getStats(props.geojson, dbStats);
 
       if (prevLocationRef.current !== props.location) {
         prevLocationRef.current = props.location;
@@ -198,7 +197,10 @@ const App = (props) => {
       }
 
       // listen to new photos to be moderated
-      if ( _.get(props.user, "isModerator") && !unregisterPhotosToModerate.current ) {
+      if (
+        _.get(props.user, "isModerator") &&
+        !unregisterPhotosToModerate.current
+      ) {
         unregisterPhotosToModerate.current = dbFirebase.photosToModerateRT(
           config.MODERATING_PHOTOS,
           (photo) => updatePhotoToModerate(photo),
@@ -225,27 +227,28 @@ const App = (props) => {
       unregisterAuthObserver.current();
       unregisterConnectionObserver.current();
       unregisterConfigObserver.current();
-      unregisterPhotosToModerate.current && unregisterPhotosToModerate.current();
+      unregisterPhotosToModerate.current &&
+        unregisterPhotosToModerate.current();
       unregisterOwnPhotos.current && unregisterOwnPhotos.current();
-      unregisterPublishedPhotosRT.current && unregisterPublishedPhotosRT.current();
+      unregisterPublishedPhotosRT.current &&
+        unregisterPublishedPhotosRT.current();
       await dbFirebase.disconnect();
-    }
-  },
-    [mapLocation]
-  );
-  
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const modifyFeature = (photo) => {
-    console.debug(`modifying ${photo.id}`)
+    console.debug(`modifying ${photo.id}`);
     props.dispatch({ type: "UPDATE_FEATURE", payload: { photo } });
   };
 
   const addFeature = (photo) => {
     console.debug(`adding ${photo.id} --v`);
     modifyFeature(photo);
-  }
+  };
 
   const removeFeature = (photo) => {
-    console.debug(`removing ${photo.id}`)
+    console.debug(`removing ${photo.id}`);
     props.dispatch({ type: "DELETE_FEATURE", payload: { photo } });
   };
 
@@ -266,25 +269,25 @@ const App = (props) => {
     fetchPhotoIfUndefined(photoId).then(async () => {
       // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
       // into the photoId.
-      setPhotoAccessedByUrl(!!selectedFeature)
+      setPhotoAccessedByUrl(!!selectedFeature);
 
       gtagPageView(props.location.pathname);
     });
 
     // Get the photos from the cache first.
-    const featuresDict = await localforage.getItem("featuresDict") || {};
+    const featuresDict = (await localforage.getItem("featuresDict")) || {};
     if (!_.isEmpty(featuresDict)) {
       props.dispatch({ type: "SET_FEATURES", payload: { featuresDict } });
     } else {
       await fetchPhotos();
     }
-  
+
     registerPublishedPhotosRT();
-    
+
     if (!welcomeShown) {
       props.history.push(config.PAGES.welcome.path);
     }
-  }
+  };
 
   const registerPublishedPhotosRT = async () => {
     if (unregisterPublishedPhotosRT.current) {
@@ -305,7 +308,7 @@ const App = (props) => {
       },
       calculateLastUpdate()
     );
-  }
+  };
 
   const calculateLastUpdate = () => {
     let lastUpdated = new Date(null);
@@ -316,29 +319,32 @@ const App = (props) => {
       lastUpdated = _.get(latestPhoto, "properties.updated");
     }
     return lastUpdated;
-  }
+  };
 
   const fetchPhotos = async (fromAPI = true, lastUpdate = new Date(null)) => {
     return dbFirebase
       .fetchPhotos(fromAPI, lastUpdate)
       .then((photos) => _.forEach(photos, (photo) => addFeature(photo)))
       .catch(console.error);
-  }
+  };
 
   const removePhotoToModerate = (photo) => {
-    console.debug( `removing the element ${photo.id} from the collection photosToModerate in the view`);
-    setPhotosToModerate(_.filter(photosToModerate, (p) => p.id !== photo.id ));
-  }
+    console.debug(
+      `removing the element ${photo.id} from the collection photosToModerate in the view`
+    );
+    setPhotosToModerate(_.filter(photosToModerate, (p) => p.id !== photo.id));
+  };
 
   const updatePhotoToModerate = (photo) => {
-    console.debug( `updating the element ${photo.id} from the collection photosToModeratein the view`);
+    console.debug(
+      `updating the element ${photo.id} from the collection photosToModerate in the view`
+    );
 
     const newDict = { ...photosToModerate };
     newDict[photo.id] = photo;
 
     setPhotosToModerate(newDict);
-  }
-
+  };
 
   const handleClickLoginLogout = () => {
     let loginLogoutDialogOpen = true;
@@ -357,7 +363,9 @@ const App = (props) => {
     if (config.SECURITY.UPLOAD_REQUIRES_LOGIN && !props.user) {
       setDialogOpen(true);
       setDialogTitle("Please login to add a photo");
-      setDialogContentText("Before adding photos, you must be logged into your account.")
+      setDialogContentText(
+        "Before adding photos, you must be logged into your account."
+      );
     } else {
       console.log("Clicking on photo");
       domRefInput.current.click();
@@ -395,9 +403,10 @@ const App = (props) => {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
       props.dispatch({
-        type: "SET_USER", payload: {
-          user: { ...props.user, emailVerified: user.emailVerified }
-        }
+        type: "SET_USER",
+        payload: {
+          user: { ...props.user, emailVerified: user.emailVerified },
+        },
       });
 
       let message = {
@@ -408,8 +417,7 @@ const App = (props) => {
     } else {
       let message = {
         title: "Warning",
-        body:
-          "Email not verified yet. Please click the link in the email we sent you.",
+        body: "Email not verified yet. Please click the link in the email we sent you.",
       };
       return message;
     }
@@ -455,12 +463,14 @@ const App = (props) => {
 
       if (_.get(selectedFeature, "properties.id") === photo.id) {
         _selectedFeature.properties.published = isApproved;
-        setSelectedFeature(_selectedFeature)
+        setSelectedFeature(_selectedFeature);
       }
     } catch (e) {
       console.error(e);
       setConfirmDialogOpen(true);
-      setConfirmDialogTitle(`The photo state has not changed. Please try again, id:${photo.id}`);
+      setConfirmDialogTitle(
+        `The photo state has not changed. Please try again, id:${photo.id}`
+      );
       setConfirmDialogHandleOk(handleConfirmDialogClose);
     }
   };
@@ -492,17 +502,14 @@ const App = (props) => {
 
   const handleLocationClick = () => {
     gtagEvent("Location FAB clicked", "Map");
-    debugger
-    setMapLocation(geolocation);
+    setMapLocation(geolocationContext.geolocation);
   };
 
   const handlePhotoPageClose = () => {
     const PAGES = config.PAGES;
     const photoPath = props.location.pathname;
     const coords = photoPath.split("@")[1];
-    const mapPath = props.location.pathname.startsWith(
-      PAGES.embeddable.path
-    )
+    const mapPath = props.location.pathname.startsWith(PAGES.embeddable.path)
       ? PAGES.embeddable.path
       : PAGES.map.path;
     if (photoAccessedByUrl) {
@@ -549,7 +556,7 @@ const App = (props) => {
   };
 
   // from the own photos from the dict
-  const getOwnPhotos = () =>{
+  const getOwnPhotos = () => {
     let ownPhotos = {};
     if (props.user) {
       const allPhotos = _.get(props, "geojson.features");
@@ -562,7 +569,7 @@ const App = (props) => {
       }, {});
     }
     return ownPhotos;
-  }
+  };
 
   console.log(firebaseConfig);
   return (
@@ -587,10 +594,7 @@ const App = (props) => {
                   path={CustomPage.path}
                   render={(props) => (
                     // eslint-disable-next-line react/jsx-pascal-case
-                    <CustomPage.page
-                      {...props}
-                      handleClose={history.goBack}
-                    />
+                    <CustomPage.page {...props} handleClose={history.goBack} />
                   )}
                 />
               )
@@ -667,8 +671,8 @@ const App = (props) => {
                   photos={getOwnPhotos()}
                   handleClose={history.goBack}
                   handlePhotoClick={handlePhotoClick}
-                // handleRejectClick={handleRejectClick}
-                // handleApproveClick={handleApproveClick}
+                  // handleRejectClick={handleRejectClick}
+                  // handleApproveClick={handleApproveClick}
                 />
               )}
             />
@@ -715,10 +719,7 @@ const App = (props) => {
           <Route
             path={config.PAGES.writeFeedback.path}
             render={(props) => (
-              <WriteFeedbackPage
-                {...props}
-                handleClose={history.goBack}
-              />
+              <WriteFeedbackPage {...props} handleClose={history.goBack} />
             )}
           />
 
@@ -742,9 +743,7 @@ const App = (props) => {
 
         <Map
           history={props.history}
-          visible={props.history.location.pathname.match(
-            VISIBILITY_REGEX
-          )}
+          visible={props.history.location.pathname.match(VISIBILITY_REGEX)}
           embeddable={props.history.location.pathname.match(
             new RegExp(config.PAGES.embeddable.path, "g")
           )}
@@ -757,7 +756,6 @@ const App = (props) => {
           }
           handleLocationClick={handleLocationClick}
         />
-
       </main>
 
       <Snackbar open={!props.geojson} message="Loading photos..." />
@@ -802,9 +800,7 @@ const App = (props) => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            {dialogContentText}
-          </DialogContentText>
+          <DialogContentText>{dialogContentText}</DialogContentText>
         </DialogContent>
 
         <DialogActions>
@@ -815,32 +811,27 @@ const App = (props) => {
         </DialogActions>
       </Dialog>
 
-      <Dialog
-        open={confirmDialogOpen}
-        onClose={handleConfirmDialogClose}
-      >
+      <Dialog open={confirmDialogOpen} onClose={handleConfirmDialogClose}>
         <DialogTitle>{confirmDialogTitle}</DialogTitle>
         <DialogActions>
           <Button onClick={handleConfirmDialogClose} color="secondary">
             Cancel
           </Button>
-          <Button
-            onClick={confirmDialogHandleOk}
-            color="secondary"
-          >
+          <Button onClick={confirmDialogHandleOk} color="secondary">
             Ok
           </Button>
         </DialogActions>
       </Dialog>
     </div>
   );
-  
-}
+};
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   user: state.user,
   online: state.online,
-  geojson: state.geojson
+  geojson: state.geojson,
 });
 
-export default connect(mapStateToProps)(withRouter(withStyles(styles, { withTheme: true })(App)));
+export default connect(mapStateToProps)(
+  withRouter(withStyles(styles, { withTheme: true })(App))
+);
