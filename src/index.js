@@ -18,10 +18,8 @@ import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
 import { GeolocationContextProvider } from "store/GeolocationContext";
 
-let resolveNewVersionAvailable = () => { };
-const newVersionAvailable = new Promise((resolve) => {
-  resolveNewVersionAvailable = resolve;
-});
+let resolveNewVersionAvailable;
+const newVersionAvailable = new Promise((resolve) => resolveNewVersionAvailable = resolve);
 
 function onSuccess(registration) {
   console.log("App installed");
@@ -30,12 +28,18 @@ function onUpdate(registration) {
   const waitingServiceWorker = registration.waiting;
 
   if (waitingServiceWorker) {
+    waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+
+    // Need to wait until when the new sw is ready
     waitingServiceWorker.addEventListener("statechange", (event) => {
       if (event.target.state === "activated") {
         resolveNewVersionAvailable();
-      }
+        // need it ? keep it here in case you may need it.
+        // caches.delete("all").then(function(boolean) {
+        //   console.log("XXXXX cached deleted: event.target.state: boolean", boolean)
+        // });
+      }      
     });
-    waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
   }
 }
 serviceWorkerRegistration.register({onSuccess, onUpdate});
