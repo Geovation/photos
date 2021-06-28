@@ -84,5 +84,3 @@ self.addEventListener('message', (event) => {
 registerRoute(/.*pbf.*/, new CacheFirst({ "cacheName":"firebasestorage", plugins: [new ExpirationPlugin({"maxAgeSeconds":30*24*60*60,"purgeOnQuotaError":true})] }));
 registerRoute(/.*firebasestorage.*/, new StaleWhileRevalidate({ "cacheName":"firebasestorage", plugins: [new ExpirationPlugin({"purgeOnQuotaError":true})] }), "GET");
 registerRoute(/.*/, new StaleWhileRevalidate({ "cacheName": "all" }), "GET");
-
-// TODO: disable cache for service-worker.js
