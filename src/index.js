@@ -24,7 +24,7 @@ const newVersionAvailable = new Promise((resolve) => {
 });
 
 function onSuccess(registration) {
-  // TODO: needed ?
+  console.log("App installed");
 }
 function onUpdate(registration) {
   const waitingServiceWorker = registration.waiting;
@@ -32,10 +32,6 @@ function onUpdate(registration) {
   if (waitingServiceWorker) {
     waitingServiceWorker.addEventListener("statechange", (event) => {
       if (event.target.state === "activated") {
-        // TODO: pass it to react
-        // if (window.confirm("There is a new version of the app ready. Please reload to update.")) {
-        //   window.location.reload();
-        // }
         resolveNewVersionAvailable();
       }
     });

@@ -85,6 +85,4 @@ registerRoute(/.*pbf.*/, new CacheFirst({ "cacheName":"firebasestorage", plugins
 registerRoute(/.*firebasestorage.*/, new StaleWhileRevalidate({ "cacheName":"firebasestorage", plugins: [new ExpirationPlugin({"purgeOnQuotaError":true})] }), "GET");
 registerRoute(/.*/, new StaleWhileRevalidate({ "cacheName": "all" }), "GET");
 
-// TODO: send a message when there is a new app
 // TODO: disable cache for service-worker.js
-// 
