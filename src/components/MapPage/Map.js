@@ -18,6 +18,7 @@ import "./Map.scss";
 import MapLocation from "types/MapLocation";
 
 import config from "custom/config";
+import { GeolocationContext } from "store/GeolocationContext";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
@@ -54,6 +55,7 @@ const styles = (theme) => ({
 const UPDATE_URL_COORDS_DELAY = 1000;
 
 class Map extends Component {
+  static contextType = GeolocationContext;
   constructor(props) {
     super(props);
     this.map = {
@@ -134,11 +136,11 @@ class Map extends Component {
             return;
           } else {
             this.flyTo(
-              new MapLocation(
-                features[0].geometry.coordinates[1],
-                features[0].geometry.coordinates[0],
+              new MapLocation({
+                latitude: features[0].geometry.coordinates[1],
+                longitude: features[0].geometry.coordinates[0],
                 zoom
-              )
+              })
             );
           }
         });
@@ -153,11 +155,11 @@ class Map extends Component {
   };
 
   calcMapLocation = () =>
-    new MapLocation(
-      this.map.getCenter().lat,
-      this.map.getCenter().lng,
-      this.map.getZoom()
-    );
+    new MapLocation({
+      latitude: this.map.getCenter().lat,
+      longitude: this.map.getCenter().lng,
+      zoom: this.map.getZoom()
+    });
 
   componentDidUpdate(prevProps) {
     const mapLocation = this.props.mapLocation;
@@ -345,7 +347,9 @@ class Map extends Component {
   }
 
   render() {
-    const { gpsOffline, gpsDisabled, classes } = this.props;
+    const { classes } = this.props;
+    const gpsOffline = !this.context.geolocation.online;
+    const gpsDisabled = !this.context.geolocation.updated;
 
     return (
       <div

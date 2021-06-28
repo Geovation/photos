@@ -16,6 +16,7 @@ import { gtagInit } from "gtag.js";
 
 import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
+import { GeolocationContextProvider } from "store/GeolocationContext";
 
 serviceWorkerRegistration.register();
 
@@ -76,7 +77,9 @@ const startApp = () => {
       <Provider store={store}>
         <Router>
           <MuiThemeProvider theme={theme}>
-            <App/>
+            <GeolocationContextProvider>
+              <App />
+            </GeolocationContextProvider>
           </MuiThemeProvider>
         </Router>
       </Provider>

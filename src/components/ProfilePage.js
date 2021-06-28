@@ -149,11 +149,11 @@ class Profile extends React.Component {
   }
 
   calcUrl(feature) {
-    const mapLocation = new MapLocation(
-      feature.geometry.coordinates[1],
-      feature.geometry.coordinates[0],
-      config.ZOOM_FLYTO
-    );
+    const mapLocation = new MapLocation({
+      latitude: feature.geometry.coordinates[1],
+      longitude: feature.geometry.coordinates[0],
+      zoom: config.ZOOM_FLYTO
+    });
     const urlFormated = mapLocation.urlFormated();
     return `${config.PAGES.displayPhoto.path}/${feature.properties.id}@${urlFormated}`;
   }

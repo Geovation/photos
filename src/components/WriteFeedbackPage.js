@@ -19,6 +19,7 @@ import { dbFirebase } from "features/firebase";
 import utils, { device } from "utils";
 import config from "custom/config";
 import PageWrapper from "./PageWrapper";
+import { GeolocationContext } from "store/GeolocationContext";
 
 const styles = theme => ({
   content: {
@@ -39,6 +40,7 @@ const styles = theme => ({
 });
 
 class WriteFeedbackPage extends React.Component {
+  static contextType = GeolocationContext;
   constructor(props) {
     super(props);
     this.state = {
@@ -93,7 +95,7 @@ class WriteFeedbackPage extends React.Component {
 
   sendFeedback = () => {
     this.setState({ sending: true });
-    const { location } = this.props;
+    const location = this.context.geolocation;
 
     let data = {};
     data.feedback = this.state.feedback;

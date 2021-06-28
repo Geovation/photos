@@ -23,6 +23,7 @@ import Fields from "./Fields";
 import _ from "lodash";
 import GeoTag from "./GeoTag";
 import MapLocation from "types/MapLocation";
+import { GeolocationContext } from "store/GeolocationContext";
 
 const emptyState = {
   imgSrc: null,
@@ -80,6 +81,8 @@ const styles = (theme) => ({
 });
 
 class PhotoPage extends Component {
+  static contextType = GeolocationContext;
+
   constructor(props) {
     super(props);
     this.state = { ...emptyState };
@@ -124,7 +127,7 @@ class PhotoPage extends Component {
       const latLon = dms2dec(lat, latRef, lon, lonRef);
       latitude = latLon[0];
       longitude = latLon[1];
-      location = new MapLocation( latitude, longitude );
+      location = new MapLocation({ latitude, longitude });
     } catch (e) {
       console.debug(`Error extracting GPS from file; ${e}`);
     }
@@ -217,7 +220,7 @@ class PhotoPage extends Component {
         // Get location from the image first
         imgLocation = this.getLocationFromExifMetadata(imgExif);
         // If undefined, get it from the GPS
-        imgLocation = imgLocation ? imgLocation : this.props.gpsLocation;
+        imgLocation = imgLocation ? imgLocation : this.context.geolocation;
 
         this.setState({
           imgSrc,
@@ -382,7 +385,6 @@ class PhotoPage extends Component {
 }
 
 PhotoPage.propTypes = {
-  gpsLocation: PropTypes.object.isRequired,
   online: PropTypes.bool.isRequired,
   file: PropTypes.object,
   handleClose: PropTypes.func.isRequired,
