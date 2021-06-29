@@ -17,8 +17,8 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import CloseIcon from "@material-ui/icons/Close";
-import MuiAlert from '@material-ui/lab/Alert';
-import CachedIcon from '@material-ui/icons/Cached';
+import MuiAlert from "@material-ui/lab/Alert";
+import CachedIcon from "@material-ui/icons/Cached";
 
 import { dbFirebase, authFirebase } from "features/firebase";
 
@@ -157,89 +157,93 @@ const App = (props) => {
   useEffect(() => {
     // didMount
     // TODO: test it. Does it slow down starting up ?
-    if (!initDone.current) {
-      initDone.current = true;
-      props.newVersionAvailable.then(() => setNewVersionAvailable(true));
-      prevLocationRef.current = props.location;
+    initDone.current = true;
+    props.newVersionAvailable.then(() => setNewVersionAvailable(true));
+    prevLocationRef.current = props.location;
+    console.log("props.location: " + JSON.stringify(props.location));
 
-      stats.current = config.getStats(props.geojson, dbStats);
+    stats.current = config.getStats(props.geojson, dbStats);
 
-      let { photoId, mapLocation } = extractPathnameParams();
-      setMapLocation(mapLocation);
-      someInits(photoId);
+    let { photoId, mapLocation } = extractPathnameParams();
+    setMapLocation(mapLocation);
+    someInits(photoId);
 
-      unregisterAuthObserver.current = authFirebase.onAuthStateChanged(
-        (user) => {
-          // lets start fresh if the user logged out
-          if (props.user && !user) {
-            gtagEvent("Signed out", "User");
+    unregisterAuthObserver.current = authFirebase.onAuthStateChanged((user) => {
+      // lets start fresh if the user logged out
+      if (props.user && !user) {
+        gtagEvent("Signed out", "User");
 
-            props.history.push(config.PAGES.map.path);
-            window.location.reload();
-          }
-
-          // the user had logged in.
-          props.dispatch({ type: "SET_USER", payload: { user } });
-        }
-      );
-
-      unregisterConfigObserver.current = dbFirebase.configObserver(
-        (config) => setFirebaseConfig(config),
-        console.error
-      );
-    } else {
-      // didUpdate
-      stats.current = config.getStats(props.geojson, dbStats);
-
-      if (prevLocationRef.current !== props.location) {
-        prevLocationRef.current = props.location;
-        gtagPageView(props.location.pathname);
-
-        // if it updates, then it is guaranteed that we didn't landed into the photo
-        setPhotoAccessedByUrl(false);
-        fetchPhotoIfUndefined(_.get(selectedFeature, "properties.id"));
+        props.history.push(config.PAGES.map.path);
+        window.location.reload();
       }
 
-      // listen to new photos to be moderated
-      if (
-        _.get(props.user, "isModerator") &&
-        !unregisterPhotosToModerate.current
-      ) {
-        unregisterPhotosToModerate.current = dbFirebase.photosToModerateRT(
-          config.MODERATING_PHOTOS,
-          (photo) => updatePhotoToModerate(photo),
-          (photo) => removePhotoToModerate(photo)
-        );
-      }
-      // if there is a user
-      if (props.user && !unregisterOwnPhotos.current) {
-        unregisterOwnPhotos.current = dbFirebase.ownPhotosRT(
-          addFeature,
-          modifyFeature,
-          removeFeature,
-          (error) => {
-            console.log(error);
-            alert(error);
-            window.location.reload();
-          }
-        );
-      }
-    }
+      // the user had logged in.
+      props.dispatch({ type: "SET_USER", payload: { user } });
+    });
 
+    unregisterConfigObserver.current = dbFirebase.configObserver(
+      (config) => setFirebaseConfig(config),
+      console.error
+    );
     // willUnmount
     return async () => {
       unregisterAuthObserver.current();
       unregisterConnectionObserver.current();
       unregisterConfigObserver.current();
+      await dbFirebase.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    // didUpdate
+    stats.current = config.getStats(props.geojson, dbStats);
+
+    if (prevLocationRef.current !== props.location) {
+      prevLocationRef.current = props.location;
+      gtagPageView(props.location.pathname);
+
+      // if it updates, then it is guaranteed that we didn't landed into the photo
+      setPhotoAccessedByUrl(false);
+      fetchPhotoIfUndefined(_.get(selectedFeature, "properties.id"));
+    }
+
+    // listen to new photos to be moderated
+    if (
+      _.get(props.user, "isModerator") &&
+      !unregisterPhotosToModerate.current
+    ) {
+      unregisterPhotosToModerate.current = dbFirebase.photosToModerateRT(
+        config.MODERATING_PHOTOS,
+        (photo) => updatePhotoToModerate(photo),
+        (photo) => removePhotoToModerate(photo)
+      );
+    }
+
+    // if there is a user
+    if (props.user && !unregisterOwnPhotos.current) {
+      unregisterOwnPhotos.current = dbFirebase.ownPhotosRT(
+        addFeature,
+        modifyFeature,
+        removeFeature,
+        (error) => {
+          console.log(error);
+          alert(error);
+          window.location.reload();
+        }
+      );
+    }
+
+    // willUnmount
+    return async () => {
       unregisterPhotosToModerate.current &&
         unregisterPhotosToModerate.current();
       unregisterOwnPhotos.current && unregisterOwnPhotos.current();
       unregisterPublishedPhotosRT.current &&
         unregisterPublishedPhotosRT.current();
-      await dbFirebase.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.geojson, props.location, props.user]);
 
   const modifyFeature = (photo) => {
     console.debug(`modifying ${photo.id}`);
@@ -762,25 +766,38 @@ const App = (props) => {
         />
       </main>
 
-      <Snackbar open={newVersionAvailable && !ignoreUpdate}
+      <Snackbar
+        open={newVersionAvailable && !ignoreUpdate}
         key="topcenter"
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <MuiAlert elevation={6} variant="filled"
+        <MuiAlert
+          elevation={6}
+          variant="filled"
           severity="success"
-          action={<>
-            <IconButton color="primary" size="small" onClick={() => window.location.reload()}>
-              <CachedIcon />
-            </IconButton>
-            <IconButton color="primary" size="small" onClick={() =>  setIgnoreUpdate(true)}>
-              <CloseIcon />
-            </IconButton>
-          </>}
+          action={
+            <>
+              <IconButton
+                color="primary"
+                size="small"
+                onClick={() => window.location.reload()}
+              >
+                <CachedIcon />
+              </IconButton>
+              <IconButton
+                color="primary"
+                size="small"
+                onClick={() => setIgnoreUpdate(true)}
+              >
+                <CloseIcon />
+              </IconButton>
+            </>
+          }
         >
           New verison available !
         </MuiAlert>
       </Snackbar>
-      
+
       <Snackbar open={!props.geojson} message="Loading photos..." />
       <Snackbar
         open={welcomeShown && !props.online}
