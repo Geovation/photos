@@ -18,7 +18,30 @@ import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
 import { GeolocationContextProvider } from "store/GeolocationContext";
 
-serviceWorkerRegistration.register();
+const newVersionAvailable = new Promise((resolve) => {
+  function onSuccess(registration) {
+    console.log("App installed");
+  }
+  function onUpdate(registration) {
+    const waitingServiceWorker = registration.waiting;
+
+    if (waitingServiceWorker) {
+      waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+
+      // Need to wait until when the new sw is ready
+      waitingServiceWorker.addEventListener("statechange", (event) => {
+        if (event.target.state === "activated") {
+          resolve();
+          // need it ? keep it here in case you may need it.
+          // caches.delete("all").then(function(boolean) {
+          //   console.log("XXXXX cached deleted: event.target.state: boolean", boolean)
+          // });
+        }      
+      });
+    }
+  }
+  serviceWorkerRegistration.register({onSuccess, onUpdate});
+});
 
 if (
   process.env.NODE_ENV !== "development" &&
@@ -78,7 +101,7 @@ const startApp = () => {
         <Router>
           <MuiThemeProvider theme={theme}>
             <GeolocationContextProvider>
-              <App />
+              <App newVersionAvailable={ newVersionAvailable }/>
             </GeolocationContextProvider>
           </MuiThemeProvider>
         </Router>

@@ -83,4 +83,4 @@ self.addEventListener('message', (event) => {
 // GEOVATION
 registerRoute(/.*pbf.*/, new CacheFirst({ "cacheName":"firebasestorage", plugins: [new ExpirationPlugin({"maxAgeSeconds":30*24*60*60,"purgeOnQuotaError":true})] }));
 registerRoute(/.*firebasestorage.*/, new StaleWhileRevalidate({ "cacheName":"firebasestorage", plugins: [new ExpirationPlugin({"purgeOnQuotaError":true})] }), "GET");
-registerRoute(/.*/, new StaleWhileRevalidate({ "cacheName":"all"}), "GET");
+registerRoute(/.*/, new StaleWhileRevalidate({ "cacheName": "all" }), "GET");
