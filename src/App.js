@@ -176,7 +176,7 @@ const App = (props) => {
         }
 
         // the user had logged in.
-        dispatch({ type: "SET_USER", payload: { firebaseUser } });
+        dispatch({ type: "SET_USER", payload: { user: firebaseUser } });
       }
     );
 
