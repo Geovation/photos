@@ -95,7 +95,6 @@ const App = (props) => {
   let unregisterPublishedPhotosRT = useRef();
   let unregisterPhotosToModerate = useRef();
   let unregisterOwnPhotos = useRef();
-  let initDone = useRef(false);
   let stats = useRef({});
   let domRefInput = useRef();
   const VISIBILITY_REGEX = new RegExp(
@@ -157,7 +156,6 @@ const App = (props) => {
   useEffect(() => {
     // didMount
     // TODO: test it. Does it slow down starting up ?
-    initDone.current = true;
     props.newVersionAvailable.then(() => setNewVersionAvailable(true));
     prevLocationRef.current = location;
 
