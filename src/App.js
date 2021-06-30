@@ -59,7 +59,7 @@ const styles = (theme) => ({
 });
 
 const App = (props) => {
-  const { classes, history } = props;
+  const { classes, dispatch, history, location, geojson, online, user } = props;
   const fields = Object.values(config.PHOTO_FIELDS);
 
   const [file, setFile] = useState(null);
@@ -110,7 +110,7 @@ const App = (props) => {
   const openPhotoPage = (file) => {
     setFile(file);
 
-    props.history.push(config.PAGES.photos.path);
+    history.push(config.PAGES.photos.path);
   };
 
   const handleDialogClose = () => setDialogOpen(false);
@@ -127,14 +127,14 @@ const App = (props) => {
 
   const extractPathnameParams = () => {
     // extracts photoID
-    const regexPhotoIDMatch = props.location.pathname.match(
+    const regexPhotoIDMatch = location.pathname.match(
       new RegExp(`${config.PAGES.displayPhoto.path}\\/(\\w+)`)
     );
 
     const photoId = regexPhotoIDMatch && regexPhotoIDMatch[1];
 
     // extracts mapLocation
-    const regexMapLocationMatch = props.location.pathname.match(
+    const regexMapLocationMatch = location.pathname.match(
       new RegExp("@(-?\\d*\\.?\\d*),(-?\\d*\\.?\\d*),(\\d*\\.?\\d*)z")
     );
 
@@ -159,27 +159,28 @@ const App = (props) => {
     // TODO: test it. Does it slow down starting up ?
     initDone.current = true;
     props.newVersionAvailable.then(() => setNewVersionAvailable(true));
-    prevLocationRef.current = props.location;
-    console.log("props.location: " + JSON.stringify(props.location));
+    prevLocationRef.current = location;
 
-    stats.current = config.getStats(props.geojson, dbStats);
+    stats.current = config.getStats(geojson, dbStats);
 
     let { photoId, mapLocation } = extractPathnameParams();
     setMapLocation(mapLocation);
     someInits(photoId);
 
-    unregisterAuthObserver.current = authFirebase.onAuthStateChanged((user) => {
-      // lets start fresh if the user logged out
-      if (props.user && !user) {
-        gtagEvent("Signed out", "User");
+    unregisterAuthObserver.current = authFirebase.onAuthStateChanged(
+      (firebaseUser) => {
+        // lets start fresh if the user logged out
+        if (user && !firebaseUser) {
+          gtagEvent("Signed out", "User");
 
-        props.history.push(config.PAGES.map.path);
-        window.location.reload();
+          history.push(config.PAGES.map.path);
+          window.location.reload();
+        }
+
+        // the user had logged in.
+        dispatch({ type: "SET_USER", payload: { firebaseUser } });
       }
-
-      // the user had logged in.
-      props.dispatch({ type: "SET_USER", payload: { user } });
-    });
+    );
 
     unregisterConfigObserver.current = dbFirebase.configObserver(
       (config) => setFirebaseConfig(config),
@@ -197,11 +198,11 @@ const App = (props) => {
 
   useEffect(() => {
     // didUpdate
-    stats.current = config.getStats(props.geojson, dbStats);
+    stats.current = config.getStats(geojson, dbStats);
 
-    if (prevLocationRef.current !== props.location) {
-      prevLocationRef.current = props.location;
-      gtagPageView(props.location.pathname);
+    if (prevLocationRef.current !== location) {
+      prevLocationRef.current = location;
+      gtagPageView(location.pathname);
 
       // if it updates, then it is guaranteed that we didn't landed into the photo
       setPhotoAccessedByUrl(false);
@@ -209,10 +210,7 @@ const App = (props) => {
     }
 
     // listen to new photos to be moderated
-    if (
-      _.get(props.user, "isModerator") &&
-      !unregisterPhotosToModerate.current
-    ) {
+    if (_.get(user, "isModerator") && !unregisterPhotosToModerate.current) {
       unregisterPhotosToModerate.current = dbFirebase.photosToModerateRT(
         config.MODERATING_PHOTOS,
         (photo) => updatePhotoToModerate(photo),
@@ -221,7 +219,7 @@ const App = (props) => {
     }
 
     // if there is a user
-    if (props.user && !unregisterOwnPhotos.current) {
+    if (user && !unregisterOwnPhotos.current) {
       unregisterOwnPhotos.current = dbFirebase.ownPhotosRT(
         addFeature,
         modifyFeature,
@@ -243,11 +241,11 @@ const App = (props) => {
         unregisterPublishedPhotosRT.current();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.geojson, props.location, props.user]);
+  }, [geojson, location, user]);
 
   const modifyFeature = (photo) => {
     console.debug(`modifying ${photo.id}`);
-    props.dispatch({ type: "UPDATE_FEATURE", payload: { photo } });
+    dispatch({ type: "UPDATE_FEATURE", payload: { photo } });
   };
 
   const addFeature = (photo) => {
@@ -257,12 +255,12 @@ const App = (props) => {
 
   const removeFeature = (photo) => {
     console.debug(`removing ${photo.id}`);
-    props.dispatch({ type: "DELETE_FEATURE", payload: { photo } });
+    dispatch({ type: "DELETE_FEATURE", payload: { photo } });
   };
 
   const someInits = async (photoId) => {
     unregisterConnectionObserver.current = dbFirebase.onConnectionStateChanged(
-      (online) => props.dispatch({ type: "SET_ONLINE", payload: { online } })
+      (online) => dispatch({ type: "SET_ONLINE", payload: { online } })
     );
 
     dbFirebase.fetchStats().then((dbStats) => {
@@ -279,13 +277,13 @@ const App = (props) => {
       // into the photoId.
       setPhotoAccessedByUrl(!!selectedFeature);
 
-      gtagPageView(props.location.pathname);
+      gtagPageView(location.pathname);
     });
 
     // Get the photos from the cache first.
     const featuresDict = (await localforage.getItem("featuresDict")) || {};
     if (!_.isEmpty(featuresDict)) {
-      props.dispatch({ type: "SET_FEATURES", payload: { featuresDict } });
+      dispatch({ type: "SET_FEATURES", payload: { featuresDict } });
     } else {
       await fetchPhotos();
     }
@@ -293,7 +291,7 @@ const App = (props) => {
     registerPublishedPhotosRT();
 
     if (!welcomeShown) {
-      props.history.push(config.PAGES.welcome.path);
+      history.push(config.PAGES.welcome.path);
     }
   };
 
@@ -320,8 +318,8 @@ const App = (props) => {
 
   const calculateLastUpdate = () => {
     let lastUpdated = new Date(null);
-    if (props.geojson) {
-      const latestPhoto = _.maxBy(props.geojson.features, (photo) => {
+    if (geojson) {
+      const latestPhoto = _.maxBy(geojson.features, (photo) => {
         return photo.properties.updated;
       });
       lastUpdated = _.get(latestPhoto, "properties.updated");
@@ -357,7 +355,7 @@ const App = (props) => {
   const handleClickLoginLogout = () => {
     let loginLogoutDialogOpen = true;
 
-    if (props.user) {
+    if (user) {
       authFirebase.signOut();
       loginLogoutDialogOpen = false;
     }
@@ -368,7 +366,7 @@ const App = (props) => {
   const handleLoginClose = () => setLoginLogoutDialogOpen(false);
 
   const handleCameraClick = () => {
-    if (config.SECURITY.UPLOAD_REQUIRES_LOGIN && !props.user) {
+    if (config.SECURITY.UPLOAD_REQUIRES_LOGIN && !user) {
       setDialogOpen(true);
       setDialogTitle("Please login to add a photo");
       setDialogContentText(
@@ -389,7 +387,7 @@ const App = (props) => {
   const handleWelcomePageClose = () => {
     setWelcomeShown(true);
     localStorage.setItem("welcomeShown", true);
-    props.history.goBack();
+    history.goBack();
   };
 
   const handleTermsPageClose = (e) => {
@@ -410,10 +408,10 @@ const App = (props) => {
   const handleNextClick = async () => {
     const user = await authFirebase.reloadUser();
     if (user.emailVerified) {
-      props.dispatch({
+      dispatch({
         type: "SET_USER",
         payload: {
-          user: { ...props.user, emailVerified: user.emailVerified },
+          user: { ...user, emailVerified: user.emailVerified },
         },
       });
 
@@ -454,15 +452,9 @@ const App = (props) => {
     // publish/unpublish photo in firestore
     try {
       if (isApproved) {
-        await dbFirebase.approvePhoto(
-          photo.id,
-          props.user ? props.user.id : null
-        );
+        await dbFirebase.approvePhoto(photo.id, user ? user.id : null);
       } else {
-        await dbFirebase.rejectPhoto(
-          photo.id,
-          props.user ? props.user.id : null
-        );
+        await dbFirebase.rejectPhoto(photo.id, user ? user.id : null);
       }
 
       const _selectedFeature = selectedFeature;
@@ -488,7 +480,7 @@ const App = (props) => {
   const rejectPhoto = (photo) => approveRejectPhoto(false, photo);
 
   const handleMapLocationChange = (newMapLocation) => {
-    if (!props.history.location.pathname.match(VISIBILITY_REGEX)) {
+    if (!history.location.pathname.match(VISIBILITY_REGEX)) {
       return;
     }
 
@@ -499,11 +491,11 @@ const App = (props) => {
       currentMapLocation == null ||
       !currentMapLocation.isEqual(newMapLocation)
     ) {
-      const currentUrl = props.history.location;
+      const currentUrl = history.location;
       const prefix = currentUrl.pathname.split("@")[0];
       const newUrl = `${prefix}@${newMapLocation.urlFormated()}`;
 
-      props.history.replace(newUrl);
+      history.replace(newUrl);
       setMapLocation(newMapLocation);
     }
   };
@@ -515,25 +507,25 @@ const App = (props) => {
 
   const handlePhotoPageClose = () => {
     const PAGES = config.PAGES;
-    const photoPath = props.location.pathname;
+    const photoPath = location.pathname;
     const coords = photoPath.split("@")[1];
-    const mapPath = props.location.pathname.startsWith(PAGES.embeddable.path)
+    const mapPath = location.pathname.startsWith(PAGES.embeddable.path)
       ? PAGES.embeddable.path
       : PAGES.map.path;
     if (photoAccessedByUrl) {
       const mapUrl = mapPath + (coords ? `@${coords}` : "");
-      props.history.replace(mapUrl);
-      props.history.push(photoPath);
+      history.replace(mapUrl);
+      history.push(photoPath);
     }
 
-    props.history.goBack();
+    history.goBack();
   };
 
   const handlePhotoClick = (feature) => {
     setSelectedFeature(feature);
 
     let pathname = `${config.PAGES.displayPhoto.path}/${feature.properties.id}`;
-    const currentPath = props.history.location.pathname;
+    const currentPath = history.location.pathname;
 
     const coordsUrl =
       currentPath.split("@")[1] ||
@@ -548,16 +540,16 @@ const App = (props) => {
         : pathname;
 
     // if it is in map, change the url
-    if (props.history.location.pathname.match(VISIBILITY_REGEX)) {
-      props.history.replace(`${currentPath.split("@")[0]}@${coordsUrl}`);
+    if (history.location.pathname.match(VISIBILITY_REGEX)) {
+      history.replace(`${currentPath.split("@")[0]}@${coordsUrl}`);
     }
 
-    props.history.push(`${pathname}@${coordsUrl}`);
+    history.push(`${pathname}@${coordsUrl}`);
   };
 
   const reloadPhotos = () => {
     // delete photos.
-    props.dispatch({ type: "SET_FEATURES", payload: { featuresDict: {} } });
+    dispatch({ type: "SET_FEATURES", payload: { featuresDict: {} } });
 
     // fetch all the photos from firestore instead than from the CDN
     fetchPhotos(false);
@@ -566,11 +558,11 @@ const App = (props) => {
   // from the own photos from the dict
   const getOwnPhotos = () => {
     let ownPhotos = {};
-    if (props.user) {
+    if (user) {
       const allPhotos = _.get(props, "geojson.features");
       ownPhotos = _.filter(
         allPhotos,
-        (photo) => _.get(photo, "properties.owner_id") === props.user.id
+        (photo) => _.get(photo, "properties.owner_id") === user.id
       ).reduce((accumulator, currentValue) => {
         accumulator[currentValue.properties.id] = currentValue;
         return accumulator;
@@ -583,12 +575,12 @@ const App = (props) => {
   return (
     <div className="geovation-app">
       {!termsAccepted &&
-        !props.history.location.pathname.startsWith(
-          config.PAGES.embeddable.path
-        ) && <TermsDialog handleClose={handleTermsPageClose} />}
+        !history.location.pathname.startsWith(config.PAGES.embeddable.path) && (
+          <TermsDialog handleClose={handleTermsPageClose} />
+        )}
 
       <EmailVerifiedDialog
-        open={!!(props.user && !props.user.emailVerified)}
+        open={!!(user && !user.emailVerified)}
         handleNextClick={handleNextClick}
       />
 
@@ -655,7 +647,7 @@ const App = (props) => {
             )}
           />
 
-          {props.user && props.user.isModerator && (
+          {user && user.isModerator && (
             <Route
               path={config.PAGES.moderator.path}
               render={(props) => (
@@ -670,7 +662,7 @@ const App = (props) => {
             />
           )}
 
-          {props.user && (
+          {user && (
             <Route
               path={config.PAGES.ownPhotos.path}
               render={(props) => (
@@ -686,13 +678,13 @@ const App = (props) => {
             />
           )}
 
-          {props.user && props.user.isModerator && (
+          {user && user.isModerator && (
             <Route
               path={config.PAGES.feedbackReports.path}
               render={(props) => (
                 <FeedbackReportsSubrouter
                   {...props}
-                  handleClose={props.history.goBack}
+                  handleClose={history.goBack}
                 />
               )}
             />
@@ -711,7 +703,7 @@ const App = (props) => {
             )}
           />
 
-          {props.user && (
+          {user && (
             <Route
               path={config.PAGES.account.path}
               render={(props) => (
@@ -750,9 +742,9 @@ const App = (props) => {
         </Switch>
 
         <Map
-          history={props.history}
-          visible={props.history.location.pathname.match(VISIBILITY_REGEX)}
-          embeddable={props.history.location.pathname.match(
+          history={history}
+          visible={history.location.pathname.match(VISIBILITY_REGEX)}
+          embeddable={history.location.pathname.match(
             new RegExp(config.PAGES.embeddable.path, "g")
           )}
           handleCameraClick={handleCameraClick}
@@ -798,9 +790,9 @@ const App = (props) => {
         </MuiAlert>
       </Snackbar>
 
-      <Snackbar open={!props.geojson} message="Loading photos..." />
+      <Snackbar open={!geojson} message="Loading photos..." />
       <Snackbar
-        open={welcomeShown && !props.online}
+        open={welcomeShown && !online}
         message="Connecting to our servers..."
       />
 
@@ -816,7 +808,7 @@ const App = (props) => {
       </RootRef>
 
       <Login
-        open={loginLogoutDialogOpen && !props.user}
+        open={loginLogoutDialogOpen && !user}
         handleClose={handleLoginClose}
         loginComponent={LoginFirebase}
       />
