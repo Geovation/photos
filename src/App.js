@@ -191,6 +191,11 @@ const App = (props) => {
       unregisterAuthObserver.current();
       unregisterConnectionObserver.current();
       unregisterConfigObserver.current();
+      unregisterPhotosToModerate.current &&
+        unregisterPhotosToModerate.current();
+      unregisterOwnPhotos.current && unregisterOwnPhotos.current();
+      unregisterPublishedPhotosRT.current &&
+        unregisterPublishedPhotosRT.current();
       await dbFirebase.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -231,15 +236,6 @@ const App = (props) => {
         }
       );
     }
-
-    // willUnmount
-    return async () => {
-      unregisterPhotosToModerate.current &&
-        unregisterPhotosToModerate.current();
-      unregisterOwnPhotos.current && unregisterOwnPhotos.current();
-      unregisterPublishedPhotosRT.current &&
-        unregisterPublishedPhotosRT.current();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geojson, location, user]);
 
