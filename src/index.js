@@ -60,7 +60,8 @@ const theme = createMuiTheme(config.THEME);
 const initialState = {
   user: null,
   online: false,
-  geojson: null
+  geojson: null,
+  featuresDict: {}
 };
 
 function reducer(state = initialState, action) {
@@ -80,6 +81,12 @@ function reducer(state = initialState, action) {
         ...state,
         geojson: action.payload.geojson
       }
+    case "SET_FEATURES":
+      return {
+        ...state,
+        featuresDict: action.payload.featuresDict
+      }
+    // TODO: SET_FEATURES
     default:
       return state;
   } 
