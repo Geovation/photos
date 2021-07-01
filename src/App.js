@@ -85,7 +85,6 @@ const App = (props) => {
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogContentText, setDialogContentText] = useState("");
   const [confirmDialogTitle, setConfirmDialogTitle] = useState("");
-  const [newVersionAvailable, setNewVersionAvailable] = useState(false);
   const [ignoreUpdate, setIgnoreUpdate] = useState(false);
 
   const geolocationContext = useContext(GeolocationContext);
@@ -164,7 +163,6 @@ const App = (props) => {
   useEffect(() => {
     // didMount
     // TODO: test it. Does it slow down starting up ?
-    props.newVersionAvailable.then(() => setNewVersionAvailable(true));
     prevLocationRef.current = location;
 
     setStats(config.getStats(geojson, dbStats));
@@ -756,7 +754,7 @@ const App = (props) => {
       </main>
 
       <Snackbar
-        open={newVersionAvailable && !ignoreUpdate}
+        open={props.newVersionAvailable && !ignoreUpdate}
         key="topcenter"
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >

@@ -18,31 +18,6 @@ import { firebaseInit } from "features/firebase/firebaseInit";
 import { dbFirebase } from "features/firebase";
 import { GeolocationContextProvider } from "store/GeolocationContext";
 
-const newVersionAvailable = new Promise((resolve) => {
-  function onSuccess(registration) {
-    console.log("App installed");
-  }
-  function onUpdate(registration) {
-    const waitingServiceWorker = registration.waiting;
-
-    if (waitingServiceWorker) {
-      waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
-
-      // Need to wait until when the new sw is ready
-      waitingServiceWorker.addEventListener("statechange", (event) => {
-        if (event.target.state === "activated") {
-          resolve();
-          // need it ? keep it here in case you may need it.
-          // caches.delete("all").then(function(boolean) {
-          //   console.log("XXXXX cached deleted: event.target.state: boolean", boolean)
-          // });
-        }      
-      });
-    }
-  }
-  serviceWorkerRegistration.register({onSuccess, onUpdate});
-});
-
 if (
   process.env.NODE_ENV !== "development" &&
   localStorage.getItem("debug") !== "true"
@@ -95,13 +70,7 @@ const sagaMiddleware = createSagaMiddleware()
 const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(rootSaga)
 
-const startApp = () => {
-  gtagInit();
-
-  firebaseInit(() => {
-    dbFirebase.updateUserFCMToken();
-  });
-
+function render({ newVersionAvailable = false } = {}) {
   ReactDOM.render(
     <React.StrictMode>
       <Provider store={store}>
@@ -116,6 +85,35 @@ const startApp = () => {
     </React.StrictMode>,
     document.getElementById("root")
   );
-};
+}
 
-startApp();
+gtagInit();
+
+firebaseInit(() => {
+  dbFirebase.updateUserFCMToken();
+});
+
+function onSuccess(registration) {
+  console.log("App installed");
+}
+function onUpdate(registration) {
+  const waitingServiceWorker = registration.waiting;
+
+  if (waitingServiceWorker) {
+    waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+
+    // Need to wait until when the new sw is ready
+    waitingServiceWorker.addEventListener("statechange", (event) => {
+      if (event.target.state === "activated") {
+        render({ newVersionAvailable: true});
+        // need it ? keep it here in case you may need it.
+        // caches.delete("all").then(function(boolean) {
+        //   console.log("XXXXX cached deleted: event.target.state: boolean", boolean)
+        // });
+      }      
+    });
+  }
+}
+serviceWorkerRegistration.register({onSuccess, onUpdate});
+
+render();
