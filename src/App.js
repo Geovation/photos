@@ -80,6 +80,7 @@ const App = (props) => {
   const [photosToModerate, setPhotosToModerate] = useState({});
   const [mapLocation, setMapLocation] = useState(new MapLocation());
   const [dbStats, setDbStats] = useState();
+  const [stats, setStats] = useState();
   const [firebaseConfig, setFirebaseConfig] = useState();
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogContentText, setDialogContentText] = useState("");
@@ -95,8 +96,9 @@ const App = (props) => {
   let unregisterPublishedPhotosRT = useRef();
   let unregisterPhotosToModerate = useRef();
   let unregisterOwnPhotos = useRef();
-  let stats = useRef({});
   let domRefInput = useRef();
+  let userChecked = useRef(false);
+
   const VISIBILITY_REGEX = new RegExp(
     "(^/@|^/$|^" +
       config.PAGES.displayPhoto.path +
@@ -152,6 +154,12 @@ const App = (props) => {
     return { photoId, mapLocation };
   };
 
+  const unexpectedErrorFn = (error) => {
+    console.error(error);
+    alert(`Let our dev about this error: ${error}`);
+    window.location.reload();
+  }
+
   const prevLocationRef = useRef();
   useEffect(() => {
     // didMount
@@ -159,25 +167,49 @@ const App = (props) => {
     props.newVersionAvailable.then(() => setNewVersionAvailable(true));
     prevLocationRef.current = location;
 
-    stats.current = config.getStats(geojson, dbStats);
+    setStats(config.getStats(geojson, dbStats))
 
     let { photoId, mapLocation } = extractPathnameParams();
     setMapLocation(mapLocation);
-    someInits(photoId);
+    unregisterConnectionObserver.current = dbFirebase.onConnectionStateChanged(
+      (online) => dispatch({ type: "SET_ONLINE", payload: { online } })
+    );
 
-    unregisterAuthObserver.current = authFirebase.onAuthStateChanged(
-      (firebaseUser) => {
-        // lets start fresh if the user logged out
-        if (user && !firebaseUser) {
-          gtagEvent("Signed out", "User");
+    dbFirebase.fetchStats().then((dbStats) => {
+      console.log(dbStats);
+      setUsersLeaderboard(dbStats.users);
+      setDbStats(dbStats);
 
-          history.push(config.PAGES.map.path);
-          window.location.reload();
-        }
+      return dbStats;
+    });
 
-        // the user had logged in.
-        dispatch({ type: "SET_USER", payload: { user: firebaseUser } });
+    // when photoId is defined (when acceding the app with photoid query string), need to get the photo info.
+    fetchPhotoIfUndefined(photoId).then( () => {
+      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
+      // into the photoId.
+      setPhotoAccessedByUrl(!!selectedFeature);
+
+      gtagPageView(location.pathname);
+    });
+
+    // Get the photos from the cache first.
+    (async () => {
+      const featuresDict = (await localforage.getItem("featuresDict")) || {};
+      if (!_.isEmpty(featuresDict)) {
+        dispatch({ type: "SET_FEATURES", payload: { featuresDict } });
+      } else {
+        fetchPhotos();
       }
+    })();
+
+    registerPublishedPhotosRT();
+
+    if (!welcomeShown) {
+      history.push(config.PAGES.welcome.path);
+    }
+    
+    unregisterAuthObserver.current = authFirebase.onAuthStateChanged(
+      (firebaseUser) => dispatch({ type: "SET_USER", payload: { user: firebaseUser } })
     );
 
     unregisterConfigObserver.current = dbFirebase.configObserver(
@@ -190,19 +222,35 @@ const App = (props) => {
       unregisterConnectionObserver.current();
       unregisterConfigObserver.current();
       unregisterPhotosToModerate.current &&
-        unregisterPhotosToModerate.current();
+      unregisterPhotosToModerate.current();
       unregisterOwnPhotos.current && unregisterOwnPhotos.current();
       unregisterPublishedPhotosRT.current &&
-        unregisterPublishedPhotosRT.current();
+      unregisterPublishedPhotosRT.current();
       await dbFirebase.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    // didUpdate
-    stats.current = config.getStats(geojson, dbStats);
+    console.log(user);
+    // lets start fresh if the user logged out
+    if (userChecked.current && !user) {
+      gtagEvent("Signed out", "User");
 
+      history.push(config.PAGES.map.path);
+      window.location.reload();
+    } else {
+      userChecked.current = true;
+    }
+  }, [user, history ]);
+
+  useEffect(() => {
+    setStats(config.getStats(geojson, dbStats));
+  }, [dbStats, geojson]);
+
+
+  useEffect(() => {
+    // didUpdate
     if (prevLocationRef.current !== location) {
       prevLocationRef.current = location;
       gtagPageView(location.pathname);
@@ -227,11 +275,7 @@ const App = (props) => {
         addFeature,
         modifyFeature,
         removeFeature,
-        (error) => {
-          console.log(error);
-          alert(error);
-          window.location.reload();
-        }
+        unexpectedErrorFn
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -252,43 +296,6 @@ const App = (props) => {
     dispatch({ type: "DELETE_FEATURE", payload: { photo } });
   };
 
-  const someInits = async (photoId) => {
-    unregisterConnectionObserver.current = dbFirebase.onConnectionStateChanged(
-      (online) => dispatch({ type: "SET_ONLINE", payload: { online } })
-    );
-
-    dbFirebase.fetchStats().then((dbStats) => {
-      console.log(dbStats);
-      setUsersLeaderboard(dbStats.users);
-      setDbStats(dbStats);
-
-      return dbStats;
-    });
-
-    // when photoId is defined (when acceding the app with photoid query string), need to get the photo info.
-    fetchPhotoIfUndefined(photoId).then(async () => {
-      // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
-      // into the photoId.
-      setPhotoAccessedByUrl(!!selectedFeature);
-
-      gtagPageView(location.pathname);
-    });
-
-    // Get the photos from the cache first.
-    const featuresDict = (await localforage.getItem("featuresDict")) || {};
-    if (!_.isEmpty(featuresDict)) {
-      dispatch({ type: "SET_FEATURES", payload: { featuresDict } });
-    } else {
-      await fetchPhotos();
-    }
-
-    registerPublishedPhotosRT();
-
-    if (!welcomeShown) {
-      history.push(config.PAGES.welcome.path);
-    }
-  };
-
   const registerPublishedPhotosRT = async () => {
     if (unregisterPublishedPhotosRT.current) {
       await unregisterPublishedPhotosRT.current();
@@ -301,11 +308,7 @@ const App = (props) => {
       addFeature,
       modifyFeature,
       removeFeature,
-      (error) => {
-        console.log(error);
-        alert(error);
-        window.location.reload();
-      },
+      unexpectedErrorFn,
       calculateLastUpdate()
     );
   };
