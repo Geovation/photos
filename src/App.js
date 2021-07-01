@@ -163,7 +163,6 @@ const App = (props) => {
   useEffect(() => {
     // didMount
     // TODO: test it. Does it slow down starting up ?
-    props.newVersionAvailable.then(() => setNewVersionAvailable(true));
     prevLocationRef.current = location;
 
     setStats(config.getStats(geojson, dbStats));

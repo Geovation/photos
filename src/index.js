@@ -70,7 +70,7 @@ const sagaMiddleware = createSagaMiddleware()
 const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(rootSaga)
 
-function render({ newVersionAvailable=false }) {
+function render({ newVersionAvailable = false } = {}) {
   ReactDOM.render(
     <React.StrictMode>
       <Provider store={store}>
