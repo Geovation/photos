@@ -70,7 +70,7 @@ const sagaMiddleware = createSagaMiddleware()
 const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(rootSaga)
 
-function render(newVersionAvailable) {
+function render({ newVersionAvailable=false }) {
   ReactDOM.render(
     <React.StrictMode>
       <Provider store={store}>
@@ -105,7 +105,7 @@ function onUpdate(registration) {
     // Need to wait until when the new sw is ready
     waitingServiceWorker.addEventListener("statechange", (event) => {
       if (event.target.state === "activated") {
-        render(true);
+        render({ newVersionAvailable: true});
         // need it ? keep it here in case you may need it.
         // caches.delete("all").then(function(boolean) {
         //   console.log("XXXXX cached deleted: event.target.state: boolean", boolean)
@@ -116,4 +116,4 @@ function onUpdate(registration) {
 }
 serviceWorkerRegistration.register({onSuccess, onUpdate});
 
-render(false);
+render();
