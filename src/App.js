@@ -156,9 +156,9 @@ const App = (props) => {
 
   const unexpectedErrorFn = (error) => {
     console.error(error);
-    alert(`Let our dev about this error: ${error}`);
+    alert(`Let our dev know about this error: ${error}`);
     window.location.reload();
-  }
+  };
 
   const prevLocationRef = useRef();
   useEffect(() => {
@@ -167,7 +167,7 @@ const App = (props) => {
     props.newVersionAvailable.then(() => setNewVersionAvailable(true));
     prevLocationRef.current = location;
 
-    setStats(config.getStats(geojson, dbStats))
+    setStats(config.getStats(geojson, dbStats));
 
     let { photoId, mapLocation } = extractPathnameParams();
     setMapLocation(mapLocation);
@@ -184,7 +184,7 @@ const App = (props) => {
     });
 
     // when photoId is defined (when acceding the app with photoid query string), need to get the photo info.
-    fetchPhotoIfUndefined(photoId).then( () => {
+    fetchPhotoIfUndefined(photoId).then(() => {
       // If the selectedFeature is not null, it means that we were able to retrieve a photo from the URL and so we landed
       // into the photoId.
       setPhotoAccessedByUrl(!!selectedFeature);
@@ -207,9 +207,10 @@ const App = (props) => {
     if (!welcomeShown) {
       history.push(config.PAGES.welcome.path);
     }
-    
+
     unregisterAuthObserver.current = authFirebase.onAuthStateChanged(
-      (firebaseUser) => dispatch({ type: "SET_USER", payload: { user: firebaseUser } })
+      (firebaseUser) =>
+        dispatch({ type: "SET_USER", payload: { user: firebaseUser } })
     );
 
     unregisterConfigObserver.current = dbFirebase.configObserver(
@@ -222,10 +223,10 @@ const App = (props) => {
       unregisterConnectionObserver.current();
       unregisterConfigObserver.current();
       unregisterPhotosToModerate.current &&
-      unregisterPhotosToModerate.current();
+        unregisterPhotosToModerate.current();
       unregisterOwnPhotos.current && unregisterOwnPhotos.current();
       unregisterPublishedPhotosRT.current &&
-      unregisterPublishedPhotosRT.current();
+        unregisterPublishedPhotosRT.current();
       await dbFirebase.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -242,12 +243,11 @@ const App = (props) => {
     } else {
       userChecked.current = true;
     }
-  }, [user, history ]);
+  }, [user, history]);
 
   useEffect(() => {
     setStats(config.getStats(geojson, dbStats));
   }, [dbStats, geojson]);
-
 
   useEffect(() => {
     // didUpdate
