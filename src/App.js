@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect, useRef, Fragment } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
@@ -280,6 +280,33 @@ const App = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geojson, location, user]);
+
+  useEffect(() => {
+    const actions = (
+      <Fragment>
+        <IconButton
+          color="primary"
+          size="small"
+          onClick={() => window.location.reload()}
+        >
+          <CachedIcon />
+        </IconButton>
+        <IconButton
+          color="primary"
+          size="small"
+          onClick={() => setIgnoreUpdate(true)}
+        >
+          <CloseIcon />
+        </IconButton>
+      </Fragment>);
+
+    setAlert({
+      open: props.newVersionAvailable && !ignoreUpdate,
+      actions,
+      message: "New verison available !",
+      autoHideDuration: 10*1000
+    });
+  }, [props.newVersionAvailable, ignoreUpdate]);
 
   const modifyFeature = (photo) => {
     console.debug(`modifying ${photo.id}`);
@@ -793,39 +820,6 @@ const App = (props) => {
         </Alert>
       </Snackbar>
       
-      {/* TODO: delete this */}
-      <Snackbar
-        open={props.newVersionAvailable && !ignoreUpdate}
-        key="topcenter"
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <MuiAlert
-          elevation={6}
-          variant="filled"
-          severity="success"
-          action={
-            <>
-              <IconButton
-                color="primary"
-                size="small"
-                onClick={() => window.location.reload()}
-              >
-                <CachedIcon />
-              </IconButton>
-              <IconButton
-                color="primary"
-                size="small"
-                onClick={() => setIgnoreUpdate(true)}
-              >
-                <CloseIcon />
-              </IconButton>
-            </>
-          }
-        >
-          New verison available !
-        </MuiAlert>
-      </Snackbar>
-
       <Snackbar open={!geojson} message="Loading photos..." />
       <Snackbar
         open={welcomeShown && !online}
