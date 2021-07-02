@@ -222,7 +222,11 @@ async function processScheduledUpload(key, onProgress) {
   });
 
   const data = { ...location, ...filteredFields };
-  const { promise, cancel} = uploadPhoto(data, imgSrc, onProgress);
+  const { promise, cancel } = uploadPhotoRetryingIfError(
+    data,
+    imgSrc,
+    onProgress
+  );
 
   const promiseUploadedAndKeyDeleted = promise.then(() => {
     console.log("Photo uploaded");
@@ -262,6 +266,7 @@ function uploadPhoto(data, imgSrc, onProgress) {
     try {
       photoRef = await saveMetadata(data);
     } catch (error) {
+      // TODO: try again
       reject();
 
       // exit
@@ -285,7 +290,9 @@ function uploadPhoto(data, imgSrc, onProgress) {
       try {
         await uploadTask;
       } catch (error) {
-        reject(); 
+        // TODO: try again
+
+        reject();
       }
       
       resolve();
@@ -310,6 +317,32 @@ function uploadPhoto(data, imgSrc, onProgress) {
   };
 
   return rtn;
+}
+
+function uploadPhotoRetryingIfError(data, imgSrc, onProgress) {
+  const cancel = () => {
+    // TODO:
+  };
+
+  const promise = new Promise(async (res, rej) => {
+    let done = false;
+    while (!done) {
+      const { promise, cancel } = uploadPhoto(data, imgSrc, onProgress);
+
+      console.log("Need to do semting about it: ", cancel);
+
+      try {
+        await promise;
+        done = true;
+        res();
+      } catch (error) {
+        console.debug(error);
+        console.log("Trying to upload again");
+      }
+    }
+  });
+
+  return { promise, cancel };
 }
 
 /**

@@ -298,7 +298,8 @@ const App = (props) => {
         >
           <CloseIcon />
         </IconButton>
-      </Fragment>);
+      </Fragment>
+    );
 
     setAlert({
       key: "newVersion",
