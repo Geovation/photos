@@ -223,10 +223,10 @@ const App = (props) => {
       unregisterConnectionObserver.current();
       unregisterConfigObserver.current();
       unregisterPhotosToModerate.current &&
-      unregisterPhotosToModerate.current();
+        unregisterPhotosToModerate.current();
       unregisterOwnPhotos.current && unregisterOwnPhotos.current();
       unregisterPublishedPhotosRT.current &&
-      unregisterPublishedPhotosRT.current();
+        unregisterPublishedPhotosRT.current();
       await dbFirebase.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -301,10 +301,11 @@ const App = (props) => {
       </Fragment>);
 
     setAlert({
+      key: "newVersion",
       open: props.newVersionAvailable && !ignoreUpdate,
       actions,
       message: "New verison available !",
-      autoHideDuration: 10*1000
+      autoHideDuration: 10 * 1000,
     });
   }, [props.newVersionAvailable, ignoreUpdate]);
 
@@ -404,12 +405,16 @@ const App = (props) => {
 
   const handleUploadClick = async ({ location, imgSrc, fieldsValues } = {}) => {
     history.goBack();
-    setAlert({ open: true, message: "Photo upload scheduled :)" });
+    setAlert({
+      key: "photoScheduled",
+      open: true,
+      message: "Photo upload scheduled :)",
+    });
     const onProgress = (progress) => console.log(`Uploading photo progress ${progress}`);
     const { promise, cancel } = await dbFirebase.scheduleUpload({ location, imgSrc, fieldsValues, onProgress });
     console.debug("I could cancel with ", cancel);
     await promise;
-    setAlert({ open: true, message: "Photo uploaded !" });
+    setAlert({ key: "photoUploaded", open: true, message: "Photo uploaded !" });
   }
 
   const openFile = (e) => {
@@ -807,6 +812,7 @@ const App = (props) => {
 
       <Snackbar
         open={alert.open}
+        key={alert.key}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         autoHideDuration={alert.autoHideDuration || 2000}
         onClose={alert.onClose || handleAlertClose}
@@ -814,12 +820,12 @@ const App = (props) => {
         <Alert
           severity={alert.severity || "success"}
           onClose={alert.onClose || handleAlertClose}
-          action={alert.actions} 
+          action={alert.actions}
         >
           {alert.message || "Hello"}
         </Alert>
       </Snackbar>
-      
+
       <Snackbar open={!geojson} message="Loading photos..." />
       <Snackbar
         open={welcomeShown && !online}

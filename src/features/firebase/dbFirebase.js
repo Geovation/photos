@@ -187,8 +187,6 @@ async function scheduleUpload({ location, imgSrc, fieldsValues, onProgress = () 
   const key = String(Date.now());
   await uploadsQueueStore.setItem(key, { location, imgSrc, fieldsValues });
   return processScheduledUpload(key, onProgress);
-
-  // TODO: upload to all the photos in the queue when the app starts
 }
 
 async function processScheduledUploads(onProgress) {
@@ -201,7 +199,7 @@ async function processScheduledUploads(onProgress) {
 async function processScheduledUpload(key, onProgress) {
   const { location, imgSrc, fieldsValues } = await uploadsQueueStore.getItem(key);
 
-  // TODO: upload it
+  // upload it
   const fieldsJustValues = _.reduce(
     fieldsValues,
     (a, v, k) => {
@@ -227,7 +225,7 @@ async function processScheduledUpload(key, onProgress) {
   const { promise, cancel} = uploadPhoto(data, imgSrc, onProgress);
 
   const promiseUploadedAndKeyDeleted = promise.then(() => {
-    // debugger
+    console.log("Photo uploaded");
     return uploadsQueueStore.removeItem(key);
   });
 
