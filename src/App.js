@@ -86,6 +86,7 @@ const App = (props) => {
   const [dialogContentText, setDialogContentText] = useState("");
   const [confirmDialogTitle, setConfirmDialogTitle] = useState("");
   const [ignoreUpdate, setIgnoreUpdate] = useState(false);
+  const [alert, setAlert] = useState({});
 
   const geolocationContext = useContext(GeolocationContext);
 
@@ -162,8 +163,9 @@ const App = (props) => {
   const prevLocationRef = useRef();
   useEffect(() => {
     // didMount
-    // TODO: test it. Does it slow down starting up ?
     prevLocationRef.current = location;
+
+    dbFirebase.processScheduledUploads(console.log);
 
     setStats(config.getStats(geojson, dbStats));
 
@@ -221,10 +223,10 @@ const App = (props) => {
       unregisterConnectionObserver.current();
       unregisterConfigObserver.current();
       unregisterPhotosToModerate.current &&
-        unregisterPhotosToModerate.current();
+      unregisterPhotosToModerate.current();
       unregisterOwnPhotos.current && unregisterOwnPhotos.current();
       unregisterPublishedPhotosRT.current &&
-        unregisterPublishedPhotosRT.current();
+      unregisterPublishedPhotosRT.current();
       await dbFirebase.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -372,6 +374,16 @@ const App = (props) => {
       domRefInput.current.click();
     }
   };
+
+  const handleUploadClick = async ({ location, imgSrc, fieldsValues } = {}) => {
+    history.goBack();
+    setAlert({ open: true, message: "Photo upload scheduled :)" });
+    const onProgress = (progress) => console.log(`Uploading photo progress ${progress}`);
+    const { promise, cancel } = await dbFirebase.scheduleUpload({ location, imgSrc, fieldsValues, onProgress });
+    console.debug("I could cancel with ", cancel);
+    await promise;
+    setAlert({ open: true, message: "Photo uploaded !" });
+  }
 
   const openFile = (e) => {
     if (e.target.files[0]) {
@@ -566,6 +578,18 @@ const App = (props) => {
     return ownPhotos;
   };
 
+  const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleAlertClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setAlert({ open: false });
+  };
+
   console.log(firebaseConfig);
   return (
     <div className="geovation-app">
@@ -694,6 +718,7 @@ const App = (props) => {
                 fields={fields}
                 handleClose={history.goBack}
                 handleRetakeClick={handleCameraClick}
+                handleUploadClick={handleUploadClick}
               />
             )}
           />
@@ -753,6 +778,22 @@ const App = (props) => {
         />
       </main>
 
+      <Snackbar
+        open={alert.open}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={alert.autoHideDuration || 2000}
+        onClose={alert.onClose || handleAlertClose}
+      >
+        <Alert
+          severity={alert.severity || "success"}
+          onClose={alert.onClose || handleAlertClose}
+          action={alert.actions} 
+        >
+          {alert.message || "Hello"}
+        </Alert>
+      </Snackbar>
+      
+      {/* TODO: delete this */}
       <Snackbar
         open={props.newVersionAvailable && !ignoreUpdate}
         key="topcenter"

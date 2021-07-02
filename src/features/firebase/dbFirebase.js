@@ -11,6 +11,7 @@ import * as axios from "axios";
 const firebaseApp = getFirebaseApp();
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
+const uploadsQueueStore = localforage.createInstance({ name: "uploadsQueue" });
 
 function extractPhoto(data, id) {
   // some data from Firebase cannot be stringified into json, so we need to convert it into other format first.
@@ -177,6 +178,63 @@ function saveMetadata(data) {
 }
 
 /**
+ * It add ann image and its metadata to a queue to then be uploaded to the DB.
+ * 
+ * @param {*} param0 TODO
+ */
+async function scheduleUpload({ location, imgSrc, fieldsValues, onProgress = () => {} } = {}) {
+  // add to queue
+  const key = String(Date.now());
+  await uploadsQueueStore.setItem(key, { location, imgSrc, fieldsValues });
+  return processScheduledUpload(key, onProgress);
+
+  // TODO: upload to all the photos in the queue when the app starts
+}
+
+async function processScheduledUploads(onProgress) {
+  return uploadsQueueStore.iterate((value, key, iterationNumber) => {
+    console.debug([key, value, iterationNumber]);
+    processScheduledUpload(key, onProgress);
+  })
+}
+
+async function processScheduledUpload(key, onProgress) {
+  const { location, imgSrc, fieldsValues } = await uploadsQueueStore.getItem(key);
+
+  // TODO: upload it
+  const fieldsJustValues = _.reduce(
+    fieldsValues,
+    (a, v, k) => {
+      a[k] = v.value;
+      return a;
+    },
+    {}
+  );
+
+  let filteredFields = {};
+  Object.entries(fieldsJustValues).forEach(([key, value]) => {
+    if (value) {
+      filteredFields[key] = typeof value === "string" ? value.trim() : value;
+
+      const fieldDefinition = config.PHOTO_FIELDS[key];
+      if (fieldDefinition.sanitize) {
+        fieldDefinition.sanitize(value);
+      }
+    }
+  });
+
+  const data = { ...location, ...filteredFields };
+  const { promise, cancel} = uploadPhoto(data, imgSrc, onProgress);
+
+  const promiseUploadedAndKeyDeleted = promise.then(() => {
+    // debugger
+    return uploadsQueueStore.removeItem(key);
+  });
+
+  return { promise: promiseUploadedAndKeyDeleted, cancel };
+}
+
+/**
  * It upload the metadata and the image itself. It returns an observable so that to beable to track the progress
  * 
  * @param {*} data data to be saved
@@ -188,6 +246,9 @@ function saveMetadata(data) {
  *  if the function cancel is called, the upload will be cancelled, the metadate will be deleted,
  *  and the promise will be rejected.
  */
+
+// TODO: handle error: try again if failed.
+// debugger
 function uploadPhoto(data, imgSrc, onProgress) {
   const rtn = {};
   let canceled = false;
@@ -499,7 +560,8 @@ const rtn = {
   configObserver,
   updateUserFCMToken,
   buildStorageUrl,
-  uploadPhoto,
+  scheduleUpload,
+  processScheduledUploads,
 };
 
 export default rtn;
