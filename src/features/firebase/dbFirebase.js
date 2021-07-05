@@ -248,9 +248,6 @@ async function processScheduledUpload(key, onProgress) {
  *  if the function cancel is called, the upload will be cancelled, the metadate will be deleted,
  *  and the promise will be rejected.
  */
-
-// TODO: handle error: try again if failed.
-// debugger
 function uploadPhoto(data, imgSrc, onProgress) {
   const rtn = {};
   let canceled = false;
@@ -266,8 +263,7 @@ function uploadPhoto(data, imgSrc, onProgress) {
     try {
       photoRef = await saveMetadata(data);
     } catch (error) {
-      // TODO: try again
-      reject();
+      reject(error);
 
       // exit
       return;
@@ -290,9 +286,7 @@ function uploadPhoto(data, imgSrc, onProgress) {
       try {
         await uploadTask;
       } catch (error) {
-        // TODO: try again
-
-        reject();
+        reject(error);
       }
       
       resolve();
