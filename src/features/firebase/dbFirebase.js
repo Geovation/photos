@@ -248,6 +248,7 @@ async function processScheduledUpload(key, onProgress) {
  *  if the function cancel is called, the upload will be cancelled, the metadate will be deleted,
  *  and the promise will be rejected.
  */
+
 function uploadPhoto(data, imgSrc, onProgress) {
   const rtn = {};
   let canceled = false;
