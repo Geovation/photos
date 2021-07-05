@@ -42,6 +42,10 @@ const styles = (theme) => ({
     fontSize: "0.8rem",
     padding: "0 12px",
     width: "unset",
+    transition: "bottom 0.3s",
+  },
+  cameraHigh: {
+    bottom: theme.spacing(6.5),
   },
   burger: {
     position: "absolute",
@@ -370,7 +374,11 @@ class Map extends Component {
         {!this.props.embeddable && (
           <div>
             <Fab
-              className={classes.camera}
+              className={`${classes.camera} ${
+                this.props.online && this.props.geojson
+                  ? ""
+                  : classes.cameraHigh
+              }`}
               color="secondary"
               onClick={this.props.handleCameraClick}
             >
@@ -388,8 +396,9 @@ class Map extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   user: state.user,
-  geojson: state.geojson
+  geojson: state.geojson,
+  online: state.online,
 });
 export default connect(mapStateToProps)(withStyles(styles)(Map));
