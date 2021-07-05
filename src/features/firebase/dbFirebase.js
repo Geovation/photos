@@ -249,7 +249,6 @@ async function processScheduledUpload(key, onProgress) {
  *  and the promise will be rejected.
  */
 
-// TODO: handle error: try again if failed.
 // debugger
 function uploadPhoto(data, imgSrc, onProgress) {
   const rtn = {};
