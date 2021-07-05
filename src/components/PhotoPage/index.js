@@ -6,21 +6,14 @@ import loadImage from "blueimp-load-image";
 import dms2dec from "dms2dec";
 
 import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import { withStyles } from "@material-ui/core/styles";
 
 import config from "custom/config";
 import { gtagEvent } from "gtag.js";
 import "./style.scss";
-import dbFirebase from "features/firebase/dbFirebase";
 
 import PageWrapper from "components/PageWrapper";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import Fields from "./Fields";
-import _ from "lodash";
 import GeoTag from "./GeoTag";
 import MapLocation from "types/MapLocation";
 import { GeolocationContext } from "store/GeolocationContext";
@@ -28,10 +21,6 @@ import { GeolocationContext } from "store/GeolocationContext";
 const emptyState = {
   imgSrc: null,
   imgLocation: null,
-  open: false,
-  message: "",
-  sending: false,
-  sendingProgress: 0,
   anyError: true,
   enabledUploadButton: true,
   next: false,
@@ -46,20 +35,6 @@ const styles = (theme) => ({
   },
   progress: {
     margin: theme.spacing(2),
-  },
-  // button: {
-  //   display: "flex",
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  dialogContentProgress: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  linearProgress: {
-    width: "100%",
-    height: "100%",
   },
   link: {
     color: theme.palette.secondary.main,
@@ -86,30 +61,7 @@ class PhotoPage extends Component {
   constructor(props) {
     super(props);
     this.state = { ...emptyState };
-    this.dialogCloseCallback = null;
-    this.cancelUpload = () => { };
   }
-
-  resetState = () => {
-    this.setState(emptyState);
-  };
-
-  openDialog = (message, fn) => {
-    this.setState({
-      sending: false,
-      sendingProgress: 0,
-      open: true,
-      message,
-    });
-
-    this.dialogCloseCallback = fn;
-  };
-
-  closeDialog = () => {
-    this.dialogCloseCallback
-      ? this.dialogCloseCallback()
-      : this.setState({ open: false });
-  };
 
   /**
    * Given an exif object, return the coordinates {latitude, longitude} or undefined if an error occurs
@@ -136,62 +88,12 @@ class PhotoPage extends Component {
   };
 
   sendFile = async () => {
-    let location = this.state.imgLocation;
-
-    gtagEvent("Upload", "Photo");
-
-    if (!this.state.imgSrc) {
-      this.openDialog("No picture is selected. Please choose a picture.");
-      return;
-    }
-
-    if (!this.props.online) {
-      this.openDialog(
-        "Can't Connect to our servers. You won't be able to upload an image."
-      );
-      return;
-    }
-
-    const fieldsJustValues = _.reduce(
-      this.state.fieldsValues,
-      (a, v, k) => {
-        a[k] = v.value;
-        return a;
-      },
-      {}
-    );
-
-    let filteredFields = {};
-    Object.entries(fieldsJustValues).forEach(([key, value]) => {
-      if (value) {
-        filteredFields[key] = typeof value === "string" ? value.trim() : value;
-
-        const fieldDefinition = config.PHOTO_FIELDS[key];
-        if (fieldDefinition.sanitize) {
-          fieldDefinition.sanitize(value);
-        }
-      }
+    this.props.handleUploadClick({
+      location: this.state.imgLocation,
+      imgSrc: this.state.imgSrc,
+      fieldsValues: this.state.fieldsValues
     });
-
-    const data = { ...location, ...filteredFields };
-
-    this.setState({
-      sending: true,
-      sendingProgress: 0,
-      enabledUploadButton: false,
-    });
-
-    const onProgress = (sendingProgress) => this.setState({ sendingProgress, enabledUploadButton: true });
-    const { cancel, promise } = dbFirebase.uploadPhoto(data, this.state.imgSrc, onProgress);
-    this.cancelUpload = cancel;
-
-    promise
-      .then(() => this.openDialog(
-        "Photo was uploaded successfully. It will be reviewed by our moderation team.",
-        this.handleClosePhotoPage
-      ))
-      .catch(() =>this.openDialog("Photo upload was canceled"));
-  };
+  }
 
   loadImage = () => {
     let imgExif = null;
@@ -242,18 +144,8 @@ class PhotoPage extends Component {
 
   retakePhoto = () => {
     gtagEvent("Retake Photo", "Photo");
-    this.resetState();
+    this.setState(emptyState);
     this.props.handleRetakeClick();
-  };
-
-  handleClosePhotoPage = () => {
-    this.resetState();
-    this.props.handleClose(); // go to the map
-  };
-
-  handleCancel = () => {
-    this.setState({ sending: false });
-    this.cancelUpload();
   };
 
   handleNext = () => {
@@ -340,44 +232,6 @@ class PhotoPage extends Component {
             }
           />
 
-          <Dialog
-            open={this.state.open}
-            onClose={this.closeDialog}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                {this.state.message}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.closeDialog} color="secondary">
-                Ok
-              </Button>
-            </DialogActions>
-          </Dialog>
-
-          <Dialog open={this.state.sending}>
-            <DialogContent className={classes.dialogContentProgress}>
-              <DialogContentText id="loading-dialog-text">
-                {this.state.sendingProgress} % done. Be patient ;)
-              </DialogContentText>
-              <div className={classes.linearProgress}>
-                <br />
-                <LinearProgress
-                  variant="determinate"
-                  color="secondary"
-                  value={this.state.sendingProgress}
-                />
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.handleCancel} color="secondary">
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
         </PageWrapper>
       </div>
     );

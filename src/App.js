@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect, useRef, Fragment } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
@@ -86,6 +86,7 @@ const App = (props) => {
   const [dialogContentText, setDialogContentText] = useState("");
   const [confirmDialogTitle, setConfirmDialogTitle] = useState("");
   const [ignoreUpdate, setIgnoreUpdate] = useState(false);
+  const [alert, setAlert] = useState({});
 
   const geolocationContext = useContext(GeolocationContext);
 
@@ -162,8 +163,9 @@ const App = (props) => {
   const prevLocationRef = useRef();
   useEffect(() => {
     // didMount
-    // TODO: test it. Does it slow down starting up ?
     prevLocationRef.current = location;
+
+    dbFirebase.processScheduledUploads(console.log);
 
     setStats(config.getStats(geojson, dbStats));
 
@@ -279,6 +281,35 @@ const App = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geojson, location, user]);
 
+  useEffect(() => {
+    const actions = (
+      <Fragment>
+        <IconButton
+          color="primary"
+          size="small"
+          onClick={() => window.location.reload()}
+        >
+          <CachedIcon />
+        </IconButton>
+        <IconButton
+          color="primary"
+          size="small"
+          onClick={() => setIgnoreUpdate(true)}
+        >
+          <CloseIcon />
+        </IconButton>
+      </Fragment>
+    );
+
+    setAlert({
+      key: "newVersion",
+      open: props.newVersionAvailable && !ignoreUpdate,
+      actions,
+      message: "New verison available !",
+      autoHideDuration: 10 * 1000,
+    });
+  }, [props.newVersionAvailable, ignoreUpdate]);
+
   const modifyFeature = (photo) => {
     console.debug(`modifying ${photo.id}`);
     dispatch({ type: "UPDATE_FEATURE", payload: { photo } });
@@ -372,6 +403,20 @@ const App = (props) => {
       domRefInput.current.click();
     }
   };
+
+  const handleUploadClick = async ({ location, imgSrc, fieldsValues } = {}) => {
+    history.goBack();
+    setAlert({
+      key: "photoScheduled",
+      open: true,
+      message: "Photo upload scheduled :)",
+    });
+    const onProgress = (progress) => console.log(`Uploading photo progress ${progress}`);
+    const { promise, cancel } = await dbFirebase.scheduleUpload({ location, imgSrc, fieldsValues, onProgress });
+    console.debug("I could cancel with ", cancel);
+    await promise;
+    setAlert({ key: "photoUploaded", open: true, message: "Photo uploaded !" });
+  }
 
   const openFile = (e) => {
     if (e.target.files[0]) {
@@ -566,6 +611,18 @@ const App = (props) => {
     return ownPhotos;
   };
 
+  const Alert = (props) => {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleAlertClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setAlert({ open: false });
+  };
+
   console.log(firebaseConfig);
   return (
     <div className="geovation-app">
@@ -694,6 +751,7 @@ const App = (props) => {
                 fields={fields}
                 handleClose={history.goBack}
                 handleRetakeClick={handleCameraClick}
+                handleUploadClick={handleUploadClick}
               />
             )}
           />
@@ -754,35 +812,19 @@ const App = (props) => {
       </main>
 
       <Snackbar
-        open={props.newVersionAvailable && !ignoreUpdate}
-        key="topcenter"
+        open={alert.open}
+        key={alert.key}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={alert.autoHideDuration || 2000}
+        onClose={alert.onClose || handleAlertClose}
       >
-        <MuiAlert
-          elevation={6}
-          variant="filled"
-          severity="success"
-          action={
-            <>
-              <IconButton
-                color="primary"
-                size="small"
-                onClick={() => window.location.reload()}
-              >
-                <CachedIcon />
-              </IconButton>
-              <IconButton
-                color="primary"
-                size="small"
-                onClick={() => setIgnoreUpdate(true)}
-              >
-                <CloseIcon />
-              </IconButton>
-            </>
-          }
+        <Alert
+          severity={alert.severity || "success"}
+          onClose={alert.onClose || handleAlertClose}
+          action={alert.actions}
         >
-          New verison available !
-        </MuiAlert>
+          {alert.message || "Hello"}
+        </Alert>
       </Snackbar>
 
       <Snackbar open={!geojson} message="Loading photos..." />
