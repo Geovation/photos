@@ -41,7 +41,7 @@
     "coveralls": "latest",
     "firebase-admin": "^9.3.0",
     "firebase-tools": "^9.13.0",
-    "husky": "^6.0.0",
+    "husky": "^7.0.0",
     "jimp": "^0.16.1",
     "ncp": "latest",
     "node-sass": "^6.0.0",
