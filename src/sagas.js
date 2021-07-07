@@ -9,9 +9,10 @@ let featuresDict = {};
 
 // dont save more than once every 10 seconds
 function* saveGeojsonAsync(action) {
-  const waitFor = waitUnil - Date.now() + 1 * 1000;
+  const waitFor = Math.max(waitUnil - Date.now() + 1 * 1000, 0);
   console.debug(`I'll wait for ${waitFor}`);
   yield delay(waitFor);
+
   waitUnil = Date.now();
   console.debug("Setting value")
   localforage.setItem("featuresDict", featuresDict);
