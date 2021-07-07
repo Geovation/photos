@@ -6,7 +6,7 @@ import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga'
 import rootSaga from 'sagas'
 
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { MuiThemeProvider, createTheme } from "@material-ui/core/styles";
 
 import "./index.scss";
 import App from "./App";
@@ -30,7 +30,7 @@ if (devDissableDebugLog) {
   console.debug = () => {};
 }
 
-const theme = createMuiTheme(config.THEME);
+const theme = createTheme(config.THEME);
 
 const initialState = {
   user: null,
