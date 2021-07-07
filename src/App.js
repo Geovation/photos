@@ -411,7 +411,6 @@ const App = (props) => {
       open: true,
       message: "Photo upload scheduled :)",
     });
-    // TODO: do I need the promise ????
     const { promise, cancel } = await dbFirebase.scheduleUpload({
       location,
       imgSrc,

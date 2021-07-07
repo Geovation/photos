@@ -165,8 +165,6 @@ function saveMetadata(data) {
   delete data.latitude;
   delete data.longitude;
 
-  console.log(firebase.auth());
-  console.log(firebase);
   data.owner_id = firebase.auth().currentUser.uid;
 
   data.updated = firebase.firestore.FieldValue.serverTimestamp();
@@ -513,13 +511,6 @@ function ownPhotosRT(addedFn, modifiedFn, removedFn, errorFn) {
   const photosRef = firestore.collection("photos");
   const userId = firebase.auth().currentUser.uid;
   const ownPhotosRef = photosRef.where("owner_id", "==", userId);
-
-  // async function addUploadFieldsFn(photo) {
-  //   const uploadFields =
-  //     (await uploadsQueueStore.getItem(photo.uploadKey)) || {};
-
-  //   addedFn({ ...photo, uploadFields });
-  // }
 
   return photosFromRefRT(
     ownPhotosRef,

@@ -21,54 +21,52 @@ import { dbFirebase } from "features/firebase";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
+const ActionIcon = ({ photo }) => {
+  let icon = <HourglassEmptyIcon color="action" />;
+  // the icon depends on the status
+  if (dbFirebase.getUploadProgress(photo.properties.id) < 100) {
+    // still being uploaded
+    // TODO: add cancell button
+    icon = <CloudUpload color="error" />;
+  } else if (photo.properties.published === false) {
+    // rejected
+    icon = <ClearIcon color="error" />;
+  } else if (photo.properties.published === true) {
+    // approved
+    icon = <CheckIcon color="secondary" />;
+  }
+
+  return <Icon>{icon}</Icon>;
+};
+
+const ProgressOrUpdated = ({ photo }) => {
+  const progress = dbFirebase.getUploadProgress(photo.properties.id);
+  const primary = progress < 100
+    ? `${progress} %`
+    : config.PHOTO_ZOOMED_FIELDS.updated(photo.properties.updated);
+  
+  return <ListItemText primary={primary} />;
+}
+
+const Thumbnail = ({ placeholderImage, photo }) => {
+
+  const thumbnail = dbFirebase.getUploadingPhoto(
+    photo.properties.id,
+    photo.properties.thumbnail
+  );
+  
+  return (
+    <ListItemAvatar>
+      <Avatar
+        imgProps={{ onError: (e) =>  e.target.src = placeholderImage }}
+        src={thumbnail}
+      />
+    </ListItemAvatar>
+  );
+};
+
 const OwnPhotosPage = (props) => {
   const label = config.PAGES.ownPhotos.label;
-  
-  function createAction(photo) {
-    // the icon depends on the status
-    if (dbFirebase.getUploadProgress(photo.properties.id) < 100) {
-      // still being uploaded
-      // TODO: display progress
-      // TODO: add cancell button
-      return (
-        <Icon>
-          <CloudUpload color="error" />
-        </Icon>
-      );
-    } else if (photo.properties.published === false) {
-      // rejected
-      return (
-        <Icon>
-          <ClearIcon color="error" />
-        </Icon>
-      );
-    } else if (photo.properties.published === true) {
-      // approved
-      return (
-        <Icon>
-          <CheckIcon color="secondary" />
-        </Icon>
-      );
-    } else {
-      // waiting for moderation
-      return (
-        <Icon>
-          <HourglassEmptyIcon color="action" />
-        </Icon>
-      );
-    }
-  }
-
-  function createThumbnail(photo) {    
-    return dbFirebase.getUploadingPhoto(photo.properties.id, photo.properties.thumbnail);
-  }
-
-  function createUpdated(photo) {
-    const progress = dbFirebase.getUploadProgress(photo.properties.id);
-    return progress < 100
-      ? `${progress} %`
-      : config.PHOTO_ZOOMED_FIELDS.updated(photo.properties.updated);
-  }
 
   return (
     <PageWrapper
@@ -83,19 +81,10 @@ const OwnPhotosPage = (props) => {
             button
             onClick={() => props.handlePhotoClick(photo)}
           >
-            <ListItemAvatar>
-              <Avatar
-                imgProps={{
-                  onError: (e) => {
-                    e.target.src = placeholderImage;
-                  },
-                }}
-                src={createThumbnail(photo)}
-              />
-            </ListItemAvatar>
-            <ListItemText primary={createUpdated(photo)} />
+            <Thumbnail photo={photo} placeholderImage={placeholderImage} />
+            <ProgressOrUpdated photo={photo} />
             <ListItemSecondaryAction>
-              {createAction(photo)}
+              <ActionIcon photo={photo} />
             </ListItemSecondaryAction>
           </ListItem>
         ))}
