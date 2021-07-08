@@ -9,7 +9,7 @@ import BackIcon from "@material-ui/icons/ArrowBack";
 
 import utils from "../utils";
 
-const placeholderImage = process.env.PUBLIC_URL + "/custom/images/banner.svg";
+import placeholderImage from "custom/assets/images/banner.svg";
 
 const styles = (theme) => ({
   container: {

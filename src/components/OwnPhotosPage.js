@@ -19,7 +19,7 @@ import PageWrapper from "./PageWrapper";
 import config from "custom/config";
 import { dbFirebase } from "features/firebase";
 
-const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
+import placeholderImage from "custom/assets/images/logo.svg";
 
 const ActionIcon = ({ photo }) => {
   let icon = <HourglassEmptyIcon color="action" />;

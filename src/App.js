@@ -48,7 +48,7 @@ import tutorialSteps from "./custom/tutorialSteps";
 import welcomeSteps from "./custom/welcomeSteps";
 import { GeolocationContext } from "store/GeolocationContext";
 
-const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
+import placeholderImage from "custom/assets/images/logo.svg";
 
 const styles = (theme) => ({
   dialogClose: {

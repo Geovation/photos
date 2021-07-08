@@ -19,7 +19,7 @@ import CardComponent from "./CardComponent";
 import "./ModeratorPage.scss";
 import config from "custom/config";
 
-const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
+import placeholderImage from "custom/assets/images/logo.svg";
 
 class ModeratorPage extends Component {
   constructor(props) {
