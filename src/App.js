@@ -99,6 +99,10 @@ const App = (props) => {
   let domRefInput = useRef();
   let userChecked = useRef(false);
 
+  // see https://github.com/facebook/react/issues/14010#issuecomment-433788147
+  const photosToModerateRef = useRef(photosToModerate);
+  photosToModerateRef.current = photosToModerate;
+
   const VISIBILITY_REGEX = new RegExp(
     "(^/@|^/$|^" +
       config.PAGES.displayPhoto.path +
@@ -364,7 +368,9 @@ const App = (props) => {
     console.debug(
       `removing the element ${photo.id} from the collection photosToModerate in the view`
     );
-    setPhotosToModerate(_.filter(photosToModerate, (p) => p.id !== photo.id));
+    setPhotosToModerate(
+      _.filter(photosToModerateRef.current, (p) => p.id !== photo.id)
+    );
   };
 
   const updatePhotoToModerate = (photo) => {
@@ -372,7 +378,7 @@ const App = (props) => {
       `updating the element ${photo.id} from the collection photosToModerate in the view`
     );
 
-    const newDict = { ...photosToModerate };
+    const newDict = { ...photosToModerateRef.current };
     newDict[photo.id] = photo;
 
     setPhotosToModerate(newDict);
@@ -419,7 +425,7 @@ const App = (props) => {
     console.debug("I could cancel with ", cancel);
     await promise;
     setAlert({ key: "photoUploaded", open: true, message: "Photo uploaded !" });
-  }
+  };
 
   const openFile = (e) => {
     if (e.target.files[0]) {
@@ -616,10 +622,10 @@ const App = (props) => {
 
   const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
+  };
 
   const handleAlertClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
