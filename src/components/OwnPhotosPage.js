@@ -1,115 +1,96 @@
-import React, { Component } from "react";
-
-import _ from "lodash";
+import React from "react";
 
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
+import CloudUpload from "@material-ui/icons/CloudUpload"
 import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import { Icon } from "@material-ui/core";
+
+import _ from "lodash";
 
 import PageWrapper from "./PageWrapper";
-import CardComponent from "./CardComponent";
 import config from "custom/config";
-import { Icon } from "@material-ui/core";
+import { dbFirebase } from "features/firebase";
 
 const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
 
-export default class OwnPhotosPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      confirmDialogHandleCancel: this.handleCancelDialog,
-      confirmDialogHandleOk: null,
-      zoomDialogOpen: false,
-      photoSelected: {},
-    };
+const ActionIcon = ({ photo }) => {
+  let icon = <HourglassEmptyIcon color="action" />;
+  // the icon depends on the status
+  if (dbFirebase.getUploadProgress(photo.properties.id) < 100) {
+    // still being uploaded
+    // TODO: add cancell button
+    icon = <CloudUpload color="error" />;
+  } else if (photo.properties.published === false) {
+    // rejected
+    icon = <ClearIcon color="error" />;
+  } else if (photo.properties.published === true) {
+    // approved
+    icon = <CheckIcon color="secondary" />;
   }
 
-  handleZoomDialogClose = () => {
-    this.setState({ zoomDialogOpen: false });
-  };
+  return <Icon>{icon}</Icon>;
+};
 
-  handleCancelDialog = () => {
-    this.setState({ confirmDialogOpen: false });
-  };
-
-  render() {
-    const { handleClose, photos } = this.props;
-    const label = config.PAGES.ownPhotos.label;
-
-    return (
-      <PageWrapper label={label} handleClose={handleClose} hasHeader={false}>
-        <List dense={false}>
-          {_.map(photos, (photo) => (
-            <ListItem
-              key={photo.properties.id}
-              button
-              onClick={() => this.props.handlePhotoClick(photo)}
-            >
-              <ListItemAvatar>
-                <Avatar
-                  imgProps={{
-                    onError: (e) => {
-                      e.target.src = placeholderImage;
-                    },
-                  }}
-                  src={photo.properties.thumbnail}
-                />
-              </ListItemAvatar>
-              <ListItemText
-                primary={config.PHOTO_ZOOMED_FIELDS.updated(
-                  photo.properties.updated
-                )}
-              />
-              <ListItemSecondaryAction>
-                <Icon>
-                  {photo.properties.published === true && (
-                    <CheckIcon color="secondary" />
-                  )}
-                  {photo.properties.published === false && (
-                    <ClearIcon color="error" />
-                  )}
-                  {photo.properties.published !== false &&
-                    photo.properties.published !== true && (
-                      <HourglassEmptyIcon olor="action" />
-                    )}
-                </Icon>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
-
-        <Dialog
-          open={this.state.zoomDialogOpen}
-          onClose={this.handleZoomDialogClose}
-        >
-          <DialogContent>
-            <div style={{ textAlign: "center" }}>
-              <img
-                className={"main-image"}
-                onError={(e) => {
-                  e.target.src = placeholderImage;
-                }}
-                alt={this.state.photoSelected.id}
-                src={this.state.photoSelected.main}
-              />
-            </div>
-            <CardComponent
-              photoSelected={this.state.photoSelected}
-              handleRejectClick={this.props.handleRejectClick}
-              handleApproveClick={this.props.handleApproveClick}
-            />
-          </DialogContent>
-        </Dialog>
-      </PageWrapper>
-    );
-  }
+const ProgressOrUpdated = ({ photo }) => {
+  const progress = dbFirebase.getUploadProgress(photo.properties.id);
+  const primary = progress < 100
+    ? `${progress} %`
+    : config.PHOTO_ZOOMED_FIELDS.updated(photo.properties.updated);
+  
+  return <ListItemText primary={primary} />;
 }
+
+const Thumbnail = ({ placeholderImage, photo }) => {
+
+  const thumbnail = dbFirebase.getUploadingPhoto(
+    photo.properties.id,
+    photo.properties.thumbnail
+  );
+  
+  return (
+    <ListItemAvatar>
+      <Avatar
+        imgProps={{ onError: (e) =>  e.target.src = placeholderImage }}
+        src={thumbnail}
+      />
+    </ListItemAvatar>
+  );
+};
+
+const OwnPhotosPage = (props) => {
+  const label = config.PAGES.ownPhotos.label;
+
+  return (
+    <PageWrapper
+      label={label}
+      handleClose={props.handleClose}
+      hasHeader={false}
+    >
+      <List dense={false}>
+        {_.map(props.photos, (photo) => (
+          <ListItem
+            key={photo.properties.id}
+            button
+            onClick={() => props.handlePhotoClick(photo)}
+          >
+            <Thumbnail photo={photo} placeholderImage={placeholderImage} />
+            <ProgressOrUpdated photo={photo} />
+            <ListItemSecondaryAction>
+              <ActionIcon photo={photo} />
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
+      </List>
+    </PageWrapper>
+  );
+};
+
+export default OwnPhotosPage;

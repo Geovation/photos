@@ -165,8 +165,6 @@ const App = (props) => {
     // didMount
     prevLocationRef.current = location;
 
-    dbFirebase.processScheduledUploads(console.log);
-
     setStats(config.getStats(geojson, dbStats));
 
     let { photoId, mapLocation } = extractPathnameParams();
@@ -269,7 +267,7 @@ const App = (props) => {
       );
     }
 
-    // if there is a user
+    // The user has logged in
     if (user && !unregisterOwnPhotos.current) {
       unregisterOwnPhotos.current = dbFirebase.ownPhotosRT(
         addFeature,
@@ -277,6 +275,8 @@ const App = (props) => {
         removeFeature,
         unexpectedErrorFn
       );
+
+      dbFirebase.processScheduledUploads();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [geojson, location, user]);
@@ -411,8 +411,11 @@ const App = (props) => {
       open: true,
       message: "Photo upload scheduled :)",
     });
-    const onProgress = (progress) => console.log(`Uploading photo progress ${progress}`);
-    const { promise, cancel } = await dbFirebase.scheduleUpload({ location, imgSrc, fieldsValues, onProgress });
+    const { promise, cancel } = await dbFirebase.scheduleUpload({
+      location,
+      imgSrc,
+      fieldsValues,
+    });
     console.debug("I could cancel with ", cancel);
     await promise;
     setAlert({ key: "photoUploaded", open: true, message: "Photo uploaded !" });
@@ -723,8 +726,6 @@ const App = (props) => {
                   photos={getOwnPhotos()}
                   handleClose={history.goBack}
                   handlePhotoClick={handlePhotoClick}
-                  // handleRejectClick={handleRejectClick}
-                  // handleApproveClick={handleApproveClick}
                 />
               )}
             />

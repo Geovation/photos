@@ -12,6 +12,7 @@ const firebaseApp = getFirebaseApp();
 const firestore = firebase.firestore();
 const storageRef = firebase.storage().ref();
 const uploadsQueueStore = localforage.createInstance({ name: "uploadsQueue" });
+const uploadsProgress = {};
 
 function extractPhoto(data, id) {
   // some data from Firebase cannot be stringified into json, so we need to convert it into other format first.
@@ -164,17 +165,16 @@ function saveMetadata(data) {
   delete data.latitude;
   delete data.longitude;
 
-  if (firebase.auth().currentUser) {
-    data.owner_id = firebase.auth().currentUser.uid;
-  }
+  data.owner_id = firebase.auth().currentUser.uid;
+
   data.updated = firebase.firestore.FieldValue.serverTimestamp();
   data.moderated = null;
 
   let fieldsToSave = ["moderated", "updated", "location", "owner_id"];
   _.forEach(config.PHOTO_FIELDS, (field) => fieldsToSave.push(field.name));
-
-  return firestore.collection("photos").add(_.pick(data, fieldsToSave));
-
+  const dataToSave = _.pick(data, fieldsToSave);
+  const photoRef = firestore.collection("photos").doc(data.id);
+  return photoRef.set(dataToSave).then(() => photoRef);
 }
 
 /**
@@ -182,22 +182,39 @@ function saveMetadata(data) {
  * 
  * @param {*} param0 TODO
  */
-async function scheduleUpload({ location, imgSrc, fieldsValues, onProgress = () => {} } = {}) {
+async function scheduleUpload({ location, imgSrc, fieldsValues } = {}) {
   // add to queue
-  const key = String(Date.now());
-  await uploadsQueueStore.setItem(key, { location, imgSrc, fieldsValues });
-  return processScheduledUpload(key, onProgress);
+  const id =
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15);
+  const uploadItem = {
+    location,
+    imgSrc,
+    fieldsValues,
+    id,
+  };
+  await uploadsQueueStore.setItem(id, uploadItem);
+  return processScheduledUpload(uploadItem);
 }
 
-async function processScheduledUploads(onProgress) {
-  return uploadsQueueStore.iterate((value, key, iterationNumber) => {
-    console.debug([key, value, iterationNumber]);
-    processScheduledUpload(key, onProgress);
-  })
+async function processScheduledUploads() {
+  return uploadsQueueStore.iterate((uploadItem, id, iterationNumber) => {
+    console.debug([id, uploadItem, iterationNumber]);
+    processScheduledUpload({ ...uploadItem, id });
+  });
 }
 
-async function processScheduledUpload(key, onProgress) {
-  const { location, imgSrc, fieldsValues } = await uploadsQueueStore.getItem(key);
+function getUploadProgress(id) {
+  return _.get(uploadsProgress, `${id}.progress`, 100);
+}
+
+function getUploadingPhoto(id, thumbnail) {
+  return _.get(uploadsProgress, `${id}.imgSrc`, thumbnail);
+}
+
+async function processScheduledUpload(uploadItem) {
+  uploadsProgress[uploadItem.id] = { ...uploadItem, progress: 0 };
+  const { location, imgSrc, fieldsValues } = uploadItem;
 
   // upload it
   const fieldsJustValues = _.reduce(
@@ -221,7 +238,11 @@ async function processScheduledUpload(key, onProgress) {
     }
   });
 
-  const data = { ...location, ...filteredFields };
+  const onProgress = (progress) => {
+    console.log(`upload progress of ${uploadItem.id} is ${progress}`);
+    uploadsProgress[uploadItem.id].progress = progress;
+  };
+  const data = { ...location, ...filteredFields, id: uploadItem.id };
   const { promise, cancel } = uploadPhotoRetryingIfError(
     data,
     imgSrc,
@@ -230,7 +251,8 @@ async function processScheduledUpload(key, onProgress) {
 
   const promiseUploadedAndKeyDeleted = promise.then(() => {
     console.log("Photo uploaded");
-    return uploadsQueueStore.removeItem(key);
+    onProgress(100);
+    return uploadsQueueStore.removeItem(uploadItem.id);
   });
 
   return { promise: promiseUploadedAndKeyDeleted, cancel };
@@ -275,21 +297,20 @@ function uploadPhoto(data, imgSrc, onProgress) {
       const base64 = imgSrc.split(",")[1];
       uploadTask = savePhoto(photoRef.id, base64);
 
-      uploadTask.on(
-        firebase.storage.TaskEvent.STATE_CHANGED,
-        (snapshot) => {
-          const sendingProgress = Math.ceil((snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1);
-          onProgress(sendingProgress);
-          console.log(snapshot.state);
-        }
-      );
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
+        const sendingProgress = Math.ceil(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 98 + 1
+        );
+        onProgress(sendingProgress);
+        console.log(snapshot.state);
+      });
 
       try {
         await uploadTask;
       } catch (error) {
         reject(error);
       }
-      
+
       resolve();
     } else {
       // the user has cancelled it but the metadata upload has succeded. Therefore we need to delete it.
@@ -303,7 +324,7 @@ function uploadPhoto(data, imgSrc, onProgress) {
 
   rtn.cancel = () => {
     canceled = true;
-    // If there is an uploadTask, that means that the image upload is in progress and therefore the metadata is already in the DB 
+    // If there is an uploadTask, that means that the image upload is in progress and therefore the metadata is already in the DB
     if (uploadTask) {
       uploadTask.cancel();
       photoRef.delete();
@@ -486,23 +507,19 @@ function photosFromRefRT(
 }
 
 function ownPhotosRT(addedFn, modifiedFn, removedFn, errorFn) {
-  if (firebase.auth().currentUser) {
-    // get also the photos that belong to the current user even if not published yet.
-    const photosRef = firestore.collection("photos");
-    const userId = firebase.auth().currentUser.uid;
-    const ownPhotosRef = photosRef.where("owner_id", "==", userId);
+  // get also the photos that belong to the current user even if not published yet.
+  const photosRef = firestore.collection("photos");
+  const userId = firebase.auth().currentUser.uid;
+  const ownPhotosRef = photosRef.where("owner_id", "==", userId);
 
-    return photosFromRefRT(
-      ownPhotosRef,
-      addedFn,
-      modifiedFn,
-      removedFn,
-      errorFn
-    );
-  }
-
-  // if the user is not legged in, then return an emtpy function
-  return () => {};
+  return photosFromRefRT(
+    ownPhotosRef,
+    // addUploadFieldsFn,
+    addedFn,
+    modifiedFn,
+    removedFn,
+    errorFn
+  );
 }
 
 function writeModeration(photoId, userId, published) {
@@ -588,6 +605,8 @@ const rtn = {
   buildStorageUrl,
   scheduleUpload,
   processScheduledUploads,
+  getUploadProgress,
+  getUploadingPhoto,
 };
 
 export default rtn;
