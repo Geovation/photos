@@ -27,8 +27,7 @@ import Chip from "@material-ui/core/Chip";
 import CardComponent from "components/CardComponent";
 
 import config from "custom/config";
-  
-const tweetLogo = process.env.PUBLIC_URL + "/images/twitter.svg";
+import tweetLogo from "assets/images/twitter.svg";
 
 const styles = (theme) => ({
   notchTop: {

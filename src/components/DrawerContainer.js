@@ -17,8 +17,8 @@ import config from "custom/config";
 import utils from "utils";
 import "./DrawerContainer.scss";
 
-const placeholderImage =
-  process.env.PUBLIC_URL + "/images/geovation-banner.svg";
+import placeholderImage from "custom/assets/images/banner.svg";
+
 const drawerWidth = "80%";
 const drawerMaxWidth = 360;
 

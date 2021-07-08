@@ -20,7 +20,7 @@ import MapLocation from "types/MapLocation";
 import config from "custom/config";
 import { GeolocationContext } from "store/GeolocationContext";
 
-const placeholderImage = process.env.PUBLIC_URL + "/custom/images/logo.svg";
+import placeholderImage from "custom/assets/images/logo.svg";
 
 const styles = (theme) => ({
   location: {
