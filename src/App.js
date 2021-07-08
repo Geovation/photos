@@ -99,10 +99,6 @@ const App = (props) => {
   let domRefInput = useRef();
   let userChecked = useRef(false);
 
-  // see https://github.com/facebook/react/issues/14010#issuecomment-433788147
-  const photosToModerateRef = useRef(photosToModerate);
-  photosToModerateRef.current = photosToModerate;
-
   const VISIBILITY_REGEX = new RegExp(
     "(^/@|^/$|^" +
       config.PAGES.displayPhoto.path +
@@ -368,8 +364,8 @@ const App = (props) => {
     console.debug(
       `removing the element ${photo.id} from the collection photosToModerate in the view`
     );
-    setPhotosToModerate(
-      _.filter(photosToModerateRef.current, (p) => p.id !== photo.id)
+    setPhotosToModerate((photosToModerate) =>
+      _.filter(photosToModerate, (p) => p.id !== photo.id)
     );
   };
 
@@ -378,10 +374,11 @@ const App = (props) => {
       `updating the element ${photo.id} from the collection photosToModerate in the view`
     );
 
-    const newDict = { ...photosToModerateRef.current };
-    newDict[photo.id] = photo;
-
-    setPhotosToModerate(newDict);
+    setPhotosToModerate((photosToModerate) => {
+      const newDict = { ...photosToModerate };
+      newDict[photo.id] = photo;
+      return newDict;
+    });
   };
 
   const handleClickLoginLogout = () => {
