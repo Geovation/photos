@@ -364,7 +364,9 @@ const App = (props) => {
     console.debug(
       `removing the element ${photo.id} from the collection photosToModerate in the view`
     );
-    setPhotosToModerate(_.filter(photosToModerate, (p) => p.id !== photo.id));
+    setPhotosToModerate((photosToModerate) =>
+      _.filter(photosToModerate, (p) => p.id !== photo.id)
+    );
   };
 
   const updatePhotoToModerate = (photo) => {
@@ -372,10 +374,11 @@ const App = (props) => {
       `updating the element ${photo.id} from the collection photosToModerate in the view`
     );
 
-    const newDict = { ...photosToModerate };
-    newDict[photo.id] = photo;
-
-    setPhotosToModerate(newDict);
+    setPhotosToModerate((photosToModerate) => {
+      const newDict = { ...photosToModerate };
+      newDict[photo.id] = photo;
+      return newDict;
+    });
   };
 
   const handleClickLoginLogout = () => {
@@ -419,7 +422,7 @@ const App = (props) => {
     console.debug("I could cancel with ", cancel);
     await promise;
     setAlert({ key: "photoUploaded", open: true, message: "Photo uploaded !" });
-  }
+  };
 
   const openFile = (e) => {
     if (e.target.files[0]) {
@@ -616,10 +619,10 @@ const App = (props) => {
 
   const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
-  }
+  };
 
   const handleAlertClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
