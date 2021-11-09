@@ -7,7 +7,7 @@
 
 # Geovation photos
 
-Many people in our [Geovation Hub](https://geovation.uk/hub) are asking for a simple tool to upload images into a map. It must be free, and easy to extend and white label. It also must work as mobile app as well as web app. An example of this is [Plastic Patrol](https://www.plasticpatrol.co.uk/). They needed an app to capture plastic pollution around UK.
+Many people in our [Geovation Hub](https://geovation.uk/hub) are asking for a simple tool to upload images into a map. It must be free, and easy to extend and white label. It also must work as mobile app as well as web app. An example of this is [Planet Patrol](https://planetpatrol.co//). They needed an app to capture plastic pollution around UK.
 The idea of Geovation Photos is to be a skeleton for those types of apps.
 
 # Getting started
