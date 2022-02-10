@@ -44,7 +44,7 @@
     "husky": "^7.0.0",
     "jimp": "^0.16.1",
     "ncp": "latest",
-    "node-sass": "^6.0.0",
+    "node-sass": "^7.0.0",
     "precise-commits": "latest",
     "prettier": "^2.1.2",
     "queue-promise": "^2.2.1",
