@@ -15,7 +15,7 @@
     "cors": "latest",
     "express": "latest",
     "firebase-admin": "latest",
-    "firebase-functions": "^3.14.1",
+    "firebase-functions": "^3.24.1",
     "gm": "latest",
     "json2csv": "latest",
     "lodash": "^4.17.21",
